@@ -1,40 +1,45 @@
 import cshogi
 
 
-class Helper():
-    """ヘルパー関数集
+class Turned():
+    """先後両用ヘルパー関数
     """
 
 
-    @staticmethod
-    def sign(number, board):
-        if board.turn == cshogi.WHITE:
+    def __init__(self, board):
+        self._board = board
+
+
+    def sign(self, number):
+        if self._board.turn == cshogi.WHITE:
             number *= -1
 
         return number
 
 
-    @staticmethod
-    def masu(number, board):
-        if board.turn == cshogi.WHITE:
-            suji = Helper.suji(number // 10, board)
-            dan = Helper.dan(number % 10, board)
-            number = dan * 10 + suji
+    def masu(self, masu):
+        if self._board.turn == cshogi.WHITE:
+            suji = self.suji(Helper.masu_to_suji(masu))
+            dan = self.dan(Helper.masu_to_dan(masu))
+            masu = dan * 10 + suji
 
-        return number
-
-
-    @staticmethod
-    def suji(number, board):
-        if board.turn == cshogi.WHITE:
-            number = 10 - number
-
-        return number
+        return masu
 
 
-    @staticmethod
-    def dan(number, board):
-        return Helper.suji(number, board)
+    def suji(self, suji):
+        if self._board.turn == cshogi.WHITE:
+            suji = 10 - suji
+
+        return suji
+
+
+    def dan(self, dan):
+        return self.suji(dan)    # 処理内容は同じ
+
+
+class Helper():
+    """ヘルパー関数集
+    """
 
 
     @staticmethod

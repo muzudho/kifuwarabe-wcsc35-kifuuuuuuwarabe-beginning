@@ -1,7 +1,7 @@
 import cshogi
 import sys
 
-from ..helper import Helper
+from ..helper import Turned, Helper
 
 
 class WillSwingingRook():
@@ -54,11 +54,12 @@ class WillSwingingRook():
         dst_sq = cshogi.move_to(move)
         #print(f'★ is_there_will_on_move: {Helper.sq_to_masu(src_sq)=} {Helper.sq_to_masu(dst_sq)=} {cshogi.move_from_piece_type(move)=}', file=sys.stderr)
 
+        turned = Turned(board)
 
         # 玉
         if cshogi.move_from_piece_type(move) == cshogi.KING:
             # 飛車が２八にいるか？
-            if board.piece(Helper.masu_to_sq(Helper.masu(28, board))) == cshogi.BROOK:
+            if board.piece(Helper.masu_to_sq(turned.masu(28))) == cshogi.BROOK:
                 # この駒は動いてはいけない
                 return False
 
@@ -70,21 +71,21 @@ class WillSwingingRook():
             friend_k_sq = board.king_square(board.turn)
             # 飛車は４筋より左に振る。かつ、玉と同じ筋または玉より左の筋に振る
             #print(f'★ 飛車が振る： {Helper.sq_to_masu(friend_k_sq)=} {Helper.sq_to_masu(src_sq)=} {Helper.sq_to_masu(dst_sq)=}', file=sys.stderr)
-            return Helper.sq_to_suji(dst_sq) > Helper.suji(4, board) and Helper.sq_to_suji(dst_sq) >= Helper.sq_to_suji(friend_k_sq)
+            return Helper.sq_to_suji(dst_sq) > turned.suji(4) and Helper.sq_to_suji(dst_sq) >= Helper.sq_to_suji(friend_k_sq)
 
         # 金
         if cshogi.move_from_piece_type(move) == cshogi.GOLD:
             # 飛車が２八にいるか？
-            if board.piece(Helper.masu_to_sq(Helper.masu(28, board))) == cshogi.BROOK:
+            if board.piece(Helper.masu_to_sq(turned.masu(28))) == cshogi.BROOK:
                 # この駒は、６筋より右にあるか？
-                if Helper.sq_to_suji(src_sq) < Helper.suji(6, board):
+                if Helper.sq_to_suji(src_sq) < turned.suji(6):
                     # この駒は動いてはいけない
                     return False
 
                 # この駒は、５筋より左にあるか？
-                elif Helper.sq_to_suji(src_sq) >= Helper.suji(6, board):
+                elif Helper.sq_to_suji(src_sq) >= turned.suji(6):
                     # この駒は左の方以外に動かしてはいけない
-                    if Helper.sq_to_suji(dst_sq) <= Helper.suji(6, board):
+                    if Helper.sq_to_suji(dst_sq) <= turned.suji(6):
                         return False
 
             #print(f'★ is_there_will_on_move: 金', file=sys.stderr)
@@ -93,16 +94,16 @@ class WillSwingingRook():
         # 銀
         if cshogi.move_from_piece_type(move) == cshogi.SILVER:
             # 飛車が２八にいるか？
-            if board.piece(Helper.masu_to_sq(Helper.masu(28, board))) == cshogi.BROOK:
+            if board.piece(Helper.masu_to_sq(turned.masu(28))) == cshogi.BROOK:
                 # この駒は、６筋より右にあるか？
-                if Helper.sq_to_suji(src_sq) < Helper.suji(6, board):
+                if Helper.sq_to_suji(src_sq) < turned.suji(6):
                     # この駒は動いてはいけない
                     return False
 
                 # この駒は、５筋より左にあるか？
-                elif Helper.sq_to_suji(src_sq) >= Helper.suji(6, board):
+                elif Helper.sq_to_suji(src_sq) >= turned.suji(6):
                     # この駒は左の方以外に動かしてはいけない
-                    if Helper.sq_to_suji(dst_sq) <= Helper.suji(6, board):
+                    if Helper.sq_to_suji(dst_sq) <= turned.suji(6):
                         return False
 
             #print(f'★ is_there_will_on_move: 銀', file=sys.stderr)

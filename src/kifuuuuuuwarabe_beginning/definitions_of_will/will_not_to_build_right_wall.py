@@ -1,7 +1,7 @@
 import cshogi
 import sys
 
-from ..helper import Helper
+from ..helper import Turned, Helper
 
 
 class WillNotToBuildRightWall():
@@ -20,10 +20,12 @@ class WillNotToBuildRightWall():
         if cshogi.move_from_piece_type(move) == cshogi.KING:
             return True
 
+        turned = Turned(board)
+
         friend_k_sq = board.king_square(board.turn)     # 自玉
         friend_k_suji = Helper.sq_to_suji(friend_k_sq)
 
-        if friend_k_suji < Helper.suji(2, board):
+        if friend_k_suji < turned.suji(2):
             return True
 
         friend_k_dan = Helper.sq_to_dan(friend_k_sq)
@@ -31,15 +33,15 @@ class WillNotToBuildRightWall():
         right_side_of_k = []
 
         # 玉の右上
-        if friend_k_dan > Helper.dan(1, board):
-            right_side_of_k.append(friend_k_sq + Helper.sign(-10, board))
+        if friend_k_dan > turned.dan(1):
+            right_side_of_k.append(friend_k_sq + turned.sign(-10))
 
         # 玉の真右
-        right_side_of_k.append(friend_k_sq + Helper.sign(-9, board))
+        right_side_of_k.append(friend_k_sq + turned.sign(-9))
 
         # 玉の右下
-        if friend_k_dan < Helper.dan(9, board):
-            right_side_of_k.append(friend_k_sq + Helper.sign(-8, board))
+        if friend_k_dan < turned.dan(9):
+            right_side_of_k.append(friend_k_sq + turned.sign(-8))
 
         # 道を塞がないならOk
         if dst_sq not in right_side_of_k:

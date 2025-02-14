@@ -1,7 +1,7 @@
 import cshogi
 import sys
 
-from ..helper import Helper
+from ..helper import Turned, Helper
 
 
 class WillNotToMove37Pawn():
@@ -18,8 +18,10 @@ class WillNotToMove37Pawn():
         src_sq = cshogi.move_from(move)
         src_masu = Helper.sq_to_masu(src_sq)
 
+        turned = Turned(board)
+
         # ３七にある駒でなければ関係ない
-        if src_masu != Helper.masu(37, board):
+        if src_masu != turned.masu(37):
             return True
 
         # 歩でなければ関係ない
