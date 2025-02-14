@@ -48,9 +48,24 @@ class WillSwingingRookSTD():
     def is_there_will_on_move(board, move):
         """指し手は［振り飛車する意志］を残しているか？
         """
-        print(f'★ is_there_will_on_move: {Helper.sq_to_masu(cshogi.move_from(move))=} {Helper.sq_to_masu(cshogi.move_to(move))=} {cshogi.move_from_piece_type(move)=}', file=sys.stderr)
+        src_sq = cshogi.move_from(move)
+        dst_sq = cshogi.move_to(move)
+        #print(f'★ is_there_will_on_move: {Helper.sq_to_masu(src_sq)=} {Helper.sq_to_masu(dst_sq)=} {cshogi.move_from_piece_type(move)=}', file=sys.stderr)
+
+        # 玉
         if cshogi.move_from_piece_type(move) == cshogi.KING:
-            print(f'★ is_there_will_on_move: 玉', file=sys.stderr)
+            #print(f'★ is_there_will_on_move: 玉', file=sys.stderr)
+            return Helper.sq_to_suji(dst_sq) <= Helper.sq_to_suji(src_sq)
+
+        # 金
+        if cshogi.move_from_piece_type(move) == cshogi.GOLD:
+            #print(f'★ is_there_will_on_move: 金', file=sys.stderr)
+            return Helper.sq_to_suji(dst_sq) <= Helper.sq_to_suji(src_sq)
+
+        # 銀
+        if cshogi.move_from_piece_type(move) == cshogi.SILVER:
+            #print(f'★ is_there_will_on_move: 銀', file=sys.stderr)
+            return Helper.sq_to_suji(dst_sq) <= Helper.sq_to_suji(src_sq)
 
         return True    # FIXME
 

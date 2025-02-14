@@ -1,8 +1,16 @@
 class Helper():
+    """ヘルパー関数集
+    """
     
-    
+
     @staticmethod
     def sq_to_masu(sq):
-        file = sq // 9 + 1
-        rank = sq % 9 + 1
-        return file * 10 + rank
+        return Helper.sq_to_suji(sq) * 10 + Helper.sq_to_dan(sq)
+
+    @staticmethod
+    def sq_to_suji(sq):
+        return sq // 9 + 1
+
+    @staticmethod
+    def sq_to_dan(sq):
+        return sq % 9 + 1

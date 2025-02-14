@@ -158,9 +158,11 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 
         will_moves = list(self._board.legal_moves)
+        print(f'★ go: ［振り飛車する意志］を残してるか尋ねる前の指し手数={len(will_moves)}', file=sys.stderr)
+
         # ［振り飛車します］状態遷移
         if self._will_swinging_rook_std.is_there_will_on_board(board=self._board):
-            print('盤は［振り飛車する意志］を残しています')
+            print('★ go: 盤は［振り飛車する意志］を残しています', file=sys.stderr)
 
             next_will_moves = []
             for m in list(self._board.legal_moves):
@@ -172,7 +174,10 @@ class ShogiEngineCompatibleWithUSIProtocol():
             next_will_moves = None
         
         else:
-            print('盤は［振り飛車する意志］はありません')
+            print('★ go: 盤は［振り飛車する意志］はありません', file=sys.stderr)
+            pass
+
+        print(f'★ go: ［振り飛車する意志］を残してるか尋ねた後の指し手数={len(will_moves)}', file=sys.stderr)
 
 
         # １手指す（投了のケースは対応済みなので、ここで対応しなくていい）
