@@ -1,6 +1,9 @@
 import cshogi
 import datetime
 import random
+import sys
+
+from .state_transition_diagrams import WillSwingingRookSTD
 
 
 class ShogiEngineCompatibleWithUSIProtocol():
@@ -11,7 +14,12 @@ class ShogiEngineCompatibleWithUSIProtocol():
     def __init__(self, config_doc):
         """初期化
         """
+
+        # 設定ファイル
         self._config_doc = config_doc
+
+        # ［振り飛車します］状態遷移図
+        self._will_swinging_rook_std = WillSwingingRookSTD()
 
         # 盤
         self._board = cshogi.Board()
@@ -148,8 +156,31 @@ class ShogiEngineCompatibleWithUSIProtocol():
                 print(f'bestmove {best_move}', flush=True)
                 return
 
+
+        will_moves = list(self._board.legal_moves)
+        # ［振り飛車します］状態遷移
+        if self._will_swinging_rook_std.is_there_will_on_board(board=self._board):
+            print('盤は［振り飛車する意志］を残しています')
+
+            next_will_moves = []
+            for m in list(self._board.legal_moves):
+                is_there_will_on_move = self._will_swinging_rook_std.is_there_will_on_move(board=self._board, move=m)
+                if is_there_will_on_move:
+                    next_will_moves.append(m)
+            
+            will_moves = next_will_moves
+            next_will_moves = None
+        
+        else:
+            print('盤は［振り飛車する意志］はありません')
+
+
         # １手指す（投了のケースは対応済みなので、ここで対応しなくていい）
-        best_move = cshogi.move_to_usi(random.choice(list(self._board.legal_moves)))
+        best_move = cshogi.move_to_usi(random.choice(will_moves))
+
+
+        #self._will_swinging_rook_std.to_transition(board=self._board)
+
 
         print(f"info depth 0 seldepth 0 time 1 nodes 0 score cp 0 string I'm random move")
         print(f'bestmove {best_move}', flush=True)
