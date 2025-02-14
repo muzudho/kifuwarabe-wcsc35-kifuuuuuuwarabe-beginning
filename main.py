@@ -3,10 +3,8 @@ import exshell as xs
 import traceback
 
 from pathlib import Path
+from src.kifuuuuuuwarabe_beginning.shogi_engine_with_usi import ShogiEngineCompatibleWithUSIProtocol
 
-
-def main():
-    print('hello, world!')
 
 ##########################
 # MARK: コマンドから実行時
@@ -14,7 +12,8 @@ def main():
 
 if __name__ == '__main__':
     try:
-        main()
+        shogi_engine = ShogiEngineCompatibleWithUSIProtocol()
+        shogi_engine.start_usi_loop()
 
     except Exception as err:
         print(f"""\
