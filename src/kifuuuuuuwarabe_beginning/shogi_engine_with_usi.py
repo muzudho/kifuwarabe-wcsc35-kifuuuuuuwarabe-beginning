@@ -8,9 +8,10 @@ class ShogiEngineCompatibleWithUSIProtocol():
     """
 
 
-    def __init__(self):
+    def __init__(self, config_doc):
         """初期化
         """
+        self._config_doc = config_doc
 
         # 盤
         self._board = cshogi.Board()
@@ -74,18 +75,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
     def usi(self):
         """USIエンジン握手
         """
-
-        # エンジン名は別ファイルから読込。pythonファイルはよく差し替えるのでデータは外に出したい
-        try:
-            file_name = "engine_name.txt"
-            with open(file_name, 'r', encoding="utf-8") as f:
-                engine_name = f.read().strip()
-
-        except FileNotFoundError as ex:
-            print(f"[usi protocol > usi] '{file_name}' file not found.  ex:{ex}")
-            raise
-
-        print(f'id name {engine_name}')
+        print(f'id name {self._config_doc['engine']['name']}')
         print('usiok', flush=True)
 
 
