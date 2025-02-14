@@ -52,10 +52,17 @@ class WillSwingingRookSTD():
         dst_sq = cshogi.move_to(move)
         #print(f'★ is_there_will_on_move: {Helper.sq_to_masu(src_sq)=} {Helper.sq_to_masu(dst_sq)=} {cshogi.move_from_piece_type(move)=}', file=sys.stderr)
 
+        # FIXME 先手視点でのみ実装しています。後手視点にも対応したい
+
         # 玉
         if cshogi.move_from_piece_type(move) == cshogi.KING:
             #print(f'★ is_there_will_on_move: 玉', file=sys.stderr)
             return Helper.sq_to_suji(dst_sq) <= Helper.sq_to_suji(src_sq)
+
+        # 飛
+        if cshogi.move_from_piece_type(move) == cshogi.KING:
+            black_k_sq = board.king_square(cshogi.BLACK)
+            return Helper.sq_to_suji(dst_sq) >= Helper.sq_to_suji(black_k_sq)
 
         # 金
         if cshogi.move_from_piece_type(move) == cshogi.GOLD:
