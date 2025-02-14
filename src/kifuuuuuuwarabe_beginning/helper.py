@@ -1,6 +1,40 @@
+import cshogi
+
+
 class Helper():
     """ヘルパー関数集
     """
+
+
+    @staticmethod
+    def sign(number, board):
+        if board.turn == cshogi.WHITE:
+            number *= -1
+
+        return number
+
+
+    @staticmethod
+    def masu(number, board):
+        if board.turn == cshogi.WHITE:
+            suji = Helper.suji(number // 10, board)
+            dan = Helper.dan(number % 10, board)
+            number = dan * 10 + suji
+
+        return number
+
+
+    @staticmethod
+    def suji(number, board):
+        if board.turn == cshogi.WHITE:
+            number = 10 - number
+
+        return number
+
+
+    @staticmethod
+    def dan(number, board):
+        return Helper.suji(number, board)
 
 
     @staticmethod

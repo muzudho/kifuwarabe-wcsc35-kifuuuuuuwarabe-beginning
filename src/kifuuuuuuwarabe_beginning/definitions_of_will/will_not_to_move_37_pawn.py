@@ -19,7 +19,7 @@ class WillNotToMove37Pawn():
         src_masu = Helper.sq_to_masu(src_sq)
 
         # ３七にある駒でなければ関係ない
-        if src_masu != 37:
+        if src_masu != Helper.masu(37, board):
             return True
 
         # 歩でなければ関係ない

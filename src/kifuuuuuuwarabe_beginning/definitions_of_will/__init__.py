@@ -1,3 +1,3 @@
 from .will_not_to_build_right_wall import WillNotToBuildRightWall
 from .will_not_to_move_37_pawn import WillNotToMove37Pawn
-from .will_swinging_rook_std import WillSwingingRook
+from .will_swinging_rook import WillSwingingRook
