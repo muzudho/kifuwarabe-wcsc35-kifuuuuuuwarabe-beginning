@@ -4,8 +4,8 @@ import sys
 from ..helper import Helper
 
 
-class WillSwingingRookSTD():
-    """［振り飛車します］状態遷移図
+class WillSwingingRook():
+    """振り飛車をする意志
     """
 
 
@@ -47,31 +47,64 @@ class WillSwingingRookSTD():
     @staticmethod
     def is_there_will_on_move(board, move):
         """指し手は［振り飛車する意志］を残しているか？
+
+        FIXME 先手視点でのみ実装しています。後手視点にも対応したい
         """
         src_sq = cshogi.move_from(move)
         dst_sq = cshogi.move_to(move)
         #print(f'★ is_there_will_on_move: {Helper.sq_to_masu(src_sq)=} {Helper.sq_to_masu(dst_sq)=} {cshogi.move_from_piece_type(move)=}', file=sys.stderr)
 
-        # FIXME 先手視点でのみ実装しています。後手視点にも対応したい
 
         # 玉
         if cshogi.move_from_piece_type(move) == cshogi.KING:
+            # 飛車が２八にいるか？
+            if board.piece(Helper.masu_to_sq(28)) == cshogi.BROOK:
+                # この駒は動いてはいけない
+                return False
+
             #print(f'★ is_there_will_on_move: 玉', file=sys.stderr)
             return Helper.sq_to_suji(dst_sq) <= Helper.sq_to_suji(src_sq)
 
         # 飛
-        if cshogi.move_from_piece_type(move) == cshogi.KING:
+        if cshogi.move_from_piece_type(move) == cshogi.ROOK:
             black_k_sq = board.king_square(cshogi.BLACK)
             # 飛車は４筋より左に振る。かつ、玉と同じ筋または玉より左の筋に振る
+            #print(f'★ 飛車が振る： {Helper.sq_to_masu(black_k_sq)=} {Helper.sq_to_masu(src_sq)=} {Helper.sq_to_masu(dst_sq)=}', file=sys.stderr)
             return Helper.sq_to_suji(dst_sq) > 4 and Helper.sq_to_suji(dst_sq) >= Helper.sq_to_suji(black_k_sq)
 
         # 金
         if cshogi.move_from_piece_type(move) == cshogi.GOLD:
+            # 飛車が２八にいるか？
+            if board.piece(Helper.masu_to_sq(28)) == cshogi.BROOK:
+                # この駒は、６筋より右にあるか？
+                if Helper.sq_to_suji(src_sq) < 6:
+                    # この駒は動いてはいけない
+                    return False
+
+                # この駒は、５筋より左にあるか？
+                elif Helper.sq_to_suji(src_sq) >= 6:
+                    # この駒は左の方以外に動かしてはいけない
+                    if Helper.sq_to_suji(dst_sq) <= 6:
+                        return False
+
             #print(f'★ is_there_will_on_move: 金', file=sys.stderr)
             return Helper.sq_to_suji(dst_sq) <= Helper.sq_to_suji(src_sq)
 
         # 銀
         if cshogi.move_from_piece_type(move) == cshogi.SILVER:
+            # 飛車が２八にいるか？
+            if board.piece(Helper.masu_to_sq(28)) == cshogi.BROOK:
+                # この駒は、６筋より右にあるか？
+                if Helper.sq_to_suji(src_sq) < 6:
+                    # この駒は動いてはいけない
+                    return False
+
+                # この駒は、５筋より左にあるか？
+                elif Helper.sq_to_suji(src_sq) >= 6:
+                    # この駒は左の方以外に動かしてはいけない
+                    if Helper.sq_to_suji(dst_sq) <= 6:
+                        return False
+
             #print(f'★ is_there_will_on_move: 銀', file=sys.stderr)
             return Helper.sq_to_suji(dst_sq) <= Helper.sq_to_suji(src_sq)
 
@@ -79,7 +112,7 @@ class WillSwingingRookSTD():
 
 
     def __init__(self):
-        self._state = WillSwingingRookSTD.ENTRY
+        self._state = WillSwingingRook.ENTRY
 
 
     @property
@@ -91,14 +124,14 @@ class WillSwingingRookSTD():
         """遷移する
         """
 
-        if self.state == WillSwingingRookSTD.ENTRY:
+        if self.state == WillSwingingRook.ENTRY:
             return
 
-        if self.state == WillSwingingRookSTD.BEFORE_SWINGING_ROOK:
+        if self.state == WillSwingingRook.BEFORE_SWINGING_ROOK:
             return
 
-        if self.state == WillSwingingRookSTD.AFTER_NOT_SWINGING_ROOK:
+        if self.state == WillSwingingRook.AFTER_NOT_SWINGING_ROOK:
             return
 
-        if self.state == WillSwingingRookSTD.AFTER_SWINGING_ROOK:
+        if self.state == WillSwingingRook.AFTER_SWINGING_ROOK:
             return

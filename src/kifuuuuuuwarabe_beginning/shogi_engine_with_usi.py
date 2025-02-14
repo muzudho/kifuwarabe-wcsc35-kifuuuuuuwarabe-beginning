@@ -3,7 +3,7 @@ import datetime
 import random
 import sys
 
-from .state_transition_diagrams import WillSwingingRookSTD
+from .definitions_of_will import WillNotToBuildRightWall, WillNotToMove37Pawn, WillSwingingRook
 
 
 class ShogiEngineCompatibleWithUSIProtocol():
@@ -18,8 +18,14 @@ class ShogiEngineCompatibleWithUSIProtocol():
         # 設定ファイル
         self._config_doc = config_doc
 
-        # ［振り飛車します］状態遷移図
-        self._will_swinging_rook_std = WillSwingingRookSTD()
+        # ３七の歩を突かない意志
+        self._will_not_to_move_37_pawn = WillNotToMove37Pawn()
+
+        # 右壁を作らない意志
+        self._will_not_to_build_right_wall = WillNotToBuildRightWall()
+
+        # 振り飛車をする意志
+        self._will_swinging_rook = WillSwingingRook()
 
         # 盤
         self._board = cshogi.Board()
@@ -158,15 +164,38 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 
         will_moves = list(self._board.legal_moves)
-        print(f'★ go: ［振り飛車する意志］を残してるか尋ねる前の指し手数={len(will_moves)}', file=sys.stderr)
 
-        # ［振り飛車します］状態遷移
-        if self._will_swinging_rook_std.is_there_will_on_board(board=self._board):
+
+        # ［３七の歩を突かない意志］
+        next_will_moves = []
+        for m in list(self._board.legal_moves):
+            is_there_will_on_move = self._will_not_to_move_37_pawn.is_there_will_on_move(board=self._board, move=m)
+            if is_there_will_on_move:
+                next_will_moves.append(m)
+        
+        will_moves = next_will_moves
+        next_will_moves = None
+
+
+        # ［右壁を作らない意志］
+        next_will_moves = []
+        for m in list(self._board.legal_moves):
+            is_there_will_on_move = self._will_not_to_build_right_wall.is_there_will_on_move(board=self._board, move=m)
+            if is_there_will_on_move:
+                next_will_moves.append(m)
+        
+        will_moves = next_will_moves
+        next_will_moves = None
+
+        #print(f'★ go: ［振り飛車する意志］を残してるか尋ねる前の指し手数={len(will_moves)}', file=sys.stderr)
+
+        # ［振り飛車をする意志］
+        if self._will_swinging_rook.is_there_will_on_board(board=self._board):
             print('★ go: 盤は［振り飛車する意志］を残しています', file=sys.stderr)
 
             next_will_moves = []
             for m in list(self._board.legal_moves):
-                is_there_will_on_move = self._will_swinging_rook_std.is_there_will_on_move(board=self._board, move=m)
+                is_there_will_on_move = self._will_swinging_rook.is_there_will_on_move(board=self._board, move=m)
                 if is_there_will_on_move:
                     next_will_moves.append(m)
             
@@ -177,14 +206,18 @@ class ShogiEngineCompatibleWithUSIProtocol():
             print('★ go: 盤は［振り飛車する意志］はありません', file=sys.stderr)
             pass
 
-        print(f'★ go: ［振り飛車する意志］を残してるか尋ねた後の指し手数={len(will_moves)}', file=sys.stderr)
+        #print(f'★ go: ［振り飛車する意志］を残してるか尋ねた後の指し手数={len(will_moves)}', file=sys.stderr)
+
+        # 指し手が全部消えてしまった場合、何でも指すようにします
+        if len(will_moves) < 1:
+            will_moves = list(self._board.legal_moves)
 
 
         # １手指す（投了のケースは対応済みなので、ここで対応しなくていい）
         best_move = cshogi.move_to_usi(random.choice(will_moves))
 
 
-        #self._will_swinging_rook_std.to_transition(board=self._board)
+        #self._will_swinging_rook.to_transition(board=self._board)
 
 
         print(f"info depth 0 seldepth 0 time 1 nodes 0 score cp 0 string I'm random move")
