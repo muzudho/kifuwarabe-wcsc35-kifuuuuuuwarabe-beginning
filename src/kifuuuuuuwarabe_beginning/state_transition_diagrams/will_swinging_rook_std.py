@@ -62,7 +62,8 @@ class WillSwingingRookSTD():
         # 飛
         if cshogi.move_from_piece_type(move) == cshogi.KING:
             black_k_sq = board.king_square(cshogi.BLACK)
-            return Helper.sq_to_suji(dst_sq) >= Helper.sq_to_suji(black_k_sq)
+            # 飛車は４筋より左に振る。かつ、玉と同じ筋または玉より左の筋に振る
+            return Helper.sq_to_suji(dst_sq) > 4 and Helper.sq_to_suji(dst_sq) >= Helper.sq_to_suji(black_k_sq)
 
         # 金
         if cshogi.move_from_piece_type(move) == cshogi.GOLD:
