@@ -24,6 +24,20 @@ class Ban():
         return Helper.masu_to_file(masu) * 9 + Helper.masu_to_rank(masu)
 
 
+class Comparison():
+    """［比較］
+    """
+    def __init__(self, board):
+        self._board = board
+
+
+    def swap(self, a, b):
+        if self._board.turn == cshogi.WHITE:
+            return b, a
+        
+        return a, b
+
+
 class Ji():
     """［自］。手番を持っている側。
     """
