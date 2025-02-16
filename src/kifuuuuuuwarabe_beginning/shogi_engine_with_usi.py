@@ -164,9 +164,10 @@ class ShogiEngineCompatibleWithUSIProtocol():
                 return
 
 
-        will_play_moves = Go.will_play_moves(
+        will_play_moves = Go.get_will_play_moves(
                 config_doc=self._config_doc,
-                board=self._board)
+                board=self._board,
+                will_play_moves=list(self._board.legal_moves))
 
 
         # 指し手が全部消えてしまった場合、何でも指すようにします
