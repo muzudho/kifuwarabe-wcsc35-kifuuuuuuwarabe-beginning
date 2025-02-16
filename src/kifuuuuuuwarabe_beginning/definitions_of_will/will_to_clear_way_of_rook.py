@@ -2,7 +2,7 @@ import cshogi
 import sys
 
 from .. import Mind
-from ..sente_perspective import Ban, Comparison, Helper, Ji
+from ..sente_perspective import Ban, CshogiBoard, Comparison, Helper, Ji
 
 
 class WillToClearWayOfRook():
@@ -15,11 +15,12 @@ class WillToClearWayOfRook():
         """指し手は［飛車道を開ける意志］を残しているか？
         """
         ban = Ban(board)
+        cboard = CshogiBoard(board)
         cmp = Comparison(board)
         ji = Ji(board)
 
-        src_sq = cshogi.move_from(move)
-        dst_sq = cshogi.move_to(move)
+        src_sq = cboard.sq(cshogi.move_from(move))
+        dst_sq = cboard.sq(cshogi.move_to(move))
         moved_pt = cshogi.move_from_piece_type(move)
 
 
@@ -36,7 +37,7 @@ class WillToClearWayOfRook():
         # 動かした駒が玉なら
         if moved_pt == cshogi.KING:
             # 玉が８段目に上がったら、意志無し
-            if ban.suji(Helper.sq_to_suji(dst_sq)) == ban.suji(8):
+            if Helper.sq_to_suji(dst_sq) == ban.suji(8):
                 return Mind.WILL_NOT
 
 

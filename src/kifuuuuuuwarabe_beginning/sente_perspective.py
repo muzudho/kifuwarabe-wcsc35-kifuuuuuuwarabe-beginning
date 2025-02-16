@@ -101,6 +101,41 @@ class Ji():
         return piece
 
 
+class CshogiBoard():
+    """盤。
+    """
+
+
+    def __init__(self, board, after_moving=False):
+        self._board = board
+        self._after_moving = after_moving
+
+
+    def is_opponent_turn(self):
+        return self._board.turn == cshogi.WHITE and not self._after_moving
+
+
+    def sq(self, sq):
+        if self.is_opponent_turn():
+            sq = 80 - sq    # 180°回転
+
+        return sq
+
+
+    def sq_to_rank(self, sq):
+        if self.is_opponent_turn():
+            sq = 80 - sq    # 180°回転
+
+        return sq % 9
+
+
+    def sq_to_file(self, sq):
+        if self.is_opponent_turn():
+            sq = 80 - sq    # 180°回転
+
+        return sq // 9
+
+
 class Helper():
     """ヘルパー関数集
     """
