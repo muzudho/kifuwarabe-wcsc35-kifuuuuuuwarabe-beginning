@@ -2,6 +2,8 @@
 """
 import cshogi
 
+from .models import Square
+
 
 class Ban():
     """盤
@@ -115,11 +117,11 @@ class CshogiBoard():
         return self._board.turn == cshogi.WHITE and not self._after_moving
 
 
-    def sq(self, sq):
+    def sq_obj(self, sq):
         if self.is_opponent_turn():
             sq = 80 - sq    # 180°回転
 
-        return sq
+        return Square(sq)
 
 
     def sq_to_rank(self, sq):

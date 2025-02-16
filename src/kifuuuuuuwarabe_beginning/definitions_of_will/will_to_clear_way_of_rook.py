@@ -19,8 +19,8 @@ class WillToClearWayOfRook():
         cmp = Comparison(board)
         ji = Ji(board)
 
-        src_sq = cboard.sq(cshogi.move_from(move))
-        dst_sq = cboard.sq(cshogi.move_to(move))
+        src_sq_obj = cboard.sq_obj(cshogi.move_from(move))
+        dst_sq_obj = cboard.sq_obj(cshogi.move_to(move))
         moved_pt = cshogi.move_from_piece_type(move)
 
 
@@ -37,24 +37,24 @@ class WillToClearWayOfRook():
         # 動かした駒が玉なら
         if moved_pt == cshogi.KING:
             # 玉が８段目に上がったら、意志無し
-            if Helper.sq_to_suji(dst_sq) == ban.suji(8):
+            if dst_sq_obj.to_file() == ban.suji(8):
                 return Mind.WILL_NOT
 
 
         # 動かした駒が金なら
         if moved_pt == cshogi.GOLD:
             # 移動先が９段目なら、意志を残している
-            if Helper.sq_to_rank(dst_sq) == ban.dan(9):
+            if dst_sq_obj.to_rank() == ban.dan(9):
                 return Mind.WILL
 
             # ６筋より右にある金なら
-            op = cmp.swap(Helper.sq_to_file(src_sq), ban.suji(6))
+            op = cmp.swap(src_sq_obj.to_file(), ban.suji(6))
             if op[0] < op[1]:
                 # 動かしたら意志なし
                 return Mind.WILL_NOT
 
             # ５筋より左にある金なら、左の方以外に動かしたら意志なし
-            op = cmp.swap(Helper.sq_to_file(dst_sq), ban.suji(6))
+            op = cmp.swap(dst_sq_obj.to_file(), ban.suji(6))
             if op[0] <= op[1]:
                 return Mind.WILL_NOT
             
@@ -65,13 +65,13 @@ class WillToClearWayOfRook():
         # 動かした駒が銀なら
         if cshogi.move_from_piece_type(move) == cshogi.SILVER:
             # ６筋以右にある銀を動かしたなら
-            op = cmp.swap(Helper.sq_to_file(src_sq), ban.suji(6))
+            op = cmp.swap(src_sq_obj.to_file(), ban.suji(6))
             if op[0] <= op[1]:
                 # 意志なし
                 return Mind.WILL_NOT
 
             # ７筋以左にある銀を、元位置より右の方に動かしたら意志なし
-            op = cmp.swap(Helper.sq_to_suji(src_sq), Helper.sq_to_suji(dst_sq))
+            op = cmp.swap(src_sq_obj.to_file(), dst_sq_obj.to_file())
             if op[0] > op[1]:
                 return Mind.WILL_NOT
             
