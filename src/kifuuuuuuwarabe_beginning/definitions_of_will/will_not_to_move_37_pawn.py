@@ -5,7 +5,7 @@ from ..sente_perspective import Helper, Turned
 
 
 class WillNotToMove37Pawn():
-    """３七の歩を突かない意志
+    """［３七の歩を突かない意志］
     """
 
 

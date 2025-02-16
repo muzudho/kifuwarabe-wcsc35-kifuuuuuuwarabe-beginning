@@ -5,7 +5,7 @@ from ..sente_perspective import Ban, Comparison, Helper, Turned, Ji
 
 
 class WillSwingingRook():
-    """振り飛車をする意志
+    """［振り飛車をする意志］
     """
 
 

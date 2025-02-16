@@ -1,63 +1,65 @@
 import cshogi
 import sys
 
-from ..sente_perspective import Comparison, Helper, Turned
+from .. import Mind
+from ..sente_perspective import Ban, Comparison, Helper, Turned
 
 
 class WillNotToBuildRightWall():
-    """右壁を作らない意志
+    """［右壁を作らない意志］
     """
 
 
     @staticmethod
     def is_there_will_on_move(board, move):
         """指し手は［右壁を作らない意志］を残しているか？
+
+        定義：　玉の右側の全ての筋について、８段目、９段目の両方に駒がある状態を［右壁］とする。
         """
+        ban = Ban(board)
         cmp = Comparison(board)
         turned = Turned(board)
 
         src_sq = cshogi.move_from(move)
         dst_sq = cshogi.move_to(move)
 
-        # 玉
+        # 玉の指し手なら対象外
         if cshogi.move_from_piece_type(move) == cshogi.KING:
-            return True
+            return Mind.NOT_IN_THIS_CASE
 
-        friend_k_sq = board.king_square(board.turn)     # 自玉
-        friend_k_suji = Helper.sq_to_suji(friend_k_sq)
+        k_sq = board.king_square(board.turn)     # 自玉
+        k_suji = Helper.sq_to_suji(k_sq)
 
-        op = cmp.swap(friend_k_suji, turned.suji(2))
-        if op[0] < op[1]:
-            return True
+        # 玉が１筋にいるなら対象外
+        if k_suji == turned.suji(1):
+            return Mind.NOT_IN_THIS_CASE
 
-        friend_k_dan = Helper.sq_to_dan(friend_k_sq)
+        friend_k_dan = Helper.sq_to_dan(k_sq)
 
-        right_side_of_k = []
 
-        # 玉の右上
-        op = cmp.swap(friend_k_dan, turned.dan(1)) 
-        if op[0] > op[1]:
-            right_side_of_k.append(friend_k_sq + turned.sign(-10))
+        # 玉より右の全ての筋について
+        for suji in range(2, k_suji):
+            right_side_of_k = []
 
-        # 玉の真右
-        right_side_of_k.append(friend_k_sq + turned.sign(-9))
+            # 八段目、九段目
+            for dan in range(8, 10):
+                right_side_of_k.append(ban.masu(Helper.suji_dan_to_masu(turned.suji(suji), turned.dan(dan))))
 
-        # 玉の右下
-        op = cmp.swap(friend_k_dan, turned.dan(9))
-        if op[0] < op[1]:
-            right_side_of_k.append(friend_k_sq + turned.sign(-8))
+                # 道を塞ぐ動きなら
+                if dst_sq in right_side_of_k:
+                    # 道を消す
+                    right_side_of_k.remove(dst_sq)
 
-        # 道を塞がないならOk
-        if dst_sq not in right_side_of_k:
-            return True
+            # 道が空いているか？
+            is_empty = False
+            for sq in right_side_of_k:
+                if board.piece(sq) == cshogi.NONE:
+                    is_empty = True
 
-        # 道を塞ぐ
-        right_side_of_k.remove(dst_sq)
+            if not is_empty:
+                # 道が開いていなければ、意志なし
+                return Mind.WILL_NOT
 
-        # 道が空いていればOk
-        for sq in right_side_of_k:
-            if board.piece(sq) == cshogi.NONE:
-                return True
 
-        # 右壁ができているから偽
-        return False
+        # 道は空いていたから、意志あり
+        return Mind.WILL

@@ -3,6 +3,7 @@ import datetime
 import random
 import sys
 
+from . import Mind
 from .definitions_of_will import WillNotToBeCut88Bishop, WillNotToBuildRightWall, WillNotToMove37Pawn, WillSwingingRook
 
 
@@ -216,7 +217,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
             self._board.push(m)   # １手指す
 
             # ［８八の角を素抜かれない意志］
-            if WillNotToBeCut88Bishop.WILL_NOT == self._will_not_to_be_cut_88_bishop.have_will_after_moving_on_board(self._board):
+            if Mind.WILL_NOT == self._will_not_to_be_cut_88_bishop.have_will_after_moving_on_board(self._board):
                 del will_moves[i]
 
             self._board.pop() # １手戻す
