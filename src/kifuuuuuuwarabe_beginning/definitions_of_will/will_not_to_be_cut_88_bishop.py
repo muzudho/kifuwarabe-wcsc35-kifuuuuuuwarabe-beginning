@@ -12,10 +12,9 @@ class WillNotToBeCut88Bishop():
 
     @staticmethod
     def have_will_after_moving_on_board(board):
-        """指した後に意志があるか？
-
-        NOTE 指した後は相手の番になっていることに注意
+        """指した後に意志があるか？        
         """
+        # NOTE 指した後は相手の番になっていることに注意
         ban = Ban(board, after_moving=True)
         ji = Ji(board, after_moving=True)
 
@@ -34,8 +33,8 @@ class WillNotToBeCut88Bishop():
             return Mind.WILL
 
         # ８段目を７筋から１筋を順に見に行って、最初に見つかった駒が自飛なら意志あり
-        for suji in range(1, 8)[::-1]:
-            pc = board.piece(ban.suji_dan(suji, 8))
+        for file in ban.suji_range(1, 8)[::-1]:
+            pc = board.piece(Helper.file_rank_to_sq(file, ban.dan(8)))
             if pc == cshogi.NONE:
                 continue
             elif pc == ji.pc(cshogi.ROOK):
