@@ -1,7 +1,7 @@
 import cshogi
 import sys
 
-from ..helper import Turned, Helper
+from ..helper import Helper, Turned
 
 
 class WillNotToBuildRightWall():

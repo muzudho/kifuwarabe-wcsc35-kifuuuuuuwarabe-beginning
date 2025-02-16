@@ -1,8 +1,27 @@
 import cshogi
 
 
+class Ji():
+    """手番を持っている側視点でプログラムを記述できるようにする仕組み。
+    ［自］。手番を持っている側。
+    """
+
+
+    def __init__(self, board):
+        self._board = board
+
+
+    def pc(self, piece_type):
+        """駒種類を手番の駒へ変換
+        """
+        if self._board.turn == cshogi.WHITE:
+            piece_type += 16
+
+        return piece_type
+
+
 class Turned():
-    """先後両用ヘルパー関数
+    """手番を持っている側視点でプログラムを記述できるようにする仕組み。
     """
 
 
