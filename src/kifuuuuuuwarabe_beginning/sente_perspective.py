@@ -17,7 +17,6 @@ class Ban():
         """
         self._board = board
         self._after_moving = after_moving
-        self._turned = Turned(self._board)
 
 
     def is_opponent_turn(self):
@@ -100,47 +99,6 @@ class Ji():
             piece = piece_type
 
         return piece
-
-
-class Turned():
-    """手番を持っている側視点でプログラムを記述できるようにする仕組み。
-    """
-
-
-    def __init__(self, board, after_moving=False):
-        self._board = board
-        self._after_moving = after_moving
-
-
-    def is_opponent_turn(self):
-        return self._board.turn == cshogi.WHITE and not self._after_moving
-
-
-    def sign(self, number):
-        if self.is_opponent_turn():
-            number *= -1
-
-        return number
-
-
-    def _masu(self, masu):
-        if self.is_opponent_turn():
-            suji = self._suji(Helper.masu_to_suji(masu))
-            dan = self._dan(Helper.masu_to_dan(masu))
-            masu = dan * 10 + suji
-
-        return masu
-
-
-    def _suji(self, suji):
-        if self.is_opponent_turn():
-            suji = 10 - suji
-
-        return suji
-
-
-    def _dan(self, dan):
-        return self._suji(dan)    # 処理内容は同じ
 
 
 class Helper():

@@ -2,7 +2,7 @@ import cshogi
 import sys
 
 from .. import Mind
-from ..sente_perspective import Ban, Helper, Ji, Turned
+from ..sente_perspective import Ban, Helper, Ji
 
 
 class WillNotToBeCut88Bishop():
@@ -18,7 +18,6 @@ class WillNotToBeCut88Bishop():
         """
         ban = Ban(board, after_moving=True)
         ji = Ji(board, after_moving=True)
-        turned = Turned(board, after_moving=True)
 
         # ８八に自角がいるケースだけ対称
         if board.piece(ban.masu(88)) != ji.pc(cshogi.BISHOP):

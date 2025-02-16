@@ -2,7 +2,7 @@ import cshogi
 import sys
 
 from .. import Mind
-from ..sente_perspective import Ban, Comparison, Helper, Turned, Ji
+from ..sente_perspective import Ban, Comparison, Helper, Ji
 
 
 class WillToClearWayOfRook():
@@ -17,7 +17,6 @@ class WillToClearWayOfRook():
         ban = Ban(board)
         cmp = Comparison(board)
         ji = Ji(board)
-        turned = Turned(board)
 
         src_sq = cshogi.move_from(move)
         dst_sq = cshogi.move_to(move)

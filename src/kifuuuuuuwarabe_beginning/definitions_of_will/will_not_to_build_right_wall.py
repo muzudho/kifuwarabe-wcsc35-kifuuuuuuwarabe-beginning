@@ -2,7 +2,7 @@ import cshogi
 import sys
 
 from .. import Mind
-from ..sente_perspective import Ban, Comparison, Helper, Turned
+from ..sente_perspective import Ban, Comparison, Helper
 
 
 class WillNotToBuildRightWall():
@@ -18,7 +18,6 @@ class WillNotToBuildRightWall():
         """
         ban = Ban(board)
         cmp = Comparison(board)
-        turned = Turned(board)
 
         src_sq = cshogi.move_from(move)
         dst_sq = cshogi.move_to(move)

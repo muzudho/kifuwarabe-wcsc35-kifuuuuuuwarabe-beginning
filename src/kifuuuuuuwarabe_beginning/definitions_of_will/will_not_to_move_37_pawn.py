@@ -1,7 +1,7 @@
 import cshogi
 import sys
 
-from ..sente_perspective import Ban, Helper, Turned
+from ..sente_perspective import Ban, Helper
 
 
 class WillNotToMove37Pawn():
@@ -14,7 +14,6 @@ class WillNotToMove37Pawn():
         """指し手は［３七の歩を突かない意志］を残しているか？
         """
         ban = Ban(board)
-        turned = Turned(board)
 
         src_sq = cshogi.move_from(move)
         src_masu = Helper.sq_to_masu(src_sq)
