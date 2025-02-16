@@ -2,7 +2,7 @@ import cshogi
 import sys
 
 from .. import Mind
-from ..sente_perspective import Ban, Comparison, Helper
+from ..sente_perspective import Ban, CshogiBoard, Comparison, Helper
 
 
 class WillNotToBuildRightWall():
@@ -17,10 +17,10 @@ class WillNotToBuildRightWall():
         定義：　玉の右側の全ての筋について、８段目、９段目の両方に駒がある状態を［右壁］とする。
         """
         ban = Ban(board)
+        cboard = CshogiBoard(board)
         cmp = Comparison(board)
 
-        src_sq = cshogi.move_from(move)
-        dst_sq = cshogi.move_to(move)
+        dst_sq_obj = cboard.sq_obj(cshogi.move_to(move))
 
         # 玉の指し手なら対象外
         if cshogi.move_from_piece_type(move) == cshogi.KING:
@@ -45,9 +45,9 @@ class WillNotToBuildRightWall():
                 right_side_of_k.append(ban.suji_dan(suji, dan))
 
                 # 道を塞ぐ動きなら
-                if dst_sq in right_side_of_k:
+                if dst_sq_obj.sq in right_side_of_k:
                     # 道を消す
-                    right_side_of_k.remove(dst_sq)
+                    right_side_of_k.remove(dst_sq_obj.sq)
 
             # 道が空いているか？
             is_empty = False
