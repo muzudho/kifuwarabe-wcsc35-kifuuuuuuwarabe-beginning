@@ -2,7 +2,7 @@ import cshogi
 import sys
 
 from .. import Mind
-from ..sente_perspective import Ban, Helper
+from ..sente_perspective import Ban, CshogiBoard, Helper
 
 
 class WillNotToMove37Pawn():
@@ -15,17 +15,17 @@ class WillNotToMove37Pawn():
         """指し手は［３七の歩を突かない意志］を残しているか？
         """
         ban = Ban(board)
+        cboard = CshogiBoard(board)
 
-        src_sq = cshogi.move_from(move)
-        src_masu = Helper.sq_to_masu(src_sq)
+        src_sq_obj = cboard.sq_obj(cshogi.move_from(move))
 
 
         # ３七以外にある駒は関係ない
-        if ban.masu(src_masu) != ban.masu(37):
+        if src_sq_obj.sq != ban.masu(37):
             return Mind.NOT_IN_THIS_CASE
 
         # 歩でなければ関係ない
-        if board.piece_type(src_sq) != cshogi.PAWN:
+        if board.piece_type(src_sq_obj.sq) != cshogi.PAWN:
             return Mind.NOT_IN_THIS_CASE
 
         # 歩が動くんだったらダメ
