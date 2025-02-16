@@ -179,42 +179,47 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 
         # ［３七の歩を突かない意志］
-        for i in range(len(will_moves))[::-1]:
-            m = will_moves[i]
-            mind = self._will_not_to_move_37_pawn.will_on_move(board=self._board, move=m)
-            if mind == Mind.WILL_NOT:
-                del will_moves[i]
+        if self._config_doc['will']['will_not_to_move_37_pawn']:
+            for i in range(len(will_moves))[::-1]:
+                m = will_moves[i]
+                mind = self._will_not_to_move_37_pawn.will_on_move(board=self._board, move=m)
+                if mind == Mind.WILL_NOT:
+                    del will_moves[i]
 
 
         # ［右壁を作らない意志］
-        for i in range(len(will_moves))[::-1]:
-            m = will_moves[i]
-            mind = self._will_not_to_build_right_wall.will_on_move(board=self._board, move=m)
-            if mind == Mind.WILL_NOT:
-                del will_moves[i]
+        if self._config_doc['will']['will_not_to_build_right_wall']:
+            for i in range(len(will_moves))[::-1]:
+                m = will_moves[i]
+                mind = self._will_not_to_build_right_wall.will_on_move(board=self._board, move=m)
+                if mind == Mind.WILL_NOT:
+                    del will_moves[i]
 
         #print(f'★ go: ［振り飛車する意志］を残してるか尋ねる前の指し手数={len(will_moves)}', file=sys.stderr)
 
+
         # ［振り飛車をする意志］
-        if Mind.WILL == self._will_swinging_rook.will_on_board(board=self._board):
-            print('★ go: 盤は［振り飛車する意志］を残しています', file=sys.stderr)
+        if self._config_doc['will']['will_swinging_rook']:
+            if Mind.WILL == self._will_swinging_rook.will_on_board(board=self._board):
+                print('★ go: 盤は［振り飛車する意志］を残しています', file=sys.stderr)
 
-            for i in range(len(will_moves))[::-1]:
-                m = will_moves[i]
+                for i in range(len(will_moves))[::-1]:
+                    m = will_moves[i]
 
-                # ［飛車道を開ける意志］
-                mind = self._will_to_clear_way_of_rook.will_on_move(board=self._board, move=m)
-                if mind == Mind.WILL_NOT:
-                    del will_moves[i]
+                    # ［飛車道を開ける意志］
+                    if self._config_doc['will']['will_to_clear_way_of_rook']:
+                        mind = self._will_to_clear_way_of_rook.will_on_move(board=self._board, move=m)
+                        if mind == Mind.WILL_NOT:
+                            del will_moves[i]
 
-                # ［振り飛車をする意志］
-                mind = self._will_swinging_rook.will_on_move(board=self._board, move=m)
-                if mind == Mind.WILL_NOT:
-                    del will_moves[i]
-        
-        else:
-            print('★ go: 盤は［振り飛車する意志］はありません', file=sys.stderr)
-            pass
+                    # ［振り飛車をする意志］
+                    mind = self._will_swinging_rook.will_on_move(board=self._board, move=m)
+                    if mind == Mind.WILL_NOT:
+                        del will_moves[i]
+            
+            else:
+                print('★ go: 盤は［振り飛車する意志］はありません', file=sys.stderr)
+                pass
 
         # #print(f'★ go: ［振り飛車する意志］を残してるか尋ねた後の指し手数={len(will_moves)}', file=sys.stderr)
 
@@ -227,9 +232,10 @@ class ShogiEngineCompatibleWithUSIProtocol():
             self._board.push(m)   # １手指す
 
             # ［８八の角を素抜かれない意志］
-            mind = self._will_not_to_be_cut_88_bishop.have_will_after_moving_on_board(self._board)
-            if mind == Mind.WILL_NOT:
-                del will_moves[i]
+            if self._config_doc['will']['will_not_to_be_cut_88_bishop']:
+                mind = self._will_not_to_be_cut_88_bishop.have_will_after_moving_on_board(self._board)
+                if mind == Mind.WILL_NOT:
+                    del will_moves[i]
 
             self._board.pop() # １手戻す
 
@@ -300,21 +306,30 @@ class ShogiEngineCompatibleWithUSIProtocol():
         """TODO 使い終わったら消す
         """
         from .sente_perspective import Ban, Helper, Ji
+
         ji = Ji(self._board)
         ban = Ban(self._board)
 
-        for suji in range(1, 10):
-            for dan in range(1, 10):
-                masu = Helper.suji_dan_to_masu(suji, dan)
-                print(f'{masu=:2} {ban.masu(masu)=:2}')
+        # for suji in range(1, 10):
+        #     for dan in range(1, 10):
+        #         masu = Helper.suji_dan_to_masu(suji, dan)
+        #         print(f'{masu=:2} {ban.masu(masu)=:2}')
 
-        if self._board.piece(ban.masu(88)) == ji.pc(cshogi.BISHOP):
-            print('８八は自角だ')
-        else:
-            print(f'８八は自角でない {self._board.piece(ban.masu(88))} {ji.pc(cshogi.BISHOP)=}')
+        if ji.pc(cshogi.BISHOP) != cshogi.BBISHOP:
+            raise ValueError('先手の角')
 
-        if self._board.piece(ban.masu(79)) == ji.pc(cshogi.SILVER):
-            print('７九は自銀だ')
-        else:
-            print(f'７九は自銀でない')
+        self._board.push_usi('7g7f')
+
+        if ji.pc(cshogi.BISHOP) != cshogi.WBISHOP:
+            raise ValueError('後手の角')
+
+        # if self._board.piece(ban.masu(88)) == ji.pc(cshogi.BISHOP):
+        #     print('８八は自角だ')
+        # else:
+        #     print(f'８八は自角でない {self._board.piece(ban.masu(88))} {ji.pc(cshogi.BISHOP)=}')
+
+        # if self._board.piece(ban.masu(79)) == ji.pc(cshogi.SILVER):
+        #     print('７九は自銀だ')
+        # else:
+        #     print(f'７九は自銀でない')
 

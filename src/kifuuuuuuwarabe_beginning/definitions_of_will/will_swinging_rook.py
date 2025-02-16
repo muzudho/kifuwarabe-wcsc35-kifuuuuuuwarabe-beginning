@@ -2,7 +2,7 @@ import cshogi
 import sys
 
 from .. import Mind
-from ..sente_perspective import Ban, Comparison, Helper, Ji
+from ..sente_perspective import Ban, Comparison, CshogiBoard, Helper, Ji
 
 
 class WillSwingingRook():
@@ -53,12 +53,12 @@ class WillSwingingRook():
         """指し手は［振り飛車する意志］を残しているか？
         """
         ban = Ban(board)
+        cboard = CshogiBoard(board)
         cmp = Comparison(board)
         ji = Ji(board)
 
-        src_sq = cshogi.move_from(move)
-        dst_sq = cshogi.move_to(move)
-        #print(f'★ will_on_move: {Helper.sq_to_masu(src_sq)=} {Helper.sq_to_masu(dst_sq)=} {cshogi.move_from_piece_type(move)=}', file=sys.stderr)
+        src_sq_obj = cboard.sq_obj(cshogi.move_from(move))
+        dst_sq_obj = cboard.sq_obj(cshogi.move_to(move))
 
 
         # 玉
@@ -70,7 +70,7 @@ class WillSwingingRook():
 
             #print(f'★ will_on_move: 玉', file=sys.stderr)            
             # 元位置位右に移動するなら、意志あり
-            op = cmp.swap(Helper.sq_to_suji(dst_sq), Helper.sq_to_suji(src_sq))
+            op = cmp.swap(dst_sq_obj.to_file(), src_sq_obj.to_file())
             if op[0] <= op[1]:
                 return Mind.WILL
             
@@ -81,11 +81,10 @@ class WillSwingingRook():
         if cshogi.move_from_piece_type(move) == cshogi.ROOK:
             friend_k_sq = board.king_square(board.turn)
             # 飛車は４筋より左に振る。かつ、玉と同じ筋または玉より左の筋に振る
-            #print(f'★ 飛車が振る： {Helper.sq_to_masu(friend_k_sq)=} {Helper.sq_to_masu(src_sq)=} {Helper.sq_to_masu(dst_sq)=}', file=sys.stderr)
-            a = cmp.swap(Helper.sq_to_file(dst_sq), ban.suji(4))
-            b = cmp.swap(Helper.sq_to_suji(dst_sq), Helper.sq_to_suji(friend_k_sq))
+            e1 = cmp.swap(dst_sq_obj.to_file(), ban.suji(4))
+            e2 = cmp.swap(dst_sq_obj.to_file(), Helper.sq_to_suji(friend_k_sq))
 
-            if a[0] > a[1] and b[0] >= b[1]:
+            if e1[0] > e1[1] and e2[0] >= e2[1]:
                 return Mind.WILL
             
             return Mind.WILL_NOT

@@ -35,7 +35,7 @@ class WillNotToBeCut88Bishop():
 
         # ８段目を７筋から１筋を順に見に行って、最初に見つかった駒が自飛なら意志あり
         for suji in range(1, 8)[::-1]:
-            pc = board.piece(ban.masu(suji * 10 + 8))
+            pc = board.piece(ban.suji_dan(suji, 8))
             if pc == cshogi.NONE:
                 continue
             elif pc == ji.pc(cshogi.ROOK):

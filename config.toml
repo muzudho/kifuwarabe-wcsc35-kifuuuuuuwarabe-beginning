@@ -1,2 +1,18 @@
 [engine]
-name = "Kifuuuuuuwarabe Beginning"
+    name = "Kifuuuuuuwarabe Beginning"
+
+[will]
+    # ［３七の歩を突かない意志］
+    will_not_to_move_37_pawn = true
+
+    # ［右壁を作らない意志］
+    will_not_to_build_right_wall = true
+
+    # ［振り飛車をする意志］
+    will_swinging_rook = true
+
+    # ［飛車道を開ける意志］
+    will_to_clear_way_of_rook = true
+
+    # ［８八の角を素抜かれない意志］
+    will_not_to_be_cut_88_bishop = true
