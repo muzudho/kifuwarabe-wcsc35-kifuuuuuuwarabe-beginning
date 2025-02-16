@@ -181,22 +181,22 @@ class ShogiEngineCompatibleWithUSIProtocol():
         # ［３七の歩を突かない意志］
         for i in range(len(will_moves))[::-1]:
             m = will_moves[i]
-            is_there_will_on_move = self._will_not_to_move_37_pawn.is_there_will_on_move(board=self._board, move=m)
-            if not is_there_will_on_move:
+            mind = self._will_not_to_move_37_pawn.will_on_move(board=self._board, move=m)
+            if mind == Mind.WILL_NOT:
                 del will_moves[i]
 
 
         # ［右壁を作らない意志］
         for i in range(len(will_moves))[::-1]:
             m = will_moves[i]
-            is_there_will_on_move = self._will_not_to_build_right_wall.is_there_will_on_move(board=self._board, move=m)
-            if not is_there_will_on_move:
+            mind = self._will_not_to_build_right_wall.will_on_move(board=self._board, move=m)
+            if mind == Mind.WILL_NOT:
                 del will_moves[i]
 
         #print(f'★ go: ［振り飛車する意志］を残してるか尋ねる前の指し手数={len(will_moves)}', file=sys.stderr)
 
         # ［振り飛車をする意志］
-        if self._will_swinging_rook.is_there_will_on_board(board=self._board):
+        if Mind.WILL == self._will_swinging_rook.will_on_board(board=self._board):
             print('★ go: 盤は［振り飛車する意志］を残しています', file=sys.stderr)
 
             for i in range(len(will_moves))[::-1]:
@@ -208,8 +208,8 @@ class ShogiEngineCompatibleWithUSIProtocol():
                     del will_moves[i]
 
                 # ［振り飛車をする意志］
-                is_there_will_on_move = self._will_swinging_rook.is_there_will_on_move(board=self._board, move=m)
-                if not is_there_will_on_move:
+                mind = self._will_swinging_rook.will_on_move(board=self._board, move=m)
+                if mind == Mind.WILL_NOT:
                     del will_moves[i]
         
         else:
@@ -227,7 +227,8 @@ class ShogiEngineCompatibleWithUSIProtocol():
             self._board.push(m)   # １手指す
 
             # ［８八の角を素抜かれない意志］
-            if Mind.WILL_NOT == self._will_not_to_be_cut_88_bishop.have_will_after_moving_on_board(self._board):
+            mind = self._will_not_to_be_cut_88_bishop.have_will_after_moving_on_board(self._board)
+            if mind == Mind.WILL_NOT:
                 del will_moves[i]
 
             self._board.pop() # １手戻す
@@ -247,7 +248,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         #self._will_swinging_rook.to_transition(board=self._board)
 
 
-        print(f"info depth 0 seldepth 0 time 1 nodes 0 score cp 0 string I'm random move")
+        print(f"info depth 0 seldepth 0 time 1 nodes 0 score cp 0 string Go kifuuuuuuWarabe")
         print(f'bestmove {best_move}', flush=True)
 
 

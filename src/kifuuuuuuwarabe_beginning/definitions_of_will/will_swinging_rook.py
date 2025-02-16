@@ -1,6 +1,7 @@
 import cshogi
 import sys
 
+from .. import Mind
 from ..sente_perspective import Ban, Comparison, Helper, Ji
 
 
@@ -34,18 +35,21 @@ class WillSwingingRook():
 
 
     @staticmethod
-    def is_there_will_on_board(board):
+    def will_on_board(board):
         """盤は［振り飛車する意志］を残しているか？
 
         ４０手目までは振り飛車の意志を残しているとします。
         ４１手目以降は振り飛車の意志はありません
         """
         print(f'★ is_there_will_on_board: {board.move_number=}', file=sys.stderr)
-        return board.move_number < 41
+        if board.move_number < 41:
+            return Mind.WILL
+        
+        return Mind.WILL_NOT
 
 
     @staticmethod
-    def is_there_will_on_move(board, move):
+    def will_on_move(board, move):
         """指し手は［振り飛車する意志］を残しているか？
         """
         ban = Ban(board)
@@ -54,7 +58,7 @@ class WillSwingingRook():
 
         src_sq = cshogi.move_from(move)
         dst_sq = cshogi.move_to(move)
-        #print(f'★ is_there_will_on_move: {Helper.sq_to_masu(src_sq)=} {Helper.sq_to_masu(dst_sq)=} {cshogi.move_from_piece_type(move)=}', file=sys.stderr)
+        #print(f'★ will_on_move: {Helper.sq_to_masu(src_sq)=} {Helper.sq_to_masu(dst_sq)=} {cshogi.move_from_piece_type(move)=}', file=sys.stderr)
 
 
         # 玉
@@ -62,12 +66,16 @@ class WillSwingingRook():
             # 飛車が２八にいるか？
             if board.piece(ban.masu(28)) == ji.pc(cshogi.ROOK):
                 # この駒は動いてはいけない
-                return False
+                return Mind.WILL_NOT
 
-            #print(f'★ is_there_will_on_move: 玉', file=sys.stderr)            
+            #print(f'★ will_on_move: 玉', file=sys.stderr)            
             # 元位置位右に移動するなら、意志あり
             op = cmp.swap(Helper.sq_to_suji(dst_sq), Helper.sq_to_suji(src_sq))
-            return op[0] <= op[1]
+            if op[0] <= op[1]:
+                return Mind.WILL
+            
+            return Mind.WILL_NOT
+
 
         # 飛
         if cshogi.move_from_piece_type(move) == cshogi.ROOK:
@@ -76,9 +84,14 @@ class WillSwingingRook():
             #print(f'★ 飛車が振る： {Helper.sq_to_masu(friend_k_sq)=} {Helper.sq_to_masu(src_sq)=} {Helper.sq_to_masu(dst_sq)=}', file=sys.stderr)
             a = cmp.swap(Helper.sq_to_file(dst_sq), ban.suji(4))
             b = cmp.swap(Helper.sq_to_suji(dst_sq), Helper.sq_to_suji(friend_k_sq))
-            return a[0] > a[1] and b[0] >= b[1]
 
-        return True    # FIXME
+            if a[0] > a[1] and b[0] >= b[1]:
+                return Mind.WILL
+            
+            return Mind.WILL_NOT
+
+
+        return Mind.NOT_IN_THIS_CASE
 
 
     def __init__(self):
