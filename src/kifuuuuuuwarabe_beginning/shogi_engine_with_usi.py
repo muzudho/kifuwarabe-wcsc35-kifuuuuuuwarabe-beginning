@@ -170,7 +170,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         for i in range(len(will_moves))[::-1]:
             m = will_moves[i]
             is_there_will_on_move = self._will_not_to_move_37_pawn.is_there_will_on_move(board=self._board, move=m)
-            if is_there_will_on_move:
+            if not is_there_will_on_move:
                 del will_moves[i]
 
 
@@ -178,7 +178,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         for i in range(len(will_moves))[::-1]:
             m = will_moves[i]
             is_there_will_on_move = self._will_not_to_build_right_wall.is_there_will_on_move(board=self._board, move=m)
-            if is_there_will_on_move:
+            if not is_there_will_on_move:
                 del will_moves[i]
 
         #print(f'★ go: ［振り飛車する意志］を残してるか尋ねる前の指し手数={len(will_moves)}', file=sys.stderr)
@@ -190,14 +190,27 @@ class ShogiEngineCompatibleWithUSIProtocol():
             for i in range(len(will_moves))[::-1]:
                 m = will_moves[i]
                 is_there_will_on_move = self._will_swinging_rook.is_there_will_on_move(board=self._board, move=m)
-                if is_there_will_on_move:
+                if not is_there_will_on_move:
                     del will_moves[i]
         
         else:
             print('★ go: 盤は［振り飛車する意志］はありません', file=sys.stderr)
             pass
 
-        #print(f'★ go: ［振り飛車する意志］を残してるか尋ねた後の指し手数={len(will_moves)}', file=sys.stderr)
+        # #print(f'★ go: ［振り飛車する意志］を残してるか尋ねた後の指し手数={len(will_moves)}', file=sys.stderr)
+
+
+        # # １手指してから判定
+        # for i in range(len(will_moves))[::-1]:
+        #     m = will_moves[i]
+        #     self._board.push(m)   # １手指す
+
+        #     # ［８八の角を素抜かれない意志］
+        #     if not self._will_not_to_be_cut_88_bishop.have_will_after_move(self._board, m):
+        #         del will_moves[i]
+
+        #     self._board.pop() # １手戻す
+
 
         # 指し手が全部消えてしまった場合、何でも指すようにします
         if len(will_moves) < 1:
