@@ -77,6 +77,11 @@ class ShogiEngineCompatibleWithUSIProtocol():
                 self.undo()
 
             # テスト
+            #       code: will
+            elif cmd[0] == 'will':
+                self.test_will()
+
+            # テスト
             #       code: test
             elif cmd[0] == 'test':
                 self.test()
@@ -219,6 +224,51 @@ class ShogiEngineCompatibleWithUSIProtocol():
         """
         self._board.pop()
 
+
+    def test_will(self):
+        """テスト
+        """
+
+        if self._board.is_game_over():
+            """投了局面時"""
+
+            # 投了
+            print(f'bestmove resign', flush=True)
+            return
+
+        if self._board.is_nyugyoku():
+            """入玉宣言局面時"""
+
+            # 勝利宣言
+            print(f'bestmove win', flush=True)
+            return
+
+        # 一手詰めを詰める
+        if not self._board.is_check():
+            """自玉に王手がかかっていない時で"""
+
+            if (matemove := self._board.mate_move_in_1ply()):
+                """一手詰めの指し手があれば、それを取得"""
+
+                best_move = cshogi.move_to_usi(matemove)
+                print('info score mate 1 pv {}'.format(best_move), flush=True)
+                print(f'bestmove {best_move}', flush=True)
+                return
+
+
+        will_play_moves = Go.will_play_moves(
+                config_doc=self._config_doc,
+                board=self._board)
+
+        print(f"""\
+{len(will_play_moves)=}
+
+----ここから----""", flush=True, file=sys.stderr)
+
+        for move in will_play_moves:
+            print(f'willmove {cshogi.move_to_usi(move)}', flush=True, file=sys.stderr)
+
+        print(f'----ここまで----', flush=True, file=sys.stderr)
 
 
     def test(self):
