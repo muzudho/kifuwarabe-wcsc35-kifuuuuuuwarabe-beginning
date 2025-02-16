@@ -11,10 +11,9 @@ class Go():
 
 
     @staticmethod
-    def will_play_moves(config_doc, board):
-        will_play_moves = list(board.legal_moves)
-
-
+    def get_will_not_to_move_37_pawn(config_doc, board, will_play_moves):
+        """［３七の歩を突かない意志］
+        """
         # ［３七の歩を突かない意志］
         if config_doc['will']['will_not_to_move_37_pawn']:
             for i in range(len(will_play_moves))[::-1]:
@@ -24,6 +23,13 @@ class Go():
                     del will_play_moves[i]
 
 
+        return will_play_moves
+
+
+    @staticmethod
+    def get_will_not_to_build_right_wall(config_doc, board, will_play_moves):
+        """［右壁を作らない意志］
+        """
         # ［右壁を作らない意志］
         if config_doc['will']['will_not_to_build_right_wall']:
             for i in range(len(will_play_moves))[::-1]:
@@ -32,8 +38,14 @@ class Go():
                 if mind == Mind.WILL_NOT:
                     del will_play_moves[i]
 
-        #print(f'★ go: ［振り飛車する意志］を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
 
+        return will_play_moves
+
+
+    @staticmethod
+    def get_will_swinging_rook(config_doc, board, will_play_moves):
+        """［振り飛車をする意志］
+        """
 
         # ［振り飛車をする意志］
         if config_doc['will']['will_swinging_rook']:
@@ -58,10 +70,14 @@ class Go():
                 print('★ go: 盤は［振り飛車する意志］はありません', file=sys.stderr)
                 pass
 
-        # #print(f'★ go: ［振り飛車する意志］を残してるか尋ねた後の指し手数={len(will_play_moves)}', file=sys.stderr)
+
+        return will_play_moves
 
 
-        print(f'★ go: ［８八の角を素抜かれない意志］を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
+    @staticmethod
+    def get_will_not_to_be_cut_88_bishop(config_doc, board, will_play_moves):
+        """［８八の角を素抜かれない意志］
+        """
 
         # １手指してから判定
         for i in range(len(will_play_moves))[::-1]:
@@ -76,6 +92,5 @@ class Go():
 
             board.pop() # １手戻す
 
-        print(f'★ go: ［８八の角を素抜かれない意志］を残してるか尋ねた後の指し手数={len(will_play_moves)}', file=sys.stderr)
 
         return will_play_moves
