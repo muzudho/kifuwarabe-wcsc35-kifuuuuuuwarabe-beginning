@@ -1,9 +1,31 @@
+"""手番を持っている側視点でプログラムを記述できるようにする仕組み。
+"""
 import cshogi
 
 
+class Ban():
+    """盤
+    """
+
+
+    def __init__(self, board):
+        self._board = board
+        self._turned = Turned(self._board)
+
+
+    def masu(self, masu):
+        """マス番号。先手の sq に変換する
+        """
+        if self._board.turn == cshogi.WHITE:
+            suji = self._turned.suji(Helper.masu_to_suji(masu))
+            dan = self._turned.dan(Helper.masu_to_dan(masu))
+            masu = dan * 10 + suji  # １８０°回転
+
+        return Helper.masu_to_file(masu) * 9 + Helper.masu_to_rank(masu)
+
+
 class Ji():
-    """手番を持っている側視点でプログラムを記述できるようにする仕組み。
-    ［自］。手番を持っている側。
+    """［自］。手番を持っている側。
     """
 
 
@@ -62,11 +84,6 @@ class Helper():
 
 
     @staticmethod
-    def masu_to_sq(masu):
-        return Helper.suji_to_file(Helper.masu_to_suji(masu)) * 9 + Helper.dan_to_rank(Helper.masu_to_dan(masu))
-
-
-    @staticmethod
     def suji_to_file(suji):
         return suji - 1
 
@@ -87,6 +104,16 @@ class Helper():
 
 
     @staticmethod
+    def masu_to_file(masu):
+        return masu // 10 - 1
+
+
+    @staticmethod
+    def masu_to_rank(masu):
+        return masu % 10 - 1
+
+
+    @staticmethod
     def sq_to_masu(sq):
         return Helper.sq_to_suji(sq) * 10 + Helper.sq_to_dan(sq)
 
@@ -99,3 +126,13 @@ class Helper():
     @staticmethod
     def sq_to_dan(sq):
         return sq % 9 + 1
+
+
+    @staticmethod
+    def sq_to_file(sq):
+        return sq // 9
+
+
+    @staticmethod
+    def sq_to_rank(sq):
+        return sq % 9

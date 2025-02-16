@@ -1,7 +1,7 @@
 import cshogi
 import sys
 
-from ..sente_perspective import Helper, Turned, Ji
+from ..sente_perspective import Ban, Helper, Turned, Ji
 
 
 class WillSwingingRook():
@@ -48,6 +48,7 @@ class WillSwingingRook():
     def is_there_will_on_move(board, move):
         """指し手は［振り飛車する意志］を残しているか？
         """
+        ban = Ban(board)
         ji = Ji(board)
         turned = Turned(board)
 
@@ -59,7 +60,7 @@ class WillSwingingRook():
         # 玉
         if cshogi.move_from_piece_type(move) == cshogi.KING:
             # 飛車が２八にいるか？
-            if board.piece(Helper.masu_to_sq(turned.masu(28))) == ji.pc(cshogi.ROOK):
+            if board.piece(ban.masu(28)) == ji.pc(cshogi.ROOK):
                 # この駒は動いてはいけない
                 return False
 
@@ -76,7 +77,7 @@ class WillSwingingRook():
         # 金
         if cshogi.move_from_piece_type(move) == cshogi.GOLD:
             # 飛車が２八にいるか？
-            if board.piece(Helper.masu_to_sq(turned.masu(28))) == ji.pc(cshogi.ROOK):
+            if board.piece(ban.masu(28)) == ji.pc(cshogi.ROOK):
                 # この駒は、６筋より右にあるか？
                 if Helper.sq_to_suji(src_sq) < turned.suji(6):
                     # この駒は動いてはいけない
@@ -94,7 +95,7 @@ class WillSwingingRook():
         # 銀
         if cshogi.move_from_piece_type(move) == cshogi.SILVER:
             # 飛車が２八にいるか？
-            if board.piece(Helper.masu_to_sq(turned.masu(28))) == ji.pc(cshogi.ROOK):
+            if board.piece(ban.masu(28)) == ji.pc(cshogi.ROOK):
                 # この駒は、６筋より右にあるか？
                 if Helper.sq_to_suji(src_sq) < turned.suji(6):
                     # この駒は動いてはいけない
