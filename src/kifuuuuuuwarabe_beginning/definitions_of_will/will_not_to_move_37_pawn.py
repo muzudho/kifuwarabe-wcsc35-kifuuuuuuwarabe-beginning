@@ -1,7 +1,7 @@
 import cshogi
 import sys
 
-from ..sente_perspective import Helper, Turned
+from ..sente_perspective import Ban, Helper, Turned
 
 
 class WillNotToMove37Pawn():
@@ -13,6 +13,7 @@ class WillNotToMove37Pawn():
     def is_there_will_on_move(board, move):
         """指し手は［３七の歩を突かない意志］を残しているか？
         """
+        ban = Ban(board)
         turned = Turned(board)
 
         src_sq = cshogi.move_from(move)
@@ -20,7 +21,7 @@ class WillNotToMove37Pawn():
 
 
         # ３七にある駒でなければ関係ない
-        if src_masu != turned.masu(37):
+        if ban.masu(src_masu) != ban.masu(37):
             return True
 
         # 歩でなければ関係ない

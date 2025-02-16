@@ -123,7 +123,7 @@ class Turned():
         return number
 
 
-    def masu(self, masu):
+    def _masu(self, masu):
         if self.is_opponent_turn():
             suji = self._suji(Helper.masu_to_suji(masu))
             dan = self._dan(Helper.masu_to_dan(masu))
