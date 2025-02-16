@@ -79,10 +79,10 @@ class WillSwingingRook():
 
         # 飛
         if cshogi.move_from_piece_type(move) == cshogi.ROOK:
-            friend_k_sq = board.king_square(board.turn)
+            k_sq_obj = cboard.sq_obj(board.king_square(board.turn))
             # 飛車は４筋より左に振る。かつ、玉と同じ筋または玉より左の筋に振る
             e1 = cmp.swap(dst_sq_obj.to_file(), ban.suji(4))
-            e2 = cmp.swap(dst_sq_obj.to_file(), Helper.sq_to_suji(friend_k_sq))
+            e2 = cmp.swap(dst_sq_obj.to_file(), k_sq_obj.to_file())
 
             if e1[0] > e1[1] and e2[0] >= e2[1]:
                 return Mind.WILL
