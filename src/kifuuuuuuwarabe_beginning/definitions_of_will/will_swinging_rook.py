@@ -75,7 +75,7 @@ class WillSwingingRook():
             friend_k_sq = board.king_square(board.turn)
             # 飛車は４筋より左に振る。かつ、玉と同じ筋または玉より左の筋に振る
             #print(f'★ 飛車が振る： {Helper.sq_to_masu(friend_k_sq)=} {Helper.sq_to_masu(src_sq)=} {Helper.sq_to_masu(dst_sq)=}', file=sys.stderr)
-            a = cmp.swap(Helper.sq_to_suji(dst_sq), turned.suji(4))
+            a = cmp.swap(Helper.sq_to_file(dst_sq), ban.suji(4))
             b = cmp.swap(Helper.sq_to_suji(dst_sq), Helper.sq_to_suji(friend_k_sq))
             return a[0] > a[1] and b[0] >= b[1]
 

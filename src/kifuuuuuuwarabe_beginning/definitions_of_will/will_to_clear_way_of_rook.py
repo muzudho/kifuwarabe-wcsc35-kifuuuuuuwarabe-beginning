@@ -37,24 +37,24 @@ class WillToClearWayOfRook():
         # 動かした駒が玉なら
         if moved_pt == cshogi.KING:
             # 玉が８段目に上がったら、意志無し
-            if turned.suji(Helper.sq_to_suji(dst_sq)) == turned.suji(8):
+            if ban.suji(Helper.sq_to_suji(dst_sq)) == ban.suji(8):
                 return Mind.WILL_NOT
 
 
         # 動かした駒が金なら
         if moved_pt == cshogi.GOLD:
             # 移動先が９段目なら、意志を残している
-            if Helper.sq_to_dan(dst_sq) == turned.dan(9):
+            if Helper.sq_to_rank(dst_sq) == ban.dan(9):
                 return Mind.WILL
 
             # ６筋より右にある金なら
-            op = cmp.swap(Helper.sq_to_suji(src_sq), turned.suji(6))
+            op = cmp.swap(Helper.sq_to_file(src_sq), ban.suji(6))
             if op[0] < op[1]:
                 # 動かしたら意志なし
                 return Mind.WILL_NOT
 
             # ５筋より左にある金なら、左の方以外に動かしたら意志なし
-            op = cmp.swap(Helper.sq_to_suji(dst_sq), turned.suji(6))
+            op = cmp.swap(Helper.sq_to_file(dst_sq), ban.suji(6))
             if op[0] <= op[1]:
                 return Mind.WILL_NOT
             
@@ -65,7 +65,7 @@ class WillToClearWayOfRook():
         # 動かした駒が銀なら
         if cshogi.move_from_piece_type(move) == cshogi.SILVER:
             # ６筋以右にある銀を動かしたなら
-            op = cmp.swap(Helper.sq_to_suji(src_sq), turned.suji(6))
+            op = cmp.swap(Helper.sq_to_file(src_sq), ban.suji(6))
             if op[0] <= op[1]:
                 # 意志なし
                 return Mind.WILL_NOT

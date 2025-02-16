@@ -25,14 +25,37 @@ class Ban():
 
 
     def masu(self, masu):
-        """マス番号。先手の sq に変換する
+        """マス番号。先手の sq に変換する。
         """
         if self.is_opponent_turn():
-            suji = self._turned.suji(Helper.masu_to_suji(masu))
-            dan = self._turned.dan(Helper.masu_to_dan(masu))
+            return self.suji_dan(
+                    suji=Helper.masu_to_suji(masu),
+                    dan=Helper.masu_to_dan(masu))
             masu = dan * 10 + suji  # １８０°回転
 
         return Helper.masu_to_file(masu) * 9 + Helper.masu_to_rank(masu)
+
+
+    def suji_dan(self, suji, dan):
+        """筋と段番号。先手の sq に変換する。
+        """
+        if self.is_opponent_turn():
+            return (9 - suji) * 9 + (9 - dan)  # masu → sq 変換しながら、１８０°回転
+
+        return (suji - 1) * 9 + (dan - 1)
+
+
+    def suji(self, suji):
+        """筋番号。先手の file に変換する。
+        """
+        if self.is_opponent_turn():
+            suji = 10 - suji
+
+        return suji - 1
+
+
+    def dan(self, dan):
+        return self.suji(suji=dan)    # 処理内容は同じ
 
 
 class Comparison():
@@ -102,22 +125,22 @@ class Turned():
 
     def masu(self, masu):
         if self.is_opponent_turn():
-            suji = self.suji(Helper.masu_to_suji(masu))
-            dan = self.dan(Helper.masu_to_dan(masu))
+            suji = self._suji(Helper.masu_to_suji(masu))
+            dan = self._dan(Helper.masu_to_dan(masu))
             masu = dan * 10 + suji
 
         return masu
 
 
-    def suji(self, suji):
+    def _suji(self, suji):
         if self.is_opponent_turn():
             suji = 10 - suji
 
         return suji
 
 
-    def dan(self, dan):
-        return self.suji(dan)    # 処理内容は同じ
+    def _dan(self, dan):
+        return self._suji(dan)    # 処理内容は同じ
 
 
 class Helper():
@@ -138,6 +161,11 @@ class Helper():
     @staticmethod
     def suji_dan_to_masu(suji, dan):
         return suji * 10 + dan
+
+
+    @staticmethod
+    def file_rank_to_masu(file, rank):
+        return (file + 1) * 10 + (rank + 1)
 
 
     @staticmethod

@@ -31,7 +31,7 @@ class WillNotToBuildRightWall():
         k_suji = Helper.sq_to_suji(k_sq)
 
         # 玉が１筋にいるなら対象外
-        if k_suji == turned.suji(1):
+        if Helper.suji_to_file(k_suji) == ban.suji(1):
             return Mind.NOT_IN_THIS_CASE
 
         friend_k_dan = Helper.sq_to_dan(k_sq)
@@ -43,7 +43,7 @@ class WillNotToBuildRightWall():
 
             # 八段目、九段目
             for dan in range(8, 10):
-                right_side_of_k.append(ban.masu(Helper.suji_dan_to_masu(turned.suji(suji), turned.dan(dan))))
+                right_side_of_k.append(ban.suji_dan(suji, dan))
 
                 # 道を塞ぐ動きなら
                 if dst_sq in right_side_of_k:
