@@ -11,30 +11,6 @@ class WillSwingingRook():
 
 
     @staticmethod
-    @property
-    def ENTRY():
-        return 0
-
-
-    @staticmethod
-    @property
-    def BEFORE_SWINGING_ROOK():
-        return 1
-
-
-    @staticmethod
-    @property
-    def AFTER_NOT_SWINGING_ROOK():
-        return 2
-
-
-    @staticmethod
-    @property
-    def AFTER_SWINGING_ROOK():
-        return 3
-
-
-    @staticmethod
     def will_on_board(board):
         """盤は［振り飛車する意志］を残しているか？
 
@@ -91,29 +67,3 @@ class WillSwingingRook():
 
 
         return Mind.NOT_IN_THIS_CASE
-
-
-    def __init__(self):
-        self._state = WillSwingingRook.ENTRY
-
-
-    @property
-    def state(self):
-        return self._state
-
-
-    def to_transition(self, board):
-        """遷移する
-        """
-
-        if self.state == WillSwingingRook.ENTRY:
-            return
-
-        if self.state == WillSwingingRook.BEFORE_SWINGING_ROOK:
-            return
-
-        if self.state == WillSwingingRook.AFTER_NOT_SWINGING_ROOK:
-            return
-
-        if self.state == WillSwingingRook.AFTER_SWINGING_ROOK:
-            return

@@ -19,21 +19,6 @@ class ShogiEngineCompatibleWithUSIProtocol():
         # 設定ファイル
         self._config_doc = config_doc
 
-        # ［８八の角を素抜かれない意志］
-        self._will_not_to_be_cut_88_bishop = WillNotToBeCut88Bishop()
-
-        # ［３七の歩を突かない意志］
-        self._will_not_to_move_37_pawn = WillNotToMove37Pawn()
-
-        # ［右壁を作らない意志］
-        self._will_not_to_build_right_wall = WillNotToBuildRightWall()
-
-        # ［振り飛車をする意志］
-        self._will_swinging_rook = WillSwingingRook()
-
-        # ［飛車道を開ける意志］
-        self._will_to_clear_way_of_rook = WillToClearWayOfRook()
-
         # 盤
         self._board = cshogi.Board()
 
@@ -182,7 +167,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         if self._config_doc['will']['will_not_to_move_37_pawn']:
             for i in range(len(will_moves))[::-1]:
                 m = will_moves[i]
-                mind = self._will_not_to_move_37_pawn.will_on_move(board=self._board, move=m)
+                mind = WillNotToMove37Pawn.will_on_move(board=self._board, move=m)
                 if mind == Mind.WILL_NOT:
                     del will_moves[i]
 
@@ -191,7 +176,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         if self._config_doc['will']['will_not_to_build_right_wall']:
             for i in range(len(will_moves))[::-1]:
                 m = will_moves[i]
-                mind = self._will_not_to_build_right_wall.will_on_move(board=self._board, move=m)
+                mind = WillNotToBuildRightWall.will_on_move(board=self._board, move=m)
                 if mind == Mind.WILL_NOT:
                     del will_moves[i]
 
@@ -200,7 +185,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
         # ［振り飛車をする意志］
         if self._config_doc['will']['will_swinging_rook']:
-            if Mind.WILL == self._will_swinging_rook.will_on_board(board=self._board):
+            if Mind.WILL == WillSwingingRook.will_on_board(board=self._board):
                 print('★ go: 盤は［振り飛車する意志］を残しています', file=sys.stderr)
 
                 for i in range(len(will_moves))[::-1]:
@@ -208,12 +193,12 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
                     # ［飛車道を開ける意志］
                     if self._config_doc['will']['will_to_clear_way_of_rook']:
-                        mind = self._will_to_clear_way_of_rook.will_on_move(board=self._board, move=m)
+                        mind = WillToClearWayOfRook.will_on_move(board=self._board, move=m)
                         if mind == Mind.WILL_NOT:
                             del will_moves[i]
 
                     # ［振り飛車をする意志］
-                    mind = self._will_swinging_rook.will_on_move(board=self._board, move=m)
+                    mind = WillSwingingRook.will_on_move(board=self._board, move=m)
                     if mind == Mind.WILL_NOT:
                         del will_moves[i]
             
@@ -233,7 +218,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
             # ［８八の角を素抜かれない意志］
             if self._config_doc['will']['will_not_to_be_cut_88_bishop']:
-                mind = self._will_not_to_be_cut_88_bishop.have_will_after_moving_on_board(self._board)
+                mind = WillNotToBeCut88Bishop.have_will_after_moving_on_board(self._board)
                 if mind == Mind.WILL_NOT:
                     del will_moves[i]
 
@@ -249,9 +234,6 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
         # １手指す（投了のケースは対応済みなので、ここで対応しなくていい）
         best_move = cshogi.move_to_usi(random.choice(will_moves))
-
-
-        #self._will_swinging_rook.to_transition(board=self._board)
 
 
         print(f"info depth 0 seldepth 0 time 1 nodes 0 score cp 0 string Go kifuuuuuuWarabe")

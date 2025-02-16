@@ -59,6 +59,14 @@ class Ban():
         return self.suji(suji=dan)    # 処理内容は同じ
 
 
+    def suji_range(start, end):
+        if self.is_opponent_turn():
+            return range(9 - end, 9 - start)    # masu → sq 変換しながら、１８０°回転
+
+        return range(start - 1, end - 1)
+
+
+
 class Comparison():
     """［比較］
     """
@@ -142,36 +150,33 @@ class Helper():
     """ヘルパー関数集
     """
 
-
-    @staticmethod
-    def suji_to_file(suji):
-        return suji - 1
-
+    # D
 
     @staticmethod
     def dan_to_rank(dan):
         return dan - 1
 
 
-    @staticmethod
-    def suji_dan_to_masu(suji, dan):
-        return suji * 10 + dan
-
+    # F
 
     @staticmethod
     def file_rank_to_masu(file, rank):
         return (file + 1) * 10 + (rank + 1)
 
+    @staticmethod
+    def file_rank_to_sq(file, rank):
+        return file * 9 + rank
+
+
+    # M
 
     @staticmethod
     def masu_to_suji(masu):
         return masu // 10
 
-
     @staticmethod
     def masu_to_dan(masu):
         return masu % 10
-
 
     @staticmethod
     def masu_to_file(masu):
@@ -182,6 +187,17 @@ class Helper():
     def masu_to_rank(masu):
         return masu % 10 - 1
 
+
+    # S
+
+    @staticmethod
+    def suji_to_file(suji):
+        return suji - 1
+
+
+    @staticmethod
+    def suji_dan_to_masu(suji, dan):
+        return suji * 10 + dan
 
     @staticmethod
     def sq_to_masu(sq):

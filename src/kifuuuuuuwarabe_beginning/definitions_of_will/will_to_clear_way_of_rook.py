@@ -24,8 +24,13 @@ class WillToClearWayOfRook():
         moved_pt = cshogi.move_from_piece_type(move)
 
 
-        # 飛車が２八にいなければ対象外
+        # 飛車が２八にいなければ、対象外
         if board.piece(ban.masu(28)) != ji.pc(cshogi.ROOK):
+            return Mind.NOT_IN_THIS_CASE
+
+
+        # 移動先が８段目以外なら、対象外
+        if dst_sq_obj.to_rank() != ban.dan(8):
             return Mind.NOT_IN_THIS_CASE
 
 
@@ -36,17 +41,12 @@ class WillToClearWayOfRook():
 
         # 動かした駒が玉なら
         if moved_pt == cshogi.KING:
-            # 玉が８段目に上がったら、意志無し
-            if dst_sq_obj.to_file() == ban.suji(8):
-                return Mind.WILL_NOT
+            # 意志無し
+            return Mind.WILL
 
 
         # 動かした駒が金なら
         if moved_pt == cshogi.GOLD:
-            # 移動先が９段目なら、意志を残している
-            if dst_sq_obj.to_rank() == ban.dan(9):
-                return Mind.WILL
-
             # ６筋より右にある金なら
             op = cmp.swap(src_sq_obj.to_file(), ban.suji(6))
             if op[0] < op[1]:
@@ -63,7 +63,7 @@ class WillToClearWayOfRook():
 
 
         # 動かした駒が銀なら
-        if cshogi.move_from_piece_type(move) == cshogi.SILVER:
+        if moved_pt == cshogi.SILVER:
             # ６筋以右にある銀を動かしたなら
             op = cmp.swap(src_sq_obj.to_file(), ban.suji(6))
             if op[0] <= op[1]:

@@ -26,23 +26,21 @@ class WillNotToBuildRightWall():
         if cshogi.move_from_piece_type(move) == cshogi.KING:
             return Mind.NOT_IN_THIS_CASE
 
-        k_sq = board.king_square(board.turn)     # 自玉
-        k_suji = Helper.sq_to_suji(k_sq)
+        k_sq_obj = cboard.sq_obj(board.king_square(board.turn))     # 自玉
+        k_sq_file = k_sq_obj.to_file()
 
         # 玉が１筋にいるなら対象外
-        if Helper.suji_to_file(k_suji) == ban.suji(1):
+        if k_sq_file == ban.suji(1):
             return Mind.NOT_IN_THIS_CASE
-
-        friend_k_dan = Helper.sq_to_dan(k_sq)
 
 
         # 玉より右の全ての筋について
-        for suji in range(2, k_suji):
+        for file in range(Helper.suji_to_file(2), k_sq_file):   # FIXME
             right_side_of_k = []
 
             # 八段目、九段目
-            for dan in range(8, 10):
-                right_side_of_k.append(ban.suji_dan(suji, dan))
+            for rank in [ban.dan(8), ban.dan(9)]:
+                right_side_of_k.append(Helper.file_rank_to_sq(file, rank))
 
                 # 道を塞ぐ動きなら
                 if dst_sq_obj.sq in right_side_of_k:
