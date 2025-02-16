@@ -1,7 +1,7 @@
 import cshogi
 import sys
 
-from ..helper import Helper, Turned
+from ..sente_perspective import Helper, Turned
 
 
 class WillNotToBuildRightWall():

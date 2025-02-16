@@ -1,7 +1,7 @@
 import cshogi
 import sys
 
-from ..helper import Helper, Turned, Ji
+from ..sente_perspective import Helper, Turned, Ji
 
 
 class WillSwingingRook():
