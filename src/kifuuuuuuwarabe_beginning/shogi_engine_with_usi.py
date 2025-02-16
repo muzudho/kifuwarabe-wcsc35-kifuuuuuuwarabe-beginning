@@ -167,25 +167,19 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 
         # ［３七の歩を突かない意志］
-        next_will_moves = []
-        for m in list(self._board.legal_moves):
+        for i in range(len(will_moves))[::-1]:
+            m = will_moves[i]
             is_there_will_on_move = self._will_not_to_move_37_pawn.is_there_will_on_move(board=self._board, move=m)
             if is_there_will_on_move:
-                next_will_moves.append(m)
-        
-        will_moves = next_will_moves
-        next_will_moves = None
+                del will_moves[i]
 
 
         # ［右壁を作らない意志］
-        next_will_moves = []
-        for m in list(self._board.legal_moves):
+        for i in range(len(will_moves))[::-1]:
+            m = will_moves[i]
             is_there_will_on_move = self._will_not_to_build_right_wall.is_there_will_on_move(board=self._board, move=m)
             if is_there_will_on_move:
-                next_will_moves.append(m)
-        
-        will_moves = next_will_moves
-        next_will_moves = None
+                del will_moves[i]
 
         #print(f'★ go: ［振り飛車する意志］を残してるか尋ねる前の指し手数={len(will_moves)}', file=sys.stderr)
 
@@ -193,14 +187,11 @@ class ShogiEngineCompatibleWithUSIProtocol():
         if self._will_swinging_rook.is_there_will_on_board(board=self._board):
             print('★ go: 盤は［振り飛車する意志］を残しています', file=sys.stderr)
 
-            next_will_moves = []
-            for m in list(self._board.legal_moves):
+            for i in range(len(will_moves))[::-1]:
+                m = will_moves[i]
                 is_there_will_on_move = self._will_swinging_rook.is_there_will_on_move(board=self._board, move=m)
                 if is_there_will_on_move:
-                    next_will_moves.append(m)
-            
-            will_moves = next_will_moves
-            next_will_moves = None
+                    del will_moves[i]
         
         else:
             print('★ go: 盤は［振り飛車する意志］はありません', file=sys.stderr)
