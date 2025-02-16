@@ -3,7 +3,7 @@ import sys
 
 from .. import Mind
 from ..models import Square
-from ..sente_perspective import Ban, Comparison, CshogiBoard, Helper, Ji
+from ..sente_perspective import Ban, Comparison, Helper, Ji
 
 
 class WillSwingingRook():
@@ -30,7 +30,6 @@ class WillSwingingRook():
         """指し手は［振り飛車する意志］を残しているか？
         """
         ban = Ban(board)
-        cboard = CshogiBoard(board)
         cmp = Comparison(board)
         ji = Ji(board)
 

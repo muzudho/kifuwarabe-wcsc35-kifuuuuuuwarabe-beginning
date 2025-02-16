@@ -3,7 +3,7 @@ import sys
 
 from .. import Mind
 from ..models import Square
-from ..sente_perspective import Ban, CshogiBoard, Comparison, Helper, Ji
+from ..sente_perspective import Ban, Comparison, Helper, Ji
 
 
 class WillToClearWayOfRook():
@@ -16,7 +16,6 @@ class WillToClearWayOfRook():
         """指し手は［飛車道を開ける意志］を残しているか？
         """
         ban = Ban(board)
-        cboard = CshogiBoard(board)
         cmp = Comparison(board)
         ji = Ji(board)
 

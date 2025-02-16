@@ -3,7 +3,7 @@ import sys
 
 from .. import Mind
 from ..models import Square
-from ..sente_perspective import Ban, CshogiBoard, Helper
+from ..sente_perspective import Ban, Helper
 
 
 class WillNotToMove37Pawn():
@@ -16,7 +16,6 @@ class WillNotToMove37Pawn():
         """指し手は［３七の歩を突かない意志］を残しているか？
         """
         ban = Ban(board)
-        cboard = CshogiBoard(board)
 
         src_sq_obj = Square(cshogi.move_from(move))
         # print(f'★ {src_sq_obj.sq=} ', end='')

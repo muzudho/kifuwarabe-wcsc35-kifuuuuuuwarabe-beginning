@@ -3,7 +3,7 @@ import sys
 
 from .. import Mind
 from ..models import Square
-from ..sente_perspective import Ban, CshogiBoard, Comparison, Helper
+from ..sente_perspective import Ban, Comparison, Helper
 
 
 class WillNotToBuildRightWall():
@@ -20,7 +20,6 @@ class WillNotToBuildRightWall():
         定義：　玉の右側の全ての筋について、８段目、９段目の両方に駒がある状態を［右壁］とする。
         """
         ban = Ban(board)
-        cboard = CshogiBoard(board)
         cmp = Comparison(board)
 
         src_sq_obj = Square(cshogi.move_from(move))
