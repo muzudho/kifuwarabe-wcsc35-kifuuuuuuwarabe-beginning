@@ -59,7 +59,7 @@ class Ban():
         return self.suji(suji=dan)    # 処理内容は同じ
 
 
-    def suji_range(start, end):
+    def suji_range(self, start, end):
         if self.is_opponent_turn():
             return range(9 - end, 9 - start)    # masu → sq 変換しながら、１８０°回転
 
