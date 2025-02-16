@@ -3,7 +3,7 @@ import datetime
 import random
 import sys
 
-from .definitions_of_will import WillNotToBuildRightWall, WillNotToMove37Pawn, WillSwingingRook
+from .definitions_of_will import WillNotToBeCut88Bishop, WillNotToBuildRightWall, WillNotToMove37Pawn, WillSwingingRook
 
 
 class ShogiEngineCompatibleWithUSIProtocol():
@@ -18,13 +18,16 @@ class ShogiEngineCompatibleWithUSIProtocol():
         # 設定ファイル
         self._config_doc = config_doc
 
-        # ３七の歩を突かない意志
+        # ［８八の角を素抜かれない意志］
+        self._will_not_to_be_cut_88_bishop = WillNotToBeCut88Bishop()
+
+        # ［３七の歩を突かない意志］
         self._will_not_to_move_37_pawn = WillNotToMove37Pawn()
 
-        # 右壁を作らない意志
+        # ［右壁を作らない意志］
         self._will_not_to_build_right_wall = WillNotToBuildRightWall()
 
-        # 振り飛車をする意志
+        # ［振り飛車をする意志］
         self._will_swinging_rook = WillSwingingRook()
 
         # 盤
@@ -84,6 +87,11 @@ class ShogiEngineCompatibleWithUSIProtocol():
             #       code: undo
             elif cmd[0] == 'undo':
                 self.undo()
+
+            # テスト
+            #       code: test
+            elif cmd[0] == 'test':
+                self.test()
 
 
     def usi(self):
@@ -200,16 +208,20 @@ class ShogiEngineCompatibleWithUSIProtocol():
         # #print(f'★ go: ［振り飛車する意志］を残してるか尋ねた後の指し手数={len(will_moves)}', file=sys.stderr)
 
 
-        # # １手指してから判定
-        # for i in range(len(will_moves))[::-1]:
-        #     m = will_moves[i]
-        #     self._board.push(m)   # １手指す
+        print(f'★ go: ［８八の角を素抜かれない意志］を残してるか尋ねる前の指し手数={len(will_moves)}', file=sys.stderr)
 
-        #     # ［８八の角を素抜かれない意志］
-        #     if not self._will_not_to_be_cut_88_bishop.have_will_after_move(self._board, m):
-        #         del will_moves[i]
+        # １手指してから判定
+        for i in range(len(will_moves))[::-1]:
+            m = will_moves[i]
+            self._board.push(m)   # １手指す
 
-        #     self._board.pop() # １手戻す
+            # ［８八の角を素抜かれない意志］
+            if WillNotToBeCut88Bishop.WILL_NOT == self._will_not_to_be_cut_88_bishop.have_will_after_moving_on_board(self._board):
+                del will_moves[i]
+
+            self._board.pop() # １手戻す
+
+        print(f'★ go: ［８八の角を素抜かれない意志］を残してるか尋ねた後の指し手数={len(will_moves)}', file=sys.stderr)
 
 
         # 指し手が全部消えてしまった場合、何でも指すようにします
@@ -269,4 +281,28 @@ class ShogiEngineCompatibleWithUSIProtocol():
             code: undo
         """
         self._board.pop()
+
+
+
+    def test(self):
+        """TODO 使い終わったら消す
+        """
+        from .sente_perspective import Ban, Helper, Ji
+        ji = Ji(self._board)
+        ban = Ban(self._board)
+
+        for suji in range(1, 10):
+            for dan in range(1, 10):
+                masu = Helper.suji_dan_to_masu(suji, dan)
+                print(f'{masu=:2} {ban.masu(masu)=:2}')
+
+        if self._board.piece(ban.masu(88)) == ji.pc(cshogi.BISHOP):
+            print('８八は自角だ')
+        else:
+            print(f'８八は自角でない {self._board.piece(ban.masu(88))} {ji.pc(cshogi.BISHOP)=}')
+
+        if self._board.piece(ban.masu(79)) == ji.pc(cshogi.SILVER):
+            print('７九は自銀だ')
+        else:
+            print(f'７九は自銀でない')
 

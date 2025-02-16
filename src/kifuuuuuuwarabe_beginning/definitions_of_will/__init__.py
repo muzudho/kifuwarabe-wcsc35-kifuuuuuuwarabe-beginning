@@ -1,3 +1,4 @@
+from .will_not_to_be_cut_88_bishop import WillNotToBeCut88Bishop
 from .will_not_to_build_right_wall import WillNotToBuildRightWall
 from .will_not_to_move_37_pawn import WillNotToMove37Pawn
 from .will_swinging_rook import WillSwingingRook

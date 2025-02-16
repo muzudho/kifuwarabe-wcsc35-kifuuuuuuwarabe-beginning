@@ -8,15 +8,26 @@ class Ban():
     """
 
 
-    def __init__(self, board):
+    def __init__(self, board, after_moving=False):
+        """
+        Parameters
+        ----------
+        after_moving : bool
+            １手指した後か。（相手の番になっています）
+        """
         self._board = board
+        self._after_moving = after_moving
         self._turned = Turned(self._board)
+
+
+    def is_opponent_turn(self):
+        return self._board.turn == cshogi.WHITE and not self._after_moving
 
 
     def masu(self, masu):
         """マス番号。先手の sq に変換する
         """
-        if self._board.turn == cshogi.WHITE:
+        if self.is_opponent_turn():
             suji = self._turned.suji(Helper.masu_to_suji(masu))
             dan = self._turned.dan(Helper.masu_to_dan(masu))
             masu = dan * 10 + suji  # １８０°回転
@@ -27,12 +38,17 @@ class Ban():
 class Comparison():
     """［比較］
     """
-    def __init__(self, board):
+    def __init__(self, board, after_moving=False):
         self._board = board
+        self._after_moving = after_moving
+
+
+    def is_opponent_turn(self):
+        return self._board.turn == cshogi.WHITE and not self._after_moving
 
 
     def swap(self, a, b):
-        if self._board.turn == cshogi.WHITE:
+        if self.is_opponent_turn():
             return b, a
         
         return a, b
@@ -43,17 +59,24 @@ class Ji():
     """
 
 
-    def __init__(self, board):
+    def __init__(self, board, after_moving=False):
         self._board = board
+        self._after_moving = after_moving
+
+
+    def is_opponent_turn(self):
+        return self._board.turn == cshogi.WHITE and not self._after_moving
 
 
     def pc(self, piece_type):
         """駒種類を手番の駒へ変換
         """
-        if self._board.turn == cshogi.WHITE:
-            piece_type += 16
+        if self.is_opponent_turn():
+            piece = piece_type + 16
+        else:
+            piece = piece_type
 
-        return piece_type
+        return piece
 
 
 class Turned():
@@ -61,19 +84,24 @@ class Turned():
     """
 
 
-    def __init__(self, board):
+    def __init__(self, board, after_moving=False):
         self._board = board
+        self._after_moving = after_moving
+
+
+    def is_opponent_turn(self):
+        return self._board.turn == cshogi.WHITE and not self._after_moving
 
 
     def sign(self, number):
-        if self._board.turn == cshogi.WHITE:
+        if self.is_opponent_turn():
             number *= -1
 
         return number
 
 
     def masu(self, masu):
-        if self._board.turn == cshogi.WHITE:
+        if self.is_opponent_turn():
             suji = self.suji(Helper.masu_to_suji(masu))
             dan = self.dan(Helper.masu_to_dan(masu))
             masu = dan * 10 + suji
@@ -82,7 +110,7 @@ class Turned():
 
 
     def suji(self, suji):
-        if self._board.turn == cshogi.WHITE:
+        if self.is_opponent_turn():
             suji = 10 - suji
 
         return suji
@@ -105,6 +133,11 @@ class Helper():
     @staticmethod
     def dan_to_rank(dan):
         return dan - 1
+
+
+    @staticmethod
+    def suji_dan_to_masu(suji, dan):
+        return suji * 10 + dan
 
 
     @staticmethod
