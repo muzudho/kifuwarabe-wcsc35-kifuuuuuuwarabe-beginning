@@ -2,6 +2,7 @@ import cshogi
 import sys
 
 from .. import Mind
+from ..models import Square
 from ..sente_perspective import Ban, Comparison, CshogiBoard, Helper, Ji
 
 
@@ -33,8 +34,8 @@ class WillSwingingRook():
         cmp = Comparison(board)
         ji = Ji(board)
 
-        src_sq_obj = cboard.sq_obj(cshogi.move_from(move))
-        dst_sq_obj = cboard.sq_obj(cshogi.move_to(move))
+        src_sq_obj = Square(cshogi.move_from(move))
+        dst_sq_obj = Square(cshogi.move_to(move))
 
 
         # 玉
@@ -46,8 +47,8 @@ class WillSwingingRook():
 
             #print(f'★ will_on_move: 玉', file=sys.stderr)            
             # 元位置位右に移動するなら、意志あり
-            op = cmp.swap(dst_sq_obj.file, src_sq_obj.file)
-            if op[0] <= op[1]:
+            e1 = cmp.swap(dst_sq_obj.file, src_sq_obj.file)
+            if e1[0] <= e1[1]:
                 return Mind.WILL
             
             return Mind.WILL_NOT
@@ -55,7 +56,7 @@ class WillSwingingRook():
 
         # 飛
         if cshogi.move_from_piece_type(move) == cshogi.ROOK:
-            k_sq_obj = cboard.sq_obj(board.king_square(board.turn))
+            k_sq_obj = Square(board.king_square(board.turn))
             # 飛車は４筋より左に振る。かつ、玉と同じ筋または玉より左の筋に振る
             e1 = cmp.swap(dst_sq_obj.file, ban.suji(4))
             e2 = cmp.swap(dst_sq_obj.file, k_sq_obj.file)

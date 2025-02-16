@@ -33,7 +33,7 @@ class Go():
                 will_play_moves=will_play_moves)
 
         return will_play_moves
-        
+
 
     @staticmethod
     def get_will_not_to_move_37_pawn(config_doc, board, will_play_moves):
@@ -59,7 +59,7 @@ class Go():
         if config_doc['will']['will_not_to_build_right_wall']:
             for i in range(len(will_play_moves))[::-1]:
                 m = will_play_moves[i]
-                mind = WillNotToBuildRightWall.will_on_move(board=board, move=m)
+                mind = WillNotToBuildRightWall.will_play_before_move(board=board, move=m)
                 if mind == Mind.WILL_NOT:
                     del will_play_moves[i]
 

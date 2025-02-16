@@ -32,7 +32,6 @@ class Ban():
             return self.suji_dan(
                     suji=Helper.masu_to_suji(masu),
                     dan=Helper.masu_to_dan(masu))
-            masu = dan * 10 + suji  # １８０°回転
 
         return Helper.masu_to_file(masu) * 9 + Helper.masu_to_rank(masu)
 
@@ -125,13 +124,6 @@ class CshogiBoard():
         return self._board.turn == cshogi.WHITE and not self._after_moving
 
 
-    def sq_obj(self, sq):
-        if self.is_opponent_turn():
-            sq = 80 - sq    # 180°回転
-
-        return Square(sq)
-
-
     def sq_to_rank(self, sq):
         if self.is_opponent_turn():
             sq = 80 - sq    # 180°回転
@@ -222,3 +214,15 @@ class Helper():
     @staticmethod
     def sq_to_rank(sq):
         return sq % 9
+
+
+    # T
+
+    @staticmethod
+    def turn_name(turn):
+        if turn == 0:
+            return 'Black'
+        elif turn == 1:
+            return 'White'
+        else:
+            raise ValueError(f'{turn=}')
