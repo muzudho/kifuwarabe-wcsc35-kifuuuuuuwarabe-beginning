@@ -28,30 +28,30 @@ class WillNotToBuildRightWall():
 
         # 玉の指し手なら対象外
         if cshogi.move_from_piece_type(move) == cshogi.KING:
-            print(f'★ 玉の指し手は対象外')
+            #print(f'★ 玉の指し手は対象外')
             return Mind.NOT_IN_THIS_CASE
 
         k_sq_obj = Square(board.king_square(board.turn))     # 自玉
-        print(f'★ {k_sq_obj.file=} {ban.suji(1)=}')
+        #print(f'★ {k_sq_obj.file=} {ban.suji(1)=}')
 
         # 玉が１筋にいるなら対象外
         if k_sq_obj.file == ban.suji(1):
-            print(f'★ 玉が１筋にいるなら対象外')
+            #print(f'★ 玉が１筋にいるなら対象外')
             return Mind.NOT_IN_THIS_CASE
 
         # 玉の以左に移動する手なら対象外
         e1 = cmp.swap(k_sq_obj.file, dst_sq_obj.file)
-        print(f'★ {k_sq_obj.file=} {dst_sq_obj.file=} {e1[0]=} {e1[1]}')
+        #print(f'★ {k_sq_obj.file=} {dst_sq_obj.file=} {e1[0]=} {e1[1]}')
         if e1[0] <= e1[1]:
-            print(f'★ 玉の以左に移動する手なら対象外')
+            #print(f'★ 玉の以左に移動する手なら対象外')
             return Mind.NOT_IN_THIS_CASE
 
         # ８段目、９段目以外に移動する手なら対象外
         dan8 = ban.dan(8)
         dan9 = ban.dan(9)
-        print(f'D: {dst_sq_obj.rank=} {ban.dan(8)=} {ban.dan(9)}')
+        #print(f'D: {dst_sq_obj.rank=} {ban.dan(8)=} {ban.dan(9)}')
         if dst_sq_obj.rank in [dan8, dan9]:
-            print(f'★ {dan8}段目、{dan9}段目以外に移動する手なら対象外')
+            #print(f'★ {dan8}段目、{dan9}段目以外に移動する手なら対象外')
             return Mind.NOT_IN_THIS_CASE
 
 
@@ -67,7 +67,7 @@ class WillNotToBuildRightWall():
             # 道を塞ぐ動きなら
             if dst_sq_obj.sq in right_side_of_k:
                 # 道を消す
-                print(f'D: 道を消す')
+                #print(f'D: 道を消す')
                 right_side_of_k.remove(dst_sq_obj.sq)
 
         # 道が空いているか？
@@ -76,15 +76,15 @@ class WillNotToBuildRightWall():
             if (board.piece(sq) == cshogi.NONE
                     # 👇 香車が９段目から８段目に上がるのを右壁と誤認するのを防ぐ
                     or sq == src_sq_obj.sq):
-                print(f'D: 道が空いている')
+                #print(f'D: 道が空いている')
                 is_empty = True
 
         if not is_empty:
             # 道が開いていなければ、意志なし
-            print(f'★ 道が開いていなければ、意志なし')
+            #print(f'★ 道が開いていなければ、意志なし')
             return Mind.WILL_NOT
 
 
         # 道は空いていたから、意志あり
-        print(f'★ 道は空いていたから、意志あり')
+        #print(f'★ 道は空いていたから、意志あり')
         return Mind.WILL

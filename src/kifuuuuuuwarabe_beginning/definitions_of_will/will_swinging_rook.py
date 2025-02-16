@@ -18,7 +18,7 @@ class WillSwingingRook():
         ４０手目までは振り飛車の意志を残しているとします。
         ４１手目以降は振り飛車の意志はありません
         """
-        print(f'★ is_there_will_on_board: {board.move_number=}', file=sys.stderr)
+        #print(f'★ is_there_will_on_board: {board.move_number=}', file=sys.stderr)
         if board.move_number < 41:
             return Mind.WILL
         

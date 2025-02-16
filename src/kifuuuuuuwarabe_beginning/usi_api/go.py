@@ -75,7 +75,7 @@ class Go():
         # ［振り飛車をする意志］
         if config_doc['will']['will_swinging_rook']:
             if Mind.WILL == WillSwingingRook.will_on_board(board=board):
-                print('★ go: 盤は［振り飛車する意志］を残しています', file=sys.stderr)
+                #print('★ go: 盤は［振り飛車する意志］を残しています', file=sys.stderr)
 
                 for i in range(len(will_play_moves))[::-1]:
                     m = will_play_moves[i]
@@ -91,9 +91,9 @@ class Go():
                     if mind == Mind.WILL_NOT:
                         del will_play_moves[i]
             
-            else:
-                print('★ go: 盤は［振り飛車する意志］はありません', file=sys.stderr)
-                pass
+            # else:
+            #     print('★ go: 盤は［振り飛車する意志］はありません', file=sys.stderr)
+            #     pass
 
 
         return will_play_moves
