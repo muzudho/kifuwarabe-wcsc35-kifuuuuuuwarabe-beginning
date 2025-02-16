@@ -4,7 +4,7 @@ import random
 import sys
 
 from . import Mind
-from .definitions_of_will import WillNotToBeCut88Bishop, WillNotToBuildRightWall, WillNotToMove37Pawn, WillSwingingRook
+from .definitions_of_will import WillNotToBeCut88Bishop, WillNotToBuildRightWall, WillNotToMove37Pawn, WillSwingingRook, WillToClearWayOfRook
 
 
 class ShogiEngineCompatibleWithUSIProtocol():
@@ -30,6 +30,9 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
         # ［振り飛車をする意志］
         self._will_swinging_rook = WillSwingingRook()
+
+        # ［飛車道を開ける意志］
+        self._will_to_clear_way_of_rook = WillToClearWayOfRook()
 
         # 盤
         self._board = cshogi.Board()
@@ -198,6 +201,13 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
             for i in range(len(will_moves))[::-1]:
                 m = will_moves[i]
+
+                # ［飛車道を開ける意志］
+                mind = self._will_to_clear_way_of_rook.will_on_move(board=self._board, move=m)
+                if mind == Mind.WILL_NOT:
+                    del will_moves[i]
+
+                # ［振り飛車をする意志］
                 is_there_will_on_move = self._will_swinging_rook.is_there_will_on_move(board=self._board, move=m)
                 if not is_there_will_on_move:
                     del will_moves[i]

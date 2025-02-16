@@ -66,6 +66,7 @@ class WillSwingingRook():
                 return False
 
             #print(f'★ is_there_will_on_move: 玉', file=sys.stderr)            
+            # 元位置位右に移動するなら、意志あり
             op = cmp.swap(Helper.sq_to_suji(dst_sq), Helper.sq_to_suji(src_sq))
             return op[0] <= op[1]
 
@@ -77,52 +78,6 @@ class WillSwingingRook():
             a = cmp.swap(Helper.sq_to_suji(dst_sq), turned.suji(4))
             b = cmp.swap(Helper.sq_to_suji(dst_sq), Helper.sq_to_suji(friend_k_sq))
             return a[0] > a[1] and b[0] >= b[1]
-
-        # 金
-        if cshogi.move_from_piece_type(move) == cshogi.GOLD:
-            # 飛車が２八にいるか？
-            if board.piece(ban.masu(28)) == ji.pc(cshogi.ROOK):
-                # この駒は、６筋より右にあるか？
-                op = cmp.swap(Helper.sq_to_suji(src_sq), turned.suji(6))
-                if op[0] < op[1]:
-                    # この駒は動いてはいけない
-                    return False
-
-                # この駒は、５筋より左にあるか？
-                
-                op = cmp.swap(Helper.sq_to_suji(src_sq), turned.suji(6))
-                if op[0] >= op[1]:
-                    # この駒は左の方以外に動かしてはいけない
-                    
-                    op = cmp.swap(Helper.sq_to_suji(dst_sq), turned.suji(6))
-                    if op[0] <= op[1]:
-                        return False
-
-            #print(f'★ is_there_will_on_move: 金', file=sys.stderr)
-            op = cmp.swap(Helper.sq_to_suji(dst_sq), Helper.sq_to_suji(src_sq))
-            return op[0] <= op[1]
-
-        # 銀
-        if cshogi.move_from_piece_type(move) == cshogi.SILVER:
-            # 飛車が２八にいるか？
-            if board.piece(ban.masu(28)) == ji.pc(cshogi.ROOK):
-                # この駒は、６筋より右にあるか？
-                op = cmp.swap(Helper.sq_to_suji(src_sq), turned.suji(6))
-                if op[0] < op[1]:
-                    # この駒は動いてはいけない
-                    return False
-
-                # この駒は、５筋より左にあるか？
-                op = cmp.swap(Helper.sq_to_suji(src_sq), turned.suji(6))
-                if op[0] >= op[1]:
-                    # この駒は左の方以外に動かしてはいけない
-                    op = cmp.swap(Helper.sq_to_suji(dst_sq), turned.suji(6))
-                    if op[0] <= op[1]:
-                        return False
-
-            #print(f'★ is_there_will_on_move: 銀', file=sys.stderr)
-            op = cmp.swap(Helper.sq_to_suji(dst_sq), Helper.sq_to_suji(src_sq))
-            return op[0] <= op[1]
 
         return True    # FIXME
 
