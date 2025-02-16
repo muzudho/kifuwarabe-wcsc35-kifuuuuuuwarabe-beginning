@@ -30,7 +30,7 @@ class WillToClearWayOfRook():
 
 
         # 移動先が８段目以外なら、対象外
-        if dst_sq_obj.to_rank() != ban.dan(8):
+        if dst_sq_obj.rank != ban.dan(8):
             return Mind.NOT_IN_THIS_CASE
 
 
@@ -48,13 +48,13 @@ class WillToClearWayOfRook():
         # 動かした駒が金なら
         if moved_pt == cshogi.GOLD:
             # ６筋より右にある金なら
-            op = cmp.swap(src_sq_obj.to_file(), ban.suji(6))
+            op = cmp.swap(src_sq_obj.file, ban.suji(6))
             if op[0] < op[1]:
                 # 動かしたら意志なし
                 return Mind.WILL_NOT
 
             # ５筋より左にある金なら、左の方以外に動かしたら意志なし
-            op = cmp.swap(dst_sq_obj.to_file(), ban.suji(6))
+            op = cmp.swap(dst_sq_obj.file, ban.suji(6))
             if op[0] <= op[1]:
                 return Mind.WILL_NOT
             
@@ -65,13 +65,13 @@ class WillToClearWayOfRook():
         # 動かした駒が銀なら
         if moved_pt == cshogi.SILVER:
             # ６筋以右にある銀を動かしたなら
-            op = cmp.swap(src_sq_obj.to_file(), ban.suji(6))
+            op = cmp.swap(src_sq_obj.file, ban.suji(6))
             if op[0] <= op[1]:
                 # 意志なし
                 return Mind.WILL_NOT
 
             # ７筋以左にある銀を、元位置より右の方に動かしたら意志なし
-            op = cmp.swap(src_sq_obj.to_file(), dst_sq_obj.to_file())
+            op = cmp.swap(src_sq_obj.file, dst_sq_obj.file)
             if op[0] > op[1]:
                 return Mind.WILL_NOT
             

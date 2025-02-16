@@ -5,13 +5,16 @@ class Square():
         self._sq = sq
 
 
+    @property
     def sq(self):
         return self._sq
 
 
-    def to_file(self):
+    @property
+    def file(self):
         return self._sq // 9
 
 
-    def to_rank(self):
+    @property
+    def rank(self):
         return self._sq % 9

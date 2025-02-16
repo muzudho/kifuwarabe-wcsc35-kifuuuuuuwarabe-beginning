@@ -18,6 +18,9 @@ class WillNotToMove37Pawn():
         cboard = CshogiBoard(board)
 
         src_sq_obj = cboard.sq_obj(cshogi.move_from(move))
+        print(f'★ {src_sq_obj.sq=} ', end='')
+        print(f'{Helper.sq_to_masu(src_sq_obj.sq)=} ', end='')
+        print(f'{board.piece_type(src_sq_obj.sq)=}')
 
 
         # ３七以外にある駒は関係ない

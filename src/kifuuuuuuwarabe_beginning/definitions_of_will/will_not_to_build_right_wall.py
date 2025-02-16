@@ -27,7 +27,7 @@ class WillNotToBuildRightWall():
             return Mind.NOT_IN_THIS_CASE
 
         k_sq_obj = cboard.sq_obj(board.king_square(board.turn))     # 自玉
-        k_sq_file = k_sq_obj.to_file()
+        k_sq_file = k_sq_obj.file
 
         # 玉が１筋にいるなら対象外
         if k_sq_file == ban.suji(1):

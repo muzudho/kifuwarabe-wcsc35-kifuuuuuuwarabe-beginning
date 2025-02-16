@@ -11,6 +11,29 @@ class Go():
 
 
     @staticmethod
+    def will_play_moves(config_doc, board, will_play_moves):
+        will_play_moves = Go.get_will_not_to_move_37_pawn(
+                config_doc=self._config_doc,
+                board=self._board,
+                will_play_moves=will_play_moves)
+
+        will_play_moves = Go.get_will_not_to_build_right_wall(
+                config_doc=self._config_doc,
+                board=self._board,
+                will_play_moves=will_play_moves)
+
+        will_play_moves = Go.get_will_swinging_rook(
+                config_doc=self._config_doc,
+                board=self._board,
+                will_play_moves=will_play_moves)
+
+        will_play_moves = Go.get_will_not_to_be_cut_88_bishop(
+                config_doc=self._config_doc,
+                board=self._board,
+                will_play_moves=will_play_moves)
+
+
+    @staticmethod
     def get_will_not_to_move_37_pawn(config_doc, board, will_play_moves):
         """［３七の歩を突かない意志］
         """

@@ -46,7 +46,7 @@ class WillSwingingRook():
 
             #print(f'★ will_on_move: 玉', file=sys.stderr)            
             # 元位置位右に移動するなら、意志あり
-            op = cmp.swap(dst_sq_obj.to_file(), src_sq_obj.to_file())
+            op = cmp.swap(dst_sq_obj.file, src_sq_obj.file)
             if op[0] <= op[1]:
                 return Mind.WILL
             
@@ -57,8 +57,8 @@ class WillSwingingRook():
         if cshogi.move_from_piece_type(move) == cshogi.ROOK:
             k_sq_obj = cboard.sq_obj(board.king_square(board.turn))
             # 飛車は４筋より左に振る。かつ、玉と同じ筋または玉より左の筋に振る
-            e1 = cmp.swap(dst_sq_obj.to_file(), ban.suji(4))
-            e2 = cmp.swap(dst_sq_obj.to_file(), k_sq_obj.to_file())
+            e1 = cmp.swap(dst_sq_obj.file, ban.suji(4))
+            e2 = cmp.swap(dst_sq_obj.file, k_sq_obj.file)
 
             if e1[0] > e1[1] and e2[0] >= e2[1]:
                 return Mind.WILL
