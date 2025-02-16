@@ -24,7 +24,7 @@ class WillNotToBuildRightWall():
 
         src_sq_obj = Square(cshogi.move_from(move))
         dst_sq_obj = Square(cshogi.move_to(move))
-        print(f'D: {Helper.sq_to_masu(src_sq_obj.sq)=} {Helper.sq_to_masu(dst_sq_obj.sq)=}')
+        #print(f'D: {cshogi.move_to_usi(move)=} {Helper.sq_to_masu(src_sq_obj.sq)=} {Helper.sq_to_masu(dst_sq_obj.sq)=}')
 
         # 玉の指し手なら対象外
         if cshogi.move_from_piece_type(move) == cshogi.KING:
@@ -50,8 +50,8 @@ class WillNotToBuildRightWall():
         dan8 = ban.dan(8)
         dan9 = ban.dan(9)
         #print(f'D: {dst_sq_obj.rank=} {ban.dan(8)=} {ban.dan(9)}')
-        if dst_sq_obj.rank in [dan8, dan9]:
-            #print(f'★ {dan8}段目、{dan9}段目以外に移動する手なら対象外')
+        if dst_sq_obj.rank not in [dan8, dan9]:
+            #print(f'★ {dst_sq_obj.rank=}段目 は、 {dan8}段目、{dan9}段目以外に移動する手だから対象外')
             return Mind.NOT_IN_THIS_CASE
 
 
@@ -61,7 +61,7 @@ class WillNotToBuildRightWall():
         # 八段目、九段目
         for rank in [ban.dan(8), ban.dan(9)]:
             sq = Helper.file_rank_to_sq(dst_sq_obj.file, rank)
-            print(f'D: {rank=} {sq=}')
+            #print(f'D: {rank=} {sq=}')
             right_side_of_k.append(sq)
 
             # 道を塞ぐ動きなら
