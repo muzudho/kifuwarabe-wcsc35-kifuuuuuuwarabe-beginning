@@ -9,7 +9,7 @@ from ..sente_perspective import Ban, Comparison, Helper
 class WillNotToBuildRightWall():
     """［右壁を作らない意志］
 
-    NOTE 振り飛車をさせるとき、玉より右側に振って［右壁］が作られるケースがあるので注意。
+    NOTE 振り飛車をさせるとき、玉より右側に振ると、［右壁］と判定してキャンセルするので注意。
     """
 
 

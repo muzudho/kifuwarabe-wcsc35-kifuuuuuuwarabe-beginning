@@ -2,6 +2,9 @@
     name = "Kifuuuuuuwarabe Beginning"
 
 [will]
+    # ［金銀３枚が右に集まる意志］
+    will_for_three_gold_and_silver_coins_to_gather_to_the_right = true
+
     # ［３七の歩を突かない意志］
     will_not_to_move_37_pawn = true
 

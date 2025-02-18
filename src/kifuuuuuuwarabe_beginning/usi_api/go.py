@@ -4,7 +4,7 @@ import random
 import sys
 
 from .. import Mind
-from ..definitions_of_will import WillNotToBeCut88Bishop, WillNotToBuildRightWall, WillNotToMove37Pawn, WillSwingingRook, WillToClearWayOfRook
+from ..definitions_of_will import WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToBuildRightWall, WillNotToMove37Pawn, WillSwingingRook, WillToClearWayOfRook
 
 
 class Go():
@@ -12,6 +12,11 @@ class Go():
 
     @staticmethod
     def get_will_play_moves(config_doc, board, will_play_moves):
+        will_play_moves = Go.get_will_for_three_gold_and_silver_coins_to_gather_to_the_right(
+                config_doc=config_doc,
+                board=board,
+                will_play_moves=will_play_moves)
+
         will_play_moves = Go.get_will_not_to_move_37_pawn(
                 config_doc=config_doc,
                 board=board,
@@ -36,6 +41,21 @@ class Go():
 
 
     @staticmethod
+    def get_will_for_three_gold_and_silver_coins_to_gather_to_the_right(config_doc, board, will_play_moves):
+        """［金銀３枚が右に集まる意志］
+        """
+
+        if config_doc['will']['will_for_three_gold_and_silver_coins_to_gather_to_the_right']:
+            for i in range(len(will_play_moves))[::-1]:
+                m = will_play_moves[i]
+                mind = WillForThreeGoldAndSilverCoinsToGatherToTheRight.will_before_move(board=board, move=m)
+                if mind == Mind.WILL_NOT:
+                    del will_play_moves[i]
+
+        return will_play_moves
+
+
+    @staticmethod
     def get_will_not_to_move_37_pawn(config_doc, board, will_play_moves):
         """［３七の歩を突かない意志］
         """
@@ -46,7 +66,6 @@ class Go():
                 mind = WillNotToMove37Pawn.will_on_move(board=board, move=m)
                 if mind == Mind.WILL_NOT:
                     del will_play_moves[i]
-
 
         return will_play_moves
 
@@ -62,7 +81,6 @@ class Go():
                 mind = WillNotToBuildRightWall.will_play_before_move(board=board, move=m)
                 if mind == Mind.WILL_NOT:
                     del will_play_moves[i]
-
 
         return will_play_moves
 
@@ -95,7 +113,6 @@ class Go():
             #     print('★ go: 盤は［振り飛車する意志］はありません', file=sys.stderr)
             #     pass
 
-
         return will_play_moves
 
 
@@ -116,6 +133,5 @@ class Go():
                     del will_play_moves[i]
 
             board.pop() # １手戻す
-
 
         return will_play_moves
