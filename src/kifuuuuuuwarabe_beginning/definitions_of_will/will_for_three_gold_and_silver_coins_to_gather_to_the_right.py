@@ -35,8 +35,8 @@ class WillForThreeGoldAndSilverCoinsToGatherToTheRight():
             return Mind.NOT_IN_THIS_CASE
 
         # 36マスをスキャンする
-        left_from_6_suji = [Helper.file_rank_to_sq(file, rank) for file in range(ban.suji(6), ban.suji(10))
-            for rank in range(ban.dan(1), ban.dan(10))]
+        left_from_6_suji = [Helper.file_rank_to_sq(file, rank) for file in ban.suji_range(6, 10)
+            for rank in ban.dan_range(1, 10)]
         #print(f'{len(left_from_6_suji)=} {left_from_6_suji=}')
 
         count = 0

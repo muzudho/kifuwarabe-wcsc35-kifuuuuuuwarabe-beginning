@@ -65,6 +65,10 @@ class Ban():
         return range(start - 1, end - 1)
 
 
+    def dan_range(self, start, end):
+        return self.suji_range(start, end)      # 処理内容は同じ
+
+
 
 class Comparison():
     """［比較］
