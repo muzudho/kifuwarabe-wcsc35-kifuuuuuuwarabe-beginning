@@ -4,7 +4,7 @@ import random
 import sys
 
 from .. import Mind
-from ..definitions_of_will import WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToBuildRightWall, WillNotToMove37Pawn, WillSwingingRook, WillToClearWayOfRook
+from ..definitions_of_will import WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToBuildRightWall, WillNotToMove37Pawn, WillSwingingRook, WillToClearWayOfRook, WillToTakeThePieceWithoutLosingAnything
 
 
 class Go():
@@ -37,6 +37,11 @@ class Go():
                 board=board,
                 will_play_moves=will_play_moves)
 
+        will_play_moves = Go.get_will_to_take_the_piece_without_losing_anything(
+                config_doc=config_doc,
+                board=board,
+                will_play_moves=will_play_moves)
+
         return will_play_moves
 
 
@@ -48,7 +53,7 @@ class Go():
         if config_doc['will']['will_for_three_gold_and_silver_coins_to_gather_to_the_right']:
             for i in range(len(will_play_moves))[::-1]:
                 m = will_play_moves[i]
-                mind = WillForThreeGoldAndSilverCoinsToGatherToTheRight.will_before_move(board=board, move=m)
+                mind = WillForThreeGoldAndSilverCoinsToGatherToTheRight.will_before_move(m, board)
                 if mind == Mind.WILL_NOT:
                     del will_play_moves[i]
 
@@ -63,7 +68,7 @@ class Go():
         if config_doc['will']['will_not_to_move_37_pawn']:
             for i in range(len(will_play_moves))[::-1]:
                 m = will_play_moves[i]
-                mind = WillNotToMove37Pawn.will_on_move(board=board, move=m)
+                mind = WillNotToMove37Pawn.will_on_move(m, board)
                 if mind == Mind.WILL_NOT:
                     del will_play_moves[i]
 
@@ -78,7 +83,7 @@ class Go():
         if config_doc['will']['will_not_to_build_right_wall']:
             for i in range(len(will_play_moves))[::-1]:
                 m = will_play_moves[i]
-                mind = WillNotToBuildRightWall.will_play_before_move(board=board, move=m)
+                mind = WillNotToBuildRightWall.will_play_before_move(m, board)
                 if mind == Mind.WILL_NOT:
                     del will_play_moves[i]
 
@@ -92,7 +97,7 @@ class Go():
 
         # ［振り飛車をする意志］
         if config_doc['will']['will_swinging_rook']:
-            if Mind.WILL == WillSwingingRook.will_on_board(board=board):
+            if Mind.WILL == WillSwingingRook.will_on_board(board):
                 #print('★ go: 盤は［振り飛車する意志］を残しています', file=sys.stderr)
 
                 for i in range(len(will_play_moves))[::-1]:
@@ -100,12 +105,12 @@ class Go():
 
                     # ［飛車道を開ける意志］
                     if config_doc['will']['will_to_clear_way_of_rook']:
-                        mind = WillToClearWayOfRook.will_on_move(board=board, move=m)
+                        mind = WillToClearWayOfRook.will_before_move(m, board)
                         if mind == Mind.WILL_NOT:
                             del will_play_moves[i]
 
                     # ［振り飛車をする意志］
-                    mind = WillSwingingRook.will_on_move(board=board, move=m)
+                    mind = WillSwingingRook.will_on_move(m, board)
                     if mind == Mind.WILL_NOT:
                         del will_play_moves[i]
             
@@ -135,3 +140,25 @@ class Go():
             board.pop() # １手戻す
 
         return will_play_moves
+
+
+    @staticmethod
+    def get_will_to_take_the_piece_without_losing_anything(config_doc, board, will_play_moves):
+        """［駒取って損しない意志］
+        """
+
+        # １手指してから判定
+        for i in range(len(will_play_moves))[::-1]:
+            m = will_play_moves[i]
+            board.push(m)   # １手指す
+
+            # ［８八の角を素抜かれない意志］
+            if config_doc['will']['will_to_take_the_piece_without_losing_anything']:
+                mind = WillToTakeThePieceWithoutLosingAnything.will_after_move(m, board)
+                if mind == Mind.WILL_NOT:
+                    del will_play_moves[i]
+
+            board.pop() # １手戻す
+
+        return will_play_moves
+

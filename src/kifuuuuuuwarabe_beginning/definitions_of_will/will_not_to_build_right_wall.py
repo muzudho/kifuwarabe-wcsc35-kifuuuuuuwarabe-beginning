@@ -14,7 +14,7 @@ class WillNotToBuildRightWall():
 
 
     @staticmethod
-    def will_play_before_move(board, move):
+    def will_play_before_move(move, board):
         """指し手は［右壁を作らない意志］を残しているか？
 
         定義：　玉の右側の全ての筋について、８段目、９段目の両方に駒がある状態を［右壁］とする。

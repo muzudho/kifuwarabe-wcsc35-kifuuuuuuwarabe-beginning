@@ -12,7 +12,7 @@ class WillToClearWayOfRook():
 
 
     @staticmethod
-    def will_on_move(board, move):
+    def will_before_move(move, board):
         """指し手は［飛車道を開ける意志］を残しているか？
         """
         ban = Ban(board)

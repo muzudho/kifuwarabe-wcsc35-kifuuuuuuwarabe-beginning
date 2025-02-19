@@ -12,7 +12,7 @@ class WillNotToMove37Pawn():
 
 
     @staticmethod
-    def will_on_move(board, move):
+    def will_on_move(move, board):
         """指し手は［３七の歩を突かない意志］を残しているか？
         """
         ban = Ban(board)

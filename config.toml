@@ -19,3 +19,6 @@
 
     # ［８八の角を素抜かれない意志］
     will_not_to_be_cut_88_bishop = true
+
+    # ［駒取って損しない意志］
+    will_to_take_the_piece_without_losing_anything = true

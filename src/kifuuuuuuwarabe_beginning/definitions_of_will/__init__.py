@@ -4,3 +4,4 @@ from .will_not_to_build_right_wall import WillNotToBuildRightWall
 from .will_not_to_move_37_pawn import WillNotToMove37Pawn
 from .will_swinging_rook import WillSwingingRook
 from .will_to_clear_way_of_rook import WillToClearWayOfRook
+from .will_to_take_the_piece_without_losing_anything import WillToTakeThePieceWithoutLosingAnything

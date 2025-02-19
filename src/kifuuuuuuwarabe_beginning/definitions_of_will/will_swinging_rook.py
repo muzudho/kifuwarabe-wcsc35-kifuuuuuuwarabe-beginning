@@ -26,7 +26,7 @@ class WillSwingingRook():
 
 
     @staticmethod
-    def will_on_move(board, move):
+    def will_on_move(move, board):
         """指し手は［振り飛車する意志］を残しているか？
         """
         ban = Ban(board)

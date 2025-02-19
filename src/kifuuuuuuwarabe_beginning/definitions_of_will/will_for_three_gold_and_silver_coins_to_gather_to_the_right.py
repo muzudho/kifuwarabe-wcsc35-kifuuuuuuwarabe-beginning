@@ -11,7 +11,7 @@ class WillForThreeGoldAndSilverCoinsToGatherToTheRight():
     """
 
     @staticmethod
-    def will_before_move(board, move):
+    def will_before_move(move, board):
         """［金銀３枚が右に集まる意志］があるか？
 
         先手から見て５筋と６筋の間にドアがあるとする。
