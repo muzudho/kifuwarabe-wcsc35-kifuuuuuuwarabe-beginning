@@ -2,7 +2,7 @@
 """
 import cshogi
 
-from .models import Square
+from .models import Masu, Square
 
 
 class Ban():
@@ -68,6 +68,49 @@ class Ban():
     def dan_range(self, start, end):
         return self.suji_range(start, end)      # 処理内容は同じ
 
+
+    def top_left(self, masu):
+        """左上
+        """
+
+        masu_obj = Masu(masu)
+
+        # １段目だ
+        if self.masu(masu) == self.dan(1):
+            return None
+
+        # ９列目だ
+        if self.suji(masu_obj.to_suji()) == self.suji(9):
+            return None
+
+        rel_sq = 8
+
+        if self.is_opponent_turn():
+            rel_sq *= -1
+
+        return self.masu(masu) + rel_sq
+
+
+    def bottom_right(self, masu):
+        """右下
+        """
+
+        masu_obj = Masu(masu)
+
+        # ９段目だ
+        if self.masu(masu) == self.dan(9):
+            return None
+
+        # １列目だ
+        if self.suji(masu_obj.to_suji()) == self.suji(1):
+            return None
+
+        rel_sq = -8
+
+        if self.is_opponent_turn():
+            rel_sq *= -1
+
+        return self.masu(masu) + rel_sq
 
 
 class Comparison():

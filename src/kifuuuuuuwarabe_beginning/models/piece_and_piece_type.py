@@ -1,3 +1,6 @@
+import cshogi
+
+
 class PieceType():
     """駒種類
     """
@@ -66,6 +69,15 @@ class Piece():
         'v竜',  # 16 + 14
     ]
 
+
     @classmethod
     def kanji(clazz, piece):
         return clazz._kanji_list[piece]
+
+
+    @staticmethod
+    def turn(piece):
+        if piece <= 16:
+            return cshogi.BLACK
+        
+        return cshogi.WHITE

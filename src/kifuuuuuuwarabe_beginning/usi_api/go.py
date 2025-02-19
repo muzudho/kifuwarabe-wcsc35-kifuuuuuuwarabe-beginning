@@ -150,15 +150,12 @@ class Go():
         # １手指してから判定
         for i in range(len(will_play_moves))[::-1]:
             m = will_play_moves[i]
-            board.push(m)   # １手指す
 
             # ［８八の角を素抜かれない意志］
             if config_doc['will']['will_to_take_the_piece_without_losing_anything']:
-                mind = WillToTakeThePieceWithoutLosingAnything.will_after_move(m, board)
+                mind = WillToTakeThePieceWithoutLosingAnything.will_move(m, board)
                 if mind == Mind.WILL_NOT:
                     del will_play_moves[i]
-
-            board.pop() # １手戻す
 
         return will_play_moves
 
