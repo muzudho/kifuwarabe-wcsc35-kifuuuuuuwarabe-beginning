@@ -53,12 +53,22 @@ class Table():
         return self._board.mate_move_in_1ply()
 
 
+    @property
+    def move_number(self):
+        return self._board.move_number
+
+
     #########
     # MARK: P
     #########
 
     def piece(self, sq):
         return self._board.piece(sq)
+
+
+    @property
+    def pieces_in_hand(self):
+        return self._board.pieces_in_hand
 
 
     def pop(self, usi):
@@ -88,7 +98,7 @@ class Table():
     def sfen(self):
         """平手初期局面からの棋譜が付いていない。指定局面の１手目の形になっている
         """
-        self._board.sfen()
+        return self._board.sfen()
 
 
     #########
@@ -97,4 +107,4 @@ class Table():
 
     @property
     def turn(self):
-        self._board.turn
+        return self._board.turn

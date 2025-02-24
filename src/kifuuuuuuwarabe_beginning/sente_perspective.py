@@ -10,19 +10,19 @@ class Ban():
     """
 
 
-    def __init__(self, board, after_moving=False):
+    def __init__(self, table, after_moving=False):
         """
         Parameters
         ----------
         after_moving : bool
             １手指した後か。（相手の番になっています）
         """
-        self._board = board
+        self._table = table
         self._after_moving = after_moving
 
 
     def is_opponent_turn(self):
-        return self._board.turn == cshogi.WHITE and not self._after_moving
+        return self._table.turn == cshogi.WHITE and not self._after_moving
 
 
     def masu(self, masu):
@@ -116,13 +116,13 @@ class Ban():
 class Comparison():
     """［比較］
     """
-    def __init__(self, board, after_moving=False):
-        self._board = board
+    def __init__(self, table, after_moving=False):
+        self._table = table
         self._after_moving = after_moving
 
 
     def is_opponent_turn(self):
-        return self._board.turn == cshogi.WHITE and not self._after_moving
+        return self._table.turn == cshogi.WHITE and not self._after_moving
 
 
     def swap(self, a, b):
@@ -137,13 +137,13 @@ class Ji():
     """
 
 
-    def __init__(self, board, after_moving=False):
-        self._board = board
+    def __init__(self, table, after_moving=False):
+        self._table = table
         self._after_moving = after_moving
 
 
     def is_opponent_turn(self):
-        return self._board.turn == cshogi.WHITE and not self._after_moving
+        return self._table.turn == cshogi.WHITE and not self._after_moving
 
 
     def pc(self, piece_type):

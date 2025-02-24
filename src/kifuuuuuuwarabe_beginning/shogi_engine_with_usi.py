@@ -21,8 +21,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         self._config_doc = config_doc
 
         # 盤
-        self._board = cshogi.Board()
-        self._table = Table(self._board)
+        self._table = Table(cshogi.Board())
 
 
     def start_usi_loop(self):
@@ -221,7 +220,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 
     def board(self, cmd):
-        board_view = TableView(board=self._table)
+        board_view = TableView(self._table)
         print(board_view.stringify())
 
 
@@ -324,8 +323,8 @@ class ShogiEngineCompatibleWithUSIProtocol():
         """
         from .sente_perspective import Ban, Helper, Ji
 
-        ji = Ji(self._table.raw_b)
-        ban = Ban(self._table.raw_b)
+        ji = Ji(self._table)
+        ban = Ban(self._table)
 
         # for suji in range(1, 10):
         #     for dan in range(1, 10):

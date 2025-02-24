@@ -25,12 +25,12 @@ class TableView():
     #     """
 
     #     # 指定局面（現局面）の SFEN を取得
-    #     # board#sfen() は 棋譜が付いていない
+    #     # sfen() は 棋譜が付いていない
     #     designated_sfen = self._table.sfen()
     #     print(f"{designated_sfen=}")
 
     #     # 盤を複製
-    #     copied_board = self._board.copy()
+    #     copied_board = self._table.copy()
     #     print(f"{copied_board=}")
 
     #     # 指し手をポップしていく
@@ -62,14 +62,14 @@ class TableView():
     def stringify(self):
 
         # 先手、後手の持ち駒の数のリスト
-        b = self._board.pieces_in_hand[0]
-        w = self._board.pieces_in_hand[1]
+        b = self._table.pieces_in_hand[0]
+        w = self._table.pieces_in_hand[1]
 
         repetition = 0      # self.count_repetition()
 
         blocks = []
         blocks.append(f"""\
-[ next {self._board.move_number} move(s) | {self.turn} | repetition {repetition} ]
+[ next {self._table.move_number} move(s) | {self.turn} | repetition {repetition} ]
 """)
         blocks.append(f"""\
 
