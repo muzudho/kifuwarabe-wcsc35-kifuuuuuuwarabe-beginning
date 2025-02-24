@@ -1,4 +1,4 @@
-class BoardView():
+class TableView():
     """盤表示
     """
 
@@ -17,7 +17,7 @@ class BoardView():
     def turn(self):
         """現在の手番を `black` か `white` で出力
         """
-        return BoardView._turns[self._table.turn]
+        return TableView._turns[self._table.turn]
 
 
     # def count_repetition(self):

@@ -5,7 +5,7 @@ import sys
 
 from .models import Table
 from .usi_api import Go
-from .views import BoardView
+from .views import TableView
 
 
 class ShogiEngineCompatibleWithUSIProtocol():
@@ -221,7 +221,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 
     def board(self, cmd):
-        board_view = BoardView(board=self._table)
+        board_view = TableView(board=self._table)
         print(board_view.stringify())
 
 

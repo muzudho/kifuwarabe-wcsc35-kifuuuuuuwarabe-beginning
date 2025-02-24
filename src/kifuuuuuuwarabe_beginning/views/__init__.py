@@ -1,1 +1,1 @@
-from .board_view import BoardView
+from .table_view import TableView
