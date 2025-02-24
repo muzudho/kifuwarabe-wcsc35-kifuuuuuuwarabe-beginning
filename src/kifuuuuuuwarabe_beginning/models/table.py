@@ -17,7 +17,6 @@ class Table():
     def __init__(self, designated_sfen, moves_as_usi):
         self._designated_sfen = designated_sfen
         self._board = cshogi.Board(self._designated_sfen)
-        print(f'★ {self._board.sfen()=}')
 
         # 指し手のリスト
         self._moves_as_usi = moves_as_usi
