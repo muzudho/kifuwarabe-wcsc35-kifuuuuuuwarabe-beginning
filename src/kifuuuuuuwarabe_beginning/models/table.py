@@ -32,6 +32,14 @@ class Table():
 
 
     #########
+    # MARK: I
+    #########
+
+    def king_square(self, turn):
+        return self._board.king_square(turn)
+
+
+    #########
     # MARK: L
     #########
 
@@ -61,13 +69,21 @@ class Table():
         return self._board.piece(sq)
 
 
+    def piece_type(self, sq):
+        return self._board.piece_type(sq)
+
+
     @property
     def pieces_in_hand(self):
         return self._board.pieces_in_hand
 
 
-    def pop(self, usi):
-        return self._board.pop(usi)
+    def pop(self):
+        return self._board.pop()
+
+
+    def push(self, move):
+        return self._board.push(move)
 
 
     def push_usi(self, usi):
