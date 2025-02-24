@@ -1,4 +1,4 @@
-class BoardWrapper():
+class Table():
     """cshogi の Board に付いていない機能を付加するラッパー
     """
 
@@ -10,6 +10,14 @@ class BoardWrapper():
     @property
     def raw_b(self):
         return self._board
+
+
+    #########
+    # MARK: C
+    #########
+
+    def copy(self):
+        return self._board.copy()
 
 
     #########
@@ -75,3 +83,18 @@ class BoardWrapper():
 
     def set_sfen(self, sfen):
         self._board.set_sfen(sfen)
+
+
+    def sfen(self):
+        """平手初期局面からの棋譜が付いていない。指定局面の１手目の形になっている
+        """
+        self._board.sfen()
+
+
+    #########
+    # MARK: T
+    #########
+
+    @property
+    def turn(self):
+        self._board.turn

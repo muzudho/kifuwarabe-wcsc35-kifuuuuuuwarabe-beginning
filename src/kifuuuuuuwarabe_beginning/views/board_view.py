@@ -9,15 +9,15 @@ class BoardView():
     ]
 
 
-    def __init__(self, board):
-        self._board = board
+    def __init__(self, table):
+        self._table = table
 
 
     @property
     def turn(self):
         """現在の手番を `black` か `white` で出力
         """
-        return BoardView._turns[self._board.turn]
+        return BoardView._turns[self._table.turn]
 
 
     # def count_repetition(self):
@@ -26,7 +26,7 @@ class BoardView():
 
     #     # 指定局面（現局面）の SFEN を取得
     #     # board#sfen() は 棋譜が付いていない
-    #     designated_sfen = self._board.sfen()
+    #     designated_sfen = self._table.sfen()
     #     print(f"{designated_sfen=}")
 
     #     # 盤を複製

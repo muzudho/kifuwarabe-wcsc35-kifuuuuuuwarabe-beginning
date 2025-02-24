@@ -3,7 +3,7 @@ import datetime
 import random
 import sys
 
-from .models import BoardWrapper
+from .models import Table
 from .usi_api import Go
 from .views import BoardView
 
@@ -22,7 +22,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
         # 盤
         self._board = cshogi.Board()
-        self._bw = BoardWrapper(self._board)
+        self._table = Table(self._board)
 
 
     def start_usi_loop(self):
@@ -131,29 +131,29 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
         # 平手初期局面に変更
         if sfen_text == 'startpos':
-            self._bw.reset()
+            self._table.reset()
 
         # 指定局面に変更
         elif sfen_text[:5] == 'sfen ':
-            self._bw.set_sfen(sfen_text[5:])
+            self._table.set_sfen(sfen_text[5:])
 
         # 棋譜再生
         for move_as_usi in moves_text_as_usi:
-            self._bw.push_usi(move_as_usi)
+            self._table.push_usi(move_as_usi)
 
 
     def go(self):
         """思考開始～最善手返却
         """
 
-        if self._bw.is_game_over():
+        if self._table.is_game_over():
             """投了局面時"""
 
             # 投了
             print(f'bestmove resign', flush=True)
             return
 
-        if self._bw.is_nyugyoku():
+        if self._table.is_nyugyoku():
             """入玉宣言局面時"""
 
             # 勝利宣言
@@ -161,10 +161,10 @@ class ShogiEngineCompatibleWithUSIProtocol():
             return
 
         # 一手詰めを詰める
-        if not self._bw.is_check():
+        if not self._table.is_check():
             """自玉に王手がかかっていない時で"""
 
-            if (matemove := self._bw.mate_move_in_1ply()):
+            if (matemove := self._table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
 
                 best_move = cshogi.move_to_usi(matemove)
@@ -175,13 +175,13 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
         will_play_moves = Go.get_will_play_moves(
                 config_doc=self._config_doc,
-                board=self._bw.raw_b,
-                will_play_moves=list(self._bw.legal_moves))
+                board=self._table.raw_b,
+                will_play_moves=list(self._table.legal_moves))
 
 
         # 指し手が全部消えてしまった場合、何でも指すようにします
         if len(will_play_moves) < 1:
-            will_play_moves = list(self._bw.legal_moves)
+            will_play_moves = list(self._table.legal_moves)
 
 
         # １手指す（投了のケースは対応済みなので、ここで対応しなくていい）
@@ -221,7 +221,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 
     def board(self, cmd):
-        board_view = BoardView(board=self._bw.raw_b)
+        board_view = BoardView(board=self._table)
         print(board_view.stringify())
 
 
@@ -230,28 +230,28 @@ class ShogiEngineCompatibleWithUSIProtocol():
         example: ７六歩
             code: do 7g7f
         """
-        self._bw.push_usi(cmd[1])
+        self._table.push_usi(cmd[1])
 
 
     def undo(self):
         """一手戻す
             code: undo
         """
-        self._bw.pop()
+        self._table.pop()
 
 
     def test_will(self):
         """テスト
         """
 
-        if self._bw.is_game_over():
+        if self._table.is_game_over():
             """投了局面時"""
 
             # 投了
             print(f'bestmove resign', flush=True)
             return
 
-        if self._bw.is_nyugyoku():
+        if self._table.is_nyugyoku():
             """入玉宣言局面時"""
 
             # 勝利宣言
@@ -259,10 +259,10 @@ class ShogiEngineCompatibleWithUSIProtocol():
             return
 
         # 一手詰めを詰める
-        if not self._bw.is_check():
+        if not self._table.is_check():
             """自玉に王手がかかっていない時で"""
 
-            if (matemove := self._bw.mate_move_in_1ply()):
+            if (matemove := self._table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
 
                 best_move = cshogi.move_to_usi(matemove)
@@ -280,13 +280,13 @@ class ShogiEngineCompatibleWithUSIProtocol():
             print(f'----ここまで----', flush=True, file=sys.stderr)
 
 
-        will_play_moves = list(self._bw.legal_moves)
+        will_play_moves = list(self._table.legal_moves)
 
 
         print(f'★ go: ［３七の歩を突かない意志］を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
         will_play_moves = Go.get_will_not_to_move_37_pawn(
                 config_doc=self._config_doc,
-                board=self._bw.raw_b,
+                board=self._table.raw_b,
                 will_play_moves=will_play_moves)
         print(f'★ go: ［３七の歩を突かない意志］を残してるか尋ねた後の指し手数={len(will_play_moves)}', file=sys.stderr)
         print_moves(will_play_moves)
@@ -295,7 +295,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         print(f'★ go: ［右壁を作らない意志］を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
         will_play_moves = Go.get_will_not_to_build_right_wall(
                 config_doc=self._config_doc,
-                board=self._bw.raw_b,
+                board=self._table.raw_b,
                 will_play_moves=will_play_moves)
         print(f'★ go: ［右壁を作らない意志］を残してるか尋ねた後の指し手数={len(will_play_moves)}', file=sys.stderr)
         print_moves(will_play_moves)
@@ -304,7 +304,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         print(f'★ go: ［振り飛車する意志］を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
         will_play_moves = Go.get_will_swinging_rook(
                 config_doc=self._config_doc,
-                board=self._bw.raw_b,
+                board=self._table.raw_b,
                 will_play_moves=will_play_moves)
         print(f'★ go: ［振り飛車する意志］を残してるか尋ねた後の指し手数={len(will_play_moves)}', file=sys.stderr)
         print_moves(will_play_moves)
@@ -313,7 +313,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         print(f'★ go: ［８八の角を素抜かれない意志］を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
         will_play_moves = Go.get_will_not_to_be_cut_88_bishop(
                 config_doc=self._config_doc,
-                board=self._bw.raw_b,
+                board=self._table.raw_b,
                 will_play_moves=will_play_moves)
         print(f'★ go: ［８八の角を素抜かれない意志］を残してるか尋ねた後の指し手数={len(will_play_moves)}', file=sys.stderr)
         print_moves(will_play_moves)
@@ -324,8 +324,8 @@ class ShogiEngineCompatibleWithUSIProtocol():
         """
         from .sente_perspective import Ban, Helper, Ji
 
-        ji = Ji(self._bw.raw_b)
-        ban = Ban(self._bw.raw_b)
+        ji = Ji(self._table.raw_b)
+        ban = Ban(self._table.raw_b)
 
         # for suji in range(1, 10):
         #     for dan in range(1, 10):
@@ -335,17 +335,17 @@ class ShogiEngineCompatibleWithUSIProtocol():
         if ji.pc(cshogi.BISHOP) != cshogi.BBISHOP:
             raise ValueError('先手の角')
 
-        self._bw.push_usi('7g7f')
+        self._table.push_usi('7g7f')
 
         if ji.pc(cshogi.BISHOP) != cshogi.WBISHOP:
             raise ValueError('後手の角')
 
-        # if self._bw.piece(ban.masu(88)) == ji.pc(cshogi.BISHOP):
+        # if self._table.piece(ban.masu(88)) == ji.pc(cshogi.BISHOP):
         #     print('８八は自角だ')
         # else:
-        #     print(f'８八は自角でない {self._bw.piece(ban.masu(88))} {ji.pc(cshogi.BISHOP)=}')
+        #     print(f'８八は自角でない {self._table.piece(ban.masu(88))} {ji.pc(cshogi.BISHOP)=}')
 
-        # if self._bw.piece(ban.masu(79)) == ji.pc(cshogi.SILVER):
+        # if self._table.piece(ban.masu(79)) == ji.pc(cshogi.SILVER):
         #     print('７九は自銀だ')
         # else:
         #     print(f'７九は自銀でない')
