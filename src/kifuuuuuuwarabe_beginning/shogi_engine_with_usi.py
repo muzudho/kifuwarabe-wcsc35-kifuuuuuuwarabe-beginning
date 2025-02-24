@@ -331,13 +331,13 @@ class ShogiEngineCompatibleWithUSIProtocol():
         #         masu = Helper.suji_dan_to_masu(suji, dan)
         #         print(f'{masu=:2} {ban.masu(masu)=:2}')
 
-        if ji.pc(cshogi.BISHOP) != cshogi.BBISHOP:
-            raise ValueError('先手の角')
+        # if ji.pc(cshogi.BISHOP) != cshogi.BBISHOP:
+        #     raise ValueError('先手の角')
 
-        self._table.push_usi('7g7f')
+        # self._table.push_usi('7g7f')
 
-        if ji.pc(cshogi.BISHOP) != cshogi.WBISHOP:
-            raise ValueError('後手の角')
+        # if ji.pc(cshogi.BISHOP) != cshogi.WBISHOP:
+        #     raise ValueError('後手の角')
 
         # if self._table.piece(ban.masu(88)) == ji.pc(cshogi.BISHOP):
         #     print('８八は自角だ')
@@ -349,6 +349,16 @@ class ShogiEngineCompatibleWithUSIProtocol():
         # else:
         #     print(f'７九は自銀でない')
 
-        table = self._table.copy_table()
-        table_view = TableView(table=table)
-        print(table_view.stringify())
+        print(f"{self._table.sfen()=}")
+
+        # 盤を複製
+        copied_table = self._table.copy_table_as_designated_position()
+        table_view = TableView(table=copied_table)
+        print(table_view.stringify())   # 平手初期局面に戻ってる
+
+        # 指定局面（現局面）の SFEN を取得（棋譜は付いていない）
+        designated_sfen = copied_table.sfen()
+        print(f"コピー盤 {designated_sfen=}")
+
+        moves_as_usi = copied_table.copy_moves_as_usi()
+        print(f"{moves_as_usi=}")

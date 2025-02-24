@@ -36,7 +36,8 @@ class Table():
         return list(self._moves_as_usi)
 
 
-    def copy_table(self):
+    def copy_table_as_designated_position(self):
+        """テーブルのコピー。ただし、指定局面の１手目に戻っている"""
         return Table(
                 designated_sfen=self.designated_sfen,
                 moves_as_usi=self.copy_moves_as_usi())

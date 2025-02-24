@@ -23,16 +23,16 @@ class TableView():
         return TableView._turns[self._table.turn]
 
 
-    # def count_repetition(self):
-    #     """現局面が何回出現したかを数えます
-    #     """
+    def count_repetition(self):
+        """TODO 現局面が何回出現したかを数えます
+        """
 
-    #     # 指定局面（現局面）の SFEN を取得（棋譜は付いていない）
-    #     designated_sfen = self._table.sfen()
-    #     print(f"{designated_sfen=}")
+        # 指定局面（現局面）の SFEN を取得（棋譜は付いていない）
+        designated_sfen = self._table.sfen()
+        print(f"{designated_sfen=}")
 
-    #     # 盤を複製
-    #     copied_table = self._table.copy_table()
+        # 盤を複製
+        copied_table = self._table.copy_table_as_designated_position()
 
     #     # 指し手をポップしていく
     #     print(f"{copied_table.move_number=}")
