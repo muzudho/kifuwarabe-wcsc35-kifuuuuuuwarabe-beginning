@@ -15,6 +15,13 @@ position sfen 3gk4/1r5b1/9/9/9/9/9/1B5R1/1NSGKGS2 b 13Pg2s3n4l5p 1
 ```
 
 
+## 千日手テスト
+
+```
+position sfen lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 14
+```
+
+
 ## 歩を突き捨てないテスト
 
 ```

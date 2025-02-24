@@ -15,7 +15,48 @@ class BoardView():
 
     @property
     def turn(self):
+        """現在の手番を `black` か `white` で出力
+        """
         return BoardView._turns[self._board.turn]
+
+
+    # def count_repetition(self):
+    #     """現局面が何回出現したかを数えます
+    #     """
+
+    #     # 指定局面（現局面）の SFEN を取得
+    #     # board#sfen() は 棋譜が付いていない
+    #     designated_sfen = self._board.sfen()
+    #     print(f"{designated_sfen=}")
+
+    #     # 盤を複製
+    #     copied_board = self._board.copy()
+    #     print(f"{copied_board=}")
+
+    #     # 指し手をポップしていく
+    #     print(f"{copied_board.move_number=}")
+    #     moves_list = []
+    #     moves_list.append(copied_board.pop_usi())
+    #     print(f"{copied_board.move_number=}")
+    #     while 1 < copied_board.move_number:
+    #         # copied_board.pop() を使うと強制終了する？
+    #         moves_list.append(copied_board.pop())
+    #         print(f"{copied_board.move_number=}")
+        
+    #     # print(f"{len(moves_list)=}")
+    #     # print(f"{moves_list=}")
+
+    #     # # 指していく
+    #     # repetition = 0
+    #     # for i in reversed(range(0, len(moves_list))):
+    #     #     m = moves_list[i]
+    #     #     copied_board.push(m)
+
+    #     #     # 指定局面の出現回数をカウント
+    #     #     if board.sfen() == designated_sfen:
+    #     #         repetition += 1
+
+    #     # return repetition
 
 
     def stringify(self):
@@ -24,9 +65,11 @@ class BoardView():
         b = self._board.pieces_in_hand[0]
         w = self._board.pieces_in_hand[1]
 
+        repetition = 0      # self.count_repetition()
+
         blocks = []
         blocks.append(f"""\
-[ next {self._board.move_number} move(s) | {self.turn} | repetition 0 ]
+[ next {self._board.move_number} move(s) | {self.turn} | repetition {repetition} ]
 """)
         blocks.append(f"""\
 
