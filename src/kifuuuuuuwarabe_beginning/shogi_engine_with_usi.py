@@ -4,6 +4,7 @@ import random
 import sys
 
 from .usi_api import Go
+from .views import BoardView
 
 
 class ShogiEngineCompatibleWithUSIProtocol():
@@ -64,6 +65,12 @@ class ShogiEngineCompatibleWithUSIProtocol():
                 break
 
             # 以下、独自拡張
+            # --------------
+
+            # 盤表示
+            #       code: board
+            elif cmd[0] == 'board':
+                self.board(cmd)
 
             # 一手指す
             # example: ７六歩
@@ -209,6 +216,11 @@ class ShogiEngineCompatibleWithUSIProtocol():
             # その他
             else:
                 print(f"（・＿・）何だろな？：'{cmd[1]}'")
+
+
+    def board(self, cmd):
+        board_view = BoardView(board=self._board)
+        print(board_view.stringify())
 
 
     def do(self, cmd):
