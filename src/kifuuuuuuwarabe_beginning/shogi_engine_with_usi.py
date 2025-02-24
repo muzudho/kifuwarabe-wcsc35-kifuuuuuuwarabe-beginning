@@ -21,7 +21,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         self._config_doc = config_doc
 
         # 盤
-        self._table = Table(cshogi.Board())
+        self._table = Table.create_table()
 
 
     def start_usi_loop(self):
@@ -349,3 +349,6 @@ class ShogiEngineCompatibleWithUSIProtocol():
         # else:
         #     print(f'７九は自銀でない')
 
+        table = self._table.copy_table()
+        table_view = TableView(table=table)
+        print(table_view.stringify())

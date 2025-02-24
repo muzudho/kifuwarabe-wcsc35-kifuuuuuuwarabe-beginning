@@ -1,18 +1,46 @@
+import cshogi
+
+
 class Table():
     """cshogi の Board に付いていない機能を付加するラッパー
     """
 
 
-    def __init__(self, board):
-        self._board = board
+    @staticmethod
+    def create_table():
+        return Table(
+                # 平手指定局面を明示
+                designated_sfen='lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1',
+                moves_as_usi=[])
 
 
-    #########
-    # MARK: C
-    #########
+    def __init__(self, designated_sfen, moves_as_usi):
+        self._designated_sfen = designated_sfen
+        self._board = cshogi.Board(self._designated_sfen)
+        print(f'★ {self._board.sfen()=}')
 
-    def copy(self):
-        return self._board.copy()
+        # 指し手のリスト
+        self._moves_as_usi = moves_as_usi
+
+
+    @property
+    def designated_sfen(self):
+        """指定局面"""
+        return self._designated_sfen
+
+
+    # #########
+    # # MARK: C
+    # #########
+
+    def copy_moves_as_usi(self):
+        return list(self._moves_as_usi)
+
+
+    def copy_table(self):
+        return Table(
+                designated_sfen=self.designated_sfen,
+                moves_as_usi=self.copy_moves_as_usi())
 
 
     #########
@@ -79,14 +107,17 @@ class Table():
 
 
     def pop(self):
+        self._moves_as_usi.pop()
         return self._board.pop()
 
 
     def push(self, move):
+        self._moves_as_usi.append(cshogi.move_to_usi(move))
         return self._board.push(move)
 
 
     def push_usi(self, usi):
+        self._moves_as_usi.append(usi)
         return self._board.push_usi(usi)
 
 
