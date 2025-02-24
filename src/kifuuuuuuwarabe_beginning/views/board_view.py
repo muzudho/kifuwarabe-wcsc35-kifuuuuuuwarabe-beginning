@@ -8,6 +8,11 @@ class BoardView():
 
 
     def stringify(self):
+
+        # 持ち駒の数
+        b = self._board.pieces_in_hand[0]
+        w = self._board.pieces_in_hand[1]
+
         blocks = []
         blocks.append(f"""\
 [ next 1 move(s) | black | repetition 0 ]
@@ -15,7 +20,7 @@ class BoardView():
         blocks.append(f"""\
 
 飛 角 金 銀 桂 香 歩
- 0  0  0  0  0  0  0
+ {w[6]}  {w[5]}  {w[4]}  {w[3]}  {w[2]}  {w[1]} {w[0]:2}
  -  -  -  -  -  - --
 
 """)
@@ -44,7 +49,7 @@ class BoardView():
 """)
         blocks.append(f"""\
                  飛 角 金 銀 桂 香 歩
-                  0  0  0  0  0  0  0
+                  {b[6]}  {b[5]}  {b[4]}  {b[3]}  {b[2]}  {b[1]} {b[0]:2}
                   -  -  -  -  -  - -- 
 
 """)
