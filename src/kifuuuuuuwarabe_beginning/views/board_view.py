@@ -3,19 +3,30 @@ class BoardView():
     """
 
 
+    _turns = [
+        'black',
+        'white'
+    ]
+
+
     def __init__(self, board):
         self._board = board
 
 
+    @property
+    def turn(self):
+        return BoardView._turns[self._board.turn]
+
+
     def stringify(self):
 
-        # 持ち駒の数
+        # 先手、後手の持ち駒の数のリスト
         b = self._board.pieces_in_hand[0]
         w = self._board.pieces_in_hand[1]
 
         blocks = []
         blocks.append(f"""\
-[ next 1 move(s) | black | repetition 0 ]
+[ next {self._board.move_number} move(s) | {self.turn} | repetition 0 ]
 """)
         blocks.append(f"""\
 
