@@ -7,11 +7,6 @@ class Table():
         self._board = board
 
 
-    @property
-    def raw_b(self):
-        return self._board
-
-
     #########
     # MARK: C
     #########

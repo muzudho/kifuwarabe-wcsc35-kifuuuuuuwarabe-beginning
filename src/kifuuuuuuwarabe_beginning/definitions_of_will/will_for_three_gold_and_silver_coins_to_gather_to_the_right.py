@@ -11,15 +11,15 @@ class WillForThreeGoldAndSilverCoinsToGatherToTheRight():
     """
 
     @staticmethod
-    def will_before_move(move, board):
+    def will_before_move(move, table):
         """［金銀３枚が右に集まる意志］があるか？
 
         先手から見て５筋と６筋の間にドアがあるとする。
         ５筋位左にある金銀が左へ移動するとき、６筋位左に自駒の金銀が０枚である場合のみ移動できる。
         """
 
-        ban = Ban(board)
-        cmp = Comparison(board)
+        ban = Ban(table)
+        cmp = Comparison(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
         dst_sq_obj = Square(cshogi.move_to(move))
@@ -42,7 +42,7 @@ class WillForThreeGoldAndSilverCoinsToGatherToTheRight():
         count = 0
 
         for sq in left_from_6_suji:
-            pc = board.piece(sq)
+            pc = table.piece(sq)
 
             pt = cshogi.piece_to_piece_type(pc)
             if pt not in [cshogi.GOLD, cshogi.SILVER]:
@@ -53,7 +53,7 @@ class WillForThreeGoldAndSilverCoinsToGatherToTheRight():
             else:
                 color = cshogi.WHITE
 
-            if board.turn != color:
+            if table.turn != color:
                 continue
 
             count += 1

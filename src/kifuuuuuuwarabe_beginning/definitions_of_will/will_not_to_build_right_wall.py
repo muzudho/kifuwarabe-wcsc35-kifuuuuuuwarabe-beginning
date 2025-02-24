@@ -14,13 +14,13 @@ class WillNotToBuildRightWall():
 
 
     @staticmethod
-    def will_play_before_move(move, board):
+    def will_play_before_move(move, table):
         """指し手は［右壁を作らない意志］を残しているか？
 
         定義：　玉の右側の全ての筋について、８段目、９段目の両方に駒がある状態を［右壁］とする。
         """
-        ban = Ban(board)
-        cmp = Comparison(board)
+        ban = Ban(table)
+        cmp = Comparison(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
         dst_sq_obj = Square(cshogi.move_to(move))
@@ -31,7 +31,7 @@ class WillNotToBuildRightWall():
             #print(f'★ 玉の指し手は対象外')
             return Mind.NOT_IN_THIS_CASE
 
-        k_sq_obj = Square(board.king_square(board.turn))     # 自玉
+        k_sq_obj = Square(table.king_square(table.turn))     # 自玉
         #print(f'★ {k_sq_obj.file=} {ban.suji(1)=}')
 
         # 玉が１筋にいるなら対象外
@@ -73,7 +73,7 @@ class WillNotToBuildRightWall():
         # 道が空いているか？
         is_empty = False
         for sq in right_side_of_k:
-            if (board.piece(sq) == cshogi.NONE
+            if (table.piece(sq) == cshogi.NONE
                     # 👇 香車が９段目から８段目に上がるのを右壁と誤認するのを防ぐ
                     or sq == src_sq_obj.sq):
                 #print(f'D: 道が空いている')

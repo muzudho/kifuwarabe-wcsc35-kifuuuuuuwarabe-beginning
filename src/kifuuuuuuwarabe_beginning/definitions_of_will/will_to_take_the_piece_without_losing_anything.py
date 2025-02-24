@@ -11,7 +11,7 @@ class WillToTakeThePieceWithoutLosingAnything():
     """
 
     @staticmethod
-    def will_move(move, board):
+    def will_move(move, table):
         """指し手は［駒取って損しない意志］を残しているか？
         """
 
@@ -27,7 +27,7 @@ class WillToTakeThePieceWithoutLosingAnything():
         dst_sq = cshogi.move_to(move)
 
         # そこに駒はあるか？
-        cap = board.piece(dst_sq)
+        cap = table.piece(dst_sq)
         #print(f'★ will_to_take_the_piece_without_losing_anything.will_move: {Piece.kanji(cap)=}')
 
         # 取った駒が無ければ、対象外
@@ -42,21 +42,21 @@ class WillToTakeThePieceWithoutLosingAnything():
             return Mind.NOT_IN_THIS_CASE
         
 
-        board.push(move)   # １手指す
+        table.push(move)   # １手指す
 
         mind = WillToTakeThePieceWithoutLosingAnything.will_after_move(
                 move=move,
                 cap_sq=dst_sq,
                 cap_type=cap_type,
-                board=board)
+                table=table)
 
-        board.pop() # １手戻す
+        table.pop() # １手戻す
 
         return mind
 
 
     @staticmethod
-    def will_after_move(move, cap_sq, cap_type, board):
+    def will_after_move(move, cap_sq, cap_type, table):
         """
         Parameters
         ----------
@@ -65,8 +65,8 @@ class WillToTakeThePieceWithoutLosingAnything():
         """
 
         # NOTE 指した後は相手の番になっていることに注意
-        ban = Ban(board, after_moving=True)
-        ji = Ji(board, after_moving=True)
+        ban = Ban(table, after_moving=True)
+        ji = Ji(table, after_moving=True)
 
 
         # TODO 角が取り返される危険性のチェック
@@ -82,10 +82,10 @@ class WillToTakeThePieceWithoutLosingAnything():
             return Mind.WILL_NOT
 
         # 敵角があるか？
-        pc2 = board.piece(bottom_right_sq)
+        pc2 = table.piece(bottom_right_sq)
         pt2 = cshogi.piece_to_piece_type(pc2)
 
-        if board.turn == Piece.turn(pc2):
+        if table.turn == Piece.turn(pc2):
             if pt2 == cshogi.BISHOP:
                 # 角で取り返される。意志なし
                 return Mind.WILL_NOT

@@ -174,7 +174,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
         will_play_moves = Go.get_will_play_moves(
                 config_doc=self._config_doc,
-                board=self._table.raw_b,
+                table=self._table,
                 will_play_moves=list(self._table.legal_moves))
 
 
@@ -285,7 +285,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         print(f'★ go: ［３七の歩を突かない意志］を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
         will_play_moves = Go.get_will_not_to_move_37_pawn(
                 config_doc=self._config_doc,
-                board=self._table.raw_b,
+                table=self._table,
                 will_play_moves=will_play_moves)
         print(f'★ go: ［３七の歩を突かない意志］を残してるか尋ねた後の指し手数={len(will_play_moves)}', file=sys.stderr)
         print_moves(will_play_moves)
@@ -294,7 +294,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         print(f'★ go: ［右壁を作らない意志］を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
         will_play_moves = Go.get_will_not_to_build_right_wall(
                 config_doc=self._config_doc,
-                board=self._table.raw_b,
+                table=self._table,
                 will_play_moves=will_play_moves)
         print(f'★ go: ［右壁を作らない意志］を残してるか尋ねた後の指し手数={len(will_play_moves)}', file=sys.stderr)
         print_moves(will_play_moves)
@@ -303,7 +303,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         print(f'★ go: ［振り飛車する意志］を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
         will_play_moves = Go.get_will_swinging_rook(
                 config_doc=self._config_doc,
-                board=self._table.raw_b,
+                table=self._table,
                 will_play_moves=will_play_moves)
         print(f'★ go: ［振り飛車する意志］を残してるか尋ねた後の指し手数={len(will_play_moves)}', file=sys.stderr)
         print_moves(will_play_moves)
@@ -312,7 +312,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         print(f'★ go: ［８八の角を素抜かれない意志］を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
         will_play_moves = Go.get_will_not_to_be_cut_88_bishop(
                 config_doc=self._config_doc,
-                board=self._table.raw_b,
+                table=self._table,
                 will_play_moves=will_play_moves)
         print(f'★ go: ［８八の角を素抜かれない意志］を残してるか尋ねた後の指し手数={len(will_play_moves)}', file=sys.stderr)
         print_moves(will_play_moves)

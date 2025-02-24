@@ -12,12 +12,12 @@ class WillToClearWayOfRook():
 
 
     @staticmethod
-    def will_before_move(move, board):
+    def will_before_move(move, table):
         """指し手は［飛車道を開ける意志］を残しているか？
         """
-        ban = Ban(board)
-        cmp = Comparison(board)
-        ji = Ji(board)
+        ban = Ban(table)
+        cmp = Comparison(table)
+        ji = Ji(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
         dst_sq_obj = Square(cshogi.move_to(move))
@@ -25,7 +25,7 @@ class WillToClearWayOfRook():
 
 
         # 飛車が２八にいなければ、対象外
-        if board.piece(ban.masu(28)) != ji.pc(cshogi.ROOK):
+        if table.piece(ban.masu(28)) != ji.pc(cshogi.ROOK):
             return Mind.NOT_IN_THIS_CASE
 
 
