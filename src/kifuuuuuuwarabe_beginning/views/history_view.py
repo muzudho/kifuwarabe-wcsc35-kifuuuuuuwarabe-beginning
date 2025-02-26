@@ -10,9 +10,11 @@ class HistoryView():
     def stringify(self):
         piece_moved_list = self._table.copy_piece_moved_list()
 
-        accumulated_list = ["""\
+        accumulated_list = [f"""\
 HISTORY
--------"""]
+-------
+      {self._table.designated_sfen}"""]
+
         for piece_moved in piece_moved_list:
             accumulated_list.append(f"{piece_moved.move_as_usi:<5} {piece_moved.sfen_with_0_moves}")
 
