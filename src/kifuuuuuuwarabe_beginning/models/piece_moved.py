@@ -9,6 +9,9 @@ class PieceMoved():
         self._move_as_usi = move_as_usi
         self._sfen_with_0_moves = sfen_with_0_moves
 
+        # TODO 同形局面反復回数
+        self._number_of_repetition = 0
+
 
     @property
     def move_as_usi(self):
@@ -20,3 +23,10 @@ class PieceMoved():
         """同形反復回数を数えるのに利用する
         """
         return self._sfen_with_0_moves
+
+
+    @property
+    def number_of_repetition(self):
+        """同形反復回数
+        """
+        return self._number_of_repetition
