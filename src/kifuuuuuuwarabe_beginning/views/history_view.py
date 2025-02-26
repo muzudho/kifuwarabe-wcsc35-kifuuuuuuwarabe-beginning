@@ -14,6 +14,6 @@ class HistoryView():
 HISTORY
 -------"""]
         for piece_moved in piece_moved_list:
-            accumulated_list.append(piece_moved.move_as_usi)
+            accumulated_list.append(f"{piece_moved.move_as_usi:<5} {piece_moved.sfen_with_0_moves}")
 
         return '\n'.join(accumulated_list)
