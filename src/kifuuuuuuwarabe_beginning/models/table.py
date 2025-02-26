@@ -1,5 +1,7 @@
 import cshogi
 
+from .piece_moved import PieceMoved
+
 
 class Table():
     """cshogi の Board に付いていない機能を付加するラッパー
@@ -21,6 +23,9 @@ class Table():
         # 指し手のリスト
         self._move_list_as_usi = move_list_as_usi
 
+        # 局面の重複を調べるために、０手の SFEN をリストで持ちたい
+        self._piece_moved_list = []
+
 
     @property
     def designated_sfen(self):
@@ -32,11 +37,15 @@ class Table():
     # # MARK: C
     # #########
 
+    def copy_piece_moved_list(self):
+        return list(self._piece_moved_list)
+
+
     def copy_move_list_as_usi(self):
         return list(self._move_list_as_usi)
 
 
-    def copy_table_as_designated_position(self):
+    def copy_table_with_0_moves(self):
         """テーブルのコピー。ただし、指定局面の１手目に戻っている"""
         return Table(
                 designated_sfen=self.designated_sfen,
@@ -108,16 +117,26 @@ class Table():
 
     def pop(self):
         self._move_list_as_usi.pop()
+        self._piece_moved_list.pop()
+
         return self._board.pop()
 
 
     def push(self, move):
         self._move_list_as_usi.append(cshogi.move_to_usi(move))
+        self._piece_moved_list.append(PieceMoved(
+                move_as_usi=cshogi.move_to_usi(move),
+                sfen_with_0_moves=None))
+
         return self._board.push(move)
 
 
     def push_usi(self, usi):
         self._move_list_as_usi.append(usi)
+        self._piece_moved_list.append(PieceMoved(
+                move_as_usi=usi,
+                sfen_with_0_moves=None))
+
         return self._board.push_usi(usi)
 
 

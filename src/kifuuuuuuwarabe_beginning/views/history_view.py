@@ -8,10 +8,12 @@ class HistoryView():
 
 
     def stringify(self):
-        move_list_as_usi = self._table.copy_move_list_as_usi()
+        piece_moved_list = self._table.copy_piece_moved_list()
 
-        accumulated_list = []
-        for move_as_usi in move_list_as_usi:
-            accumulated_list.append(move_as_usi)
+        accumulated_list = ["""\
+HISTORY
+-------"""]
+        for piece_moved in piece_moved_list:
+            accumulated_list.append(piece_moved.move_as_usi)
 
         return '\n'.join(accumulated_list)

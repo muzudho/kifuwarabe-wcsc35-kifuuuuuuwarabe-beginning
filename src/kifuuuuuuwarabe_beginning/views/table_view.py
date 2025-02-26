@@ -32,7 +32,7 @@ class TableView():
         print(f"{designated_sfen=}")
 
         # 盤を複製
-        copied_table = self._table.copy_table_as_designated_position()
+        copied_table = self._table.copy_table_with_0_moves()
 
     #     # 指し手をポップしていく
     #     print(f"{copied_table.move_number=}")

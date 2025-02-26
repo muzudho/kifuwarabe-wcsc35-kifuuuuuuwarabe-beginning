@@ -239,7 +239,10 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
     def history(self, cmd):
         history_view = HistoryView(self._table)
-        print(history_view.stringify())
+        print(f"""\
+
+{history_view.stringify()}
+""")
 
 
     def undo(self):
@@ -362,7 +365,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         print(f"{self._table.sfen()=}")
 
         # 盤を複製
-        copied_table = self._table.copy_table_as_designated_position()
+        copied_table = self._table.copy_table_with_0_moves()
         table_view = TableView(table=copied_table)
         print(table_view.stringify())   # 平手初期局面に戻ってる
 
