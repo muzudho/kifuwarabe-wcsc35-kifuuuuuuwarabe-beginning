@@ -373,5 +373,5 @@ class ShogiEngineCompatibleWithUSIProtocol():
         designated_sfen = copied_table.sfen()
         print(f"コピー盤 {designated_sfen=}")
 
-        move_list_as_usi = copied_table.copy_move_list_as_usi()
-        print(f"{move_list_as_usi=}")
+        piece_moved_list = copied_table.copy_piece_moved_list()
+        print(f"{piece_moved_list=}")
