@@ -5,7 +5,7 @@ import sys
 
 from .models import Table
 from .usi_api import Go
-from .views import TableView
+from .views import HistoryView, TableView
 
 
 class ShogiEngineCompatibleWithUSIProtocol():
@@ -72,6 +72,11 @@ class ShogiEngineCompatibleWithUSIProtocol():
             #       code: board
             elif cmd[0] == 'board':
                 self.board(cmd)
+
+            # 棋譜表示
+            #       code: history
+            elif cmd[0] == 'history':
+                self.history(cmd)
 
             # 一手指す
             # example: ７六歩
@@ -232,6 +237,11 @@ class ShogiEngineCompatibleWithUSIProtocol():
         self._table.push_usi(cmd[1])
 
 
+    def history(self, cmd):
+        history_view = HistoryView(self._table)
+        print(history_view.stringify())
+
+
     def undo(self):
         """一手戻す
             code: undo
@@ -360,5 +370,5 @@ class ShogiEngineCompatibleWithUSIProtocol():
         designated_sfen = copied_table.sfen()
         print(f"コピー盤 {designated_sfen=}")
 
-        moves_as_usi = copied_table.copy_moves_as_usi()
-        print(f"{moves_as_usi=}")
+        move_list_as_usi = copied_table.copy_move_list_as_usi()
+        print(f"{move_list_as_usi=}")

@@ -11,15 +11,15 @@ class Table():
         return Table(
                 # 平手指定局面を明示
                 designated_sfen='lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1',
-                moves_as_usi=[])
+                move_list_as_usi=[])
 
 
-    def __init__(self, designated_sfen, moves_as_usi):
+    def __init__(self, designated_sfen, move_list_as_usi):
         self._designated_sfen = designated_sfen
         self._board = cshogi.Board(self._designated_sfen)
 
         # 指し手のリスト
-        self._moves_as_usi = moves_as_usi
+        self._move_list_as_usi = move_list_as_usi
 
 
     @property
@@ -32,15 +32,15 @@ class Table():
     # # MARK: C
     # #########
 
-    def copy_moves_as_usi(self):
-        return list(self._moves_as_usi)
+    def copy_move_list_as_usi(self):
+        return list(self._move_list_as_usi)
 
 
     def copy_table_as_designated_position(self):
         """テーブルのコピー。ただし、指定局面の１手目に戻っている"""
         return Table(
                 designated_sfen=self.designated_sfen,
-                moves_as_usi=self.copy_moves_as_usi())
+                move_list_as_usi=self.copy_move_list_as_usi())
 
 
     #########
@@ -107,17 +107,17 @@ class Table():
 
 
     def pop(self):
-        self._moves_as_usi.pop()
+        self._move_list_as_usi.pop()
         return self._board.pop()
 
 
     def push(self, move):
-        self._moves_as_usi.append(cshogi.move_to_usi(move))
+        self._move_list_as_usi.append(cshogi.move_to_usi(move))
         return self._board.push(move)
 
 
     def push_usi(self, usi):
-        self._moves_as_usi.append(usi)
+        self._move_list_as_usi.append(usi)
         return self._board.push_usi(usi)
 
 
