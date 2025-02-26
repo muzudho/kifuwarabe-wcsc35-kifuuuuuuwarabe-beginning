@@ -114,14 +114,17 @@ class Table():
 
 
     def push(self, move):
-        result = self._board.push(move)
+        move_as_usi = cshogi.move_to_usi(move)
+        self.push_usi(move_as_usi)
 
-        # 指した後に記録
-        self._piece_moved_list.append(PieceMoved(
-                move_as_usi=cshogi.move_to_usi(move),
-                sfen_with_0_moves=self._board.sfen()))    # 指した後の sfen を記憶
+        # result = self._board.push(move)
 
-        return result
+        # # 指した後に記録
+        # self._piece_moved_list.append(PieceMoved(
+        #         move_as_usi=cshogi.move_to_usi(move),
+        #         sfen_with_0_moves=self._board.sfen()))    # 指した後の sfen を記憶
+
+        # return result
 
 
     def push_usi(self, usi):
