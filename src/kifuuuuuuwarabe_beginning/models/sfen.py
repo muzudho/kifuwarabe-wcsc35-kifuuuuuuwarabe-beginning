@@ -70,4 +70,6 @@ class SFEN():
     def check_repetition(self, sfen_obj):
         """TODO 同形反復かチェックする
         """
+
+        # 盤面、手番、持ち駒が等しければ同形反復
         return self._board_str == sfen_obj.board_str and self._turn_str == sfen_obj.turn_str and self._hand_str == sfen_obj.hand_str
