@@ -17,7 +17,7 @@ class WillNotToBuildRightWall():
     def will_play_before_move(move, table):
         """指し手は［右壁を作らない意志］を残しているか？
 
-        定義：　移動前の玉の右側の全ての筋について、８段目、９段目の両方に駒がある状態を［右壁］とする。
+        定義：　移動前の玉の以右の全ての筋について、８段目、９段目の両方に駒がある状態を［右壁］とする。
         """
         ban = Ban(table)
         cmp = Comparison(table)
@@ -25,11 +25,6 @@ class WillNotToBuildRightWall():
         src_sq_obj = Square(cshogi.move_from(move))
         dst_sq_obj = Square(cshogi.move_to(move))
         #print(f'D: {cshogi.move_to_usi(move)=} {Helper.sq_to_masu(src_sq_obj.sq)=} {Helper.sq_to_masu(dst_sq_obj.sq)=}')
-
-        # # 玉の指し手なら対象外
-        # if cshogi.move_from_piece_type(move) == cshogi.KING:
-        #     #print(f'★ 玉の指し手は対象外')
-        #     return Mind.NOT_IN_THIS_CASE
 
         k_sq_obj = Square(table.king_square(table.turn))     # 移動前の自玉の位置
         #print(f'★ {k_sq_obj.file=} {ban.suji(1)=}')
@@ -39,11 +34,11 @@ class WillNotToBuildRightWall():
             #print(f'★ 玉が１筋にいるなら対象外')
             return Mind.NOT_IN_THIS_CASE
 
-        # 玉の以左に移動する手なら対象外
+        # 玉より左に移動する手なら対象外
         e1 = cmp.swap(k_sq_obj.file, dst_sq_obj.file)
         #print(f'★ {k_sq_obj.file=} {dst_sq_obj.file=} {e1[0]=} {e1[1]}')
-        if e1[0] <= e1[1]:
-            #print(f'★ 玉の以左に移動する手なら対象外')
+        if e1[0] < e1[1]:
+            #print(f'★ 玉より左に移動する手なら対象外')
             return Mind.NOT_IN_THIS_CASE
 
         # ８段目、９段目以外に移動する手なら対象外
