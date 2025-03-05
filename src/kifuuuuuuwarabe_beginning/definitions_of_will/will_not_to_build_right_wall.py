@@ -9,7 +9,7 @@ from ..sente_perspective import Ban, Comparison, Helper
 class WillNotToBuildRightWall():
     """［右壁を作らない意志］
 
-    NOTE 振り飛車をさせるとき、玉より右側に振ると、［右壁］と判定してキャンセルするので注意。
+    NOTE 飛車も玉も、［右壁］の構成物になるので注意。
     """
 
 
@@ -17,7 +17,7 @@ class WillNotToBuildRightWall():
     def will_play_before_move(move, table):
         """指し手は［右壁を作らない意志］を残しているか？
 
-        定義：　玉の右側の全ての筋について、８段目、９段目の両方に駒がある状態を［右壁］とする。
+        定義：　移動前の玉の右側の全ての筋について、８段目、９段目の両方に駒がある状態を［右壁］とする。
         """
         ban = Ban(table)
         cmp = Comparison(table)
@@ -26,12 +26,12 @@ class WillNotToBuildRightWall():
         dst_sq_obj = Square(cshogi.move_to(move))
         #print(f'D: {cshogi.move_to_usi(move)=} {Helper.sq_to_masu(src_sq_obj.sq)=} {Helper.sq_to_masu(dst_sq_obj.sq)=}')
 
-        # 玉の指し手なら対象外
-        if cshogi.move_from_piece_type(move) == cshogi.KING:
-            #print(f'★ 玉の指し手は対象外')
-            return Mind.NOT_IN_THIS_CASE
+        # # 玉の指し手なら対象外
+        # if cshogi.move_from_piece_type(move) == cshogi.KING:
+        #     #print(f'★ 玉の指し手は対象外')
+        #     return Mind.NOT_IN_THIS_CASE
 
-        k_sq_obj = Square(table.king_square(table.turn))     # 自玉
+        k_sq_obj = Square(table.king_square(table.turn))     # 移動前の自玉の位置
         #print(f'★ {k_sq_obj.file=} {ban.suji(1)=}')
 
         # 玉が１筋にいるなら対象外
@@ -55,7 +55,7 @@ class WillNotToBuildRightWall():
             return Mind.NOT_IN_THIS_CASE
 
 
-        # 玉より右の全ての筋で起こる移動について
+        # 玉の元位置より右の全ての筋で起こる移動について
         right_side_of_k = []
 
         # 八段目、九段目
