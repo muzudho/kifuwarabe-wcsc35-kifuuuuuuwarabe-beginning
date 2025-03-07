@@ -2,20 +2,21 @@
     name = "Kifuuuuuuwarabe Beginning"
 
 [will]
+
+    # 行進［右壁を作るな］
+    do_not_build_right_wall = true
+
+    # 行進［８段目に上がるな］
+    do_not_up_to_rank_8 = true
+
     # ［金銀３枚が右に集まる意志］
     will_for_three_gold_and_silver_coins_to_gather_to_the_right = false     #true
 
     # ［３七の歩を突かない意志］
     will_not_to_move_37_pawn = false    #true
 
-    # ［右壁を作らない意志］
-    will_not_to_build_right_wall = true
-
     # ［振り飛車をする意志］
     will_swinging_rook = false      #true
-
-    # 行進［８段目に上がるな］
-    do_not_up_to_rank_8 = false       #true
 
     # ［８八の角を素抜かれない意志］
     will_not_to_be_cut_88_bishop = false        #true

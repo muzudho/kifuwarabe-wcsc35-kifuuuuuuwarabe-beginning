@@ -22,7 +22,7 @@ class Go():
                 table=table,
                 will_play_moves=will_play_moves)
 
-        will_play_moves = Go.get_will_not_to_build_right_wall(
+        will_play_moves = Go.get_do_not_build_right_wall(
                 config_doc=config_doc,
                 table=table,
                 will_play_moves=will_play_moves)
@@ -76,11 +76,11 @@ class Go():
 
 
     @staticmethod
-    def get_will_not_to_build_right_wall(config_doc, table, will_play_moves):
-        """［右壁を作らない意志］
+    def get_do_not_build_right_wall(config_doc, table, will_play_moves):
+        """行進［右壁を作るな］
         """
-        # ［右壁を作らない意志］
-        if config_doc['will']['will_not_to_build_right_wall']:
+        # 行進［右壁を作るな］
+        if config_doc['will']['do_not_build_right_wall']:
             for i in range(len(will_play_moves))[::-1]:
                 m = will_play_moves[i]
                 mind = WillNotToBuildRightWall.will_play_before_move(m, table)

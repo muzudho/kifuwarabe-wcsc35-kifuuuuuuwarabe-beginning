@@ -304,12 +304,12 @@ class ShogiEngineCompatibleWithUSIProtocol():
         print_moves(will_play_moves)
 
 
-        print(f'★ go: ［右壁を作らない意志］を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
-        will_play_moves = Go.get_will_not_to_build_right_wall(
+        print(f'★ go: ［右壁を作らない］意志を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
+        will_play_moves = Go.get_do_not_build_right_wall(
                 config_doc=self._config_doc,
                 table=self._table,
                 will_play_moves=will_play_moves)
-        print(f'★ go: ［右壁を作らない意志］を残してるか尋ねた後の指し手数={len(will_play_moves)}', file=sys.stderr)
+        print(f'★ go: ［右壁を作らない］意志を残してるか尋ねた後の指し手数={len(will_play_moves)}', file=sys.stderr)
         print_moves(will_play_moves)
 
 
