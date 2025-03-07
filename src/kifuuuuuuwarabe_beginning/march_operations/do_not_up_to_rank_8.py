@@ -76,5 +76,10 @@ class DoNotUpToRank8():
             # 位左の方に動かしたのなら、まあ、対象外
             return Mind.NOT_IN_THIS_CASE
 
+        # 動かした駒がイノシシなら
+        if moved_pt == cshogi.LANCE:
+            # 意志なし
+            return Mind.WILL_NOT
+
         # それ以外なら意志を残している
         return Mind.WILL
