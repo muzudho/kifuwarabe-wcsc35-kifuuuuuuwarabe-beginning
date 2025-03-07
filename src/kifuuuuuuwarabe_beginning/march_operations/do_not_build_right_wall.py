@@ -6,7 +6,7 @@ from ..models import Square
 from ..sente_perspective import Ban, Comparison, Helper
 
 
-class WillNotToBuildRightWall():
+class DoNotBuildRightWall():
     """行進［右壁を作るな］
     ［右壁を作らない］意志
 

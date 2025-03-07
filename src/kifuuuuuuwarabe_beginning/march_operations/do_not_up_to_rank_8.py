@@ -24,30 +24,25 @@ class DoNotUpToRank8():
         dst_sq_obj = Square(cshogi.move_to(move))
         moved_pt = cshogi.move_from_piece_type(move)
 
-
         # キリンが２八にいる
         if table.piece(ban.masu(28)) != ji.pc(cshogi.ROOK):
             # そうでなければ対象外
             return Mind.NOT_IN_THIS_CASE
-
 
         # 移動先は８段目だ
         if dst_sq_obj.rank != ban.dan(8):
             # そうでなければ対象外
             return Mind.NOT_IN_THIS_CASE
 
-
         # 動かした駒はキリン以外だ
         if moved_pt == cshogi.ROOK:
             # そうでなければ対象外
             return Mind.NOT_IN_THIS_CASE
 
-
         # 動かした駒がライオンなら
         if moved_pt == cshogi.KING:
             # 意志無し
             return Mind.WILL
-
 
         # 動かした駒が金なら
         if moved_pt == cshogi.GOLD:
@@ -65,7 +60,6 @@ class DoNotUpToRank8():
             # 左の方に動かしたのなら、まあ、対象外
             return Mind.NOT_IN_THIS_CASE
 
-
         # 動かした駒が銀なら
         if moved_pt == cshogi.SILVER:
             # ６筋以右にある銀を動かしたなら
@@ -81,7 +75,6 @@ class DoNotUpToRank8():
             
             # 位左の方に動かしたのなら、まあ、対象外
             return Mind.NOT_IN_THIS_CASE
-
 
         # それ以外なら意志を残している
         return Mind.WILL

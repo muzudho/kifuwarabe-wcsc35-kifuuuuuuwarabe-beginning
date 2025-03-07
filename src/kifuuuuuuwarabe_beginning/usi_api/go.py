@@ -4,7 +4,7 @@ import random
 import sys
 
 from .. import Mind
-from ..march_operations import WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToBuildRightWall, WillNotToMove37Pawn, WillSwingingRook, DoNotUpToRank8, WillToTakeThePieceWithoutLosingAnything
+from ..march_operations import DoNotUpToRank6, DoNotUpToRank8, DoNotBuildRightWall, WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToMove37Pawn, WillSwingingRook, WillToTakeThePieceWithoutLosingAnything
 
 
 class Go():
@@ -15,6 +15,12 @@ class Go():
 
         # 行進［右壁を作るな］
         will_play_moves = Go.get_do_not_build_right_wall(
+                config_doc=config_doc,
+                table=table,
+                will_play_moves=will_play_moves)
+
+        # 行進［６段目に上がるな］
+        will_play_moves = Go.get_do_not_up_to_rank_6(
                 config_doc=config_doc,
                 table=table,
                 will_play_moves=will_play_moves)
@@ -61,7 +67,22 @@ class Go():
         if config_doc['march']['do_not_build_right_wall']:
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
-                mind = WillNotToBuildRightWall.will_play_before_move(m, table)
+                mind = DoNotBuildRightWall.will_play_before_move(m, table)
+                if mind == Mind.WILL_NOT:
+                    del will_play_moves[i]
+
+        return will_play_moves
+
+
+    @staticmethod
+    def get_do_not_up_to_rank_6(config_doc, table, will_play_moves):
+        """行進［６段目に上がるな］
+        """
+
+        if config_doc['march']['do_not_up_to_rank_6']:
+            for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
+                m = will_play_moves[i]
+                mind = DoNotUpToRank6.will_before_move(m, table)
                 if mind == Mind.WILL_NOT:
                     del will_play_moves[i]
 

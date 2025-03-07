@@ -7,6 +7,9 @@
     # 行進［右壁を作るな］
     do_not_build_right_wall = true
 
+    # 行進［６段目に上がるな］
+    do_not_up_to_rank_6 = true
+
     # 行進［８段目に上がるな］
     do_not_up_to_rank_8 = true
 
