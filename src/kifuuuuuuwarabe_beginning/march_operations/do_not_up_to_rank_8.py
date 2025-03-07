@@ -39,10 +39,10 @@ class DoNotUpToRank8():
             # そうでなければ対象外
             return Mind.NOT_IN_THIS_CASE
 
-        # 動かした駒がライオンなら
-        if moved_pt == cshogi.KING:
+        # 動かした駒がライオンかイノシシなら
+        if moved_pt in [cshogi.KING, cshogi.LANCE]:
             # 意志無し
-            return Mind.WILL
+            return Mind.WILL_NOT
 
         # 動かした駒が金なら
         if moved_pt == cshogi.GOLD:
@@ -75,11 +75,6 @@ class DoNotUpToRank8():
             
             # 位左の方に動かしたのなら、まあ、対象外
             return Mind.NOT_IN_THIS_CASE
-
-        # 動かした駒がイノシシなら
-        if moved_pt == cshogi.LANCE:
-            # 意志なし
-            return Mind.WILL_NOT
 
         # それ以外なら意志を残している
         return Mind.WILL
