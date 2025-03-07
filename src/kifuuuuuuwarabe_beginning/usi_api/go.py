@@ -4,7 +4,7 @@ import random
 import sys
 
 from .. import Mind
-from ..marches import WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToBuildRightWall, WillNotToMove37Pawn, WillSwingingRook, DoNotUpToRank8, WillToTakeThePieceWithoutLosingAnything
+from ..march_operations import WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToBuildRightWall, WillNotToMove37Pawn, WillSwingingRook, DoNotUpToRank8, WillToTakeThePieceWithoutLosingAnything
 
 
 class Go():
