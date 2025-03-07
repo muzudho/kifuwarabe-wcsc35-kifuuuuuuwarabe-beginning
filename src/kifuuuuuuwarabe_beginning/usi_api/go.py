@@ -4,7 +4,7 @@ import random
 import sys
 
 from .. import Mind
-from ..definitions_of_will import WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToBuildRightWall, WillNotToMove37Pawn, WillSwingingRook, WillToClearWayOfRook, WillToTakeThePieceWithoutLosingAnything
+from ..definitions_of_will import WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToBuildRightWall, WillNotToMove37Pawn, WillSwingingRook, DoNotUpToRank8, WillToTakeThePieceWithoutLosingAnything
 
 
 class Go():
@@ -103,9 +103,9 @@ class Go():
                 for i in range(len(will_play_moves))[::-1]:
                     m = will_play_moves[i]
 
-                    # ［飛車道を開ける意志］
-                    if config_doc['will']['will_to_clear_way_of_rook']:
-                        mind = WillToClearWayOfRook.will_before_move(m, table)
+                    # ［飛車道を開ける］意志
+                    if config_doc['will']['do_not_up_to_rank_8']:
+                        mind = DoNotUpToRank8.will_before_move(m, table)
                         if mind == Mind.WILL_NOT:
                             del will_play_moves[i]
 

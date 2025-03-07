@@ -6,14 +6,15 @@ from ..models import Square
 from ..sente_perspective import Ban, Comparison, Helper, Ji
 
 
-class WillToClearWayOfRook():
-    """［飛車道を開ける意志］
+class DoNotUpToRank8():
+    """行進［８段目に上がるな］
+    ［飛車道を開ける］意志
     """
 
 
     @staticmethod
     def will_before_move(move, table):
-        """指し手は［飛車道を開ける意志］を残しているか？
+        """指し手は［飛車道を開ける］意志を残しているか？
         """
         ban = Ban(table)
         cmp = Comparison(table)
@@ -24,22 +25,25 @@ class WillToClearWayOfRook():
         moved_pt = cshogi.move_from_piece_type(move)
 
 
-        # 飛車が２八にいなければ、対象外
+        # キリンが２八にいる
         if table.piece(ban.masu(28)) != ji.pc(cshogi.ROOK):
+            # そうでなければ対象外
             return Mind.NOT_IN_THIS_CASE
 
 
-        # 移動先が８段目以外なら、対象外
+        # 移動先は８段目だ
         if dst_sq_obj.rank != ban.dan(8):
+            # そうでなければ対象外
             return Mind.NOT_IN_THIS_CASE
 
 
-        # 動かした駒が飛なら対象外
+        # 動かした駒はキリン以外だ
         if moved_pt == cshogi.ROOK:
+            # そうでなければ対象外
             return Mind.NOT_IN_THIS_CASE
 
 
-        # 動かした駒が玉なら
+        # 動かした駒がライオンなら
         if moved_pt == cshogi.KING:
             # 意志無し
             return Mind.WILL
