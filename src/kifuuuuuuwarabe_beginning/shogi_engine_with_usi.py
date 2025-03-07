@@ -90,8 +90,8 @@ class ShogiEngineCompatibleWithUSIProtocol():
                 self.undo()
 
             # テスト
-            #       code: will
-            elif cmd[0] == 'will':
+            #       code: march
+            elif cmd[0] == 'march':
                 self.test_will()
 
             # テスト

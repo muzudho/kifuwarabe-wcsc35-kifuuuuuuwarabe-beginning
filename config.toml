@@ -1,7 +1,8 @@
 [engine]
     name = "Kifuuuuuuwarabe Beginning"
 
-[will]
+# 行進
+[march]
 
     # 行進［右壁を作るな］
     do_not_build_right_wall = true
