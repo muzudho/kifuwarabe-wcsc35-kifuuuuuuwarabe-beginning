@@ -38,8 +38,7 @@ class DoNotUpToRank6():
         return Mind.WILL_NOT
 
 
-    def before_all_moves(self, will_play_moves, table, config_doc):
-
+    def do_anything(self, will_play_moves, table, config_doc):
         if config_doc['march']['do_not_up_to_rank_6']:
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]

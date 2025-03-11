@@ -95,3 +95,16 @@ class WillToTakeThePieceWithoutLosingAnything():
         # 意志あり
         return Mind.WILL
 
+
+    def do_anything(self, will_play_moves, table, config_doc):
+        # １手指してから判定
+        for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
+            m = will_play_moves[i]
+
+            # ［８八の角を素抜かれない意志］
+            if config_doc['march']['will_to_take_the_piece_without_losing_anything']:
+                mind = WillToTakeThePieceWithoutLosingAnything.will_move(m, table)
+                if mind == Mind.WILL_NOT:
+                    del will_play_moves[i]
+
+        return will_play_moves

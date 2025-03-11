@@ -67,3 +67,24 @@ class WillSwingingRook():
 
 
         return Mind.NOT_IN_THIS_CASE
+
+
+    def do_anything(self, will_play_moves, table, config_doc):
+        # ［振り飛車をする意志］
+        if config_doc['march']['will_swinging_rook']:
+            if Mind.WILL == WillSwingingRook.will_on_board(table):
+                #print('★ go: 盤は［振り飛車する意志］を残しています', file=sys.stderr)
+
+                for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
+                    m = will_play_moves[i]
+
+                    # ［振り飛車をする意志］
+                    mind = WillSwingingRook.will_on_move(m, table)
+                    if mind == Mind.WILL_NOT:
+                        del will_play_moves[i]
+            
+            # else:
+            #     print('★ go: 盤は［振り飛車する意志］はありません', file=sys.stderr)
+            #     pass
+
+        return will_play_moves

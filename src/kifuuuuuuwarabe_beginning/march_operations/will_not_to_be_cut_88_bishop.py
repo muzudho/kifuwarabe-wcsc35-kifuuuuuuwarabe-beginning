@@ -42,3 +42,20 @@ class WillNotToBeCut88Bishop():
 
         # 意志なし
         return Mind.WILL_NOT
+
+
+    def do_anything(self, will_play_moves, table, config_doc):
+        # １手指してから判定
+        for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
+            m = will_play_moves[i]
+            table.push(m)   # １手指す
+
+            # ［８八の角を素抜かれない意志］
+            if config_doc['march']['will_not_to_be_cut_88_bishop']:
+                mind = WillNotToBeCut88Bishop.have_will_after_moving_on_board(table)
+                if mind == Mind.WILL_NOT:
+                    del will_play_moves[i]
+
+            table.pop() # １手戻す
+
+        return will_play_moves

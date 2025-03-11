@@ -37,3 +37,14 @@ class WillNotToMove37Pawn():
 
         # 歩が動くんだったらダメ
         return Mind.WILL_NOT
+
+
+    def do_anything(self, will_play_moves, table, config_doc):
+        if config_doc['march']['will_not_to_move_37_pawn']:
+            for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
+                m = will_play_moves[i]
+                mind = WillNotToMove37Pawn.will_on_move(m, table)
+                if mind == Mind.WILL_NOT:
+                    del will_play_moves[i]
+
+        return will_play_moves

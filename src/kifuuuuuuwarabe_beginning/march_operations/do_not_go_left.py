@@ -39,3 +39,14 @@ class DoNotGoLeft():
 
         # それ以外は意志なし
         return Mind.WILL_NOT
+
+
+    def do_anything(self, will_play_moves, table, config_doc):
+        if config_doc['march']['do_not_go_left']:
+            for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
+                m = will_play_moves[i]
+                mind = DoNotGoLeft.before_move(m, table)
+                if mind == Mind.WILL_NOT:
+                    del will_play_moves[i]
+
+        return will_play_moves
