@@ -23,6 +23,8 @@ class ShogiEngineCompatibleWithUSIProtocol():
         # 盤
         self._table = Table.create_table()
 
+        # 各種オブジェクト
+        self._go = Go()
 
     def start_usi_loop(self):
         """USIループ開始
@@ -116,6 +118,10 @@ class ShogiEngineCompatibleWithUSIProtocol():
     def usinewgame(self):
         """新しい対局
         """
+
+        # 再生成
+        self._go = Go()
+
         print(f"[{datetime.datetime.now()}] usinewgame end", flush=True)
 
 
@@ -176,12 +182,10 @@ class ShogiEngineCompatibleWithUSIProtocol():
                 print(f'bestmove {best_move}', flush=True)
                 return
 
-
-        will_play_moves = Go.get_will_play_moves(
-                config_doc=self._config_doc,
+        will_play_moves = self._go.get_will_play_moves(
+                will_play_moves=list(self._table.legal_moves),
                 table=self._table,
-                will_play_moves=list(self._table.legal_moves))
-
+                config_doc=self._config_doc)
 
         # 指し手が全部消えてしまった場合、何でも指すようにします
         if len(will_play_moves) < 1:

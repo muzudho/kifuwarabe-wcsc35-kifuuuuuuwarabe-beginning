@@ -11,61 +11,6 @@ class Go():
 
 
     @staticmethod
-    def get_will_play_moves(config_doc, table, will_play_moves):
-
-        # 行進［右壁を作るな］
-        will_play_moves = Go.get_do_not_build_right_wall(
-                config_doc=config_doc,
-                table=table,
-                will_play_moves=will_play_moves)
-
-        # 行進［左へ行くな］
-        will_play_moves = Go.get_do_not_go_left(
-                config_doc=config_doc,
-                table=table,
-                will_play_moves=will_play_moves)
-
-        # 行進［６段目に上がるな］
-        will_play_moves = Go.get_do_not_up_to_rank_6(
-                config_doc=config_doc,
-                table=table,
-                will_play_moves=will_play_moves)
-
-        # 行進［８段目に上がるな］
-        will_play_moves = Go.get_do_not_up_to_rank_8(
-                config_doc=config_doc,
-                table=table,
-                will_play_moves=will_play_moves)
-
-        will_play_moves = Go.get_will_for_three_gold_and_silver_coins_to_gather_to_the_right(
-                config_doc=config_doc,
-                table=table,
-                will_play_moves=will_play_moves)
-
-        will_play_moves = Go.get_will_not_to_move_37_pawn(
-                config_doc=config_doc,
-                table=table,
-                will_play_moves=will_play_moves)
-
-        will_play_moves = Go.get_will_swinging_rook(
-                config_doc=config_doc,
-                table=table,
-                will_play_moves=will_play_moves)
-
-        will_play_moves = Go.get_will_not_to_be_cut_88_bishop(
-                config_doc=config_doc,
-                table=table,
-                will_play_moves=will_play_moves)
-
-        will_play_moves = Go.get_will_to_take_the_piece_without_losing_anything(
-                config_doc=config_doc,
-                table=table,
-                will_play_moves=will_play_moves)
-
-        return will_play_moves
-
-
-    @staticmethod
     def get_do_not_build_right_wall(config_doc, table, will_play_moves):
         """行進［右壁を作るな］
         """
@@ -89,21 +34,6 @@ class Go():
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
                 mind = DoNotGoLeft.before_move(m, table)
-                if mind == Mind.WILL_NOT:
-                    del will_play_moves[i]
-
-        return will_play_moves
-
-
-    @staticmethod
-    def get_do_not_up_to_rank_6(config_doc, table, will_play_moves):
-        """行進［６段目に上がるな］
-        """
-
-        if config_doc['march']['do_not_up_to_rank_6']:
-            for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
-                m = will_play_moves[i]
-                mind = DoNotUpToRank6.before_move(m, table)
                 if mind == Mind.WILL_NOT:
                     del will_play_moves[i]
 
@@ -215,5 +145,66 @@ class Go():
                 mind = WillToTakeThePieceWithoutLosingAnything.will_move(m, table)
                 if mind == Mind.WILL_NOT:
                     del will_play_moves[i]
+
+        return will_play_moves
+
+
+    def __init__(self):
+        self._march_list = [
+            DoNotUpToRank6()    # 行進［６段目に上がるな］
+        ]
+
+
+    def get_will_play_moves(self, will_play_moves, table, config_doc):
+
+        # 行進［右壁を作るな］
+        will_play_moves = Go.get_do_not_build_right_wall(
+                config_doc=config_doc,
+                table=table,
+                will_play_moves=will_play_moves)
+
+        # 行進［左へ行くな］
+        will_play_moves = Go.get_do_not_go_left(
+                config_doc=config_doc,
+                table=table,
+                will_play_moves=will_play_moves)
+
+        # 行進リスト
+        for march in self._march_list:
+            will_play_moves = march.before_all_moves(
+                    will_play_moves = will_play_moves,
+                    table           = table,
+                    config_doc      = config_doc)
+
+        # 行進［８段目に上がるな］
+        will_play_moves = Go.get_do_not_up_to_rank_8(
+                config_doc=config_doc,
+                table=table,
+                will_play_moves=will_play_moves)
+
+        will_play_moves = Go.get_will_for_three_gold_and_silver_coins_to_gather_to_the_right(
+                config_doc=config_doc,
+                table=table,
+                will_play_moves=will_play_moves)
+
+        will_play_moves = Go.get_will_not_to_move_37_pawn(
+                config_doc=config_doc,
+                table=table,
+                will_play_moves=will_play_moves)
+
+        will_play_moves = Go.get_will_swinging_rook(
+                config_doc=config_doc,
+                table=table,
+                will_play_moves=will_play_moves)
+
+        will_play_moves = Go.get_will_not_to_be_cut_88_bishop(
+                config_doc=config_doc,
+                table=table,
+                will_play_moves=will_play_moves)
+
+        will_play_moves = Go.get_will_to_take_the_piece_without_losing_anything(
+                config_doc=config_doc,
+                table=table,
+                will_play_moves=will_play_moves)
 
         return will_play_moves
