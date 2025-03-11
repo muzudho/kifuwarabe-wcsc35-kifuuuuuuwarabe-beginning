@@ -10,9 +10,10 @@ class WillForThreeGoldAndSilverCoinsToGatherToTheRight():
     """［金銀３枚が右に集まる意志］
     """
 
+
     @staticmethod
-    def will_before_move(move, table):
-        """［金銀３枚が右に集まる意志］があるか？
+    def before_move(move, table):
+        """指す前に。
 
         先手から見て５筋と６筋の間にドアがあるとする。
         ５筋位左にある金銀が左へ移動するとき、６筋位左に自駒の金銀が０枚である場合のみ移動できる。

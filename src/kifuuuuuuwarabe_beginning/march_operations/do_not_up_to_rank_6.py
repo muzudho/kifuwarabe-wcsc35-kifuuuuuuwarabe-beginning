@@ -13,8 +13,8 @@ class DoNotUpToRank6():
 
 
     @staticmethod
-    def will_before_move(move, table):
-        """指し手は［飛車を振るまで歩を突かない］意志を残しているか？
+    def before_move(move, table):
+        """指す前に。
         """
         ban = Ban(table)
         cmp = Comparison(table)

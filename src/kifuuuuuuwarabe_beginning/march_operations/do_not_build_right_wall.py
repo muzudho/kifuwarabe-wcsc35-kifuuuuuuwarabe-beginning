@@ -15,8 +15,8 @@ class DoNotBuildRightWall():
 
 
     @staticmethod
-    def will_play_before_move(move, table):
-        """指し手は［右壁を作らない］意志を残しているか？
+    def before_move(move, table):
+        """指す前に。
 
         定義：　移動前の玉の以右の全ての筋について、８段目、９段目の両方に駒がある状態を［右壁］とする。
         """

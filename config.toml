@@ -13,6 +13,9 @@
     # 行進［８段目に上がるな］
     do_not_up_to_rank_8 = true
 
+    # 行進［左へ行くな］
+    do_not_go_left = true
+
     # ［金銀３枚が右に集まる意志］
     will_for_three_gold_and_silver_coins_to_gather_to_the_right = false     #true
 

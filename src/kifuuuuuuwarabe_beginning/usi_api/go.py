@@ -4,7 +4,7 @@ import random
 import sys
 
 from .. import Mind
-from ..march_operations import DoNotUpToRank6, DoNotUpToRank8, DoNotBuildRightWall, WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToMove37Pawn, WillSwingingRook, WillToTakeThePieceWithoutLosingAnything
+from ..march_operations import DoNotUpToRank6, DoNotUpToRank8, DoNotBuildRightWall, DoNotGoLeft, WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToMove37Pawn, WillSwingingRook, WillToTakeThePieceWithoutLosingAnything
 
 
 class Go():
@@ -15,6 +15,12 @@ class Go():
 
         # 行進［右壁を作るな］
         will_play_moves = Go.get_do_not_build_right_wall(
+                config_doc=config_doc,
+                table=table,
+                will_play_moves=will_play_moves)
+
+        # 行進［左へ行くな］
+        will_play_moves = Go.get_do_not_go_left(
                 config_doc=config_doc,
                 table=table,
                 will_play_moves=will_play_moves)
@@ -67,7 +73,22 @@ class Go():
         if config_doc['march']['do_not_build_right_wall']:
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
-                mind = DoNotBuildRightWall.will_play_before_move(m, table)
+                mind = DoNotBuildRightWall.before_move(m, table)
+                if mind == Mind.WILL_NOT:
+                    del will_play_moves[i]
+
+        return will_play_moves
+
+
+    @staticmethod
+    def get_do_not_go_left(config_doc, table, will_play_moves):
+        """行進［左へ行くな］
+        """
+
+        if config_doc['march']['do_not_go_left']:
+            for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
+                m = will_play_moves[i]
+                mind = DoNotGoLeft.before_move(m, table)
                 if mind == Mind.WILL_NOT:
                     del will_play_moves[i]
 
@@ -82,7 +103,7 @@ class Go():
         if config_doc['march']['do_not_up_to_rank_6']:
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
-                mind = DoNotUpToRank6.will_before_move(m, table)
+                mind = DoNotUpToRank6.before_move(m, table)
                 if mind == Mind.WILL_NOT:
                     del will_play_moves[i]
 
@@ -97,7 +118,7 @@ class Go():
         if config_doc['march']['do_not_up_to_rank_8']:
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
-                mind = DoNotUpToRank8.will_before_move(m, table)
+                mind = DoNotUpToRank8.before_move(m, table)
                 if mind == Mind.WILL_NOT:
                     del will_play_moves[i]
 
@@ -112,7 +133,7 @@ class Go():
         if config_doc['march']['will_for_three_gold_and_silver_coins_to_gather_to_the_right']:
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
-                mind = WillForThreeGoldAndSilverCoinsToGatherToTheRight.will_before_move(m, table)
+                mind = WillForThreeGoldAndSilverCoinsToGatherToTheRight.before_move(m, table)
                 if mind == Mind.WILL_NOT:
                     del will_play_moves[i]
 
