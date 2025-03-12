@@ -193,11 +193,17 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 
         # １手指す（投了のケースは対応済みなので、ここで対応しなくていい）
-        best_move = cshogi.move_to_usi(random.choice(will_play_moves))
+        best_move = random.choice(will_play_moves)
+        best_move_as_usi = cshogi.move_to_usi(best_move)
+
+        self._go.on_best_move_played(
+                move=best_move,
+                table=self._table,
+                config_doc=self._config_doc)
 
 
         print(f"info depth 0 seldepth 0 time 1 nodes 0 score cp 0 string Go kifuuuuuuWarabe")
-        print(f'bestmove {best_move}', flush=True)
+        print(f'bestmove {best_move_as_usi}', flush=True)
 
 
     def stop(self):

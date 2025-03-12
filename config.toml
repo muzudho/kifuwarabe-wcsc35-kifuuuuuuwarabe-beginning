@@ -16,6 +16,9 @@
     # 行進［左へ行くな］
     do_not_go_left = true
 
+    # 行進［きりんは横に行くな］
+    do_not_go_horizontal_rook = false  #true
+
     # ［金銀３枚が右に集まる意志］
     will_for_three_gold_and_silver_coins_to_gather_to_the_right = false     #true
 

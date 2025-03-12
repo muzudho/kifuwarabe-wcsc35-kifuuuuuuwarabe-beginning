@@ -4,7 +4,7 @@ import random
 import sys
 
 from .. import Mind
-from ..march_operations import DoNotUpToRank6, DoNotUpToRank8, DoNotBuildRightWall, DoNotGoLeft, WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToMove37Pawn, WillSwingingRook, WillToTakeThePieceWithoutLosingAnything
+from ..march_operations import DoNotUpToRank6, DoNotUpToRank8, DoNotBuildRightWall, DoNotGoHorizontalRook, DoNotGoLeft, WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToMove37Pawn, WillSwingingRook, WillToTakeThePieceWithoutLosingAnything
 
 
 class Go():
@@ -12,7 +12,8 @@ class Go():
 
     def __init__(self):
         self._march_operation_list = [
-            DoNotBuildRightWall(),   # 行進［右壁を作るな］
+            DoNotBuildRightWall(),      # 行進［右壁を作るな］
+            DoNotGoHorizontalRook(),    # 行進［きりんは横に行くな］  NOTE 飛車を振るまで有効になりません
             DoNotGoLeft(),      # 行進［左へ行くな］
             DoNotUpToRank6(),   # 行進［６段目に上がるな］
             DoNotUpToRank8(),   # 行進［８段目に上がるな］
@@ -35,7 +36,7 @@ class Go():
                     table           = table,
                     config_doc      = config_doc)
 
-            # TODO 行進演算を、必要がなくなったら、リストから除外する操作
+            # 行進演算を、必要がなくなったら、リストから除外する操作
             if march_operation.is_removed:
                 match_operation_list_to_remove.append(march_operation)
 
@@ -44,3 +45,25 @@ class Go():
             print('★ get_will_play_moves: 行進演算 削除')
 
         return will_play_moves
+
+
+    def on_best_move_played(self, move, table, config_doc):
+        """指す手の確定時。
+        """
+
+        match_operation_list_to_remove = []
+
+        # 行進リスト
+        for march_operation in self._march_operation_list:
+            march_operation.on_best_move_played(
+                    move        = move,
+                    table       = table,
+                    config_doc  = config_doc)
+
+            # 行進演算を、必要がなくなったら、リストから除外する操作
+            if march_operation.is_removed:
+                match_operation_list_to_remove.append(march_operation)
+
+        for march_operation in match_operation_list_to_remove:
+            self._march_operation_list.remove(march_operation)
+            print('★ on_best_move_played: 行進演算 削除')
