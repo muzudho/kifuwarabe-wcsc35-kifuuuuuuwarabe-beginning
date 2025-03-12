@@ -71,7 +71,7 @@ class DoNotGoHorizontalRook(MatchOperation):
         """指す手の確定時。
         """
 
-        if config_doc['march']['do_not_go_horizontal_rook'] and not self.is_disabled:
+        if config_doc['march']['do_not_go_horizontal_rook']: # 無効化のときも（アクティベートのために）実行します
             ban = Ban(table)
             cmp = Comparison(table)
 
@@ -86,6 +86,7 @@ class DoNotGoHorizontalRook(MatchOperation):
                 # キリンの移動先が異筋なら、この行進演算を有効化します。
                 e1 = cmp.swap(dst_sq_obj.file, src_sq_obj.file)
                 if e1[0] != e1[1]:
+                    print(f'★ on_best_move_played: {self.name=} 有効化')
                     self._is_disabled = False
 
             # else:

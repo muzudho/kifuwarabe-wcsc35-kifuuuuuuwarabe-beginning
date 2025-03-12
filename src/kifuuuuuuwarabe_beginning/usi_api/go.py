@@ -42,7 +42,7 @@ class Go():
 
         for march_operation in match_operation_list_to_remove:
             self._march_operation_list.remove(march_operation)
-            print('★ get_will_play_moves: 行進演算 削除')
+            print(f'★ get_will_play_moves: 行進演算 削除 {march_operation.name=}')
 
         return will_play_moves
 
@@ -66,4 +66,4 @@ class Go():
 
         for march_operation in match_operation_list_to_remove:
             self._march_operation_list.remove(march_operation)
-            print('★ on_best_move_played: 行進演算 削除')
+            print(f'★ on_best_move_played: 行進演算 削除 {march_operation.name=}')
