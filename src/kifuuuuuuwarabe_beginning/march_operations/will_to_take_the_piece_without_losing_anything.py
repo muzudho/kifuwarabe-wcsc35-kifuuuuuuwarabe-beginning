@@ -4,9 +4,10 @@ import sys
 from .. import Mind
 from ..models import Masu, Piece, PieceType, Square
 from ..sente_perspective import Ban, Helper, Ji
+from .match_operation import MatchOperation
 
 
-class WillToTakeThePieceWithoutLosingAnything():
+class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
     """［駒取って損しない意志］
     """
 

@@ -3,9 +3,10 @@ import sys
 
 from .. import Mind
 from ..sente_perspective import Ban, Helper, Ji
+from .match_operation import MatchOperation
 
 
-class WillNotToBeCut88Bishop():
+class WillNotToBeCut88Bishop(MatchOperation):
     """［８八の角を素抜かれない意志］
     """
 

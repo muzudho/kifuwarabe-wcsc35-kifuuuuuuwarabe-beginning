@@ -26,11 +26,21 @@ class Go():
 
     def get_will_play_moves(self, will_play_moves, table, config_doc):
 
+        match_operation_list_to_remove = []
+
         # 行進リスト
         for march_operation in self._march_operation_list:
             will_play_moves = march_operation.do_anything(
                     will_play_moves = will_play_moves,
                     table           = table,
                     config_doc      = config_doc)
+
+            # TODO 行進演算を、必要がなくなったら、リストから除外する操作
+            if march_operation.is_removed:
+                match_operation_list_to_remove.append(march_operation)
+
+        for march_operation in match_operation_list_to_remove:
+            self._march_operation_list.remove(march_operation)
+            print('★ get_will_play_moves: 行進演算 削除')
 
         return will_play_moves

@@ -4,9 +4,10 @@ import sys
 from .. import Mind
 from ..models import Square
 from ..sente_perspective import Ban, Helper
+from .match_operation import MatchOperation
 
 
-class WillNotToMove37Pawn():
+class WillNotToMove37Pawn(MatchOperation):
     """［３七の歩を突かない意志］
     """
 

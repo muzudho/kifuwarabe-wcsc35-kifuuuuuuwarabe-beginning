@@ -4,9 +4,10 @@ import sys
 from .. import Mind
 from ..models import Square
 from ..sente_perspective import Ban, Comparison, Helper
+from .match_operation import MatchOperation
 
 
-class DoNotBuildRightWall():
+class DoNotBuildRightWall(MatchOperation):
     """行進［右壁を作るな］
     ［右壁を作らない］意志
 

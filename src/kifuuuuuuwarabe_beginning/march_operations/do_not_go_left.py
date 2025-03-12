@@ -4,9 +4,10 @@ import sys
 from .. import Mind
 from ..models import Square
 from ..sente_perspective import Ban, Comparison, Helper
+from .match_operation import MatchOperation
 
 
-class DoNotGoLeft():
+class DoNotGoLeft(MatchOperation):
     """行進［左へ行くな］
     ［右へ行く］意志
     """

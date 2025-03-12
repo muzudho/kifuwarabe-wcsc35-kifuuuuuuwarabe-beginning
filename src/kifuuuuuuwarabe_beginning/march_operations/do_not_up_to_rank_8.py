@@ -4,9 +4,10 @@ import sys
 from .. import Mind
 from ..models import Square
 from ..sente_perspective import Ban, Comparison, Helper, Ji
+from .match_operation import MatchOperation
 
 
-class DoNotUpToRank8():
+class DoNotUpToRank8(MatchOperation):
     """行進［８段目に上がるな］
     ［飛車道を開ける］意志
     """

@@ -4,9 +4,10 @@ import sys
 from .. import Mind
 from ..models import Square
 from ..sente_perspective import Ban, Comparison, Helper
+from .match_operation import MatchOperation
 
 
-class WillForThreeGoldAndSilverCoinsToGatherToTheRight():
+class WillForThreeGoldAndSilverCoinsToGatherToTheRight(MatchOperation):
     """［金銀３枚が右に集まる意志］
     """
 

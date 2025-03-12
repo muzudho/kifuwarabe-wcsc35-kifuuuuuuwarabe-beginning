@@ -4,11 +4,12 @@ import sys
 from .. import Mind
 from ..models import Square
 from ..sente_perspective import Ban, Comparison, Helper, Ji
+from .match_operation import MatchOperation
 
 
-class DoNotUpToRank6():
+class DoNotUpToRank6(MatchOperation):
     """行進［６段目に上がるな］
-    ［飛車を振るまで歩を突かない］意志
+    ［玉が２八に行くまで歩を突かない］意志
     """
 
 
@@ -24,7 +25,7 @@ class DoNotUpToRank6():
         dst_sq_obj = Square(cshogi.move_to(move))
         #moved_pt = cshogi.move_from_piece_type(move)
 
-        # キリンが２八にいる
+        # 自キリンが２八にいる
         if table.piece(ban.masu(28)) != ji.pc(cshogi.ROOK):
             # そうでなければ対象外
             return Mind.NOT_IN_THIS_CASE
@@ -40,6 +41,19 @@ class DoNotUpToRank6():
 
     def do_anything(self, will_play_moves, table, config_doc):
         if config_doc['march']['do_not_up_to_rank_6']:
+
+            ban = Ban(table)
+            #cmp = Comparison(table)
+            ji = Ji(table)
+
+            # 自ライオンが２八にいる
+            if table.piece(ban.masu(28)) == ji.pc(cshogi.KING):
+                # このオブジェクトを除外
+                self._is_removed = True
+
+                # 対象外
+                return will_play_moves
+
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
                 mind = DoNotUpToRank6.before_move(m, table)

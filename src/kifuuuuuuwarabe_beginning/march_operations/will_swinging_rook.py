@@ -4,9 +4,10 @@ import sys
 from .. import Mind
 from ..models import Square
 from ..sente_perspective import Ban, Comparison, Helper, Ji
+from .match_operation import MatchOperation
 
 
-class WillSwingingRook():
+class WillSwingingRook(MatchOperation):
     """［振り飛車をする意志］
     """
 
