@@ -8,13 +8,13 @@ from .match_operation import MatchOperation
 
 
 class WillNotToMove37Pawn(MatchOperation):
-    """［３七の歩を突かない意志］
+    """［３七の歩を突かない］意志
     """
 
 
     @staticmethod
     def will_on_move(move, table):
-        """指し手は［３七の歩を突かない意志］を残しているか？
+        """指し手は［３七の歩を突かない］意志を残しているか？
         """
         ban = Ban(table)
 
@@ -38,6 +38,11 @@ class WillNotToMove37Pawn(MatchOperation):
 
         # 歩が動くんだったらダメ
         return Mind.WILL_NOT
+
+
+    def __init__(self):
+        super().__init__()
+        self._name = '３七の歩を突かない'
 
 
     def do_anything(self, will_play_moves, table, config_doc):

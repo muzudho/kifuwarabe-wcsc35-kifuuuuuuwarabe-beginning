@@ -81,6 +81,11 @@ class DoNotUpToRank8(MatchOperation):
         return Mind.WILL
 
 
+    def __init__(self):
+        super().__init__()
+        self._name = '８段目に上がるな'
+
+
     def do_anything(self, will_play_moves, table, config_doc):
         if config_doc['march']['do_not_up_to_rank_8']:
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順

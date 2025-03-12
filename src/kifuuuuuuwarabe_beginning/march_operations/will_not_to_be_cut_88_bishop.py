@@ -7,7 +7,7 @@ from .match_operation import MatchOperation
 
 
 class WillNotToBeCut88Bishop(MatchOperation):
-    """［８八の角を素抜かれない意志］
+    """［８八の角を素抜かれない］意志
     """
 
 
@@ -45,13 +45,18 @@ class WillNotToBeCut88Bishop(MatchOperation):
         return Mind.WILL_NOT
 
 
+    def __init__(self):
+        super().__init__()
+        self._name = '８八の角を素抜かれない'
+
+
     def do_anything(self, will_play_moves, table, config_doc):
         # １手指してから判定
         for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
             m = will_play_moves[i]
             table.push(m)   # １手指す
 
-            # ［８八の角を素抜かれない意志］
+            # ［８八の角を素抜かれない］意志
             if config_doc['march']['will_not_to_be_cut_88_bishop']:
                 mind = WillNotToBeCut88Bishop.have_will_after_moving_on_board(table)
                 if mind == Mind.WILL_NOT:

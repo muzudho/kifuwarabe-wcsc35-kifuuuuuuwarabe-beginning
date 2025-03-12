@@ -20,8 +20,8 @@ class Go():
             WillForThreeGoldAndSilverCoinsToGatherToTheRight(),     # ［金銀３枚が右に集まる］意志
             WillNotToMove37Pawn(),  # ［３七の歩を突かない］意志
             WillSwingingRook(),     # ［振り飛車をする］意志
-            WillNotToBeCut88Bishop(),   # ［８八の角を素抜かれない意志］
-            WillToTakeThePieceWithoutLosingAnything(),  #  ［駒取って損しない意志］
+            WillNotToBeCut88Bishop(),   # ［８八の角を素抜かれない］意志
+            WillToTakeThePieceWithoutLosingAnything(),  #  ［駒取って損しない］意志
         ]
 
 

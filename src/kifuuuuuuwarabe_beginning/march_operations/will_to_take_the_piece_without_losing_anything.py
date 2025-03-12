@@ -8,12 +8,12 @@ from .match_operation import MatchOperation
 
 
 class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
-    """［駒取って損しない意志］
+    """［駒取って損しない］意志
     """
 
     @staticmethod
     def will_move(move, table):
-        """指し手は［駒取って損しない意志］を残しているか？
+        """指し手は［駒取って損しない］意志を残しているか？
         """
 
         # 動かした駒の種類
@@ -97,12 +97,17 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
         return Mind.WILL
 
 
+    def __init__(self):
+        super().__init__()
+        self._name = '駒取って損しない'
+
+
     def do_anything(self, will_play_moves, table, config_doc):
         # １手指してから判定
         for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
             m = will_play_moves[i]
 
-            # ［８八の角を素抜かれない意志］
+            # ［駒取って損しない］意志
             if config_doc['march']['will_to_take_the_piece_without_losing_anything']:
                 mind = WillToTakeThePieceWithoutLosingAnything.will_move(m, table)
                 if mind == Mind.WILL_NOT:

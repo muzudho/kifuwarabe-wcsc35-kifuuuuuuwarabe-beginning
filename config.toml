@@ -19,17 +19,17 @@
     # 行進［きりんは横に行くな］
     do_not_go_horizontal_rook = false  #true
 
-    # ［金銀３枚が右に集まる意志］
+    # ［金銀３枚が右に集まる］意志
     will_for_three_gold_and_silver_coins_to_gather_to_the_right = false     #true
 
-    # ［３七の歩を突かない意志］
+    # ［３七の歩を突かない］意志
     will_not_to_move_37_pawn = false    #true
 
-    # ［振り飛車をする意志］
+    # ［振り飛車をする］意志
     will_swinging_rook = false      #true
 
-    # ［８八の角を素抜かれない意志］
+    # ［８八の角を素抜かれない］意志
     will_not_to_be_cut_88_bishop = false        #true
 
-    # ［駒取って損しない意志］
+    # ［駒取って損しない］意志
     will_to_take_the_piece_without_losing_anything = false      #true

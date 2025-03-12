@@ -39,6 +39,11 @@ class DoNotUpToRank6(MatchOperation):
         return Mind.WILL_NOT
 
 
+    def __init__(self):
+        super().__init__()
+        self._name = '６段目に上がるな'
+
+
     def do_anything(self, will_play_moves, table, config_doc):
         if config_doc['march']['do_not_up_to_rank_6']:
 

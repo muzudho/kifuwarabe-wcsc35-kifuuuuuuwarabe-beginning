@@ -41,6 +41,7 @@ class DoNotGoHorizontalRook(MatchOperation):
 
     def __init__(self):
         super().__init__()
+        self._name = 'きりんは横に行くな'
         self._is_disabled = True    # 初期状態は無効から始まる
 
 

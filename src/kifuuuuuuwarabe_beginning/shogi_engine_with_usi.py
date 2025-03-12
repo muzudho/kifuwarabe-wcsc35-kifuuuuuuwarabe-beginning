@@ -305,12 +305,12 @@ class ShogiEngineCompatibleWithUSIProtocol():
         will_play_moves = list(self._table.legal_moves)
 
 
-        print(f'★ go: ［３七の歩を突かない意志］を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
+        print(f'★ go: ［３七の歩を突かない］意志を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
         will_play_moves = Go.get_will_not_to_move_37_pawn(
                 config_doc=self._config_doc,
                 table=self._table,
                 will_play_moves=will_play_moves)
-        print(f'★ go: ［３七の歩を突かない意志］を残してるか尋ねた後の指し手数={len(will_play_moves)}', file=sys.stderr)
+        print(f'★ go: ［３七の歩を突かない］意志を残してるか尋ねた後の指し手数={len(will_play_moves)}', file=sys.stderr)
         print_moves(will_play_moves)
 
 
@@ -323,21 +323,21 @@ class ShogiEngineCompatibleWithUSIProtocol():
         print_moves(will_play_moves)
 
 
-        print(f'★ go: ［振り飛車する意志］を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
+        print(f'★ go: ［振り飛車をする］意志を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
         will_play_moves = Go.get_will_swinging_rook(
                 config_doc=self._config_doc,
                 table=self._table,
                 will_play_moves=will_play_moves)
-        print(f'★ go: ［振り飛車する意志］を残してるか尋ねた後の指し手数={len(will_play_moves)}', file=sys.stderr)
+        print(f'★ go: ［振り飛車をする］意志を残してるか尋ねた後の指し手数={len(will_play_moves)}', file=sys.stderr)
         print_moves(will_play_moves)
 
 
-        print(f'★ go: ［８八の角を素抜かれない意志］を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
+        print(f'★ go: ［８八の角を素抜かれない］意志を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
         will_play_moves = Go.get_will_not_to_be_cut_88_bishop(
                 config_doc=self._config_doc,
                 table=self._table,
                 will_play_moves=will_play_moves)
-        print(f'★ go: ［８八の角を素抜かれない意志］を残してるか尋ねた後の指し手数={len(will_play_moves)}', file=sys.stderr)
+        print(f'★ go: ［８八の角を素抜かれない］意志を残してるか尋ねた後の指し手数={len(will_play_moves)}', file=sys.stderr)
         print_moves(will_play_moves)
 
 

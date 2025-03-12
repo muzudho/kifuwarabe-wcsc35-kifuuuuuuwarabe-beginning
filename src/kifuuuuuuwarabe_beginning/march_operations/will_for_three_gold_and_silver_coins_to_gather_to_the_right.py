@@ -8,7 +8,7 @@ from .match_operation import MatchOperation
 
 
 class WillForThreeGoldAndSilverCoinsToGatherToTheRight(MatchOperation):
-    """［金銀３枚が右に集まる意志］
+    """［金銀３枚が右に集まる］意志
     """
 
 
@@ -64,6 +64,11 @@ class WillForThreeGoldAndSilverCoinsToGatherToTheRight(MatchOperation):
             return Mind.WILL
 
         return Mind.WILL_NOT
+
+
+    def __init__(self):
+        super().__init__()
+        self._name = '金銀３枚が右に集まる'
 
 
     def do_anything(self, will_play_moves, table, config_doc):

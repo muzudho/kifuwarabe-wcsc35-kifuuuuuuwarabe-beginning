@@ -42,6 +42,11 @@ class DoNotGoLeft(MatchOperation):
         return Mind.WILL_NOT
 
 
+    def __init__(self):
+        super().__init__()
+        self._name = '左へ行くな'
+
+
     def do_anything(self, will_play_moves, table, config_doc):
         if config_doc['march']['do_not_go_left']:
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順

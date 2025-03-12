@@ -92,6 +92,11 @@ class DoNotBuildRightWall(MatchOperation):
         return Mind.WILL
 
 
+    def __init__(self):
+        super().__init__()
+        self._name = '右壁を作るな'
+
+
     def do_anything(self, will_play_moves, table, config_doc):
         if config_doc['march']['do_not_build_right_wall']:
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順

@@ -2,8 +2,17 @@ class MatchOperation():
 
 
     def __init__(self):
+        self._name = ''
         self._is_removed = False
         self._is_disabled = False
+
+
+    @property
+    def name(self):
+        """名前。
+        人に読めるテキスト。
+        """
+        return self._name
 
 
     @property
