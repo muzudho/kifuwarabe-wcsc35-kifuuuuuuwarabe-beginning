@@ -3,7 +3,7 @@ import sys
 
 from .. import Mind
 from ..models import Square
-from ..sente_perspective import Ban, Comparison, Helper
+from ..sente_perspective import Ban, Comparison, Helper, Ji
 from .match_operation import MatchOperation
 
 
@@ -46,11 +46,22 @@ class DoNotGoHorizontalRook(MatchOperation):
 
     def do_anything(self, will_play_moves, table, config_doc):
         if config_doc['march']['do_not_go_horizontal_rook'] and not self.is_disabled:
-            for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
-                m = will_play_moves[i]
-                mind = DoNotGoHorizontalRook.before_move(m, table)
-                if mind == Mind.WILL_NOT:
-                    del will_play_moves[i]
+
+            ban = Ban(table)
+            cmp = Comparison(table)
+            ji = Ji(table)
+
+            # 自ライオンが２八にいる
+            if table.piece(ban.masu(28)) == ji.pc(cshogi.KING):
+                # （処理を行わず）このオブジェクトを除外
+                self._is_removed = True
+            
+            else:
+                for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
+                    m = will_play_moves[i]
+                    mind = DoNotGoHorizontalRook.before_move(m, table)
+                    if mind == Mind.WILL_NOT:
+                        del will_play_moves[i]
 
         return will_play_moves
 
@@ -71,13 +82,13 @@ class DoNotGoHorizontalRook(MatchOperation):
                 return
 
             if self._is_disabled:
-                # 移動先が異筋なら、この行進演算を有効化します。
+                # キリンの移動先が異筋なら、この行進演算を有効化します。
                 e1 = cmp.swap(dst_sq_obj.file, src_sq_obj.file)
                 if e1[0] != e1[1]:
                     self._is_disabled = False
 
-            else:
-                # 移動先が異段なら、この行進演算は削除します。
-                e1 = cmp.swap(dst_sq_obj.rank, src_sq_obj.rank)
-                if e1[0] != e1[1]:
-                    self._is_removed = True
+            # else:
+            #     # キリンの移動先が異段なら、この行進演算は削除します。
+            #     e1 = cmp.swap(dst_sq_obj.rank, src_sq_obj.rank)
+            #     if e1[0] != e1[1]:
+            #         self._is_removed = True
