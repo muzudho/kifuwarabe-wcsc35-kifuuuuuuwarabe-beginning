@@ -24,22 +24,34 @@ class DoNotGoLeft(MatchOperation):
         src_sq_obj = Square(cshogi.move_from(move))
         dst_sq_obj = Square(cshogi.move_to(move))
 
-        # ライオン、イヌ、ネコ以外なら対象外
-        if cshogi.move_from_piece_type(move) not in [cshogi.KING, cshogi.GOLD, cshogi.SILVER]:
-            return Mind.NOT_IN_THIS_CASE
+        # ライオンなら、以左には行くな。
+        if cshogi.move_from_piece_type(move) == cshogi.KING:
+            # 移動先が右なら意志あり
+            e1 = cmp.swap(dst_sq_obj.file, src_sq_obj.file)
+            if e1[0] < e1[1]:
+                return Mind.WILL
 
-        # ６筋位左にある駒は対象外
-        e1 = cmp.swap(src_sq_obj.file, ban.suji(6))
-        if e1[0] >= e1[1]:
-            return Mind.NOT_IN_THIS_CASE
+            # それ以外は意志なし
+            return Mind.WILL_NOT
 
-        # 移動先が同筋位右なら意志あり
-        e1 = cmp.swap(dst_sq_obj.file, src_sq_obj.file)
-        if e1[0] <= e1[1]:
-            return Mind.WILL
+        # イヌ、ネコなら
+        if cshogi.move_from_piece_type(move) in [cshogi.GOLD, cshogi.SILVER]:
+            # ６筋位左にある駒は対象外
+            e1 = cmp.swap(src_sq_obj.file, ban.suji(6))
+            if e1[0] >= e1[1]:
+                return Mind.NOT_IN_THIS_CASE
 
-        # それ以外は意志なし
-        return Mind.WILL_NOT
+            # 移動先が同筋位右なら意志あり
+            e1 = cmp.swap(dst_sq_obj.file, src_sq_obj.file)
+            if e1[0] <= e1[1]:
+                return Mind.WILL
+
+            # それ以外は意志なし
+            return Mind.WILL_NOT
+
+        # それ以外なら対象外
+        return Mind.NOT_IN_THIS_CASE
+
 
 
     def __init__(self):
