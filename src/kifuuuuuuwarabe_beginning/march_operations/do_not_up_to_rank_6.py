@@ -25,10 +25,10 @@ class DoNotUpToRank6(MatchOperation):
         dst_sq_obj = Square(cshogi.move_to(move))
         #moved_pt = cshogi.move_from_piece_type(move)
 
-        # 自キリンが２八にいる
-        if table.piece(ban.masu(28)) != ji.pc(cshogi.ROOK):
-            # そうでなければ対象外
-            return Mind.NOT_IN_THIS_CASE
+        # # 自キリンが２八にいる
+        # if table.piece(ban.masu(28)) != ji.pc(cshogi.ROOK):
+        #     # そうでなければ対象外
+        #     return Mind.NOT_IN_THIS_CASE
 
         # 移動先は６段目だ
         if dst_sq_obj.rank != ban.dan(6):
