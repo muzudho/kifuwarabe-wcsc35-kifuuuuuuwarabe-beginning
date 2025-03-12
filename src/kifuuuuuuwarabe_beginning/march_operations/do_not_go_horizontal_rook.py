@@ -45,7 +45,7 @@ class DoNotGoHorizontalRook(MatchOperation):
 
 
     def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march']['do_not_go_horizontal_rook']:
+        if config_doc['march']['do_not_go_horizontal_rook'] and not self.is_disabled:
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
                 mind = DoNotGoHorizontalRook.before_move(m, table)
@@ -59,7 +59,7 @@ class DoNotGoHorizontalRook(MatchOperation):
         """指す手の確定時。
         """
 
-        if config_doc['march']['do_not_go_horizontal_rook']:
+        if config_doc['march']['do_not_go_horizontal_rook'] and not self.is_disabled:
             ban = Ban(table)
             cmp = Comparison(table)
 
