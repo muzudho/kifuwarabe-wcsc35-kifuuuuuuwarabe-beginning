@@ -10,8 +10,8 @@
     # 行進［６段目に上がるな］
     do_not_up_to_rank_6 = true
 
-    # 行進［８段目に上がるな］
-    do_not_up_to_rank_8 = true
+    # 行進［キリンが動くまで動くな］
+    do_not_move_until_rook_moves = true
 
     # 行進［左へ行くな］
     do_not_go_left = true

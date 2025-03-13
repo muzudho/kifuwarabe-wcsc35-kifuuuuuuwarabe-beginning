@@ -2,7 +2,7 @@ from .do_not_build_right_wall import DoNotBuildRightWall
 from .do_not_move_rook import DoNotMoveRook
 from .do_not_go_left import DoNotGoLeft
 from .do_not_up_to_rank_6 import DoNotUpToRank6
-from .do_not_up_to_rank_8 import DoNotUpToRank8
+from .do_not_move_until_rook_moves import DoNotMoveUntilRookMoves
 from .will_for_three_gold_and_silver_coins_to_gather_to_the_right import WillForThreeGoldAndSilverCoinsToGatherToTheRight
 from .will_not_to_be_cut_88_bishop import WillNotToBeCut88Bishop
 from .will_not_to_move_37_pawn import WillNotToMove37Pawn

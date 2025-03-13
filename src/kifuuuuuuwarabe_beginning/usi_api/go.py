@@ -4,7 +4,7 @@ import random
 import sys
 
 from .. import Mind
-from ..march_operations import DoNotUpToRank6, DoNotUpToRank8, DoNotBuildRightWall, DoNotMoveRook, DoNotGoLeft, WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToMove37Pawn, WillSwingingRook, WillToTakeThePieceWithoutLosingAnything
+from ..march_operations import DoNotUpToRank6, DoNotMoveUntilRookMoves, DoNotBuildRightWall, DoNotMoveRook, DoNotGoLeft, WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToMove37Pawn, WillSwingingRook, WillToTakeThePieceWithoutLosingAnything
 
 
 class Go():
@@ -16,7 +16,7 @@ class Go():
             DoNotMoveRook(),    # 行進［きりんは動くな］  NOTE 飛車を振るまで有効になりません
             DoNotGoLeft(),      # 行進［左へ行くな］
             DoNotUpToRank6(),   # 行進［６段目に上がるな］
-            DoNotUpToRank8(),   # 行進［８段目に上がるな］
+            DoNotMoveUntilRookMoves(),   # 行進［キリンが動くまで動くな］
             WillForThreeGoldAndSilverCoinsToGatherToTheRight(),     # ［金銀３枚が右に集まる］意志
             WillNotToMove37Pawn(),  # ［３七の歩を突かない］意志
             WillSwingingRook(),     # ［振り飛車をする］意志

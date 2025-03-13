@@ -7,8 +7,8 @@ from ..sente_perspective import Ban, Comparison, Helper, Ji
 from .match_operation import MatchOperation
 
 
-class DoNotUpToRank8(MatchOperation):
-    """行進［８段目に上がるな］
+class DoNotMoveUntilRookMoves(MatchOperation):
+    """行進［キリンが動くまで動くな］
     ［飛車道を開ける］意志
     """
 
@@ -40,8 +40,8 @@ class DoNotUpToRank8(MatchOperation):
             # そうでなければ対象外
             return Mind.NOT_IN_THIS_CASE
 
-        # 動かした駒がライオン、イヌ、ネコ、イノシシのいずれかなら
-        if moved_pt in [cshogi.KING, cshogi.GOLD, cshogi.SILVER, cshogi.LANCE]:
+        # 動かした駒がライオン、イヌ、ネコのいずれかなら
+        if moved_pt in [cshogi.KING, cshogi.GOLD, cshogi.SILVER]:
             # 意志無し
             return Mind.WILL_NOT
 
@@ -83,14 +83,14 @@ class DoNotUpToRank8(MatchOperation):
 
     def __init__(self):
         super().__init__()
-        self._name = '８段目に上がるな'
+        self._name = 'キリンが動くまで動くな'
 
 
     def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march']['do_not_up_to_rank_8']:
+        if config_doc['march']['do_not_move_until_rook_moves']:
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
-                mind = DoNotUpToRank8.before_move(m, table)
+                mind = DoNotMoveUntilRookMoves.before_move(m, table)
                 if mind == Mind.WILL_NOT:
                     del will_play_moves[i]
 
