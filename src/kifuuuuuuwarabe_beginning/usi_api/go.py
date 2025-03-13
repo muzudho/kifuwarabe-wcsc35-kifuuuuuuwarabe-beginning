@@ -4,7 +4,7 @@ import random
 import sys
 
 from .. import Mind
-from ..march_operations import DoNotUpToRank6, DoNotUpToRank8, DoNotBuildRightWall, DoNotGoHorizontalRook, DoNotGoLeft, WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToMove37Pawn, WillSwingingRook, WillToTakeThePieceWithoutLosingAnything
+from ..march_operations import DoNotUpToRank6, DoNotUpToRank8, DoNotBuildRightWall, DoNotMoveRook, DoNotGoLeft, WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToMove37Pawn, WillSwingingRook, WillToTakeThePieceWithoutLosingAnything
 
 
 class Go():
@@ -13,7 +13,7 @@ class Go():
     def __init__(self):
         self._march_operation_list = [
             DoNotBuildRightWall(),      # 行進［右壁を作るな］
-            DoNotGoHorizontalRook(),    # 行進［きりんは横に行くな］  NOTE 飛車を振るまで有効になりません
+            DoNotMoveRook(),    # 行進［きりんは動くな］  NOTE 飛車を振るまで有効になりません
             DoNotGoLeft(),      # 行進［左へ行くな］
             DoNotUpToRank6(),   # 行進［６段目に上がるな］
             DoNotUpToRank8(),   # 行進［８段目に上がるな］

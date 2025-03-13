@@ -7,9 +7,9 @@ from ..sente_perspective import Ban, Comparison, Helper, Ji
 from .match_operation import MatchOperation
 
 
-class DoNotGoHorizontalRook(MatchOperation):
-    """行進［きりんは横に行くな］
-    ［きりんは縦に行く］意志
+class DoNotMoveRook(MatchOperation):
+    """行進［きりんは動くな］
+    ［きりんは止まる］意志
 
     NOTE 初期状態は無効で始まり、飛車を振った後に有効化します
     """
@@ -30,10 +30,10 @@ class DoNotGoHorizontalRook(MatchOperation):
         if cshogi.move_from_piece_type(move) not in [cshogi.ROOK]:
             return Mind.NOT_IN_THIS_CASE
 
-        # 移動先が異段なら意志あり
-        e1 = cmp.swap(dst_sq_obj.rank, src_sq_obj.rank)
-        if e1[0] != e1[1]:
-            return Mind.WILL
+        # # 移動先が異段なら意志あり
+        # e1 = cmp.swap(dst_sq_obj.rank, src_sq_obj.rank)
+        # if e1[0] != e1[1]:
+        #     return Mind.WILL
 
         # それ以外は意志なし
         return Mind.WILL_NOT
@@ -41,12 +41,12 @@ class DoNotGoHorizontalRook(MatchOperation):
 
     def __init__(self):
         super().__init__()
-        self._name = 'きりんは横に行くな'
+        self._name = 'きりんは動くな'
         self._is_disabled = True    # 初期状態は無効から始まる
 
 
     def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march']['do_not_go_horizontal_rook'] and not self.is_disabled:
+        if config_doc['march']['do_not_move_rook'] and not self.is_disabled:
 
             ban = Ban(table)
             cmp = Comparison(table)
@@ -60,7 +60,7 @@ class DoNotGoHorizontalRook(MatchOperation):
             else:
                 for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                     m = will_play_moves[i]
-                    mind = DoNotGoHorizontalRook.before_move(m, table)
+                    mind = DoNotMoveRook.before_move(m, table)
                     if mind == Mind.WILL_NOT:
                         del will_play_moves[i]
 
@@ -71,7 +71,7 @@ class DoNotGoHorizontalRook(MatchOperation):
         """指す手の確定時。
         """
 
-        if config_doc['march']['do_not_go_horizontal_rook']: # 無効化のときも（アクティベートのために）実行します
+        if config_doc['march']['do_not_move_rook']: # 無効化のときも（アクティベートのために）実行します
             ban = Ban(table)
             cmp = Comparison(table)
 
