@@ -1,4 +1,5 @@
 from .do_not_build_right_wall import DoNotBuildRightWall
+from .do_not_move_left_lance import DoNotMoveLeftLance
 from .do_not_move_rook import DoNotMoveRook
 from .do_not_go_left import DoNotGoLeft
 from .do_not_up_to_rank_6 import DoNotUpToRank6

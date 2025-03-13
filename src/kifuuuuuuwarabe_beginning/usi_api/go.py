@@ -4,7 +4,7 @@ import random
 import sys
 
 from .. import Mind
-from ..march_operations import DoNotUpToRank6, DoNotMoveUntilRookMoves, DoNotBuildRightWall, DoNotMoveRook, DoNotGoLeft, WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToMove37Pawn, WillSwingingRook, WillToTakeThePieceWithoutLosingAnything
+from ..march_operations import DoNotUpToRank6, DoNotMoveUntilRookMoves, DoNotBuildRightWall, DoNotMoveLeftLance, DoNotMoveRook, DoNotGoLeft, WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToMove37Pawn, WillSwingingRook, WillToTakeThePieceWithoutLosingAnything
 
 
 class Go():
@@ -12,10 +12,11 @@ class Go():
 
     def __init__(self):
         self._march_operation_list = [
-            DoNotBuildRightWall(),      # 行進［右壁を作るな］
-            DoNotMoveRook(),    # 行進［きりんは動くな］  NOTE 飛車を振るまで有効になりません
-            DoNotGoLeft(),      # 行進［左へ行くな］
-            DoNotUpToRank6(),   # 行進［６段目に上がるな］
+            DoNotBuildRightWall(),  # 行進［右壁を作るな］
+            DoNotMoveLeftLance(),   # 行進［左のイノシシは動くな］
+            DoNotMoveRook(),        # 行進［きりんは動くな］  NOTE 飛車を振るまで有効になりません
+            DoNotGoLeft(),          # 行進［左へ行くな］
+            DoNotUpToRank6(),       # 行進［６段目に上がるな］
             DoNotMoveUntilRookMoves(),   # 行進［キリンが動くまで動くな］
             WillForThreeGoldAndSilverCoinsToGatherToTheRight(),     # ［金銀３枚が右に集まる］意志
             WillNotToMove37Pawn(),  # ［３七の歩を突かない］意志

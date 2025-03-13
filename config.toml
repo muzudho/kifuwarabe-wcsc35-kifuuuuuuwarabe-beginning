@@ -16,6 +16,9 @@
     # 行進［左へ行くな］
     do_not_go_left = true
 
+    # 行進［左のイノシシは動くな］
+    do_not_move_left_lance = true
+
     # 行進［きりんは動くな］
     do_not_move_rook = true
 
