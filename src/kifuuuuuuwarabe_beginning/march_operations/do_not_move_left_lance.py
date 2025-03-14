@@ -29,7 +29,7 @@ class DoNotMoveLeftLance(MatchOperation):
             return Mind.NOT_IN_THIS_CASE
 
         # ９筋の駒が動いたら意志無し
-        print(f'★ ＤoNotMoveLeftLance.before_move(): {src_sq_obj.file=} {ban.suji(9)=}')
+        #print(f'★ ＤoNotMoveLeftLance.before_move(): {src_sq_obj.file=} {ban.suji(9)=}')
         if src_sq_obj.file == ban.suji(9):
             return Mind.WILL_NOT
 
@@ -43,7 +43,7 @@ class DoNotMoveLeftLance(MatchOperation):
 
 
     def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march']['do_not_move_left_lance'] and not self.is_disabled:
+        if config_doc['march']['do_not_move_left_lance']:
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
                 mind = DoNotMoveLeftLance.before_move(m, table)

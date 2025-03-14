@@ -11,7 +11,7 @@ class DoNotMoveRook(MatchOperation):
     """行進［きりんは動くな］
     ［きりんは止まる］意志
 
-    NOTE 初期状態は無効で始まり、飛車を振った後に有効化します
+    NOTE 初期状態は［アイドリング］で始まり、飛車を振った後に有効化します
     """
 
 
@@ -42,11 +42,10 @@ class DoNotMoveRook(MatchOperation):
     def __init__(self):
         super().__init__()
         self._name = 'きりんは動くな'
-        self._is_disabled = True    # 初期状態は無効から始まる
 
 
     def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march']['do_not_move_rook'] and not self.is_disabled:
+        if config_doc['march']['do_not_move_rook']:
 
             ban = Ban(table)
             cmp = Comparison(table)
@@ -67,7 +66,7 @@ class DoNotMoveRook(MatchOperation):
         return will_play_moves
 
 
-    def on_best_move_played(self, move, table, config_doc):
+    def on_best_move_played_when_idling(self, move, table, config_doc):
         """指す手の確定時。
         """
 
@@ -82,14 +81,12 @@ class DoNotMoveRook(MatchOperation):
             if cshogi.move_from_piece_type(move) not in [cshogi.ROOK]:
                 return
 
-            if self._is_disabled:
-                # キリンの移動先が異筋なら、この行進演算を有効化します。
-                e1 = cmp.swap(dst_sq_obj.file, src_sq_obj.file)
-                if e1[0] != e1[1]:
-                    print(f'★ on_best_move_played: {self.name=} 有効化')
-                    self._is_disabled = False
+            # キリンの移動先が異筋なら、この行進演算を有効化します。
+            e1 = cmp.swap(dst_sq_obj.file, src_sq_obj.file)
+            if e1[0] != e1[1]:
+                print(f'★ ｏn_best_move_played: {self.name=} 有効化')
+                self._is_activate = True
 
-            # else:
             #     # キリンの移動先が異段なら、この行進演算は削除します。
             #     e1 = cmp.swap(dst_sq_obj.rank, src_sq_obj.rank)
             #     if e1[0] != e1[1]:

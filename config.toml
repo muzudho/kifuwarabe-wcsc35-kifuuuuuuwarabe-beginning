@@ -4,6 +4,9 @@
 # 行進
 [march]
 
+    # 行進［戻るな］
+    do_not_back = true
+
     # 行進［右壁を作るな］
     do_not_build_right_wall = true
 

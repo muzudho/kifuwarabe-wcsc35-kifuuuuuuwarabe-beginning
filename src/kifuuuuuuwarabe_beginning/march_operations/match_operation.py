@@ -3,8 +3,8 @@ class MatchOperation():
 
     def __init__(self):
         self._name = ''
+        self._is_activate = False
         self._is_removed = False
-        self._is_disabled = False
 
 
     @property
@@ -16,13 +16,22 @@ class MatchOperation():
 
 
     @property
+    def is_activate(self):
+        """［アイドリング］状態にある［行進演算］が、
+        ［オンゴーイング］状態に遷移するためのフラグです。
+        """
+        return self._is_activate
+
+
+    @property
     def is_removed(self):
         return self._is_removed
 
 
-    @property
-    def is_disabled(self):
-        return self._is_disabled
+    def on_best_move_played_when_idling(self, move, table, config_doc):
+        """（アイドリング中の行進演算について）指す手の確定時。
+        """
+        pass
 
 
     def on_best_move_played(self, move, table, config_doc):
