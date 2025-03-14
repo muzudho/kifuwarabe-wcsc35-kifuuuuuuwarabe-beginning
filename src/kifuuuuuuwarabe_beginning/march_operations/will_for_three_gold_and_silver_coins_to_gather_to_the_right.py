@@ -11,14 +11,15 @@ class WillForThreeGoldAndSilverCoinsToGatherToTheRight(MatchOperation):
     """
 
 
-    def __init__(self):
-        super().__init__()
-        self._id = 'will_for_three_gold_and_silver_coins_to_gather_to_the_right'
-        self._label = '金銀３枚が右に集まる'
+    def __init__(self, config_doc):
+        super().__init__(
+                id          = 'will_for_three_gold_and_silver_coins_to_gather_to_the_right',
+                label       = '金銀３枚が右に集まる',
+                config_doc  = config_doc)
 
 
-    def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march_operations'][self._id]:
+    def do_anything(self, will_play_moves, table):
+        if self.is_enabled:
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
                 mind = self.before_move(m, table)

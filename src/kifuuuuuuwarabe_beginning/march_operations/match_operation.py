@@ -1,10 +1,21 @@
 class MatchOperation():
 
 
-    def __init__(self):
-        self._label = ''
+    def __init__(self, id, label, config_doc):
+        self._id = id
+        self._label = label
+        self._config_doc = config_doc
+
         self._is_activate = False
         self._is_removed = False
+
+
+    @property
+    def id(self):
+        """識別子。
+        設定ファイルなどで利用する名前。
+        """
+        return self._label
 
 
     @property
@@ -13,6 +24,11 @@ class MatchOperation():
         人に読めるテキスト。
         """
         return self._label
+
+
+    @property
+    def is_enabled(self):
+        return self._config_doc['march_operations'][self._id]
 
 
     @property
@@ -28,13 +44,13 @@ class MatchOperation():
         return self._is_removed
 
 
-    def on_best_move_played_when_idling(self, move, table, config_doc):
+    def on_best_move_played_when_idling(self, move, table):
         """（アイドリング中の行進演算について）指す手の確定時。
         """
         pass
 
 
-    def on_best_move_played(self, move, table, config_doc):
+    def on_best_move_played(self, move, table):
         """指す手の確定時。
         """
         pass

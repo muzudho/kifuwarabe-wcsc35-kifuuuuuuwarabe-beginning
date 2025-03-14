@@ -9,25 +9,25 @@ from ..march_operations import DoNotBack, DoNotUpToRank6, DoNotMoveUntilRookMove
 class Go():
 
 
-    def __init__(self):
+    def __init__(self, config_doc):
         # 初期状態では、有効でない行進演算です。
         self._march_operation_list_when_idling = [
-            DoNotMoveRook(),        # 行進［きりんは動くな］  NOTE 飛車を振るまで有効になりません
+            DoNotMoveRook(config_doc=config_doc),        # 行進［きりんは動くな］  NOTE 飛車を振るまで有効になりません
         ]
 
         self._march_operation_list = [
-            DoNotBack(),            # 行進［戻るな］
-            DoNotBuildRightWall(),  # 行進［右壁を作るな］
-            DoNotMoveLeftLance(),   # 行進［左のイノシシは動くな］
-            DoNotMoveRightLance(),  # 行進［右のイノシシは動くな］
-            DoNotGoLeft(),          # 行進［左へ行くな］
-            DoNotUpToRank6(),       # 行進［６段目に上がるな］
-            DoNotMoveUntilRookMoves(),   # 行進［キリンが動くまで動くな］
-            WillForThreeGoldAndSilverCoinsToGatherToTheRight(),     # ［金銀３枚が右に集まる］意志
-            WillNotToMove37Pawn(),  # ［３七の歩を突かない］意志
-            WillSwingingRook(),     # ［振り飛車をする］意志
-            WillNotToBeCut88Bishop(),   # ［８八の角を素抜かれない］意志
-            WillToTakeThePieceWithoutLosingAnything(),  #  ［駒取って損しない］意志
+            DoNotBack                                           (config_doc=config_doc),    # 行進［戻るな］
+            DoNotBuildRightWall                                 (config_doc=config_doc),    # 行進［右壁を作るな］
+            DoNotMoveLeftLance                                  (config_doc=config_doc),    # 行進［左のイノシシは動くな］
+            DoNotMoveRightLance                                 (config_doc=config_doc),    # 行進［右のイノシシは動くな］
+            DoNotGoLeft                                         (config_doc=config_doc),    # 行進［左へ行くな］
+            DoNotUpToRank6                                      (config_doc=config_doc),    # 行進［６段目に上がるな］
+            DoNotMoveUntilRookMoves                             (config_doc=config_doc),    # 行進［キリンが動くまで動くな］
+            WillForThreeGoldAndSilverCoinsToGatherToTheRight    (config_doc=config_doc),    # ［金銀３枚が右に集まる］意志
+            WillNotToMove37Pawn                                 (config_doc=config_doc),    # ［３七の歩を突かない］意志
+            WillSwingingRook                                    (config_doc=config_doc),    # ［振り飛車をする］意志
+            WillNotToBeCut88Bishop                              (config_doc=config_doc),    # ［８八の角を素抜かれない］意志
+            WillToTakeThePieceWithoutLosingAnything             (config_doc=config_doc),    # ［駒取って損しない］意志
         ]
 
 
@@ -39,8 +39,7 @@ class Go():
         for march_operation in self._march_operation_list:
             will_play_moves = march_operation.do_anything(
                     will_play_moves = will_play_moves,
-                    table           = table,
-                    config_doc      = config_doc)
+                    table           = table)
 
             # 行進演算を、必要がなくなったら、リストから除外する操作
             if march_operation.is_removed:
@@ -53,7 +52,7 @@ class Go():
         return will_play_moves
 
 
-    def on_best_move_played_when_idling(self, move, table, config_doc):
+    def on_best_move_played_when_idling(self, move, table):
         """（アイドリング中の行進演算について）指す手の確定時。
         """
 
@@ -64,8 +63,7 @@ class Go():
         for march_operation in self._march_operation_list_when_idling:
             march_operation.on_best_move_played_when_idling(
                     move        = move,
-                    table       = table,
-                    config_doc  = config_doc)
+                    table       = table)
 
             if march_operation.is_activate:
                 match_operation_list_to_activate.append(march_operation)
@@ -84,7 +82,7 @@ class Go():
             print(f'★ ｏn_best_move_played: 行進演算 削除 {march_operation.label=}')
 
 
-    def on_best_move_played(self, move, table, config_doc):
+    def on_best_move_played(self, move, table):
         """指す手の確定時。
         """
 
@@ -94,8 +92,7 @@ class Go():
         for march_operation in self._march_operation_list:
             march_operation.on_best_move_played(
                     move        = move,
-                    table       = table,
-                    config_doc  = config_doc)
+                    table       = table)
 
             # 行進演算を、必要がなくなったら、リストから除外する操作
             if march_operation.is_removed:

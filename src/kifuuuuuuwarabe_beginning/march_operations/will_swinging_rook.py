@@ -11,10 +11,11 @@ class WillSwingingRook(MatchOperation):
     """
 
 
-    def __init__(self):
-        super().__init__()
-        self._id = 'will_swinging_rook'
-        self._label = '振り飛車をする'
+    def __init__(self, config_doc):
+        super().__init__(
+                id          = 'will_swinging_rook',
+                label       = '振り飛車をする',
+                config_doc  = config_doc)
 
 
     @staticmethod
@@ -61,9 +62,9 @@ class WillSwingingRook(MatchOperation):
         return constants.mind.NOT_IN_THIS_CASE
 
 
-    def do_anything(self, will_play_moves, table, config_doc):
+    def do_anything(self, will_play_moves, table):
         # ［振り飛車をする］意志
-        if config_doc['march_operations'][self._id]:
+        if self.is_enabled:
             if constants.mind.WILL == self.will_on_board(table):
                 #print('★ go: 盤は［振り飛車をする］意志を残しています', file=sys.stderr)
 

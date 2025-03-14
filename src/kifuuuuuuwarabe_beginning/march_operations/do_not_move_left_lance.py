@@ -12,14 +12,15 @@ class DoNotMoveLeftLance(MatchOperation):
     """
 
 
-    def __init__(self):
-        super().__init__()
-        self._id = 'do_not_move_left_lance'
-        self._label = '左のイノシシは動くな'
+    def __init__(self, config_doc):
+        super().__init__(
+                id          = 'do_not_move_left_lance',
+                label       = '左のイノシシは動くな',
+                config_doc  = config_doc)
 
 
-    def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march_operations'][self._id]:
+    def do_anything(self, will_play_moves, table):
+        if self.is_enabled:
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
                 mind = self.before_move(m, table)

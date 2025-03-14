@@ -14,14 +14,15 @@ class DoNotMoveRook(MatchOperation):
     """
 
 
-    def __init__(self):
-        super().__init__()
-        self._id = 'do_not_move_rook'
-        self._label = 'きりんは動くな'
+    def __init__(self, config_doc):
+        super().__init__(
+                id          = 'do_not_move_rook',
+                label       = 'きりんは動くな',
+                config_doc  = config_doc)
 
 
-    def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march_operations'][self._id]:
+    def do_anything(self, will_play_moves, table):
+        if self.is_enabled:
 
             ban = Ban(table)
             cmp = Comparison(table)
@@ -65,11 +66,11 @@ class DoNotMoveRook(MatchOperation):
         return constants.mind.WILL_NOT
 
 
-    def on_best_move_played_when_idling(self, move, table, config_doc):
+    def on_best_move_played_when_idling(self, move, table):
         """（アイドリング中の行進演算について）指す手の確定時。
         """
 
-        if config_doc['march_operations'][self._id]:
+        if self.is_enabled:
             ban = Ban(table)
             cmp = Comparison(table)
 

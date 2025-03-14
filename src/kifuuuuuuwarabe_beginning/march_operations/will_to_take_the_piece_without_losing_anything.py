@@ -11,19 +11,20 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
     """
 
 
-    def __init__(self):
-        super().__init__()
-        self._id = 'will_to_take_the_piece_without_losing_anything'
-        self._label = '駒取って損しない'
+    def __init__(self, config_doc):
+        super().__init__(
+                id          = 'will_to_take_the_piece_without_losing_anything',
+                label       = '駒取って損しない',
+                config_doc  = config_doc)
 
 
-    def do_anything(self, will_play_moves, table, config_doc):
+    def do_anything(self, will_play_moves, table):
         # １手指してから判定
         for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
             m = will_play_moves[i]
 
             # ［駒取って損しない］意志
-            if config_doc['march_operations'][self._id]:
+            if self.is_enabled:
                 mind = self.will_move(m, table)
                 if mind == constants.mind.WILL_NOT:
                     del will_play_moves[i]

@@ -11,20 +11,21 @@ class WillNotToBeCut88Bishop(MatchOperation):
     """
 
 
-    def __init__(self):
-        super().__init__()
-        self._id = 'will_not_to_be_cut_88_bishop'
-        self._label = '８八の角を素抜かれない'
+    def __init__(self, config_doc):
+        super().__init__(
+                id          = 'will_not_to_be_cut_88_bishop',
+                label       = '８八の角を素抜かれない',
+                config_doc  = config_doc)
 
 
-    def do_anything(self, will_play_moves, table, config_doc):
+    def do_anything(self, will_play_moves, table):
         # １手指してから判定
         for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
             m = will_play_moves[i]
             table.push(m)   # １手指す
 
             # ［８八の角を素抜かれない］意志
-            if config_doc['march_operations'][self._id]:
+            if self.is_enabled:
                 mind = self.have_will_after_moving_on_board(table)
                 if mind == constants.mind.WILL_NOT:
                     del will_play_moves[i]

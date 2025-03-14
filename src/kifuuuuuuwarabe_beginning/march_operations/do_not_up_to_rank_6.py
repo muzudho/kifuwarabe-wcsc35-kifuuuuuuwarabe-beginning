@@ -12,14 +12,15 @@ class DoNotUpToRank6(MatchOperation):
     """
 
 
-    def __init__(self):
-        super().__init__()
-        self._id = 'do_not_up_to_rank_6'
-        self._label = '６段目に上がるな'
+    def __init__(self, config_doc):
+        super().__init__(
+                id          = 'do_not_up_to_rank_6',
+                label       = '６段目に上がるな',
+                config_doc  = config_doc)
 
 
-    def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march_operations'][self._id]:
+    def do_anything(self, will_play_moves, table):
+        if self.is_enabled:
 
             ban = Ban(table)
             #cmp = Comparison(table)

@@ -12,18 +12,19 @@ class DoNotBack(MatchOperation):
     """
 
 
-    def __init__(self):
-        super().__init__()
-        self._id = 'do_not_back'
-        self._label = '戻るな'
+    def __init__(self, config_doc):
+        super().__init__(
+                id          = 'do_not_back',
+                label       = '戻るな',
+                config_doc  = config_doc)
 
         # 元の位置。該当がなければナンです。
         # NOTE 自分が指し手を送信した手しか記憶していません。
         self._back_board = [None] * constants.BOARD_AREA
 
 
-    def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march_operations'][self._id]:
+    def do_anything(self, will_play_moves, table):
+        if self.is_enabled:
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
                 mind = self.before_move(m, table)
@@ -62,11 +63,11 @@ class DoNotBack(MatchOperation):
         return constants.mind.WILL
 
 
-    def on_best_move_played(self, move, table, config_doc):
+    def on_best_move_played(self, move, table):
         """指す手の確定時。
         """
 
-        if config_doc['march_operations'][self._id]:
+        if self.is_enabled:
             src_sq_obj = Square(cshogi.move_from(move))
             dst_sq_obj = Square(cshogi.move_to(move))
             is_drop = cshogi.move_is_drop(move)

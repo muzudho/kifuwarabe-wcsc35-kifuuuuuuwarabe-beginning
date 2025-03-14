@@ -24,7 +24,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         self._table = Table.create_table()
 
         # 各種オブジェクト
-        self._go = Go()
+        self._go = Go(config_doc=self._config_doc)
 
     def start_usi_loop(self):
         """USIループ開始
@@ -120,7 +120,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         """
 
         # 再生成
-        self._go = Go()
+        self._go = Go(config_doc=self._config_doc)
 
         print(f"[{datetime.datetime.now()}] usinewgame end", flush=True)
 
@@ -197,13 +197,11 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
         self._go.on_best_move_played_when_idling(
                 move=best_move,
-                table=self._table,
-                config_doc=self._config_doc)
+                table=self._table)
 
         self._go.on_best_move_played(
                 move=best_move,
-                table=self._table,
-                config_doc=self._config_doc)
+                table=self._table)
 
         print(f"info depth 0 seldepth 0 time 1 nodes 0 score cp 0 string Go kifuuuuuuWarabe")
         print(f'bestmove {best_move_as_usi}', flush=True)
