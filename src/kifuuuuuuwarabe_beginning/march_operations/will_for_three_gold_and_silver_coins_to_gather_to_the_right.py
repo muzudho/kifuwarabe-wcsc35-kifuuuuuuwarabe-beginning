@@ -13,7 +13,7 @@ class WillForThreeGoldAndSilverCoinsToGatherToTheRight(MatchOperation):
 
     def __init__(self):
         super().__init__()
-        self._name = '金銀３枚が右に集まる'
+        self._label = '金銀３枚が右に集まる'
 
 
     def do_anything(self, will_play_moves, table, config_doc):

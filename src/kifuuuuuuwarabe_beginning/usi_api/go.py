@@ -48,7 +48,7 @@ class Go():
 
         for march_operation in match_operation_list_to_remove:
             self._march_operation_list.remove(march_operation)
-            print(f'★ get_will_play_moves: 行進演算 削除 {march_operation.name=}')
+            print(f'★ get_will_play_moves: 行進演算 削除 {march_operation.label=}')
 
         return will_play_moves
 
@@ -77,11 +77,11 @@ class Go():
         for march_operation in match_operation_list_to_activate:
             self._march_operation_list_when_idling.remove(march_operation)
             self._march_operation_list.append(march_operation)
-            print(f'★ ｏn_best_move_played: 行進演算 有効化 {march_operation.name=}')
+            print(f'★ ｏn_best_move_played: 行進演算 有効化 {march_operation.label=}')
 
         for march_operation in match_operation_list_to_remove:
             self._march_operation_list.remove(march_operation)
-            print(f'★ ｏn_best_move_played: 行進演算 削除 {march_operation.name=}')
+            print(f'★ ｏn_best_move_played: 行進演算 削除 {march_operation.label=}')
 
 
     def on_best_move_played(self, move, table, config_doc):
@@ -103,4 +103,4 @@ class Go():
 
         for march_operation in match_operation_list_to_remove:
             self._march_operation_list.remove(march_operation)
-            print(f'★ ｏn_best_move_played: 行進演算 削除 {march_operation.name=}')
+            print(f'★ ｏn_best_move_played: 行進演算 削除 {march_operation.label=}')

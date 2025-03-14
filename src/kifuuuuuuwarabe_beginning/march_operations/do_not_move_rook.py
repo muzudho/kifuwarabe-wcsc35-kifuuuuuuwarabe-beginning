@@ -16,7 +16,7 @@ class DoNotMoveRook(MatchOperation):
 
     def __init__(self):
         super().__init__()
-        self._name = 'きりんは動くな'
+        self._label = 'きりんは動くな'
 
 
     def do_anything(self, will_play_moves, table, config_doc):
@@ -82,7 +82,7 @@ class DoNotMoveRook(MatchOperation):
             # キリンの移動先が異筋なら、この行進演算を有効化します。
             e1 = cmp.swap(dst_sq_obj.file, src_sq_obj.file)
             if e1[0] != e1[1]:
-                print(f'★ ｏn_best_move_played: {self.name=} 有効化')
+                print(f'★ ｏn_best_move_played: {self.label=} 有効化')
                 self._is_activate = True
 
             #     # キリンの移動先が異段なら、この行進演算は削除します。

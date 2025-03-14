@@ -2,17 +2,17 @@ class MatchOperation():
 
 
     def __init__(self):
-        self._name = ''
+        self._label = ''
         self._is_activate = False
         self._is_removed = False
 
 
     @property
-    def name(self):
+    def label(self):
         """名前。
         人に読めるテキスト。
         """
-        return self._name
+        return self._label
 
 
     @property

@@ -16,7 +16,7 @@ class DoNotBuildRightWall(MatchOperation):
 
     def __init__(self):
         super().__init__()
-        self._name = '右壁を作るな'
+        self._label = '右壁を作るな'
 
 
     def do_anything(self, will_play_moves, table, config_doc):

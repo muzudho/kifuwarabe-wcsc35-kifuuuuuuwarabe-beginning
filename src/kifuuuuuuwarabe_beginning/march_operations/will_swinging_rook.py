@@ -27,7 +27,7 @@ class WillSwingingRook(MatchOperation):
 
     def __init__(self):
         super().__init__()
-        self._name = '振り飛車をする'
+        self._label = '振り飛車をする'
 
 
     @staticmethod

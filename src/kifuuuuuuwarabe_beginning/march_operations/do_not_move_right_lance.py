@@ -14,7 +14,7 @@ class DoNotMoveRightLance(MatchOperation):
 
     def __init__(self):
         super().__init__()
-        self._name = '右のイノシシは動くな'
+        self._label = '右のイノシシは動くな'
 
 
     def do_anything(self, will_play_moves, table, config_doc):

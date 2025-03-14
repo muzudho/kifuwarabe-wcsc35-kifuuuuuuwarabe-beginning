@@ -41,7 +41,7 @@ class WillNotToMove37Pawn(MatchOperation):
 
     def __init__(self):
         super().__init__()
-        self._name = '３七の歩を突かない'
+        self._label = '３七の歩を突かない'
 
 
     def do_anything(self, will_play_moves, table, config_doc):

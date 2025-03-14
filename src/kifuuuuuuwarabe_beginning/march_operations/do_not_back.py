@@ -14,9 +14,10 @@ class DoNotBack(MatchOperation):
 
     def __init__(self):
         super().__init__()
-        self._name = '戻るな'
+        self._label = '戻るな'
 
         # 元の位置。該当がなければナンです。
+        # NOTE 自分が指し手を送信した手しか記憶していません。
         self._back_board = [None] * constants.BOARD_AREA
 
 
@@ -43,17 +44,17 @@ class DoNotBack(MatchOperation):
 
         # 動かす駒は、現在のマスに移動する前はどこに居たか調べます。
         try:
-            most_recent_src_sq = self._back_board[src_sq_obj.sq]
+            back_sq = self._back_board[src_sq_obj.sq]
         except IndexError:
             print(f'ERROR: {src_sq_obj.sq=}', file=sys.stderr)
             raise
 
-        if most_recent_src_sq in [None, constants.PIECE_STAND_SQ]:
+        if back_sq in [None, constants.PIECE_STAND_SQ]:
             # 動いていない、または、駒台にあったなら、対象外
             return constants.mind.NOT_IN_THIS_CASE
 
         # 元居た位置に戻る手は、意志無し。
-        if dst_sq_obj.sq == most_recent_src_sq:
+        if dst_sq_obj.sq == back_sq:
             return constants.mind.WILL_NOT
 
         # それ以外なら、意志有り。
@@ -65,9 +66,6 @@ class DoNotBack(MatchOperation):
         """
 
         if config_doc['march_operations']['do_not_back']:
-            ban = Ban(table)
-            cmp = Comparison(table)
-
             src_sq_obj = Square(cshogi.move_from(move))
             dst_sq_obj = Square(cshogi.move_to(move))
             is_drop = cshogi.move_is_drop(move)
@@ -76,15 +74,12 @@ class DoNotBack(MatchOperation):
             if cshogi.move_from_piece_type(move) not in [cshogi.KNIGHT, cshogi.LANCE, cshogi.PAWN]:
                 return
 
-            # 移動先のマス番号
-            if is_drop: # 打のとき。                
-                dst_sq = constants.PIECE_STAND_SQ
-            else:
-                dst_sq = dst_sq_obj.sq
-
             # 移動元のマス番号
-            src_sq = src_sq_obj.sq
+            if is_drop: # 打のとき。                
+                src_sq = constants.PIECE_STAND_SQ
+            else:
+                src_sq = src_sq_obj.sq
 
             # 記憶
-            self._back_board[dst_sq] = src_sq
+            self._back_board[dst_sq_obj.sq] = src_sq
             self._back_board[src_sq] = None

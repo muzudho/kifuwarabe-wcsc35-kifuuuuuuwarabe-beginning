@@ -98,7 +98,7 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
 
     def __init__(self):
         super().__init__()
-        self._name = '駒取って損しない'
+        self._label = '駒取って損しない'
 
 
     def do_anything(self, will_play_moves, table, config_doc):

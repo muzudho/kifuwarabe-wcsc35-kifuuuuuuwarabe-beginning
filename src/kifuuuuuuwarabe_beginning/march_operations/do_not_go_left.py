@@ -14,7 +14,7 @@ class DoNotGoLeft(MatchOperation):
 
     def __init__(self):
         super().__init__()
-        self._name = '左へ行くな'
+        self._label = '左へ行くな'
 
 
     def do_anything(self, will_play_moves, table, config_doc):

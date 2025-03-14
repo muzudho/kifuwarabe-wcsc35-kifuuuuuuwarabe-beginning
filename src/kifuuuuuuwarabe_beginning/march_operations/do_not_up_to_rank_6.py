@@ -14,7 +14,7 @@ class DoNotUpToRank6(MatchOperation):
 
     def __init__(self):
         super().__init__()
-        self._name = '６段目に上がるな'
+        self._label = '６段目に上がるな'
 
 
     def do_anything(self, will_play_moves, table, config_doc):

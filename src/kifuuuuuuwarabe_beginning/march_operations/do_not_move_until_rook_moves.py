@@ -14,7 +14,7 @@ class DoNotMoveUntilRookMoves(MatchOperation):
 
     def __init__(self):
         super().__init__()
-        self._name = 'キリンが動くまで動くな'
+        self._label = 'キリンが動くまで動くな'
 
 
     def do_anything(self, will_play_moves, table, config_doc):

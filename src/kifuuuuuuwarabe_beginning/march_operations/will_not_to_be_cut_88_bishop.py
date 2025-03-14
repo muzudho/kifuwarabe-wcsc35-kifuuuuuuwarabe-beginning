@@ -47,7 +47,7 @@ class WillNotToBeCut88Bishop(MatchOperation):
 
     def __init__(self):
         super().__init__()
-        self._name = '８八の角を素抜かれない'
+        self._label = '８八の角を素抜かれない'
 
 
     def do_anything(self, will_play_moves, table, config_doc):
