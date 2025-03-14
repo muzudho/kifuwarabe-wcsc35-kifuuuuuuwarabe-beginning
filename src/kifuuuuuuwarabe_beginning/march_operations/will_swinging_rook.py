@@ -18,8 +18,28 @@ class WillSwingingRook(MatchOperation):
                 config_doc  = config_doc)
 
 
-    @staticmethod
-    def will_on_move(move, table):
+    def do_anything(self, will_play_moves, table):
+        # ［振り飛車をする］意志
+        if self.is_enabled:
+            if constants.mind.WILL == self.will_on_board(table):
+                #print('★ go: 盤は［振り飛車をする］意志を残しています', file=sys.stderr)
+
+                for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
+                    m = will_play_moves[i]
+
+                    # ［振り飛車をする］意志
+                    mind = self.before_move(m, table)
+                    if mind == constants.mind.WILL_NOT:
+                        del will_play_moves[i]
+            
+            # else:
+            #     print('★ go: 盤は［振り飛車をする］意志はありません', file=sys.stderr)
+            #     pass
+
+        return will_play_moves
+
+
+    def before_move(self, move, table):
         """指し手は［振り飛車をする］意志を残しているか？
         """
         ban = Ban(table)
@@ -60,27 +80,6 @@ class WillSwingingRook(MatchOperation):
 
 
         return constants.mind.NOT_IN_THIS_CASE
-
-
-    def do_anything(self, will_play_moves, table):
-        # ［振り飛車をする］意志
-        if self.is_enabled:
-            if constants.mind.WILL == self.will_on_board(table):
-                #print('★ go: 盤は［振り飛車をする］意志を残しています', file=sys.stderr)
-
-                for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
-                    m = will_play_moves[i]
-
-                    # ［振り飛車をする］意志
-                    mind = WillSwingingRook.will_on_move(m, table)
-                    if mind == constants.mind.WILL_NOT:
-                        del will_play_moves[i]
-            
-            # else:
-            #     print('★ go: 盤は［振り飛車をする］意志はありません', file=sys.stderr)
-            #     pass
-
-        return will_play_moves
 
 
     def will_on_board(self, table):

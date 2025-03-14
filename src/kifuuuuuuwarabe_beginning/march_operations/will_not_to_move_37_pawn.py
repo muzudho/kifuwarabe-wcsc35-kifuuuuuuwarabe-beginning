@@ -18,18 +18,7 @@ class WillNotToMove37Pawn(MatchOperation):
                 config_doc  = config_doc)
 
 
-    def do_anything(self, will_play_moves, table):
-        if self.is_enabled:
-            for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
-                m = will_play_moves[i]
-                mind = self.will_on_move(m, table)
-                if mind == constants.mind.WILL_NOT:
-                    del will_play_moves[i]
-
-        return will_play_moves
-
-
-    def will_on_move(self, move, table):
+    def before_move(self, move, table):
         """指し手は［３七の歩を突かない］意志を残しているか？
         """
         ban = Ban(table)

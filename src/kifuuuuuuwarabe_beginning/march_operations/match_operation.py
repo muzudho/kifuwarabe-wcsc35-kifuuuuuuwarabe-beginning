@@ -1,3 +1,6 @@
+from ..models import constants
+
+
 class MatchOperation():
 
 
@@ -52,5 +55,22 @@ class MatchOperation():
 
     def on_best_move_played(self, move, table):
         """指す手の確定時。
+        """
+        pass
+
+
+    def do_anything(self, will_play_moves, table):
+        if self.is_enabled:
+            for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
+                m = will_play_moves[i]
+                mind = self.before_move(m, table)
+                if mind == constants.mind.WILL_NOT:
+                    del will_play_moves[i]
+
+        return will_play_moves
+
+
+    def before_move(self, move, table):
+        """指す前に。
         """
         pass

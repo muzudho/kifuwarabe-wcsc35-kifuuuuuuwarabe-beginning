@@ -18,27 +18,13 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
                 config_doc  = config_doc)
 
 
-    def do_anything(self, will_play_moves, table):
-        # １手指してから判定
-        for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
-            m = will_play_moves[i]
-
-            # ［駒取って損しない］意志
-            if self.is_enabled:
-                mind = self.will_move(m, table)
-                if mind == constants.mind.WILL_NOT:
-                    del will_play_moves[i]
-
-        return will_play_moves
-
-
-    def will_move(self, move, table):
+    def before_move(self, move, table):
         """指し手は［駒取って損しない］意志を残しているか？
         """
 
         # 動かした駒の種類
         pt = cshogi.move_from_piece_type(move)
-        #print(f'★ will_to_take_the_piece_without_losing_anything.will_move: {PieceType.kanji(pt)=}')
+        #print(f'★ will_to_take_the_piece_without_losing_anything.before_move: {PieceType.kanji(pt)=}')
 
         # 動かした駒が角以外なら対象外
         if pt != cshogi.BISHOP:
@@ -49,14 +35,14 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
 
         # そこに駒はあるか？
         cap = table.piece(dst_sq)
-        #print(f'★ will_to_take_the_piece_without_losing_anything.will_move: {Piece.kanji(cap)=}')
+        #print(f'★ will_to_take_the_piece_without_losing_anything.before_move: {Piece.kanji(cap)=}')
 
         # 取った駒が無ければ、対象外
         if cap == cshogi.NONE:
             return constants.mind.NOT_IN_THIS_CASE
 
         cap_type = cshogi.piece_to_piece_type(cap)
-        #print(f'★ will_to_take_the_piece_without_losing_anything.will_move: {PieceType.kanji(cap_type)=}')
+        #print(f'★ will_to_take_the_piece_without_losing_anything.before_move: {PieceType.kanji(cap_type)=}')
 
         # 取った駒が歩以外なら対象外
         if cap_type != cshogi.PAWN:
