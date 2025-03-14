@@ -16,11 +16,12 @@ class DoNotMoveRook(MatchOperation):
 
     def __init__(self):
         super().__init__()
+        self._id = 'do_not_move_rook'
         self._label = 'きりんは動くな'
 
 
     def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march_operations']['do_not_move_rook']:
+        if config_doc['march_operations'][self._id]:
 
             ban = Ban(table)
             cmp = Comparison(table)
@@ -68,7 +69,7 @@ class DoNotMoveRook(MatchOperation):
         """（アイドリング中の行進演算について）指す手の確定時。
         """
 
-        if config_doc['march_operations']['do_not_move_rook']:
+        if config_doc['march_operations'][self._id]:
             ban = Ban(table)
             cmp = Comparison(table)
 

@@ -10,8 +10,28 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
     """［駒取って損しない］意志
     """
 
-    @staticmethod
-    def will_move(move, table):
+
+    def __init__(self):
+        super().__init__()
+        self._id = 'will_to_take_the_piece_without_losing_anything'
+        self._label = '駒取って損しない'
+
+
+    def do_anything(self, will_play_moves, table, config_doc):
+        # １手指してから判定
+        for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
+            m = will_play_moves[i]
+
+            # ［駒取って損しない］意志
+            if config_doc['march_operations'][self._id]:
+                mind = self.will_move(m, table)
+                if mind == constants.mind.WILL_NOT:
+                    del will_play_moves[i]
+
+        return will_play_moves
+
+
+    def will_move(self, move, table):
         """指し手は［駒取って損しない］意志を残しているか？
         """
 
@@ -40,11 +60,10 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
         # 取った駒が歩以外なら対象外
         if cap_type != cshogi.PAWN:
             return constants.mind.NOT_IN_THIS_CASE
-        
 
         table.push(move)   # １手指す
 
-        mind = WillToTakeThePieceWithoutLosingAnything.will_after_move(
+        mind = self.will_after_move(
                 move=move,
                 cap_sq=dst_sq,
                 cap_type=cap_type,
@@ -55,8 +74,7 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
         return mind
 
 
-    @staticmethod
-    def will_after_move(move, cap_sq, cap_type, table):
+    def will_after_move(self, move, cap_sq, cap_type, table):
         """
         Parameters
         ----------
@@ -94,22 +112,3 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
 
         # 意志あり
         return constants.mind.WILL
-
-
-    def __init__(self):
-        super().__init__()
-        self._label = '駒取って損しない'
-
-
-    def do_anything(self, will_play_moves, table, config_doc):
-        # １手指してから判定
-        for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
-            m = will_play_moves[i]
-
-            # ［駒取って損しない］意志
-            if config_doc['march_operations']['will_to_take_the_piece_without_losing_anything']:
-                mind = WillToTakeThePieceWithoutLosingAnything.will_move(m, table)
-                if mind == constants.mind.WILL_NOT:
-                    del will_play_moves[i]
-
-        return will_play_moves

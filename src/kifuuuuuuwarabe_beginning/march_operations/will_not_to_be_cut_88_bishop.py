@@ -11,8 +11,30 @@ class WillNotToBeCut88Bishop(MatchOperation):
     """
 
 
-    @staticmethod
-    def have_will_after_moving_on_board(table):
+    def __init__(self):
+        super().__init__()
+        self._id = 'will_not_to_be_cut_88_bishop'
+        self._label = '８八の角を素抜かれない'
+
+
+    def do_anything(self, will_play_moves, table, config_doc):
+        # １手指してから判定
+        for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
+            m = will_play_moves[i]
+            table.push(m)   # １手指す
+
+            # ［８八の角を素抜かれない］意志
+            if config_doc['march_operations'][self._id]:
+                mind = self.have_will_after_moving_on_board(table)
+                if mind == constants.mind.WILL_NOT:
+                    del will_play_moves[i]
+
+            table.pop() # １手戻す
+
+        return will_play_moves
+
+
+    def have_will_after_moving_on_board(self, table):
         """指した後に意志があるか？        
         """
         # NOTE 指した後は相手の番になっていることに注意
@@ -43,25 +65,3 @@ class WillNotToBeCut88Bishop(MatchOperation):
 
         # 意志なし
         return constants.mind.WILL_NOT
-
-
-    def __init__(self):
-        super().__init__()
-        self._label = '８八の角を素抜かれない'
-
-
-    def do_anything(self, will_play_moves, table, config_doc):
-        # １手指してから判定
-        for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
-            m = will_play_moves[i]
-            table.push(m)   # １手指す
-
-            # ［８八の角を素抜かれない］意志
-            if config_doc['march_operations']['will_not_to_be_cut_88_bishop']:
-                mind = WillNotToBeCut88Bishop.have_will_after_moving_on_board(table)
-                if mind == constants.mind.WILL_NOT:
-                    del will_play_moves[i]
-
-            table.pop() # １手戻す
-
-        return will_play_moves

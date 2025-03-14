@@ -14,11 +14,12 @@ class DoNotMoveLeftLance(MatchOperation):
 
     def __init__(self):
         super().__init__()
+        self._id = 'do_not_move_left_lance'
         self._label = '左のイノシシは動くな'
 
 
     def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march_operations']['do_not_move_left_lance']:
+        if config_doc['march_operations'][self._id]:
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
                 mind = self.before_move(m, table)

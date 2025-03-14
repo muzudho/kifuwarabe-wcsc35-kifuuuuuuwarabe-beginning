@@ -14,6 +14,7 @@ class DoNotBack(MatchOperation):
 
     def __init__(self):
         super().__init__()
+        self._id = 'do_not_back'
         self._label = '戻るな'
 
         # 元の位置。該当がなければナンです。
@@ -22,7 +23,7 @@ class DoNotBack(MatchOperation):
 
 
     def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march_operations']['do_not_back']:
+        if config_doc['march_operations'][self._id]:
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
                 mind = self.before_move(m, table)
@@ -65,7 +66,7 @@ class DoNotBack(MatchOperation):
         """指す手の確定時。
         """
 
-        if config_doc['march_operations']['do_not_back']:
+        if config_doc['march_operations'][self._id]:
             src_sq_obj = Square(cshogi.move_from(move))
             dst_sq_obj = Square(cshogi.move_to(move))
             is_drop = cshogi.move_is_drop(move)

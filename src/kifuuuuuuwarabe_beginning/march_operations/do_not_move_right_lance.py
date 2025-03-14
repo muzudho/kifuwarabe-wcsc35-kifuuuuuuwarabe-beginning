@@ -14,11 +14,12 @@ class DoNotMoveRightLance(MatchOperation):
 
     def __init__(self):
         super().__init__()
+        self._id = 'do_not_move_right_lance'
         self._label = '右のイノシシは動くな'
 
 
     def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march_operations']['do_not_move_right_lance']:
+        if config_doc['march_operations'][self._id]:
 
             ban = Ban(table)
             cmp = Comparison(table)

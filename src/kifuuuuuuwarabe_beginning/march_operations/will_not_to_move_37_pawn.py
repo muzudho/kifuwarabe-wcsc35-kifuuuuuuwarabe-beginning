@@ -11,8 +11,24 @@ class WillNotToMove37Pawn(MatchOperation):
     """
 
 
-    @staticmethod
-    def will_on_move(move, table):
+    def __init__(self):
+        super().__init__()
+        self._id = 'will_not_to_move_37_pawn'
+        self._label = '３七の歩を突かない'
+
+
+    def do_anything(self, will_play_moves, table, config_doc):
+        if config_doc['march_operations'][self._id]:
+            for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
+                m = will_play_moves[i]
+                mind = self.will_on_move(m, table)
+                if mind == constants.mind.WILL_NOT:
+                    del will_play_moves[i]
+
+        return will_play_moves
+
+
+    def will_on_move(self, move, table):
         """指し手は［３七の歩を突かない］意志を残しているか？
         """
         ban = Ban(table)
@@ -21,7 +37,6 @@ class WillNotToMove37Pawn(MatchOperation):
         # print(f'★ {src_sq_obj.sq=} ', end='')
         # print(f'{Helper.sq_to_masu(src_sq_obj.sq)=} ', end='')
         # print(f'{table.piece_type(src_sq_obj.sq)=}')
-
 
         # ３七以外にある駒は関係ない
         #print(f'D: {Helper.turn_name(table.turn)=} {Helper.sq_to_masu(ban.masu(37))=} {Helper.sq_to_masu(src_sq_obj.sq)=}')
@@ -37,19 +52,3 @@ class WillNotToMove37Pawn(MatchOperation):
 
         # 歩が動くんだったらダメ
         return constants.mind.WILL_NOT
-
-
-    def __init__(self):
-        super().__init__()
-        self._label = '３七の歩を突かない'
-
-
-    def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march_operations']['will_not_to_move_37_pawn']:
-            for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
-                m = will_play_moves[i]
-                mind = WillNotToMove37Pawn.will_on_move(m, table)
-                if mind == constants.mind.WILL_NOT:
-                    del will_play_moves[i]
-
-        return will_play_moves

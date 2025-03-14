@@ -11,22 +11,9 @@ class WillSwingingRook(MatchOperation):
     """
 
 
-    @staticmethod
-    def will_on_board(table):
-        """盤は［振り飛車をする］意志を残しているか？
-
-        ４０手目までは振り飛車の意志を残しているとします。
-        ４１手目以降は振り飛車の意志はありません
-        """
-        #print(f'★ is_there_will_on_board: {table.move_number=}', file=sys.stderr)
-        if table.move_number < 41:
-            return constants.mind.WILL
-        
-        return constants.mind.WILL_NOT
-
-
     def __init__(self):
         super().__init__()
+        self._id = 'will_swinging_rook'
         self._label = '振り飛車をする'
 
 
@@ -76,8 +63,8 @@ class WillSwingingRook(MatchOperation):
 
     def do_anything(self, will_play_moves, table, config_doc):
         # ［振り飛車をする］意志
-        if config_doc['march_operations']['will_swinging_rook']:
-            if constants.mind.WILL == WillSwingingRook.will_on_board(table):
+        if config_doc['march_operations'][self._id]:
+            if constants.mind.WILL == self.will_on_board(table):
                 #print('★ go: 盤は［振り飛車をする］意志を残しています', file=sys.stderr)
 
                 for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
@@ -93,3 +80,16 @@ class WillSwingingRook(MatchOperation):
             #     pass
 
         return will_play_moves
+
+
+    def will_on_board(self, table):
+        """盤は［振り飛車をする］意志を残しているか？
+
+        ４０手目までは振り飛車の意志を残しているとします。
+        ４１手目以降は振り飛車の意志はありません
+        """
+        #print(f'★ is_there_will_on_board: {table.move_number=}', file=sys.stderr)
+        if table.move_number < 41:
+            return constants.mind.WILL
+        
+        return constants.mind.WILL_NOT

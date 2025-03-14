@@ -16,11 +16,12 @@ class DoNotBuildRightWall(MatchOperation):
 
     def __init__(self):
         super().__init__()
+        self._id = 'do_not_build_right_wall'
         self._label = '右壁を作るな'
 
 
     def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march_operations']['do_not_build_right_wall']:
+        if config_doc['march_operations'][self._id]:
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
                 mind = self.before_move(m, table)
