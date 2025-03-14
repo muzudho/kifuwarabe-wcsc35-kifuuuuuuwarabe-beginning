@@ -15,8 +15,23 @@ class DoNotBuildRightWall(MatchOperation):
     """
 
 
-    @staticmethod
-    def before_move(move, table):
+    def __init__(self):
+        super().__init__()
+        self._name = '右壁を作るな'
+
+
+    def do_anything(self, will_play_moves, table, config_doc):
+        if config_doc['march_operations']['do_not_build_right_wall']:
+            for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
+                m = will_play_moves[i]
+                mind = self.before_move(m, table)
+                if mind == Mind.WILL_NOT:
+                    del will_play_moves[i]
+
+        return will_play_moves
+
+
+    def before_move(self, move, table):
         """指す前に。
 
         定義：　移動前の玉の以右の全ての筋について、８段目、９段目の両方に駒がある状態を［右壁］とする。
@@ -90,19 +105,3 @@ class DoNotBuildRightWall(MatchOperation):
         # 道は空いていたから、意志あり
         #print(f'★ 道は空いていたから、意志あり')
         return Mind.WILL
-
-
-    def __init__(self):
-        super().__init__()
-        self._name = '右壁を作るな'
-
-
-    def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march_operations']['do_not_build_right_wall']:
-            for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
-                m = will_play_moves[i]
-                mind = DoNotBuildRightWall.before_move(m, table)
-                if mind == Mind.WILL_NOT:
-                    del will_play_moves[i]
-
-        return will_play_moves

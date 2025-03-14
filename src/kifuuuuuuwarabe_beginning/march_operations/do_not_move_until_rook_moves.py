@@ -13,8 +13,23 @@ class DoNotMoveUntilRookMoves(MatchOperation):
     """
 
 
-    @staticmethod
-    def before_move(move, table):
+    def __init__(self):
+        super().__init__()
+        self._name = 'キリンが動くまで動くな'
+
+
+    def do_anything(self, will_play_moves, table, config_doc):
+        if config_doc['march_operations']['do_not_move_until_rook_moves']:
+            for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
+                m = will_play_moves[i]
+                mind = self.before_move(m, table)
+                if mind == Mind.WILL_NOT:
+                    del will_play_moves[i]
+
+        return will_play_moves
+
+
+    def before_move(self, move, table):
         """指す前に。
         """
         ban = Ban(table)
@@ -79,19 +94,3 @@ class DoNotMoveUntilRookMoves(MatchOperation):
 
         # それ以外なら意志を残している
         return Mind.WILL
-
-
-    def __init__(self):
-        super().__init__()
-        self._name = 'キリンが動くまで動くな'
-
-
-    def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march_operations']['do_not_move_until_rook_moves']:
-            for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
-                m = will_play_moves[i]
-                mind = DoNotMoveUntilRookMoves.before_move(m, table)
-                if mind == Mind.WILL_NOT:
-                    del will_play_moves[i]
-
-        return will_play_moves

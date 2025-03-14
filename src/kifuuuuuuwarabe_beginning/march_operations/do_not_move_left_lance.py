@@ -13,8 +13,23 @@ class DoNotMoveLeftLance(MatchOperation):
     """
 
 
-    @staticmethod
-    def before_move(move, table):
+    def __init__(self):
+        super().__init__()
+        self._name = '左のイノシシは動くな'
+
+
+    def do_anything(self, will_play_moves, table, config_doc):
+        if config_doc['march_operations']['do_not_move_left_lance']:
+            for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
+                m = will_play_moves[i]
+                mind = self.before_move(m, table)
+                if mind == Mind.WILL_NOT:
+                    del will_play_moves[i]
+
+        return will_play_moves
+
+
+    def before_move(self, move, table):
         """指す前に。
         """
 
@@ -35,19 +50,3 @@ class DoNotMoveLeftLance(MatchOperation):
 
         # それ以外は意志有り
         return Mind.WILL
-
-
-    def __init__(self):
-        super().__init__()
-        self._name = '左のイノシシは動くな'
-
-
-    def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march_operations']['do_not_move_left_lance']:
-            for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
-                m = will_play_moves[i]
-                mind = DoNotMoveLeftLance.before_move(m, table)
-                if mind == Mind.WILL_NOT:
-                    del will_play_moves[i]
-
-        return will_play_moves

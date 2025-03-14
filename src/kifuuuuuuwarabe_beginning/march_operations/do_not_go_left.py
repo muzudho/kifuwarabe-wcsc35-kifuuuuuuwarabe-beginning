@@ -13,8 +13,23 @@ class DoNotGoLeft(MatchOperation):
     """
 
 
-    @staticmethod
-    def before_move(move, table):
+    def __init__(self):
+        super().__init__()
+        self._name = '左へ行くな'
+
+
+    def do_anything(self, will_play_moves, table, config_doc):
+        if config_doc['march_operations']['do_not_go_left']:
+            for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
+                m = will_play_moves[i]
+                mind = self.before_move(m, table)
+                if mind == Mind.WILL_NOT:
+                    del will_play_moves[i]
+
+        return will_play_moves
+
+
+    def before_move(self, move, table):
         """指す前に。
         """
 
@@ -51,20 +66,3 @@ class DoNotGoLeft(MatchOperation):
 
         # それ以外なら対象外
         return Mind.NOT_IN_THIS_CASE
-
-
-
-    def __init__(self):
-        super().__init__()
-        self._name = '左へ行くな'
-
-
-    def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march_operations']['do_not_go_left']:
-            for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
-                m = will_play_moves[i]
-                mind = DoNotGoLeft.before_move(m, table)
-                if mind == Mind.WILL_NOT:
-                    del will_play_moves[i]
-
-        return will_play_moves

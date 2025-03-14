@@ -12,8 +12,23 @@ class WillForThreeGoldAndSilverCoinsToGatherToTheRight(MatchOperation):
     """
 
 
-    @staticmethod
-    def before_move(move, table):
+    def __init__(self):
+        super().__init__()
+        self._name = '金銀３枚が右に集まる'
+
+
+    def do_anything(self, will_play_moves, table, config_doc):
+        if config_doc['march_operations']['will_for_three_gold_and_silver_coins_to_gather_to_the_right']:
+            for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
+                m = will_play_moves[i]
+                mind = self.before_move(m, table)
+                if mind == Mind.WILL_NOT:
+                    del will_play_moves[i]
+
+        return will_play_moves
+
+
+    def before_move(self, move, table):
         """指す前に。
 
         先手から見て５筋と６筋の間にドアがあるとする。
@@ -64,19 +79,3 @@ class WillForThreeGoldAndSilverCoinsToGatherToTheRight(MatchOperation):
             return Mind.WILL
 
         return Mind.WILL_NOT
-
-
-    def __init__(self):
-        super().__init__()
-        self._name = '金銀３枚が右に集まる'
-
-
-    def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march_operations']['will_for_three_gold_and_silver_coins_to_gather_to_the_right']:
-            for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
-                m = will_play_moves[i]
-                mind = WillForThreeGoldAndSilverCoinsToGatherToTheRight.before_move(m, table)
-                if mind == Mind.WILL_NOT:
-                    del will_play_moves[i]
-
-        return will_play_moves
