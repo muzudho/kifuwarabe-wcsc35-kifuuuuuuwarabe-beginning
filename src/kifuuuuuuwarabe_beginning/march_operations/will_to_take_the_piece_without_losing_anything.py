@@ -1,8 +1,7 @@
 import cshogi
 import sys
 
-from .. import Mind
-from ..models import Masu, Piece, PieceType, Square
+from ..models import constants, Masu, Piece, PieceType, Square
 from ..sente_perspective import Ban, Helper, Ji
 from .match_operation import MatchOperation
 
@@ -22,7 +21,7 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
 
         # 動かした駒が角以外なら対象外
         if pt != cshogi.BISHOP:
-            return Mind.NOT_IN_THIS_CASE
+            return constants.mind.NOT_IN_THIS_CASE
 
         # 歩を取るだろう位置
         dst_sq = cshogi.move_to(move)
@@ -33,14 +32,14 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
 
         # 取った駒が無ければ、対象外
         if cap == cshogi.NONE:
-            return Mind.NOT_IN_THIS_CASE
+            return constants.mind.NOT_IN_THIS_CASE
 
         cap_type = cshogi.piece_to_piece_type(cap)
         #print(f'★ will_to_take_the_piece_without_losing_anything.will_move: {PieceType.kanji(cap_type)=}')
 
         # 取った駒が歩以外なら対象外
         if cap_type != cshogi.PAWN:
-            return Mind.NOT_IN_THIS_CASE
+            return constants.mind.NOT_IN_THIS_CASE
         
 
         table.push(move)   # １手指す
@@ -80,7 +79,7 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
         # 後手視点だと、左上は右下
         bottom_right_sq = ban.bottom_right(cap_masu)
         if not bottom_right_sq:
-            return Mind.WILL_NOT
+            return constants.mind.WILL_NOT
 
         # 敵角があるか？
         pc2 = table.piece(bottom_right_sq)
@@ -89,12 +88,12 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
         if table.turn == Piece.turn(pc2):
             if pt2 == cshogi.BISHOP:
                 # 角で取り返される。意志なし
-                return Mind.WILL_NOT
+                return constants.mind.WILL_NOT
 
         # TODO 他のパターンも作ること
 
         # 意志あり
-        return Mind.WILL
+        return constants.mind.WILL
 
 
     def __init__(self):
@@ -110,7 +109,7 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
             # ［駒取って損しない］意志
             if config_doc['march_operations']['will_to_take_the_piece_without_losing_anything']:
                 mind = WillToTakeThePieceWithoutLosingAnything.will_move(m, table)
-                if mind == Mind.WILL_NOT:
+                if mind == constants.mind.WILL_NOT:
                     del will_play_moves[i]
 
         return will_play_moves

@@ -1,8 +1,7 @@
 import cshogi
 import sys
 
-from .. import Mind
-from ..models import Square
+from ..models import constants, Square
 from ..sente_perspective import Ban, Comparison, Helper, Ji
 from .match_operation import MatchOperation
 
@@ -36,7 +35,7 @@ class DoNotMoveRook(MatchOperation):
                 for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                     m = will_play_moves[i]
                     mind = self.before_move(m, table)
-                    if mind == Mind.WILL_NOT:
+                    if mind == constants.mind.WILL_NOT:
                         del will_play_moves[i]
 
         return will_play_moves
@@ -54,15 +53,15 @@ class DoNotMoveRook(MatchOperation):
 
         # キリン以外なら対象外
         if cshogi.move_from_piece_type(move) not in [cshogi.ROOK]:
-            return Mind.NOT_IN_THIS_CASE
+            return constants.mind.NOT_IN_THIS_CASE
 
         # # 移動先が異段なら意志あり
         # e1 = cmp.swap(dst_sq_obj.rank, src_sq_obj.rank)
         # if e1[0] != e1[1]:
-        #     return Mind.WILL
+        #     return constants.mind.WILL
 
         # それ以外は意志なし
-        return Mind.WILL_NOT
+        return constants.mind.WILL_NOT
 
 
     def on_best_move_played_when_idling(self, move, table, config_doc):

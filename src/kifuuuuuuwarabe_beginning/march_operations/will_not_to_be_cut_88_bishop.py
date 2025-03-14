@@ -1,7 +1,7 @@
 import cshogi
 import sys
 
-from .. import Mind
+from ..models import constants
 from ..sente_perspective import Ban, Helper, Ji
 from .match_operation import MatchOperation
 
@@ -21,17 +21,17 @@ class WillNotToBeCut88Bishop(MatchOperation):
 
         # ８八に自角がいるケースだけ対称
         if table.piece(ban.masu(88)) != ji.pc(cshogi.BISHOP):
-            return Mind.NOT_IN_THIS_CASE
+            return constants.mind.NOT_IN_THIS_CASE
 
         # ７八に自金が残れば意志あり
         pc = table.piece(ban.masu(78))
         if pc in [ji.pc(cshogi.GOLD)]:
-            return Mind.WILL
+            return constants.mind.WILL
 
         # ７九に自金、自銀が残れば意志あり
         pc = table.piece(ban.masu(79))
         if pc in [ji.pc(cshogi.GOLD), ji.pc(cshogi.SILVER)]:
-            return Mind.WILL
+            return constants.mind.WILL
 
         # ８段目を７筋から１筋を順に見に行って、最初に見つかった駒が自飛なら意志あり
         for file in ban.suji_range(1, 8)[::-1]:
@@ -39,10 +39,10 @@ class WillNotToBeCut88Bishop(MatchOperation):
             if pc == cshogi.NONE:
                 continue
             elif pc == ji.pc(cshogi.ROOK):
-                return Mind.WILL
+                return constants.mind.WILL
 
         # 意志なし
-        return Mind.WILL_NOT
+        return constants.mind.WILL_NOT
 
 
     def __init__(self):
@@ -59,7 +59,7 @@ class WillNotToBeCut88Bishop(MatchOperation):
             # ［８八の角を素抜かれない］意志
             if config_doc['march_operations']['will_not_to_be_cut_88_bishop']:
                 mind = WillNotToBeCut88Bishop.have_will_after_moving_on_board(table)
-                if mind == Mind.WILL_NOT:
+                if mind == constants.mind.WILL_NOT:
                     del will_play_moves[i]
 
             table.pop() # １手戻す

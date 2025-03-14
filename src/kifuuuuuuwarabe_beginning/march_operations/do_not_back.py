@@ -1,7 +1,6 @@
 import cshogi
 import sys
 
-from .. import Mind
 from ..models import constants, Square
 from ..sente_perspective import Ban, Comparison, Helper
 from .match_operation import MatchOperation
@@ -26,7 +25,7 @@ class DoNotBack(MatchOperation):
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
                 mind = self.before_move(m, table)
-                if mind == Mind.WILL_NOT:
+                if mind == constants.mind.WILL_NOT:
                     del will_play_moves[i]
 
         return will_play_moves
@@ -51,14 +50,14 @@ class DoNotBack(MatchOperation):
 
         if most_recent_src_sq in [None, constants.PIECE_STAND_SQ]:
             # 動いていない、または、駒台にあったなら、対象外
-            return Mind.NOT_IN_THIS_CASE
+            return constants.mind.NOT_IN_THIS_CASE
 
         # 元居た位置に戻る手は、意志無し。
         if dst_sq_obj.sq == most_recent_src_sq:
-            return Mind.WILL_NOT
+            return constants.mind.WILL_NOT
 
         # それ以外なら、意志有り。
-        return Mind.WILL
+        return constants.mind.WILL
 
 
     def on_best_move_played(self, move, table, config_doc):

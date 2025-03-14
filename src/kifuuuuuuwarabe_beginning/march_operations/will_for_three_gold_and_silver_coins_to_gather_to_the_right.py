@@ -1,8 +1,7 @@
 import cshogi
 import sys
 
-from .. import Mind
-from ..models import Square
+from ..models import constants, Square
 from ..sente_perspective import Ban, Comparison, Helper
 from .match_operation import MatchOperation
 
@@ -22,7 +21,7 @@ class WillForThreeGoldAndSilverCoinsToGatherToTheRight(MatchOperation):
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
                 mind = self.before_move(m, table)
-                if mind == Mind.WILL_NOT:
+                if mind == constants.mind.WILL_NOT:
                     del will_play_moves[i]
 
         return will_play_moves
@@ -44,12 +43,12 @@ class WillForThreeGoldAndSilverCoinsToGatherToTheRight(MatchOperation):
         # ４筋位右にある駒は対象外
         e1 = cmp.swap(src_sq_obj.file, ban.suji(4))
         if e1[0] <= e1[1]:
-            return Mind.NOT_IN_THIS_CASE
+            return constants.mind.NOT_IN_THIS_CASE
 
         # 移動先が同筋位右なら対象外
         e1 = cmp.swap(dst_sq_obj.file, src_sq_obj.file)
         if e1[0] <= e1[1]:
-            return Mind.NOT_IN_THIS_CASE
+            return constants.mind.NOT_IN_THIS_CASE
 
         # 36マスをスキャンする
         left_from_6_suji = [Helper.file_rank_to_sq(file, rank) for file in ban.suji_range(6, 10)
@@ -76,6 +75,6 @@ class WillForThreeGoldAndSilverCoinsToGatherToTheRight(MatchOperation):
             count += 1
 
         if count == 0:
-            return Mind.WILL
+            return constants.mind.WILL
 
-        return Mind.WILL_NOT
+        return constants.mind.WILL_NOT

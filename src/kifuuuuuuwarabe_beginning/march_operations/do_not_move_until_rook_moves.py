@@ -1,8 +1,7 @@
 import cshogi
 import sys
 
-from .. import Mind
-from ..models import Square
+from ..models import constants, Square
 from ..sente_perspective import Ban, Comparison, Helper, Ji
 from .match_operation import MatchOperation
 
@@ -23,7 +22,7 @@ class DoNotMoveUntilRookMoves(MatchOperation):
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
                 mind = self.before_move(m, table)
-                if mind == Mind.WILL_NOT:
+                if mind == constants.mind.WILL_NOT:
                     del will_play_moves[i]
 
         return will_play_moves
@@ -43,22 +42,22 @@ class DoNotMoveUntilRookMoves(MatchOperation):
         # キリンが２八にいる
         if table.piece(ban.masu(28)) != ji.pc(cshogi.ROOK):
             # そうでなければ対象外
-            return Mind.NOT_IN_THIS_CASE
+            return constants.mind.NOT_IN_THIS_CASE
 
         # 移動先は８段目だ
         if dst_sq_obj.rank != ban.dan(8):
             # そうでなければ対象外
-            return Mind.NOT_IN_THIS_CASE
+            return constants.mind.NOT_IN_THIS_CASE
 
         # 動かした駒はキリン以外だ
         if moved_pt == cshogi.ROOK:
             # そうでなければ対象外
-            return Mind.NOT_IN_THIS_CASE
+            return constants.mind.NOT_IN_THIS_CASE
 
         # 動かした駒がライオン、イヌ、ネコのいずれかなら
         if moved_pt in [cshogi.KING, cshogi.GOLD, cshogi.SILVER]:
             # 意志無し
-            return Mind.WILL_NOT
+            return constants.mind.WILL_NOT
 
         # # 動かした駒が金なら
         # if moved_pt == cshogi.GOLD:
@@ -66,15 +65,15 @@ class DoNotMoveUntilRookMoves(MatchOperation):
         #     e1 = cmp.swap(src_sq_obj.file, ban.suji(5))
         #     if e1[0] <= e1[1]:
         #         # 動かしたら意志なし
-        #         return Mind.WILL_NOT
+        #         return constants.mind.WILL_NOT
 
         #     # それ以外の金なら、左の方以外に動かしたら意志なし
         #     e1 = cmp.swap(src_sq_obj.file, dst_sq_obj.file)
         #     if e1[0] < e1[1]:
-        #         return Mind.WILL_NOT
+        #         return constants.mind.WILL_NOT
             
         #     # 左の方に動かしたのなら、まあ、対象外
-        #     return Mind.NOT_IN_THIS_CASE
+        #     return constants.mind.NOT_IN_THIS_CASE
 
         # # 動かした駒が銀なら
         # if moved_pt == cshogi.SILVER:
@@ -82,15 +81,15 @@ class DoNotMoveUntilRookMoves(MatchOperation):
         #     e1 = cmp.swap(src_sq_obj.file, ban.suji(5))
         #     if e1[0] <= e1[1]:
         #         # 意志なし
-        #         return Mind.WILL_NOT
+        #         return constants.mind.WILL_NOT
 
         #     # それ以外の銀を、元位置より右の方に動かしたら意志なし
         #     e1 = cmp.swap(src_sq_obj.file, dst_sq_obj.file)
         #     if e1[0] > e1[1]:
-        #         return Mind.WILL_NOT
+        #         return constants.mind.WILL_NOT
             
         #     # 位左の方に動かしたのなら、まあ、対象外
-        #     return Mind.NOT_IN_THIS_CASE
+        #     return constants.mind.NOT_IN_THIS_CASE
 
         # それ以外なら意志を残している
-        return Mind.WILL
+        return constants.mind.WILL

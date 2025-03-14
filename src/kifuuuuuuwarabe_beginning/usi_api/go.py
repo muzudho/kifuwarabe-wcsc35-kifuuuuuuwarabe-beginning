@@ -3,7 +3,6 @@ import datetime
 import random
 import sys
 
-from .. import Mind
 from ..march_operations import DoNotBack, DoNotUpToRank6, DoNotMoveUntilRookMoves, DoNotBuildRightWall, DoNotMoveLeftLance, DoNotMoveRightLance, DoNotMoveRook, DoNotGoLeft, WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToMove37Pawn, WillSwingingRook, WillToTakeThePieceWithoutLosingAnything
 
 

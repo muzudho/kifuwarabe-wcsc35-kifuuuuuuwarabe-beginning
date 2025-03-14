@@ -1,8 +1,7 @@
 import cshogi
 import sys
 
-from .. import Mind
-from ..models import Square
+from ..models import constants, Square
 from ..sente_perspective import Ban, Comparison, Helper
 from .match_operation import MatchOperation
 
@@ -25,7 +24,7 @@ class DoNotBuildRightWall(MatchOperation):
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
                 mind = self.before_move(m, table)
-                if mind == Mind.WILL_NOT:
+                if mind == constants.mind.WILL_NOT:
                     del will_play_moves[i]
 
         return will_play_moves
@@ -46,7 +45,7 @@ class DoNotBuildRightWall(MatchOperation):
         # ライオンの指し手なら対象外
         if cshogi.move_from_piece_type(move) == cshogi.KING:
             #print(f'★ ライオンの指し手は対象外')
-            return Mind.NOT_IN_THIS_CASE
+            return constants.mind.NOT_IN_THIS_CASE
 
         k_sq_obj = Square(table.king_square(table.turn))     # 移動前の自玉の位置
         #print(f'★ {k_sq_obj.file=} {ban.suji(1)=}')
@@ -54,14 +53,14 @@ class DoNotBuildRightWall(MatchOperation):
         # 玉が１筋にいるなら対象外
         if k_sq_obj.file == ban.suji(1):
             #print(f'★ 玉が１筋にいるなら対象外')
-            return Mind.NOT_IN_THIS_CASE
+            return constants.mind.NOT_IN_THIS_CASE
 
         # 玉より左に移動する手なら対象外
         e1 = cmp.swap(k_sq_obj.file, dst_sq_obj.file)
         #print(f'★ {k_sq_obj.file=} {dst_sq_obj.file=} {e1[0]=} {e1[1]}')
         if e1[0] < e1[1]:
             #print(f'★ 玉より左に移動する手なら対象外')
-            return Mind.NOT_IN_THIS_CASE
+            return constants.mind.NOT_IN_THIS_CASE
 
         # ８段目、９段目以外に移動する手なら対象外
         dan8 = ban.dan(8)
@@ -69,7 +68,7 @@ class DoNotBuildRightWall(MatchOperation):
         #print(f'D: {dst_sq_obj.rank=} {ban.dan(8)=} {ban.dan(9)}')
         if dst_sq_obj.rank not in [dan8, dan9]:
             #print(f'★ {dst_sq_obj.rank=}段目 は、 {dan8}段目、{dan9}段目以外に移動する手だから対象外')
-            return Mind.NOT_IN_THIS_CASE
+            return constants.mind.NOT_IN_THIS_CASE
 
 
         # 玉の元位置より右の全ての筋で起こる移動について
@@ -99,9 +98,9 @@ class DoNotBuildRightWall(MatchOperation):
         if not is_empty:
             # 道が開いていなければ、意志なし
             #print(f'★ 道が開いていなければ、意志なし')
-            return Mind.WILL_NOT
+            return constants.mind.WILL_NOT
 
 
         # 道は空いていたから、意志あり
         #print(f'★ 道は空いていたから、意志あり')
-        return Mind.WILL
+        return constants.mind.WILL
