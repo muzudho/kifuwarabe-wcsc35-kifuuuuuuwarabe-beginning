@@ -84,5 +84,8 @@ class DoNotBack(MatchOperation):
 
             # 記憶
             self._back_board[dst_sq_obj.sq] = src_sq
-            self._back_board[src_sq] = None
+
+            if not is_drop:
+                self._back_board[src_sq] = None
+
             print(f'★ ＤoNotBack: {Helper.sq_to_masu(dst_sq_obj.sq)=} に前位置 {Helper.sq_to_masu(src_sq)=} を記憶。')
