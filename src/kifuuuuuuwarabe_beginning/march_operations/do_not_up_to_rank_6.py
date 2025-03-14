@@ -45,7 +45,7 @@ class DoNotUpToRank6(MatchOperation):
 
 
     def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march']['do_not_up_to_rank_6']:
+        if config_doc['march_operations']['do_not_up_to_rank_6']:
 
             ban = Ban(table)
             #cmp = Comparison(table)

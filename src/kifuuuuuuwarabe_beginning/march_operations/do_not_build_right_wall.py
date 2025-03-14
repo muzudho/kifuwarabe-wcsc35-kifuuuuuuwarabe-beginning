@@ -98,7 +98,7 @@ class DoNotBuildRightWall(MatchOperation):
 
 
     def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march']['do_not_build_right_wall']:
+        if config_doc['march_operations']['do_not_build_right_wall']:
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
                 mind = DoNotBuildRightWall.before_move(m, table)

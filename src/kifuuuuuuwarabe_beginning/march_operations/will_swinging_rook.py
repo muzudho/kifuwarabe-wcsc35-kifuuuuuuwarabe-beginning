@@ -77,7 +77,7 @@ class WillSwingingRook(MatchOperation):
 
     def do_anything(self, will_play_moves, table, config_doc):
         # ［振り飛車をする］意志
-        if config_doc['march']['will_swinging_rook']:
+        if config_doc['march_operations']['will_swinging_rook']:
             if Mind.WILL == WillSwingingRook.will_on_board(table):
                 #print('★ go: 盤は［振り飛車をする］意志を残しています', file=sys.stderr)
 

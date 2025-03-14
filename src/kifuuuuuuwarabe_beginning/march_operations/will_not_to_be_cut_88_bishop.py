@@ -57,7 +57,7 @@ class WillNotToBeCut88Bishop(MatchOperation):
             table.push(m)   # １手指す
 
             # ［８八の角を素抜かれない］意志
-            if config_doc['march']['will_not_to_be_cut_88_bishop']:
+            if config_doc['march_operations']['will_not_to_be_cut_88_bishop']:
                 mind = WillNotToBeCut88Bishop.have_will_after_moving_on_board(table)
                 if mind == Mind.WILL_NOT:
                     del will_play_moves[i]

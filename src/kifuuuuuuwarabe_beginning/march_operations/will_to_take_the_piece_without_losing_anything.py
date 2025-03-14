@@ -108,7 +108,7 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
             m = will_play_moves[i]
 
             # ［駒取って損しない］意志
-            if config_doc['march']['will_to_take_the_piece_without_losing_anything']:
+            if config_doc['march_operations']['will_to_take_the_piece_without_losing_anything']:
                 mind = WillToTakeThePieceWithoutLosingAnything.will_move(m, table)
                 if mind == Mind.WILL_NOT:
                     del will_play_moves[i]

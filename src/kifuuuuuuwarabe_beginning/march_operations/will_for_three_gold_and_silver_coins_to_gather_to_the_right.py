@@ -72,7 +72,7 @@ class WillForThreeGoldAndSilverCoinsToGatherToTheRight(MatchOperation):
 
 
     def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march']['will_for_three_gold_and_silver_coins_to_gather_to_the_right']:
+        if config_doc['march_operations']['will_for_three_gold_and_silver_coins_to_gather_to_the_right']:
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
                 mind = WillForThreeGoldAndSilverCoinsToGatherToTheRight.before_move(m, table)

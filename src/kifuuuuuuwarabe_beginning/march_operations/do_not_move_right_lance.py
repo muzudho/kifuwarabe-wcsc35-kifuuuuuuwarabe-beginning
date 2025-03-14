@@ -43,7 +43,7 @@ class DoNotMoveRightLance(MatchOperation):
 
 
     def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march']['do_not_move_right_lance']:
+        if config_doc['march_operations']['do_not_move_right_lance']:
 
             ban = Ban(table)
             cmp = Comparison(table)

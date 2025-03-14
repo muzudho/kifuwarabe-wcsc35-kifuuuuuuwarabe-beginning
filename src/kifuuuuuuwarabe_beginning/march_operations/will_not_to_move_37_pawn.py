@@ -46,7 +46,7 @@ class WillNotToMove37Pawn(MatchOperation):
 
 
     def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march']['will_not_to_move_37_pawn']:
+        if config_doc['march_operations']['will_not_to_move_37_pawn']:
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
                 mind = WillNotToMove37Pawn.will_on_move(m, table)

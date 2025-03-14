@@ -38,7 +38,7 @@ class DoNotBack(MatchOperation):
 
 
     def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march']['do_not_back']:
+        if config_doc['march_operations']['do_not_back']:
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
                 mind = DoNotBack.before_move(m, table)

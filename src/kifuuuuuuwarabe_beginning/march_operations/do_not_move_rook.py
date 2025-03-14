@@ -45,7 +45,7 @@ class DoNotMoveRook(MatchOperation):
 
 
     def do_anything(self, will_play_moves, table, config_doc):
-        if config_doc['march']['do_not_move_rook']:
+        if config_doc['march_operations']['do_not_move_rook']:
 
             ban = Ban(table)
             cmp = Comparison(table)
@@ -70,7 +70,7 @@ class DoNotMoveRook(MatchOperation):
         """指す手の確定時。
         """
 
-        if config_doc['march']['do_not_move_rook']: # 無効化のときも（アクティベートのために）実行します
+        if config_doc['march_operations']['do_not_move_rook']: # 無効化のときも（アクティベートのために）実行します
             ban = Ban(table)
             cmp = Comparison(table)
 
