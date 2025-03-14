@@ -1,8 +1,9 @@
 import cshogi
 import sys
 
+from ..helper import Helper
 from ..models import constants, Masu, Piece, PieceType, Square
-from ..sente_perspective import Ban, Helper, Ji
+from ..sente_perspective import Ban, Ji
 from .match_operation import MatchOperation
 
 

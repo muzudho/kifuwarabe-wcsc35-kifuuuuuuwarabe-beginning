@@ -345,7 +345,9 @@ class ShogiEngineCompatibleWithUSIProtocol():
     def test(self):
         """TODO 使い終わったら消す
         """
-        from .sente_perspective import Ban, Helper, Ji
+        from .helper import Helper
+        from .sente_perspective import Ban, Ji
+
 
         ji = Ji(self._table)
         ban = Ban(self._table)

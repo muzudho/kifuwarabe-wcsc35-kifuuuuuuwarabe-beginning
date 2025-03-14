@@ -1,8 +1,9 @@
 import cshogi
 import sys
 
+from ..helper import Helper
 from ..models import constants, Square
-from ..sente_perspective import Ban, Comparison, Helper
+from ..sente_perspective import Ban, Comparison
 from .match_operation import MatchOperation
 
 
@@ -74,3 +75,4 @@ class DoNotBack(MatchOperation):
             # 記憶
             self._back_board[dst_sq_obj.sq] = src_sq
             self._back_board[src_sq] = None
+            print(f'★ DoNotBack: {dst_sq_obj.sq=} に {src_sq=} を記憶', file=sys.stderr)

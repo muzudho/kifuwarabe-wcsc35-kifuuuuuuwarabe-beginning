@@ -1,8 +1,9 @@
 import cshogi
 import sys
 
+from ..helper import Helper
 from ..models import constants, Square
-from ..sente_perspective import Ban, Comparison, Helper
+from ..sente_perspective import Ban, Comparison
 from .match_operation import MatchOperation
 
 
