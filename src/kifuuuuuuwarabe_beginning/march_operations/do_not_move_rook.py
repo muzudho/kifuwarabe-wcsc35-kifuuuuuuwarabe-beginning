@@ -67,10 +67,10 @@ class DoNotMoveRook(MatchOperation):
 
 
     def on_best_move_played_when_idling(self, move, table, config_doc):
-        """指す手の確定時。
+        """（アイドリング中の行進演算について）指す手の確定時。
         """
 
-        if config_doc['march_operations']['do_not_move_rook']: # 無効化のときも（アクティベートのために）実行します
+        if config_doc['march_operations']['do_not_move_rook']:
             ban = Ban(table)
             cmp = Comparison(table)
 
