@@ -19,7 +19,7 @@ class DoNotBack(MatchOperation):
                 label       = '戻るな',
                 config_doc  = config_doc)
 
-        print(f'★ ＤoNotBack: back_board 生成')
+        #print(f'★ ＤoNotBack: back_board 生成')
         # 元の位置。該当がなければナンです。
         # NOTE 自分が指し手を送信した手しか記憶していません。
         self._back_board = [None] * constants.BOARD_AREA
@@ -53,7 +53,7 @@ class DoNotBack(MatchOperation):
             # 動いていない、または、駒台にあったなら、対象外
             return constants.mind.NOT_IN_THIS_CASE
 
-        print(f'★ ＤoNotBack: {Helper.sq_to_masu(src_sq_obj.sq)=} の前位置は {Helper.sq_to_masu(back_sq)=}。')
+        #print(f'★ ＤoNotBack: {Helper.sq_to_masu(src_sq_obj.sq)=} の前位置は {Helper.sq_to_masu(back_sq)=}。')
 
         # 元居た位置に戻る手は、意志無し。
         if dst_sq_obj.sq == back_sq:
@@ -88,4 +88,4 @@ class DoNotBack(MatchOperation):
             if not is_drop:
                 self._back_board[src_sq] = None
 
-            print(f'★ ＤoNotBack: {Helper.sq_to_masu(dst_sq_obj.sq)=} に前位置 {Helper.sq_to_masu(src_sq)=} を記憶。')
+            #print(f'★ ＤoNotBack: {Helper.sq_to_masu(dst_sq_obj.sq)=} に前位置 {Helper.sq_to_masu(src_sq)=} を記憶。')
