@@ -10,8 +10,8 @@
     # 行進［右壁を作るな］
     do_not_build_right_wall = true
 
-    # 行進［イヌを上げるな］
-    do_not_up_the_dog = true
+    # 行進［イヌとネコを横並びに上げるな］
+    do_not_up_dog_and_cat_side_by_side = true
 
     # 行進［６段目に上がるな］
     do_not_up_to_rank_6 = true
