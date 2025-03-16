@@ -39,31 +39,44 @@ class DoNotDogAndCatSideBySide(MatchOperation):
         #cmp = Comparison(table)
         ji = Ji(table)
 
+        is_drop = cshogi.move_is_drop(move)
         src_sq_obj = Square(cshogi.move_from(move))
         dst_sq_obj = Square(cshogi.move_to(move))
         #moved_pt = cshogi.move_from_piece_type(move)
 
+        if is_drop:
+            # 打は順法の対象外
+            return constants.mind.NOT_IN_THIS_CASE
+
+
         def _do_not_alice_and_bob_side_by_side(alice, bob):
             # アリスなら。
             if cshogi.move_from_piece_type(move) == alice:
-                # 移動方向が上でなければ対象外。
-                if dst_sq_obj.sq != ban.top_of_sq(dst_sq_obj.sq):
-                    return constants.mind.NOT_IN_THIS_CASE
+                # 移動方向が上でなければ、［保留］
+                if dst_sq_obj.sq != ban.top_of_sq(src_sq_obj.sq):
+                    return None
 
                 # 右上、または左上にボブがいる。
                 if ji.pc(bob) in [
                     table.piece(ban.top_right_of_sq(src_sq_obj.sq)),    # 右上
                     table.piece(ban.top_left_of_sq(src_sq_obj.sq))      # 左上
                 ]:
-                    # 順法意志無し
+                    # ［順法の意志無し］
                     return constants.mind.WILL_NOT
 
+                # ［順法の意志有り］
+                return constants.mind.WILL
+
+            # ［保留］
             return None
+
 
         # イヌなら。
         result = _do_not_alice_and_bob_side_by_side(
                 alice   = cshogi.GOLD,
                 bob     = cshogi.SILVER)
+        #print(f'Debug: DoNotDogAndCatSideBySide: {table.move_number=} Gold {result=}')
+
         if result is not None:
             return result
 
@@ -71,8 +84,10 @@ class DoNotDogAndCatSideBySide(MatchOperation):
         result = _do_not_alice_and_bob_side_by_side(
                 alice   = cshogi.SILVER,
                 bob     = cshogi.GOLD)
+        #print(f'Debug: DoNotDogAndCatSideBySide: {table.move_number=} Dog {result=}')
+
         if result is not None:
             return result
 
-        # 順法意志有り
-        return constants.mind.WILL
+        # 順法の対象外
+        return constants.mind.NOT_IN_THIS_CASE

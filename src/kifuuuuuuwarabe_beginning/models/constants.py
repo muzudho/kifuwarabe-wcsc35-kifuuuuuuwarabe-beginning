@@ -37,17 +37,17 @@ class _Mind():
 
     @property
     def NOT_IN_THIS_CASE(self):
-        return 0
-
-
-    @property
-    def WILL_NOT(self):
         return 1
 
 
     @property
-    def WILL(self):
+    def WILL_NOT(self):
         return 2
+
+
+    @property
+    def WILL(self):
+        return 3
 
 
 
