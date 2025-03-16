@@ -64,14 +64,14 @@ class DoNotDogAndCatSideBySide(MatchOperation):
         result = _do_not_alice_and_bob_side_by_side(
                 alice   = cshogi.GOLD,
                 bob     = cshogi.SILVER)
-        if result is None:
+        if result is not None:
             return result
 
         # ネコなら。
         result = _do_not_alice_and_bob_side_by_side(
                 alice   = cshogi.SILVER,
                 bob     = cshogi.GOLD)
-        if result is None:
+        if result is not None:
             return result
 
         # 順法意志有り
