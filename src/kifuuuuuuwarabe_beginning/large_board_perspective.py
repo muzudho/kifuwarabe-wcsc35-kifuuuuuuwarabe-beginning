@@ -118,7 +118,7 @@ class Ban():
 
         # 対象外なケース：        
         if sq_obj.rank == self.dan(1):      # １段目だ。
-            return None
+            return None     # 盤外
 
         rel_sq = -1     # 上
 
@@ -145,7 +145,7 @@ class Ban():
                 sq_obj.rank == self.dan(1)      # １段目だ。
             or  sq_obj.file == self.suji(9)     # ９筋目だ。
         ):
-            return None
+            return None     # 盤外
 
         rel_sq = -10    # 右上
 
@@ -172,7 +172,7 @@ class Ban():
                 sq_obj.rank == self.dan(1)      # １段目だ。
             or  sq_obj.file == self.suji(9)     # ９筋目だ。
         ):
-            return None
+            return None     # 盤外
 
         rel_sq = 8      # 左上
 
@@ -199,7 +199,7 @@ class Ban():
                 sq_obj.rank == self.dan(9)     # ９段目だ。
             or  sq_obj.file == self.suji(9)    # ９筋目だ。
         ):
-            return None
+            return None     # 盤外
 
         rel_sq = 10     # 左下
 
@@ -225,7 +225,7 @@ class Ban():
                 sq_obj.rank == self.dan(9)      # ９段目だ。
             or  sq_obj.file == self.suji(1)     # １筋目だ。
         ):
-            return None
+            return None     # 盤外
 
         rel_sq = -8     # 右下
 

@@ -49,6 +49,12 @@ class DoNotDogAndCatSideBySide(MatchOperation):
             return constants.mind.NOT_IN_THIS_CASE
 
 
+        def _get_piece(sq):
+            if sq is None:
+                return None
+            return table.piece(sq)
+
+
         def _do_not_alice_and_bob_side_by_side(alice, bob):
             # アリスなら。
             if cshogi.move_from_piece_type(move) == alice:
@@ -58,8 +64,8 @@ class DoNotDogAndCatSideBySide(MatchOperation):
 
                 # 右上、または左上にボブがいる。
                 if ji.pc(bob) in [
-                    table.piece(ban.top_right_of_sq(src_sq_obj.sq)),    # 右上
-                    table.piece(ban.top_left_of_sq(src_sq_obj.sq))      # 左上
+                    _get_piece(ban.top_right_of_sq(src_sq_obj.sq)),    # 右上
+                    _get_piece(ban.top_left_of_sq(src_sq_obj.sq))      # 左上
                 ]:
                     # ［順法の意志無し］
                     return constants.mind.WILL_NOT

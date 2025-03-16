@@ -96,6 +96,9 @@ class Table():
     #########
 
     def piece(self, sq):
+        """［先後付きの駒］
+        NOTE sq がナン（盤外）にならないようにしてください。
+        """
         return self._board.piece(sq)
 
 
