@@ -3,7 +3,8 @@ import datetime
 import random
 import sys
 
-from ..march_operations import DoNotBack, DoNotUpToRank6, DoNotMoveUntilRookMoves, DoNotBuildRightWall, DoNotMoveLeftLance, DoNotMoveRightLance, DoNotMoveRook, DoNotGoLeft, WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToMove37Pawn, WillSwingingRook, WillToTakeThePieceWithoutLosingAnything
+from ..march_operations import DoNotBack, DoNotUpTheDog, DoNotUpToRank6, DoNotMoveUntilRookMoves, DoNotBuildRightWall, DoNotMoveLeftLance, DoNotMoveRightLance, DoNotMoveRook, DoNotGoLeft, \
+    WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToMove37Pawn, WillSwingingRook, WillToTakeThePieceWithoutLosingAnything
 
 
 class Go():
@@ -21,6 +22,7 @@ class Go():
             DoNotMoveLeftLance                                  (config_doc=config_doc),    # 行進［左のイノシシは動くな］
             DoNotMoveRightLance                                 (config_doc=config_doc),    # 行進［右のイノシシは動くな］
             DoNotGoLeft                                         (config_doc=config_doc),    # 行進［左へ行くな］
+            DoNotUpTheDog                                       (config_doc=config_doc),    # 行進［イヌを上げるな］
             DoNotUpToRank6                                      (config_doc=config_doc),    # 行進［６段目に上がるな］
             DoNotMoveUntilRookMoves                             (config_doc=config_doc),    # 行進［キリンが動くまで動くな］
             WillForThreeGoldAndSilverCoinsToGatherToTheRight    (config_doc=config_doc),    # ［金銀３枚が右に集まる］意志
