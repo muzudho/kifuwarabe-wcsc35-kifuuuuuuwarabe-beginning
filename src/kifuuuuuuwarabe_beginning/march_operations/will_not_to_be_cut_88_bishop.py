@@ -3,7 +3,7 @@ import sys
 
 from ..helper import Helper
 from ..models import constants
-from ..sente_perspective import Ban, Ji
+from ..large_board_perspective import Ban, Ji
 from .match_operation import MatchOperation
 
 
