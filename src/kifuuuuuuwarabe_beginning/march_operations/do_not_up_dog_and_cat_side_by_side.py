@@ -47,7 +47,7 @@ class DoNotDogAndCatSideBySide(MatchOperation):
             # アリスなら。
             if cshogi.move_from_piece_type(move) == alice:
                 # 移動方向が上でなければ対象外。
-                if dst_sq_obj.sq != ban.top_of_masu(Helper.sq_to_masu(dst_sq_obj.sq)):
+                if dst_sq_obj.sq != ban.top_of_sq(dst_sq_obj.sq):
                     return constants.mind.NOT_IN_THIS_CASE
 
                 # 右上、または左上にボブがいる。

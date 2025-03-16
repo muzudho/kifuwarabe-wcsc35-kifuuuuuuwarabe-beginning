@@ -117,7 +117,7 @@ class Ban():
         sq_obj = Square(sq)
 
         # 対象外なケース：        
-        if self.rank(sq_obj.rank) == self.dan(1):      # １段目だ。
+        if sq_obj.rank == self.dan(1):      # １段目だ。
             return None
 
         rel_sq = -1     # 上
@@ -134,6 +134,27 @@ class Ban():
         return self.top_of_sq(sq=Masu(masu).to_sq())
 
 
+    def top_left_of_sq(self, sq):
+        """［左上］
+        """
+
+        masu_sq = Square(sq)
+
+        # 対象外なケース：
+        if (
+                masu_sq.rank == self.dan(1)      # １段目だ。
+            or  masu_sq.file == self.suji(9)     # ９筋目だ。
+        ):
+            return None
+
+        rel_sq = 8      # 左上
+
+        if self.is_opponent_turn():     # 相手番なら盤を１８０°反転
+            rel_sq *= -1
+
+        return sq + rel_sq
+
+
     def top_left_of_masu(self, masu):
         """［左上］
         """
@@ -148,8 +169,8 @@ class Ban():
 
         # 対象外なケース：
         if (
-                self.rank(masu_sq.rank) == self.dan(9)      # ９段目だ。
-            or  self.file(masu_sq.file) == self.suji(9)   # ９筋目だ。
+                masu_sq.rank == self.dan(9)     # ９段目だ。
+            or  masu_sq.file == self.suji(9)    # ９筋目だ。
         ):
             return None
 
@@ -174,8 +195,8 @@ class Ban():
 
         # 対象外なケース：
         if (
-                self.rank(sq_obj.rank) == self.dan(9)      # ９段目だ。
-            or  self.file(sq_obj.file) == self.suji(1)     # １筋目だ。
+                sq_obj.rank == self.dan(9)      # ９段目だ。
+            or  sq_obj.file == self.suji(1)     # １筋目だ。
         ):
             return None
 
