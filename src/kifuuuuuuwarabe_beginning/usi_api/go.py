@@ -13,7 +13,7 @@ class Go():
     def __init__(self, config_doc):
         # 初期状態では、有効でない行進演算です。
         self._march_operation_list_when_idling = [
-            DoNotMoveRook(config_doc=config_doc),        # 行進［きりんは動くな］  NOTE 飛車を振るまで有効になりません
+            DoNotMoveRook(config_doc=config_doc),        # 行進［キリンは動くな］  NOTE 飛車を振るまで有効になりません
         ]
 
         self._march_operation_list = [

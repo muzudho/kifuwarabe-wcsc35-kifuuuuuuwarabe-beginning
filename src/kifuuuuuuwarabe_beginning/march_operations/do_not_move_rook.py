@@ -8,7 +8,7 @@ from .match_operation import MatchOperation
 
 
 class DoNotMoveRook(MatchOperation):
-    """行進［きりんは動くな］
+    """行進［キリンは動くな］
     ［きりんは止まる］意志
 
     NOTE 初期状態は［アイドリング］で始まり、飛車を振った後に有効化します
@@ -18,7 +18,7 @@ class DoNotMoveRook(MatchOperation):
     def __init__(self, config_doc):
         super().__init__(
                 id          = 'do_not_move_rook',
-                label       = 'きりんは動くな',
+                label       = 'キリンは動くな',
                 config_doc  = config_doc)
 
 

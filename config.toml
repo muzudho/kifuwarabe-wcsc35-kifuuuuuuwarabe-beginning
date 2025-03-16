@@ -28,7 +28,7 @@
     # 行進［右のイノシシは動くな］
     do_not_move_right_lance = true
 
-    # 行進［きりんは動くな］
+    # 行進［キリンは動くな］
     do_not_move_rook = true
 
     # ［金銀３枚が右に集まる］意志
