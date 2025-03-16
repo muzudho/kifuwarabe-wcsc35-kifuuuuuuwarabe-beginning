@@ -7,6 +7,9 @@
     # 行進［戻るな］
     do_not_back = true
 
+    # 行進［名の有る囲いを崩すな］
+    do_not_break_famous_fence = true
+
     # 行進［右壁を作るな］
     do_not_build_right_wall = true
 

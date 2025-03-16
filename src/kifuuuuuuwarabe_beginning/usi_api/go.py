@@ -3,7 +3,12 @@ import datetime
 import random
 import sys
 
-from ..march_operations import DoNotBack, DoNotDogAndCatSideBySide, DoNotUpToRank6, DoNotMoveUntilRookMoves, DoNotBuildRightWall, DoNotMoveLeftLance, DoNotMoveRightLance, DoNotMoveRook, DoNotGoLeft, \
+from ..march_operations import \
+    DoNotBack, DoNotBreakFamousFence, DoNotBuildRightWall, \
+    DoNotDogAndCatSideBySide, \
+    DoNotGoLeft, \
+    DoNotUpToRank6, \
+    DoNotMoveUntilRookMoves, DoNotMoveLeftLance, DoNotMoveRightLance, DoNotMoveRook, \
     WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToMove37Pawn, WillSwingingRook, WillToTakeThePieceWithoutLosingAnything
 
 
@@ -18,6 +23,7 @@ class Go():
 
         self._march_operation_list = [
             DoNotBack                                           (config_doc=config_doc),    # 行進［戻るな］
+            DoNotBreakFamousFence                               (config_doc=config_doc),    # 行進［名の有る囲いを崩すな］
             DoNotBuildRightWall                                 (config_doc=config_doc),    # 行進［右壁を作るな］
             DoNotMoveLeftLance                                  (config_doc=config_doc),    # 行進［左のイノシシは動くな］
             DoNotMoveRightLance                                 (config_doc=config_doc),    # 行進［右のイノシシは動くな］

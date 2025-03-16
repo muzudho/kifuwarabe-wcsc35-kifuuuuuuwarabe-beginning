@@ -1,4 +1,5 @@
 from .do_not_back import DoNotBack
+from .do_not_break_famous_fence import DoNotBreakFamousFence
 from .do_not_build_right_wall import DoNotBuildRightWall
 from .do_not_move_left_lance import DoNotMoveLeftLance
 from .do_not_move_right_lance import DoNotMoveRightLance
