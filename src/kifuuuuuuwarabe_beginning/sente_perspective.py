@@ -1,4 +1,4 @@
-"""手番を持っている側視点でプログラムを記述できるようにする仕組み。
+"""常に［大盤に向かって下側］視点でコーディングするようにするためのクラスです。［大盤に向かって下側］視点でコーディングすることで、現在の手番の視点に変換してくれます。
 """
 import cshogi
 
@@ -7,12 +7,15 @@ from .models import Masu, Square
 
 
 class Ban():
-    """盤
+    """［盤］
+
+    常に［大盤に向かって下側］視点でコーディングするようにするためのクラスです。［大盤に向かって下側］視点でコーディングすることで、現在の手番の視点に変換してくれます。
     """
 
 
     def __init__(self, table, after_moving=False):
-        """
+        """［初期化］
+
         Parameters
         ----------
         after_moving : bool
@@ -27,7 +30,9 @@ class Ban():
 
 
     def masu(self, masu):
-        """マス番号。先手の sq に変換する。
+        """［マス番号］
+        
+        先手の sq に変換します。
         """
         if self.is_opponent_turn():
             return self.suji_dan(
@@ -37,17 +42,30 @@ class Ban():
         return Helper.masu_to_file(masu) * 9 + Helper.masu_to_rank(masu)
 
 
-    def suji_dan(self, suji, dan):
-        """筋と段番号。先手の sq に変換する。
+    def file_rank(self, file, rank):
+        """［ファイルとランクで示されるスクウェア番号］
+        
+        先手の sq に変換します。
         """
         if self.is_opponent_turn():
-            return (9 - suji) * 9 + (9 - dan)  # masu → sq 変換しながら、１８０°回転
+            return (9 - file) * 9 + (9 - rank)  # masu → sq 変換しながら、１８０°回転
 
-        return (suji - 1) * 9 + (dan - 1)
+        return (file - 1) * 9 + (rank - 1)
 
 
-    def suji(self, suji):
-        """筋番号。先手の file に変換する。
+    def suji_dan(self, suji, dan):
+        """［筋と段で示されるスクウェア番号］
+        
+        先手の sq に変換します。
+        """
+        return self.file_rank(file=suji, rank=dan)  # 処理内容は file_rank() と同じ
+
+
+    def file(self, suji):
+        """［ファイル番号］
+        
+        先手の file に変換します。
+        変域： 1 ～ 9。
         """
         if self.is_opponent_turn():
             suji = 10 - suji
@@ -55,8 +73,31 @@ class Ban():
         return suji - 1
 
 
+    def suji(self, suji):
+        """［筋番号］
+        
+        先手の file に変換します。
+        変域： 1 ～ 9。
+        """
+        return self.file(suji)          # 処理内容は file と同じ
+
+
+    def rank(self, rank):
+        """［ランク番号］
+        
+        先手の rank に変換します。
+        変域： 1 ～ 9。
+        """
+        return self.file(file=rank)     # 処理内容は file と同じ
+
+
     def dan(self, dan):
-        return self.suji(suji=dan)    # 処理内容は同じ
+        """［段番号］
+        
+        先手の rank に変換します。
+        変域： 1 ～ 9。
+        """
+        return self.file(suji=dan)      # 処理内容は file と同じ
 
 
     def suji_range(self, start, end):
@@ -70,48 +111,105 @@ class Ban():
         return self.suji_range(start, end)      # 処理内容は同じ
 
 
-    def top_left(self, masu):
-        """左上
+    def top_left_of_sq(self, sq):
+        """［左上］
         """
+        sq_obj = Square(sq)
 
-        masu_obj = Masu(masu)
-
-        # １段目だ
-        if self.masu(masu) == self.dan(1):
+        # 対象外なケース：        
+        if (
+                self.rank(sq_obj.to_rank()) == self.dan(1)      # １段目だ。
+            or  self.file(sq_obj.to_file()) == self.suji(9)     # ９筋目だ。
+        ):
             return None
 
-        # ９列目だ
-        if self.suji(masu_obj.to_suji()) == self.suji(9):
-            return None
+        rel_sq = 8      # 左上
 
-        rel_sq = 8
-
-        if self.is_opponent_turn():
+        if self.is_opponent_turn():     # 相手番なら盤を１８０°反転
             rel_sq *= -1
 
-        return self.masu(masu) + rel_sq
+        return sq + rel_sq
 
 
-    def bottom_right(self, masu):
-        """右下
+    def top_left_of_masu(self, masu):
+        """［左上］
+        """
+        return self.top_left_of_sq(sq=Masu(masu).to_sq())
+
+
+    def top_left_of_masu(self, masu):
+        """［左上］
+        """
+        return self.top_left_of_sq(sq=Masu(masu).to_sq())
+
+        # masu_obj = Masu(masu)
+
+        # # 対象外なケース：        
+        # if (
+        #         self.dan(masu_obj.to_dan()) == self.dan(1)      # １段目だ。
+        #     or  self.suji(masu_obj.to_suji()) == self.suji(9)   # ９筋目だ。
+        # ):
+        #     return None
+
+        # rel_sq = 8      # 左上
+
+        # if self.is_opponent_turn():     # 相手番なら盤を１８０°反転
+        #     rel_sq *= -1
+
+        # return self.masu(masu) + rel_sq
+
+
+    def bottom_left_of_sq(self, sq):
+        """［左下］
         """
 
-        masu_obj = Masu(masu)
+        masu_sq = Square(sq)
 
-        # ９段目だ
-        if self.masu(masu) == self.dan(9):
+        # 対象外なケース：
+        if (
+                self.rank(masu_sq.to_rank()) == self.dan(9)      # ９段目だ。
+            or  self.file(masu_sq.to_file()) == self.suji(9)   # ９筋目だ。
+        ):
             return None
 
-        # １列目だ
-        if self.suji(masu_obj.to_suji()) == self.suji(1):
-            return None
+        rel_sq = 10     # 左下
 
-        rel_sq = -8
-
-        if self.is_opponent_turn():
+        if self.is_opponent_turn():     # 相手番なら盤を１８０°反転
             rel_sq *= -1
 
-        return self.masu(masu) + rel_sq
+        return sq + rel_sq
+
+
+    def bottom_left_of_masu(self, masu):
+        """［左下］
+        """
+        return self.bottom_left_of_sq(sq=Masu(masu).to_sq())
+
+
+    def bottom_right_of_sq(self, sq):
+        """［右下］
+        """
+        sq_obj = Square(sq)
+
+        # 対象外なケース：
+        if (
+                self.rank(sq_obj.to_rank()) == self.dan(9)      # ９段目だ。
+            or  self.file(sq_obj.to_file()) == self.suji(1)     # １筋目だ。
+        ):
+            return None
+
+        rel_sq = -8     # 右下
+
+        if self.is_opponent_turn():     # 相手番なら盤を１８０°反転
+            rel_sq *= -1
+
+        return sq + rel_sq
+
+
+    def bottom_right_of_masu(self, masu):
+        """［右下］
+        """
+        return self.bottom_right_of_sq(sq=Masu(masu).to_sq())
 
 
 class Comparison():

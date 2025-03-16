@@ -1,5 +1,7 @@
 class Masu():
-    """マス
+    """［マス］
+
+    Square のラッパーです。
     """
 
 
@@ -9,6 +11,10 @@ class Masu():
 
     def to_masu(self):
         return self._masu
+
+
+    def to_sq(self):
+        return (self.to_suji() - 1) * 9 + (self.to_dan() - 1)
 
 
     def to_suji(self):

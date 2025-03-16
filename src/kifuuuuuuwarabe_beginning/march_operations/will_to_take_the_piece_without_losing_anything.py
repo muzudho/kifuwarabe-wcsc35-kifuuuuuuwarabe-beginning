@@ -83,7 +83,7 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
         # 先手が角で１三歩を取ったと想定し、左上を調べていって最初に敵の角が出てきたら、取ったら損。
 
         # 後手視点だと、左上は右下
-        bottom_right_sq = ban.bottom_right(cap_masu)
+        bottom_right_sq = ban.bottom_right_of_masu(cap_masu)
         if not bottom_right_sq:
             return constants.mind.WILL_NOT
 
