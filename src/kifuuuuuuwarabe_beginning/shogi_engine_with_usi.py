@@ -4,6 +4,7 @@ import random
 import sys
 
 from .models import Table
+from .models.table_access_object import PieceValueTAO
 from .usi_api import Go
 from .views import HistoryView, TableView
 
@@ -23,8 +24,12 @@ class ShogiEngineCompatibleWithUSIProtocol():
         # 盤
         self._table = Table.create_table()
 
-        # 各種オブジェクト
-        self._go = Go(config_doc=self._config_doc)
+        # コマンド関連オブジェクト
+        self._go = None     # Go(config_doc=self._config_doc)
+
+        # 盤へアクセスする関連のオブジェクト
+        self._piece_value_tao = None
+
 
     def start_usi_loop(self):
         """USIループ開始
@@ -119,8 +124,9 @@ class ShogiEngineCompatibleWithUSIProtocol():
         """新しい対局
         """
 
-        # 再生成
+        # 初期化
         self._go = Go(config_doc=self._config_doc)
+        self._piece_value_tao = PieceValueTAO()
 
         print(f"[{datetime.datetime.now()}] usinewgame end", flush=True)
 
@@ -131,11 +137,13 @@ class ShogiEngineCompatibleWithUSIProtocol():
         pos = cmd[1].split('moves')
         sfen_text = pos[0].strip()
         # 区切りは半角空白１文字とします
-        moves_text = (pos[1].split(' ') if len(pos) > 1 else [])
-        self.position_detail(sfen_text, moves_text)
+        move_usi_list = (pos[1].split(' ') if len(pos) > 1 else [])
+        self.position_detail(
+                sfen_text   = sfen_text,
+                move_usi_list  = move_usi_list)
 
 
-    def position_detail(self, sfen_text, moves_text_as_usi):
+    def position_detail(self, sfen_text, move_usi_list):
         """局面データ解析
         """
 
@@ -148,9 +156,15 @@ class ShogiEngineCompatibleWithUSIProtocol():
             self._table.set_sfen(sfen_text[5:])
 
         # 棋譜再生
-        for move_as_usi in moves_text_as_usi:
+        for move_as_usi in move_usi_list:
             self._table.push_usi(move_as_usi)
 
+        if len(move_usi_list) == 0:
+            self._piece_value_tao.scan_table(
+                    table = self._table)
+        else:
+            self._piece_value_tao.put_move_usi(
+                    move_usi = move_usi_list[-1])
 
     def go(self):
         """思考開始～最善手返却
