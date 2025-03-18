@@ -108,6 +108,14 @@ class Table():
 
     @property
     def pieces_in_hand(self):
+        """持ち駒。
+        値 = [
+            # 先手
+            [歩, 香, 桂, 銀, 金, 角, 飛],
+            # 後手
+            [歩, 香, 桂, 銀, 金, 角, 飛],
+        ]
+        """
         return self._board.pieces_in_hand
 
 
