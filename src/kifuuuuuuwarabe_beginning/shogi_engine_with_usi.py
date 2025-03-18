@@ -162,9 +162,19 @@ class ShogiEngineCompatibleWithUSIProtocol():
         if len(move_usi_list) == 0:
             self._piece_value_tao.scan_table(
                     table = self._table)
+
+        elif len(move_usi_list) == 1:
+            self._piece_value_tao.put_move_usi(
+                    previous_move_usi   = None,
+                    last_move_usi       = move_usi_list[-1],
+                    table               = self._table)
+
         else:
             self._piece_value_tao.put_move_usi(
-                    move_usi = move_usi_list[-1])
+                    previous_move_usi   = move_usi_list[-2],
+                    last_move_usi       = move_usi_list[-1],
+                    table               = self._table)
+
 
     def go(self):
         """思考開始～最善手返却
