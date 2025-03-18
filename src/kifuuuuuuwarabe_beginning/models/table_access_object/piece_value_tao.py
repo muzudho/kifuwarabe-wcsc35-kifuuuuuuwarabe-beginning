@@ -12,14 +12,12 @@ class PieceValueTAO():
         pass
 
 
-    def put_move_usi(self, previous_move_usi, last_move_usi, table):
+    def put_move_usi_before_move(self, move_as_usi, table):
         """相手の手番でしか呼び出されないので、１つ前の手が自分の手になる。
 
         Parameters
         ----------
-        previous_move_usi : str
-            自分の手。無ければナン。
-        last_move_usi : str
-            相手の手。
+        move_as_usi : str
+            指し手。
         """
-        print(f'[PieceValueTAO#put_move_usi] ({table.move_number-2}) friend:{previous_move_usi} ({table.move_number-1}) opponent:{last_move_usi}')
+        print(f'[PieceValueTAO#put_move_usi] ({table.move_number}) {move_as_usi}')

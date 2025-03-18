@@ -136,8 +136,10 @@ class ShogiEngineCompatibleWithUSIProtocol():
         """
         pos = cmd[1].split('moves')
         sfen_text = pos[0].strip()
-        # 区切りは半角空白１文字とします
-        move_usi_list = (pos[1].split(' ') if len(pos) > 1 else [])
+
+        # pos[1]は半角空白から始まるので、.lstrip() で先頭の空白を除去します。
+        # 区切りは半角空白１文字とします。
+        move_usi_list = (pos[1].lstrip().split(' ') if len(pos) > 1 else [])
         self.position_detail(
                 sfen_text   = sfen_text,
                 move_usi_list  = move_usi_list)
@@ -155,25 +157,17 @@ class ShogiEngineCompatibleWithUSIProtocol():
         elif sfen_text[:5] == 'sfen ':
             self._table.set_sfen(sfen_text[5:])
 
+        # 盤をスキャン
+        self._piece_value_tao.scan_table(
+                table = self._table)
+
         # 棋譜再生
         for move_as_usi in move_usi_list:
+            self._piece_value_tao.put_move_usi_before_move(
+                    move_as_usi = move_as_usi,
+                    table       = self._table)
+
             self._table.push_usi(move_as_usi)
-
-        if len(move_usi_list) == 0:
-            self._piece_value_tao.scan_table(
-                    table = self._table)
-
-        elif len(move_usi_list) == 1:
-            self._piece_value_tao.put_move_usi(
-                    previous_move_usi   = None,
-                    last_move_usi       = move_usi_list[-1],
-                    table               = self._table)
-
-        else:
-            self._piece_value_tao.put_move_usi(
-                    previous_move_usi   = move_usi_list[-2],
-                    last_move_usi       = move_usi_list[-1],
-                    table               = self._table)
 
 
     def go(self):
