@@ -86,6 +86,10 @@ class Table():
         return self._board.mate_move_in_1ply()
 
 
+    def move_from_usi(self, usi):
+        return self._board.move_from_usi(usi = usi)
+    
+
     @property
     def move_number(self):
         return self._board.move_number

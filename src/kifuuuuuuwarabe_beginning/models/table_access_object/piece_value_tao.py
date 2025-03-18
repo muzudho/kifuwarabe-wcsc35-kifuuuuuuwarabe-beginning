@@ -56,4 +56,11 @@ class PieceValueTAO():
         move_as_usi : str
             指し手。
         """
-        print(f'[PieceValueTAO#put_move_usi] ({table.move_number}) {move_as_usi}')
+
+        # 移動先にある駒を見る。
+        m = table.move_from_usi(usi = move_as_usi)
+        dst_sq = cshogi.move_to(m)
+        dst_pc = table.piece(dst_sq)
+        self._nine_rank_side_value += 2 * - PieceValues.by_piece(dst_pc)  # 相手の駒を取るのでマイナスにします。交換値なので２倍します。
+
+        print(f'[PieceValueTAO#put_move_usi] ({table.move_number}) {move_as_usi} {self._nine_rank_side_value=}')
