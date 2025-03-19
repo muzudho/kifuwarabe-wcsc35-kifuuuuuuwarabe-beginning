@@ -1,4 +1,4 @@
-class Go():
+class GoLogics():
 
 
     @staticmethod

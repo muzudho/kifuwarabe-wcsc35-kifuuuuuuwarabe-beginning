@@ -1,1 +1,1 @@
-from .go import Go
+from .go_logics import GoLogics

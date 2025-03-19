@@ -4,7 +4,7 @@ import random
 import sys
 
 from .models_level_2 import Gymnasium
-from .logics import Go
+from .logics import GoLogics
 from .views import HistoryView, TableView
 
 
@@ -22,9 +22,6 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
         # 体育館
         self._gymnasium = Gymnasium(config_doc = self._config_doc)
-
-        # コマンド関連オブジェクト
-        self._go = None     # Go()
 
 
     def start_usi_loop(self):
@@ -195,7 +192,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
                 print(f'bestmove {best_move}', flush=True)
                 return
 
-        will_play_moves = Go.get_will_play_moves(
+        will_play_moves = GoLogics.get_will_play_moves(
                 will_play_moves = list(self._gymnasium.table.legal_moves),
                 gymnasium       = self._gymnasium)
 
@@ -207,11 +204,11 @@ class ShogiEngineCompatibleWithUSIProtocol():
         best_move = random.choice(will_play_moves)
         best_move_as_usi = cshogi.move_to_usi(best_move)
 
-        Go.on_best_move_played_when_idling(
+        GoLogics.on_best_move_played_when_idling(
                 move        = best_move,
                 gymnasium   = self._gymnasium)
 
-        Go.on_best_move_played(
+        GoLogics.on_best_move_played(
                 move        = best_move,
                 gymnasium   = self._gymnasium)
 
@@ -319,7 +316,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 
         print(f'★ go: ［３七の歩を突かない］意志を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
-        will_play_moves = Go.get_will_not_to_move_37_pawn(
+        will_play_moves = GoLogics.get_will_not_to_move_37_pawn(
                 config_doc=self._config_doc,
                 table=self._gymnasium.table,
                 will_play_moves=will_play_moves)
@@ -328,7 +325,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 
         print(f'★ go: ［右壁を作らない］意志を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
-        will_play_moves = Go.get_do_not_build_right_wall(
+        will_play_moves = GoLogics.get_do_not_build_right_wall(
                 config_doc=self._config_doc,
                 table=self._gymnasium.table,
                 will_play_moves=will_play_moves)
@@ -337,7 +334,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 
         print(f'★ go: ［振り飛車をする］意志を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
-        will_play_moves = Go.get_will_swinging_rook(
+        will_play_moves = GoLogics.get_will_swinging_rook(
                 config_doc=self._config_doc,
                 table=self._gymnasium.table,
                 will_play_moves=will_play_moves)
@@ -346,7 +343,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 
         print(f'★ go: ［８八の角を素抜かれない］意志を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
-        will_play_moves = Go.get_will_not_to_be_cut_88_bishop(
+        will_play_moves = GoLogics.get_will_not_to_be_cut_88_bishop(
                 config_doc=self._config_doc,
                 table=self._gymnasium.table,
                 will_play_moves=will_play_moves)
