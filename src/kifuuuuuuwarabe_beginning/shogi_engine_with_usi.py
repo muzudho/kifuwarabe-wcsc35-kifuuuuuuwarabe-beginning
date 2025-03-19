@@ -197,10 +197,9 @@ class ShogiEngineCompatibleWithUSIProtocol():
                 print(f'bestmove {best_move}', flush=True)
                 return
 
-        will_play_moves = self._go.get_will_play_moves(
-                will_play_moves=list(self._gymnasium.table.legal_moves),
-                table=self._gymnasium.table,
-                config_doc=self._config_doc)
+        will_play_moves = Go.get_will_play_moves(
+                will_play_moves = list(self._gymnasium.table.legal_moves),
+                gymnasium       = self._gymnasium)
 
         # 指し手が全部消えてしまった場合、何でも指すようにします
         if len(will_play_moves) < 1:
@@ -210,13 +209,13 @@ class ShogiEngineCompatibleWithUSIProtocol():
         best_move = random.choice(will_play_moves)
         best_move_as_usi = cshogi.move_to_usi(best_move)
 
-        self._go.on_best_move_played_when_idling(
-                move=best_move,
-                table=self._gymnasium.table)
+        Go.on_best_move_played_when_idling(
+                move        = best_move,
+                gymnasium   = self._gymnasium)
 
-        self._go.on_best_move_played(
-                move=best_move,
-                table=self._gymnasium.table)
+        Go.on_best_move_played(
+                move        = best_move,
+                gymnasium   = self._gymnasium)
 
         print(f"info depth 0 seldepth 0 time 1 nodes 0 score cp 0 string Go kifuuuuuuWarabe")
         print(f'bestmove {best_move_as_usi}', flush=True)
