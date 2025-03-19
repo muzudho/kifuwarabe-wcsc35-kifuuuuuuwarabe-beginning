@@ -28,7 +28,17 @@ class ShogiEngineCompatibleWithUSIProtocol():
         self._go = None     # Go(config_doc=self._config_doc)
 
         # 盤へアクセスする関連のオブジェクト
-        self._piece_value_tao = None
+        self._piece_value_tao = PieceValueTAO(table = self._table)
+
+        # その他のデータ
+        self._nine_rank_side_value = 0  # ９段目に近い方の対局者から見た駒得評価値。
+
+
+    @property
+    def nine_rank_side_value(self):
+        """９段目に近い方の対局者から見た駒得評価値。
+        """
+        return self._nine_rank_side_value
 
 
     def start_usi_loop(self):
@@ -126,7 +136,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
         # 初期化
         self._go = Go(config_doc=self._config_doc)
-        self._piece_value_tao = PieceValueTAO()
+        self._nine_rank_side_value = 0  # ９段目に近い方の対局者から見た駒得評価値。
 
         print(f"[{datetime.datetime.now()}] usinewgame end", flush=True)
 
@@ -158,14 +168,12 @@ class ShogiEngineCompatibleWithUSIProtocol():
             self._table.set_sfen(sfen_text[5:])
 
         # 盤をスキャン
-        self._piece_value_tao.scan_table(
-                table = self._table)
+        self._nine_rank_side_value = self._piece_value_tao.scan_table()
 
         # 棋譜再生
         for move_as_usi in move_usi_list:
-            self._piece_value_tao.put_move_usi_before_move(
-                    move_as_usi = move_as_usi,
-                    table       = self._table)
+            self._nine_rank_side_value += self._piece_value_tao.put_move_usi_before_move(
+                    move_as_usi = move_as_usi)
 
             self._table.push_usi(move_as_usi)
 

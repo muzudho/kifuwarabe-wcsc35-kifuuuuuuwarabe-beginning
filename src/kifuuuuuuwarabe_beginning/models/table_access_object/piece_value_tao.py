@@ -8,47 +8,43 @@ class PieceValueTAO():
     """
 
 
-    def __init__(self):
-        self._nine_rank_side_value = 0
+    def __init__(self, table):
+        self._table = table
 
 
-    def nine_rank_side_value(self):
-        """９段目に近い方の対局者から見た駒得評価値。
-        """
-        return self._nine_rank_side_value
-
-
-    def scan_table(self, table):
+    def scan_table(self):
         print(f'[PieceValueTAO#scan_table] start.')
 
-        self._nine_rank_side_value = 0
+        nine_rank_side_value = 0
 
         # 盤上の駒得を数える
         for sq in range(0, constants.BOARD_AREA):
-            pc = table.piece(sq)
-            self._nine_rank_side_value += PieceValues.by_piece(pc = pc)
+            pc = self._table.piece(sq)
+            nine_rank_side_value += PieceValues.by_piece(pc = pc)
 
         # 駒台の駒得を数える
-        self._nine_rank_side_value += PieceValues.by_piece(cshogi.BPAWN     ) * table.pieces_in_hand[0][0]  # ▲歩
-        self._nine_rank_side_value += PieceValues.by_piece(cshogi.BLANCE    ) * table.pieces_in_hand[0][1]  # ▲香
-        self._nine_rank_side_value += PieceValues.by_piece(cshogi.BKNIGHT   ) * table.pieces_in_hand[0][2]  # ▲桂
-        self._nine_rank_side_value += PieceValues.by_piece(cshogi.BSILVER   ) * table.pieces_in_hand[0][3]  # ▲銀
-        self._nine_rank_side_value += PieceValues.by_piece(cshogi.BGOLD     ) * table.pieces_in_hand[0][4]  # ▲金
-        self._nine_rank_side_value += PieceValues.by_piece(cshogi.BBISHOP   ) * table.pieces_in_hand[0][5]  # ▲角
-        self._nine_rank_side_value += PieceValues.by_piece(cshogi.BROOK     ) * table.pieces_in_hand[0][6]  # ▲飛
-        self._nine_rank_side_value += PieceValues.by_piece(cshogi.WPAWN     ) * table.pieces_in_hand[1][0]  # ▽歩
-        self._nine_rank_side_value += PieceValues.by_piece(cshogi.WLANCE    ) * table.pieces_in_hand[1][1]  # ▽香
-        self._nine_rank_side_value += PieceValues.by_piece(cshogi.WKNIGHT   ) * table.pieces_in_hand[1][2]  # ▽桂
-        self._nine_rank_side_value += PieceValues.by_piece(cshogi.WSILVER   ) * table.pieces_in_hand[1][3]  # ▽銀
-        self._nine_rank_side_value += PieceValues.by_piece(cshogi.WGOLD     ) * table.pieces_in_hand[1][4]  # ▽金
-        self._nine_rank_side_value += PieceValues.by_piece(cshogi.WBISHOP   ) * table.pieces_in_hand[1][5]  # ▽角
-        self._nine_rank_side_value += PieceValues.by_piece(cshogi.WROOK     ) * table.pieces_in_hand[1][6]  # ▽飛
+        nine_rank_side_value += PieceValues.by_piece(cshogi.BPAWN     ) * self._table.pieces_in_hand[0][0]  # ▲歩
+        nine_rank_side_value += PieceValues.by_piece(cshogi.BLANCE    ) * self._table.pieces_in_hand[0][1]  # ▲香
+        nine_rank_side_value += PieceValues.by_piece(cshogi.BKNIGHT   ) * self._table.pieces_in_hand[0][2]  # ▲桂
+        nine_rank_side_value += PieceValues.by_piece(cshogi.BSILVER   ) * self._table.pieces_in_hand[0][3]  # ▲銀
+        nine_rank_side_value += PieceValues.by_piece(cshogi.BGOLD     ) * self._table.pieces_in_hand[0][4]  # ▲金
+        nine_rank_side_value += PieceValues.by_piece(cshogi.BBISHOP   ) * self._table.pieces_in_hand[0][5]  # ▲角
+        nine_rank_side_value += PieceValues.by_piece(cshogi.BROOK     ) * self._table.pieces_in_hand[0][6]  # ▲飛
+        nine_rank_side_value += PieceValues.by_piece(cshogi.WPAWN     ) * self._table.pieces_in_hand[1][0]  # ▽歩
+        nine_rank_side_value += PieceValues.by_piece(cshogi.WLANCE    ) * self._table.pieces_in_hand[1][1]  # ▽香
+        nine_rank_side_value += PieceValues.by_piece(cshogi.WKNIGHT   ) * self._table.pieces_in_hand[1][2]  # ▽桂
+        nine_rank_side_value += PieceValues.by_piece(cshogi.WSILVER   ) * self._table.pieces_in_hand[1][3]  # ▽銀
+        nine_rank_side_value += PieceValues.by_piece(cshogi.WGOLD     ) * self._table.pieces_in_hand[1][4]  # ▽金
+        nine_rank_side_value += PieceValues.by_piece(cshogi.WBISHOP   ) * self._table.pieces_in_hand[1][5]  # ▽角
+        nine_rank_side_value += PieceValues.by_piece(cshogi.WROOK     ) * self._table.pieces_in_hand[1][6]  # ▽飛
 
         # 後手の駒台に歩が１つあれば、盤の上には先手の歩が１枚少ないので、-2 になる。（歩の交換値）
-        print(f'[PieceValueTAO#scan_table] {self._nine_rank_side_value=}')
+        print(f'[PieceValueTAO#scan_table] {nine_rank_side_value=}')
+
+        return nine_rank_side_value
 
 
-    def put_move_usi_before_move(self, move_as_usi, table):
+    def put_move_usi_before_move(self, move_as_usi):
         """相手の手番でしか呼び出されないので、１つ前の手が自分の手になる。
 
         Parameters
@@ -58,9 +54,11 @@ class PieceValueTAO():
         """
 
         # 移動先にある駒を見る。
-        m = table.move_from_usi(usi = move_as_usi)
+        m = self._table.move_from_usi(usi = move_as_usi)
         dst_sq = cshogi.move_to(m)
-        dst_pc = table.piece(dst_sq)
-        self._nine_rank_side_value += 2 * - PieceValues.by_piece(dst_pc)  # 相手の駒を取るのでマイナスにします。交換値なので２倍します。
+        dst_pc = self._table.piece(dst_sq)
+        nine_rank_side_value = 2 * - PieceValues.by_piece(dst_pc)  # 相手の駒を取るのでマイナスにします。交換値なので２倍します。
 
-        print(f'[PieceValueTAO#put_move_usi] ({table.move_number}) {move_as_usi} {self._nine_rank_side_value=}')
+        print(f'[PieceValueTAO#put_move_usi] ({self._table.move_number}) {move_as_usi} {nine_rank_side_value=}')
+
+        return nine_rank_side_value
