@@ -51,7 +51,7 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
 
         table.do_move(move)   # １手指す
 
-        mind = self.will_after_move(
+        mind = self.after_moving(
                 move=move,
                 cap_sq=dst_sq,
                 cap_type=cap_type,
@@ -62,7 +62,7 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
         return mind
 
 
-    def will_after_move(self, move, cap_sq, cap_type, table):
+    def after_moving(self, move, cap_sq, cap_type, table):
         """
         Parameters
         ----------

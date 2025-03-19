@@ -27,7 +27,7 @@ class WillNotToBeCut88Bishop(MatchOperation):
 
             # ［８八の角を素抜かれない］意志
             if self.is_enabled:
-                mind = self.have_will_after_moving_on_board(table)
+                mind = self.after_moving(table)
                 if mind == constants.mind.WILL_NOT:
                     del will_play_moves[i]
 
@@ -36,7 +36,7 @@ class WillNotToBeCut88Bishop(MatchOperation):
         return will_play_moves
 
 
-    def have_will_after_moving_on_board(self, table):
+    def after_moving_all(self, table):
         """指した後に意志があるか？        
         """
         # NOTE 指した後は相手の番になっていることに注意
