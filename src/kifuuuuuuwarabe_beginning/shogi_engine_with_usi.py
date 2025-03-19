@@ -143,32 +143,34 @@ class ShogiEngineCompatibleWithUSIProtocol():
         # pos[1]は半角空白から始まるので、.lstrip() で先頭の空白を除去します。
         # 区切りは半角空白１文字とします。
         move_usi_list = (pos[1].lstrip().split(' ') if len(pos) > 1 else [])
-        self.position_detail(
+
+
+        def _position_detail(sfen_text, move_usi_list):
+            """局面データ解析
+            """
+
+            # 平手初期局面に変更
+            if sfen_text == 'startpos':
+                self._table.reset()
+
+            # 指定局面に変更
+            elif sfen_text[:5] == 'sfen ':
+                self._table.set_sfen(sfen_text[5:])
+
+            # 盤をスキャン
+            self._note_book.nine_rank_side_value = self._piece_value_tao.scan_table()
+
+            # 棋譜再生
+            for move_as_usi in move_usi_list:
+                self._note_book.nine_rank_side_value += self._piece_value_tao.put_move_usi_before_move(
+                        move_as_usi = move_as_usi)
+
+                self._table.push_usi(move_as_usi)
+
+
+        _position_detail(
                 sfen_text   = sfen_text,
                 move_usi_list  = move_usi_list)
-
-
-    def position_detail(self, sfen_text, move_usi_list):
-        """局面データ解析
-        """
-
-        # 平手初期局面に変更
-        if sfen_text == 'startpos':
-            self._table.reset()
-
-        # 指定局面に変更
-        elif sfen_text[:5] == 'sfen ':
-            self._table.set_sfen(sfen_text[5:])
-
-        # 盤をスキャン
-        self._note_book.nine_rank_side_value = self._piece_value_tao.scan_table()
-
-        # 棋譜再生
-        for move_as_usi in move_usi_list:
-            self._note_book.nine_rank_side_value += self._piece_value_tao.put_move_usi_before_move(
-                    move_as_usi = move_as_usi)
-
-            self._table.push_usi(move_as_usi)
 
 
     def go(self):
