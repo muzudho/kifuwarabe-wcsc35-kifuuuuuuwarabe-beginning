@@ -1,3 +1,4 @@
+from ..models import Table
 from ..models.table_access_object import PieceValueTAO
 
 
@@ -6,15 +7,25 @@ class Gymnasium():
     """
 
 
-    def __init__(self, table):
+    def __init__(self):
         """初期化します。
         """
 
+        # 盤
+        self._table = Table.create_table()
+
         # 盤へアクセスする関連のオブジェクト
-        self._piece_value_tao = PieceValueTAO(table = table)
+        self._piece_value_tao = PieceValueTAO(table = self._table)
 
         # ９段目に近い方の対局者から見た駒得評価値。
         self._nine_rank_side_value = 0
+
+
+    @property
+    def table(self):
+        """［盤］。
+        """
+        return self._table
 
 
     @property
