@@ -1,8 +1,3 @@
-import cshogi
-import datetime
-import random
-import sys
-
 from ..march_operations import \
     DoNotBack, DoNotBreakFamousFence, DoNotBuildRightWall, \
     DoNotDogAndCatSideBySide, \
@@ -16,11 +11,8 @@ from ..march_operations import \
 class Go():
 
 
-    def __init__(self, config_doc):
-        # 初期状態では、有効でない行進演算です。
-        self._march_operation_list_when_idling = [
-            DoNotMoveRook(config_doc=config_doc),        # 行進［キリンは動くな］  NOTE 飛車を振るまで有効になりません
-        ]
+    def __init__(self, gymnasium, config_doc):
+        self._gymnasium = gymnasium
 
         self._march_operation_list = [
             DoNotBack                                           (config_doc=config_doc),    # 行進［戻るな］
@@ -69,7 +61,7 @@ class Go():
         match_operation_list_to_remove = []
 
         # 行進リスト
-        for march_operation in self._march_operation_list_when_idling:
+        for march_operation in self._gymnasium.march_operation_list_when_idling:
             march_operation.on_best_move_played_when_idling(
                     move        = move,
                     table       = table)
@@ -82,7 +74,7 @@ class Go():
                 match_operation_list_to_remove.append(march_operation)
 
         for march_operation in match_operation_list_to_activate:
-            self._march_operation_list_when_idling.remove(march_operation)
+            self._gymnasium.march_operation_list_when_idling.remove(march_operation)
             self._march_operation_list.append(march_operation)
             print(f'★ ｏn_best_move_played: 行進演算 有効化 {march_operation.label=}')
 

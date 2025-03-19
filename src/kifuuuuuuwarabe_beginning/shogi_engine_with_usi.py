@@ -21,7 +21,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         self._config_doc = config_doc
 
         # 体育館
-        self._gymnasium = Gymnasium()
+        self._gymnasium = Gymnasium(config_doc = self._config_doc)
 
         # コマンド関連オブジェクト
         self._go = None     # Go(config_doc=self._config_doc)
@@ -121,7 +121,9 @@ class ShogiEngineCompatibleWithUSIProtocol():
         """
 
         # 初期化
-        self._go = Go(config_doc=self._config_doc)
+        self._go = Go(
+                gymnasium   = self._gymnasium,
+                config_doc  = self._config_doc)
         self._gymnasium.on_new_game()
 
         print(f"[{datetime.datetime.now()}] usinewgame end", flush=True)
