@@ -9,7 +9,8 @@ from ..march_operations import \
     DoNotGoLeft, \
     DoNotUpToRank6, \
     DoNotMoveUntilRookMoves, DoNotMoveLeftLance, DoNotMoveRightLance, DoNotMoveRook, \
-    WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToBeCut88Bishop, WillNotToMove37Pawn, WillSwingingRook, WillToTakeThePieceWithoutLosingAnything
+    WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToMove37Pawn, WillSwingingRook
+# 削除 WillNotToBeCut88Bishop, WillToTakeThePieceWithoutLosingAnything
 
 
 class Go():
@@ -34,8 +35,8 @@ class Go():
             WillForThreeGoldAndSilverCoinsToGatherToTheRight    (config_doc=config_doc),    # ［金銀３枚が右に集まる］意志
             WillNotToMove37Pawn                                 (config_doc=config_doc),    # ［３七の歩を突かない］意志
             WillSwingingRook                                    (config_doc=config_doc),    # ［振り飛車をする］意志
-            WillNotToBeCut88Bishop                              (config_doc=config_doc),    # ［８八の角を素抜かれない］意志
-            WillToTakeThePieceWithoutLosingAnything             (config_doc=config_doc),    # ［駒取って損しない］意志
+            # 削除 WillNotToBeCut88Bishop                              (config_doc=config_doc),    # ［８八の角を素抜かれない］意志
+            # 削除 WillToTakeThePieceWithoutLosingAnything             (config_doc=config_doc),    # ［駒取って損しない］意志
         ]
 
 

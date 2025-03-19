@@ -43,8 +43,10 @@
     # ［振り飛車をする］意志
     will_swinging_rook = false      #true
 
-    # ［８八の角を素抜かれない］意志
-    will_not_to_be_cut_88_bishop = false        #true
+    # 削除
+    ## ［８八の角を素抜かれない］意志
+    #will_not_to_be_cut_88_bishop = false        #true
 
-    # ［駒取って損しない］意志
-    will_to_take_the_piece_without_losing_anything = false      #true
+    # 削除
+    ## ［駒取って損しない］意志
+    #will_to_take_the_piece_without_losing_anything = false      #true
