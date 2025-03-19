@@ -121,8 +121,6 @@ class ShogiEngineCompatibleWithUSIProtocol():
         """
 
         # 初期化
-        self._go = Go(
-                gymnasium   = self._gymnasium)
         self._gymnasium.on_new_game()
 
         print(f"[{datetime.datetime.now()}] usinewgame end", flush=True)

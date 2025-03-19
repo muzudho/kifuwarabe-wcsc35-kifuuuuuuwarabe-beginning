@@ -1,10 +1,6 @@
 class Go():
 
 
-    def __init__(self, gymnasium):
-        self._gymnasium = gymnasium
-
-
     @staticmethod
     def get_will_play_moves(will_play_moves, gymnasium):
 
