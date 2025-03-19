@@ -1,4 +1,6 @@
-class NoteBook():
+class Gymnasium():
+    """体育館。きふわらべはなぜか体育館で将棋をしている。
+    """
 
 
     def __init__(self):

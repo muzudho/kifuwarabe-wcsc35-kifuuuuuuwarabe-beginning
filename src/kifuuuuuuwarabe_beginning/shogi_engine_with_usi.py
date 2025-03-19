@@ -3,7 +3,7 @@ import datetime
 import random
 import sys
 
-from .models import NoteBook, Table
+from .models import Gymnasium, Table
 from .models.table_access_object import PieceValueTAO
 from .usi_api import Go
 from .views import HistoryView, TableView
@@ -24,8 +24,8 @@ class ShogiEngineCompatibleWithUSIProtocol():
         # 盤
         self._table = Table.create_table()
 
-        # 記憶
-        self._note_book = NoteBook()
+        # 体育館
+        self._gymnasium = Gymnasium()
 
         # コマンド関連オブジェクト
         self._go = None     # Go(config_doc=self._config_doc)
@@ -129,7 +129,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
         # 初期化
         self._go = Go(config_doc=self._config_doc)
-        self._note_book.on_new_game()
+        self._gymnasium.on_new_game()
 
         print(f"[{datetime.datetime.now()}] usinewgame end", flush=True)
 
@@ -158,11 +158,11 @@ class ShogiEngineCompatibleWithUSIProtocol():
                 self._table.set_sfen(sfen_text[5:])
 
             # 盤をスキャン
-            self._note_book.nine_rank_side_value = self._piece_value_tao.scan_table()
+            self._gymnasium.nine_rank_side_value = self._piece_value_tao.scan_table()
 
             # 棋譜再生
             for move_as_usi in move_usi_list:
-                self._note_book.nine_rank_side_value += self._piece_value_tao.put_move_usi_before_move(
+                self._gymnasium.nine_rank_side_value += self._piece_value_tao.put_move_usi_before_move(
                         move_as_usi = move_as_usi)
 
                 self._table.push_usi(move_as_usi)
