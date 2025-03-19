@@ -23,7 +23,7 @@ class WillNotToBeCut88Bishop(MatchOperation):
         # １手指してから判定
         for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
             m = will_play_moves[i]
-            table.push(m)   # １手指す
+            table.do_move(m)   # １手指す
 
             # ［８八の角を素抜かれない］意志
             if self.is_enabled:
@@ -31,7 +31,7 @@ class WillNotToBeCut88Bishop(MatchOperation):
                 if mind == constants.mind.WILL_NOT:
                     del will_play_moves[i]
 
-            table.pop() # １手戻す
+            table.undo_move() # １手戻す
 
         return will_play_moves
 

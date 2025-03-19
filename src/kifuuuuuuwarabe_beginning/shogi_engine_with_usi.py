@@ -279,7 +279,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         """一手戻す
             code: undo
         """
-        self._table.pop()
+        self._table.undo_move()
 
 
     def test_will(self):

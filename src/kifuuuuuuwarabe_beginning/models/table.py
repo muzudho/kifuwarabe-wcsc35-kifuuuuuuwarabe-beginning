@@ -123,12 +123,12 @@ class Table():
         return self._board.pieces_in_hand
 
 
-    def pop(self):
+    def undo_move(self):
         self._piece_moved_list.pop()
         return self._board.pop()
 
 
-    def push(self, move):
+    def do_move(self, move):
         move_as_usi = cshogi.move_to_usi(move)
         self.push_usi(move_as_usi)
 

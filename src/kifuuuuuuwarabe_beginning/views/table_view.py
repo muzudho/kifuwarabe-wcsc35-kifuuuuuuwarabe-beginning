@@ -40,8 +40,8 @@ class TableView():
     #     moves_list.append(copied_table.pop_usi())
     #     print(f"{copied_table.move_number=}")
     #     while 1 < copied_table.move_number:
-    #         # copied_table.pop() を使うと強制終了する？
-    #         moves_list.append(copied_table.pop())
+    #         # copied_table.undo_move() を使うと強制終了する？
+    #         moves_list.append(copied_table.undo_move())
     #         print(f"{copied_table.move_number=}")
         
     #     # print(f"{len(moves_list)=}")
@@ -51,7 +51,7 @@ class TableView():
     #     # repetition = 0
     #     # for i in reversed(range(0, len(moves_list))):
     #     #     m = moves_list[i]
-    #     #     copied_table.push(m)
+    #     #     copied_table.do_move(m)
 
     #     #     # 指定局面の出現回数をカウント
     #     #     if board.sfen() == designated_sfen:
