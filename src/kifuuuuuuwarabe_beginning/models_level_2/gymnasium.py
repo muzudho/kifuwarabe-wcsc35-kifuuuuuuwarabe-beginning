@@ -34,6 +34,23 @@ class Gymnasium():
             DoNotMoveRook(config_doc=config_doc),        # 行進［キリンは動くな］  NOTE 飛車を振るまで有効になりません
         ]
 
+        self._march_operation_list = [
+            DoNotBack                                           (config_doc=config_doc),    # 行進［戻るな］
+            DoNotBreakFamousFence                               (config_doc=config_doc),    # 行進［名の有る囲いを崩すな］
+            DoNotBuildRightWall                                 (config_doc=config_doc),    # 行進［右壁を作るな］
+            DoNotMoveLeftLance                                  (config_doc=config_doc),    # 行進［左のイノシシは動くな］
+            DoNotMoveRightLance                                 (config_doc=config_doc),    # 行進［右のイノシシは動くな］
+            DoNotGoLeft                                         (config_doc=config_doc),    # 行進［左へ行くな］
+            DoNotDogAndCatSideBySide                            (config_doc=config_doc),    # 行進［イヌとネコを横並びに上げるな］
+            DoNotUpToRank6                                      (config_doc=config_doc),    # 行進［６段目に上がるな］
+            DoNotMoveUntilRookMoves                             (config_doc=config_doc),    # 行進［キリンが動くまで動くな］
+            WillForThreeGoldAndSilverCoinsToGatherToTheRight    (config_doc=config_doc),    # ［金銀３枚が右に集まる］意志
+            WillNotToMove37Pawn                                 (config_doc=config_doc),    # ［３七の歩を突かない］意志
+            WillSwingingRook                                    (config_doc=config_doc),    # ［振り飛車をする］意志
+            # 削除 WillNotToBeCut88Bishop                              (config_doc=config_doc),    # ［８八の角を素抜かれない］意志
+            # 削除 WillToTakeThePieceWithoutLosingAnything             (config_doc=config_doc),    # ［駒取って損しない］意志
+        ]
+
 
     @property
     def table(self):
@@ -60,6 +77,11 @@ class Gymnasium():
         """
         return self._march_operation_list_when_idling
 
+
+    @property
+    def march_operation_list(self):
+        return self._march_operation_list
+    
 
     @nine_rank_side_value.setter
     def nine_rank_side_value(self, value):
