@@ -1,7 +1,7 @@
 class Go():
 
 
-    def __init__(self, gymnasium, config_doc):
+    def __init__(self, gymnasium):
         self._gymnasium = gymnasium
 
 

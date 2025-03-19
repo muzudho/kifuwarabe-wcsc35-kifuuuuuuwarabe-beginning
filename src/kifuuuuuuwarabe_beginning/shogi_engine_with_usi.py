@@ -24,7 +24,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         self._gymnasium = Gymnasium(config_doc = self._config_doc)
 
         # コマンド関連オブジェクト
-        self._go = None     # Go(config_doc=self._config_doc)
+        self._go = None     # Go()
 
 
     def start_usi_loop(self):
@@ -122,8 +122,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
         # 初期化
         self._go = Go(
-                gymnasium   = self._gymnasium,
-                config_doc  = self._config_doc)
+                gymnasium   = self._gymnasium)
         self._gymnasium.on_new_game()
 
         print(f"[{datetime.datetime.now()}] usinewgame end", flush=True)
