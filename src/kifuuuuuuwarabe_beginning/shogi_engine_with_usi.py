@@ -4,7 +4,7 @@ import random
 import sys
 
 from .models_level_2 import Gymnasium
-from .usi_api import Go
+from .logics import Go
 from .views import HistoryView, TableView
 
 
