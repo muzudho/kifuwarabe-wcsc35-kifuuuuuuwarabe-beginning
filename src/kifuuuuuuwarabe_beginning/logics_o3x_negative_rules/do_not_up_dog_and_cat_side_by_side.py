@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import Ban, Pen
+from ..models_o2x.nine_rank_side_perspective import Pen
 from .match_operation import MatchOperation
 
 
@@ -33,7 +33,6 @@ class DoNotDogAndCatSideBySide(MatchOperation):
     def before_move(self, move, table):
         """指す前に。
         """
-        ban = Ban(table)
         pen = Pen(table)
 
         is_drop = cshogi.move_is_drop(move)
@@ -55,13 +54,13 @@ class DoNotDogAndCatSideBySide(MatchOperation):
             # アリスなら。
             if cshogi.move_from_piece_type(move) == alice:
                 # 移動方向が上でなければ、［保留］
-                if dst_sq_obj.sq != ban.top_of_sq(src_sq_obj.sq):
+                if dst_sq_obj.sq != pen.top_of_sq(src_sq_obj.sq):
                     return None
 
                 # 右上、または左上にボブがいる。
                 if pen.ji_pc(bob) in [
-                    _get_piece(ban.top_right_of_sq(src_sq_obj.sq)),    # 右上
-                    _get_piece(ban.top_left_of_sq(src_sq_obj.sq))      # 左上
+                    _get_piece(pen.top_right_of_sq(src_sq_obj.sq)),    # 右上
+                    _get_piece(pen.top_left_of_sq(src_sq_obj.sq))      # 左上
                 ]:
                     # ［順法の意志無し］
                     return constants.mind.WILL_NOT

@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import Ban, Pen
+from ..models_o2x.nine_rank_side_perspective import Pen
 from .match_operation import MatchOperation
 
 
@@ -23,11 +23,10 @@ class DoNotMoveRook(MatchOperation):
     def before_move_o1o1x(self, remaining_moves, table):
         if self.is_enabled:
 
-            ban = Ban(table)
             pen = Pen(table)
 
             # 自ライオンが２八にいる
-            if table.piece(ban.masu(28)) == pen.ji_pc(cshogi.KING):
+            if table.piece(pen.masu(28)) == pen.ji_pc(cshogi.KING):
                 # （処理を行わず）このオブジェクトを除外
                 self._is_removed = True
             

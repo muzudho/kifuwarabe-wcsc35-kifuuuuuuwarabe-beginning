@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import Ban, Pen
+from ..models_o2x.nine_rank_side_perspective import Pen
 from .match_operation import MatchOperation
 
 
@@ -22,7 +22,7 @@ class DoNotMoveLeftLance(MatchOperation):
         """指す前に。
         """
 
-        ban = Ban(table)
+        pen = Pen(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
 
@@ -31,8 +31,8 @@ class DoNotMoveLeftLance(MatchOperation):
             return constants.mind.NOT_IN_THIS_CASE
 
         # ９筋の駒が動いたら意志無し
-        #print(f'★ ＤoNotMoveLeftLance.before_move(): {src_sq_obj.file=} {ban.suji(9)=}')
-        if src_sq_obj.file == ban.suji(9):
+        #print(f'★ ＤoNotMoveLeftLance.before_move(): {src_sq_obj.file=} {pen.suji(9)=}')
+        if src_sq_obj.file == pen.suji(9):
             return constants.mind.WILL_NOT
 
         # それ以外は意志有り

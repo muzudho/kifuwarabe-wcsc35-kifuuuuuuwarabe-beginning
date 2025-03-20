@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import Ban, Pen
+from ..models_o2x.nine_rank_side_perspective import Pen
 from .match_operation import MatchOperation
 
 
@@ -21,11 +21,10 @@ class DoNotUpToRank6(MatchOperation):
     def before_move_o1o1x(self, remaining_moves, table):
         if self.is_enabled:
 
-            ban = Ban(table)
             pen = Pen(table)
 
             # 自ライオンが２八にいる
-            if table.piece(ban.masu(28)) == pen.ji_pc(cshogi.KING):
+            if table.piece(pen.masu(28)) == pen.ji_pc(cshogi.KING):
                 # このオブジェクトを除外
                 self._is_removed = True
 
@@ -44,18 +43,17 @@ class DoNotUpToRank6(MatchOperation):
     def before_move(self, move, table):
         """指す前に。
         """
-        ban = Ban(table)
         pen = Pen(table)
 
         dst_sq_obj = Square(cshogi.move_to(move))
 
         # # 自キリンが２八にいる
-        # if table.piece(ban.masu(28)) != pen.ji_pc(cshogi.ROOK):
+        # if table.piece(pen.masu(28)) != pen.ji_pc(cshogi.ROOK):
         #     # そうでなければ対象外
         #     return constants.mind.NOT_IN_THIS_CASE
 
         # 移動先は６段目だ
-        if dst_sq_obj.rank != ban.dan(6):
+        if dst_sq_obj.rank != pen.dan(6):
             # そうでなければ意志を残している
             return constants.mind.WILL
 

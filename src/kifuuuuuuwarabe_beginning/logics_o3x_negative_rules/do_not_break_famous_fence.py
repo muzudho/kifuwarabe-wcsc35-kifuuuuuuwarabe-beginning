@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import Ban, Pen
+from ..models_o2x.nine_rank_side_perspective import Pen
 from .match_operation import MatchOperation
 
 
@@ -33,18 +33,17 @@ class DoNotBreakFamousFence(MatchOperation):
     def before_move(self, move, table):
         """指す前に。
         """
-        ban = Ban(table)
         pen = Pen(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
 
         # ［大住囲い］
         if (
-                pen.ji_pc(cshogi.KING) == table.piece(ban.masu(38))     # 自ライオンが［３八］
-            and pen.ji_pc(cshogi.GOLD) == table.piece(ban.masu(48))     # 自イヌが［４八］
-            and pen.ji_pc(cshogi.SILVER) == table.piece(ban.masu(39))   # 自ネコが［３九］
+                pen.ji_pc(cshogi.KING) == table.piece(pen.masu(38))     # 自ライオンが［３八］
+            and pen.ji_pc(cshogi.GOLD) == table.piece(pen.masu(48))     # 自イヌが［４八］
+            and pen.ji_pc(cshogi.SILVER) == table.piece(pen.masu(39))   # 自ネコが［３九］
             ):
-            if src_sq_obj.sq in [ban.masu(38), ban.masu(48), ban.masu(39)]:
+            if src_sq_obj.sq in [pen.masu(38), pen.masu(48), pen.masu(39)]:
                 # 順法の意志無し
                 return constants.mind.WILL_NOT
 

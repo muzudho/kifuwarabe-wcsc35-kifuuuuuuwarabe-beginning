@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x import Ban, Pen
+from ..models_o2x import Pen
 from .match_operation import MatchOperation
 
 

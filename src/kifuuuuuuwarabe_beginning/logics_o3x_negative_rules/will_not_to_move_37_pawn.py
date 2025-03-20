@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import Ban
+from ..models_o2x.nine_rank_side_perspective import Pen
 from .match_operation import MatchOperation
 
 
@@ -20,7 +20,7 @@ class WillNotToMove37Pawn(MatchOperation):
     def before_move(self, move, table):
         """指し手は［３七の歩を突かない］意志を残しているか？
         """
-        ban = Ban(table)
+        pen = Pen(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
         # print(f'★ {src_sq_obj.sq=} ', end='')
@@ -29,7 +29,7 @@ class WillNotToMove37Pawn(MatchOperation):
 
         # ３七以外にある駒は関係ない
         #print(f'D: {Helper.turn_name(table.turn)=} {Helper.sq_to_masu(ban.masu(37))=} {Helper.sq_to_masu(src_sq_obj.sq)=}')
-        if src_sq_obj.sq != ban.masu(37):
+        if src_sq_obj.sq != pen.masu(37):
             #print('★ ３七以外にある駒は関係ない')
             return constants.mind.NOT_IN_THIS_CASE
 

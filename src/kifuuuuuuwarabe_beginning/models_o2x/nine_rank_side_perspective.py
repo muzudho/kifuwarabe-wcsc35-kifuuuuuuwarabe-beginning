@@ -13,49 +13,6 @@ class Pen():
 
 
     def __init__(self, table, after_moving=False):
-        self._table = table
-        self._after_moving = after_moving
-
-
-    def is_opponent_turn(self):
-        return self._table.turn == cshogi.WHITE and not self._after_moving
-
-
-    def swap(self, a, b):
-        """［比較］
-        """
-        if self.is_opponent_turn():
-            return b, a
-        
-        return a, b
-
-
-    def ji_pc(self, piece_type):
-        """［自］。手番を持っている側。駒種類を手番の駒へ変換
-        """
-        if self.is_opponent_turn():
-            piece = piece_type + 16
-        else:
-            piece = piece_type
-
-        return piece
-
-
-    def value(self, value):
-        """評価値"""
-        if self.is_opponent_turn():
-            return - value
-        return value
-
-
-class Ban():
-    """［盤］
-
-    常に［大盤に向かって下側］視点でコーディングするようにするためのクラスです。［大盤に向かって下側］視点でコーディングすることで、現在の手番の視点に変換してくれます。
-    """
-
-
-    def __init__(self, table, after_moving=False):
         """［初期化］
 
         Parameters
@@ -281,3 +238,30 @@ class Ban():
         """［右下］
         """
         return self.bottom_right_of_sq(sq=Masu(masu).to_sq())
+
+
+    def swap(self, a, b):
+        """［比較］
+        """
+        if self.is_opponent_turn():
+            return b, a
+        
+        return a, b
+
+
+    def ji_pc(self, piece_type):
+        """［自］。手番を持っている側。駒種類を手番の駒へ変換
+        """
+        if self.is_opponent_turn():
+            piece = piece_type + 16
+        else:
+            piece = piece_type
+
+        return piece
+
+
+    def value(self, value):
+        """評価値"""
+        if self.is_opponent_turn():
+            return - value
+        return value

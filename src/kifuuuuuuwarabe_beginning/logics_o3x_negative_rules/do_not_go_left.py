@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import Ban, Pen
+from ..models_o2x.nine_rank_side_perspective import Pen
 from .match_operation import MatchOperation
 
 
@@ -22,7 +22,6 @@ class DoNotGoLeft(MatchOperation):
         """指す前に。
         """
 
-        ban = Ban(table)
         pen = Pen(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
@@ -41,7 +40,7 @@ class DoNotGoLeft(MatchOperation):
         # イヌ、ネコなら
         if cshogi.move_from_piece_type(move) in [cshogi.GOLD, cshogi.SILVER]:
             # ６筋位左にある駒は対象外
-            e1 = pen.swap(src_sq_obj.file, ban.suji(6))
+            e1 = pen.swap(src_sq_obj.file, pen.suji(6))
             if e1[0] >= e1[1]:
                 return constants.mind.NOT_IN_THIS_CASE
 

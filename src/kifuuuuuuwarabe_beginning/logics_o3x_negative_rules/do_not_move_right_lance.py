@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import Ban, Pen
+from ..models_o2x.nine_rank_side_perspective import Pen
 from .match_operation import MatchOperation
 
 
@@ -20,11 +20,10 @@ class DoNotMoveRightLance(MatchOperation):
 
     def before_move_o1o1x(self, remaining_moves, table):
         if self.is_enabled:
-            ban = Ban(table)
             pen = Pen(table)
 
             # 自ライオンが２八にいる
-            if table.piece(ban.masu(28)) == pen.ji_pc(cshogi.KING):
+            if table.piece(pen.masu(28)) == pen.ji_pc(cshogi.KING):
                 # （処理を行わず）このオブジェクトを除外
                 self._is_removed = True
             
@@ -42,7 +41,7 @@ class DoNotMoveRightLance(MatchOperation):
         """指す前に。
         """
 
-        ban = Ban(table)
+        pen = Pen(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
 
@@ -51,8 +50,8 @@ class DoNotMoveRightLance(MatchOperation):
             return constants.mind.NOT_IN_THIS_CASE
 
         # １筋の駒が動いたら意志無し
-        #print(f'★ ＤoNotMoveRightLance.before_move(): {src_sq_obj.file=} {ban.suji(1)=}')
-        if src_sq_obj.file == ban.suji(1):
+        #print(f'★ ＤoNotMoveRightLance.before_move(): {src_sq_obj.file=} {pen.suji(1)=}')
+        if src_sq_obj.file == pen.suji(1):
             return constants.mind.WILL_NOT
 
         # それ以外は意志有り
