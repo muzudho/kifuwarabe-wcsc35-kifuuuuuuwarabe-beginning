@@ -42,4 +42,8 @@ dump_2:
 {dump_2}
 """)
 
+        # 指し手が全部消えてしまった場合、何でも指すようにします
+        if len(best_move_list) < 1:
+            return remaining_moves
+
         return best_move_list

@@ -22,6 +22,8 @@ class MovesReductionFilterLogics():
                 指し手は必ず１つ以上残っています。
         """
 
+        old_remaining_moves = remaining_moves.copy()
+
         negative_rules_to_remove = []
 
         # 行進リスト
@@ -41,7 +43,7 @@ class MovesReductionFilterLogics():
 
         # 指し手が全部消えてしまった場合、何でも指すようにします
         if len(remaining_moves) < 1:
-            remaining_moves = list(gymnasium.table.legal_moves)
+            return old_remaining_moves
 
         return remaining_moves
 

@@ -125,16 +125,31 @@ class Gymnasium():
         self._nine_rank_side_value = 0  # ９段目に近い方の対局者から見た駒得評価値。
 
 
+    ##################
+    # MARK: 指し手関連
+    ##################
+
+
     def do_move_o1x(self, move):
         """一手指す。
         """
+
+        self.nine_rank_side_value += self.piece_value_tao.before_move(
+                move = move)
+
         return self._table.do_move_o1o1x(move = move)
 
 
     def undo_move_o1x(self):
         """一手戻す。
         """
-        return self._table.undo_move_o1o1x()
+
+        move = self._table.undo_move_o1o1x()
+
+        self.nine_rank_side_value += self.piece_value_tao.before_undo_move(
+                move = move)
+
+        return move
 
 
     def dump(self):

@@ -44,21 +44,36 @@ class PieceValueTAO():
         return nine_rank_side_value
 
 
-    def put_move_usi_before_move(self, move_as_usi):
+    def before_move(self, move):
         """相手の手番でしか呼び出されないので、１つ前の手が自分の手になる。
 
         Parameters
         ----------
-        move_as_usi : str
-            指し手。
+        move : int
+            ［指し手］
         """
 
         # 移動先にある駒を見る。
-        m = self._table.move_from_usi(usi = move_as_usi)
-        dst_sq = cshogi.move_to(m)
+        dst_sq = cshogi.move_to(move)
         dst_pc = self._table.piece(dst_sq)
         nine_rank_side_value = 2 * - PieceValues.by_piece(dst_pc)  # 相手の駒を取るのでマイナスにします。交換値なので２倍します。
 
-        #print(f'[PieceValueTAO#put_move_usi] ({self._table.move_number}) {move_as_usi} {nine_rank_side_value=}')
-
         return nine_rank_side_value
+
+
+
+
+    def before_undo_move(self, move):
+        """相手の手番でしか呼び出されないので、１つ前の手が自分の手になる。
+
+        Parameters
+        ----------
+        move : int
+            ［指し手］
+        """
+
+        # 取ったを見る。
+        pc = cshogi.move_cap(move)
+        nine_rank_side_value = 2 * - PieceValues.by_piece(pc)  # 相手の駒を取るのでマイナスにします。交換値なので２倍します。
+
+        return - nine_rank_side_value   # アンドゥなのでマイナス

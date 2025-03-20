@@ -151,10 +151,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
             # 棋譜再生。
             for move_as_usi in move_usi_list:
-                self._gymnasium.nine_rank_side_value += self._gymnasium.piece_value_tao.put_move_usi_before_move(
-                        move_as_usi = move_as_usi)
-
-                self._gymnasium.table.do_move_o1o1x(
+                self._gymnasium.do_move_o1x(
                         move = self._gymnasium.table.move_from_usi(move_as_usi))
 
             # この将棋エンジンの手番を記録。

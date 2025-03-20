@@ -65,6 +65,17 @@ class GoLogic():
                 best_move_as_usi = cshogi.move_to_usi(matemove)
                 return GoLogicResultState.MATE_IN_1_MOVE, best_move_as_usi
 
+        remaining_moves = list(gymnasium.table.legal_moves)
+        print(f"A: {len(remaining_moves)=}")
+
+        # 駒得評価値でフィルタリング
+        #       制約：
+        #           指し手は必ず１つ以上残っています。
+        remaining_moves = KomadokuFilterLogics.filtering(
+                remaining_moves = remaining_moves,
+                gymnasium       = gymnasium)
+        print(f"B: {len(remaining_moves)=}")
+
         # 合法手から、１手を選び出します。
         # （必ず、投了ではない手が存在します）
         #
@@ -72,13 +83,9 @@ class GoLogic():
         #       制約：
         #           指し手は必ず１つ以上残っています。
         remaining_moves = MovesReductionFilterLogics.before_move_o1x(
-                remaining_moves = list(gymnasium.table.legal_moves),
-                gymnasium       = gymnasium)
-
-        # 駒得評価値でフィルタリング
-        remaining_moves = KomadokuFilterLogics.filtering(
                 remaining_moves = remaining_moves,
                 gymnasium       = gymnasium)
+        print(f"C: {len(remaining_moves)=}")
 
         # １手に絞り込む
         best_move = random.choice(remaining_moves)
