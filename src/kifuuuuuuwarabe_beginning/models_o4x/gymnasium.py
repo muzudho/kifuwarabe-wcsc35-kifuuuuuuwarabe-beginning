@@ -78,13 +78,19 @@ class Gymnasium():
 
 
     @property
-    def engine_value(self):
-        """この将棋エンジンの評価値。
+    def nine_rank_side_value(self):
+        """９段目に近い方の対局者から見た駒得評価値。
         """
-        if self._engine_turn == cshogi.BLACK:
-            return self.nine_rank_side_value
-        return -self.nine_rank_side_value
+        return self._nine_rank_side_value
 
+
+    # @property
+    # def engine_value(self):
+    #     """この将棋エンジンの評価値。
+    #     """
+    #     if self._engine_turn == cshogi.BLACK:
+    #         return self.nine_rank_side_value
+    #     return -self.nine_rank_side_value
 
 
     @engine_turn.setter
@@ -95,13 +101,6 @@ class Gymnasium():
     @property
     def piece_value_tao(self):
         return self._piece_value_tao
-
-
-    @property
-    def nine_rank_side_value(self):
-        """９段目に近い方の対局者から見た駒得評価値。
-        """
-        return self._nine_rank_side_value
 
 
     @property

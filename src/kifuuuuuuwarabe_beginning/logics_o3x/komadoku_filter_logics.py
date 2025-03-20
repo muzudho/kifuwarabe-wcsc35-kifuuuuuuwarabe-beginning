@@ -1,4 +1,7 @@
+import cshogi
+
 from ..logics_o1x.logger_logics import LoggerLogics
+from ..models_o2x import Pen
 
 
 class KomadokuFilterLogics():
@@ -9,28 +12,41 @@ class KomadokuFilterLogics():
     @staticmethod
     def filtering(remaining_moves, gymnasium):
 
+        pen = Pen(table = gymnasium.table)
+
         if gymnasium.config_doc['debug_mode']['search_do_undo']:
             print('in debug')
             dump_1 = gymnasium.dump()
 
         best_move_list = []
-        #best_value = 
-        max_engine_value = -99999   # 無さそうな最低値。
+
+        pen_best_value = pen.value(-99999)  # 先手なら -99999、後手なら 99999 からスタート。
 
         # 残った手一覧
         for move in remaining_moves:
 
-            # 一手指す
-            gymnasium.do_move_o1x(move = move)
-            #print(f'move: {cshogi.move_to_usi(move)} {gymnasium.nine_rank_side_value=} {gymnasium.engine_turn=} {gymnasium.engine_value=}')
+            ################
+            # MARK: 一手指す
+            ################
 
-            if max_engine_value < gymnasium.engine_value:
-                max_engine_value = gymnasium.engine_value
+            # nine_rank_side_value は pen.value() で囲まないこと。
+            print(f'before move: {cshogi.move_to_usi(move)} {gymnasium.engine_turn=} {gymnasium.table.turn=} {pen_best_value=} {gymnasium.nine_rank_side_value=}')
+            gymnasium.do_move_o1x(move = move)
+
+            # NOTE 一手指した後だから、逆にしてる。
+            e1 = pen.swap(gymnasium.nine_rank_side_value, pen_best_value)
+            print(f'after move: {cshogi.move_to_usi(move)} {gymnasium.engine_turn=} {gymnasium.table.turn=} {pen_best_value=} {gymnasium.nine_rank_side_value=} {e1[0]=} {e1[1]=} {e1[0] < e1[1]=}')
+
+            if e1[0] < e1[1]:
+                pen_best_value = gymnasium.nine_rank_side_value
                 best_move_list = [move]
-            elif max_engine_value == gymnasium.engine_value:
+                
+            elif pen_best_value == gymnasium.nine_rank_side_value:
                 best_move_list.append(move)
 
-            # 一手戻す
+            ################
+            # MARK: 一手戻す
+            ################
             gymnasium.undo_move_o1x()
 
             if gymnasium.config_doc['debug_mode']['search_do_undo']:

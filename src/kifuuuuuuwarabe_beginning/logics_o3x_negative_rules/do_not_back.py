@@ -1,7 +1,6 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x import Pen
 from .negative_rule import NegativeRule
 
 
