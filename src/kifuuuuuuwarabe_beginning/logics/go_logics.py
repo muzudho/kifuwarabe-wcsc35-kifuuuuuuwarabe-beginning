@@ -3,12 +3,15 @@ class GoLogics():
 
     @staticmethod
     def get_will_play_moves(will_play_moves, gymnasium):
+        """主処理。
+        """
 
         match_operation_list_to_remove = []
 
         # 行進リスト
         for march_operation in gymnasium.march_operation_list:
-            will_play_moves = march_operation.do_anything(
+            # １手も指さず、目の前にある盤に対して。
+            will_play_moves = march_operation.before_move_o1(
                     will_play_moves = will_play_moves,
                     table           = gymnasium.table)
 
@@ -24,8 +27,9 @@ class GoLogics():
 
 
     @staticmethod
-    def on_best_move_played_when_idling(move, gymnasium):
-        """（アイドリング中の行進演算について）指す手の確定時。
+    def after_best_moving_when_idling(move, gymnasium):
+        """１手指した後に呼び出されます。
+        （アイドリング中の行進演算について）指す手の確定時。
         """
 
         match_operation_list_to_activate = []
@@ -33,7 +37,7 @@ class GoLogics():
 
         # 行進リスト
         for march_operation in gymnasium.march_operation_list_when_idling:
-            march_operation.on_best_move_played_when_idling(
+            march_operation.after_best_moving_when_idling(
                     move        = move,
                     table       = gymnasium.table)
 
@@ -55,15 +59,16 @@ class GoLogics():
 
 
     @staticmethod
-    def on_best_move_played(move, gymnasium):
-        """指す手の確定時。
+    def after_best_moving(move, gymnasium):
+        """１手指した後に呼び出されます。
+        指す手の確定時。
         """
 
         match_operation_list_to_remove = []
 
         # 行進リスト
         for march_operation in gymnasium.march_operation_list:
-            march_operation.on_best_move_played(
+            march_operation.after_best_moving(
                     move        = move,
                     table       = gymnasium.table)
 

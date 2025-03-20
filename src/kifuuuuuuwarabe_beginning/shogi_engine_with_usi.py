@@ -204,11 +204,11 @@ class ShogiEngineCompatibleWithUSIProtocol():
         best_move = random.choice(will_play_moves)
         best_move_as_usi = cshogi.move_to_usi(best_move)
 
-        GoLogics.on_best_move_played_when_idling(
+        GoLogics.after_best_moving_when_idling(
                 move        = best_move,
                 gymnasium   = self._gymnasium)
 
-        GoLogics.on_best_move_played(
+        GoLogics.after_best_moving(
                 move        = best_move,
                 gymnasium   = self._gymnasium)
 

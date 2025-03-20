@@ -22,7 +22,7 @@ class DoNotMoveRook(MatchOperation):
                 config_doc  = config_doc)
 
 
-    def do_anything(self, will_play_moves, table):
+    def before_move_o1(self, will_play_moves, table):
         if self.is_enabled:
 
             ban = Ban(table)
@@ -67,7 +67,7 @@ class DoNotMoveRook(MatchOperation):
         return constants.mind.WILL_NOT
 
 
-    def on_best_move_played_when_idling(self, move, table):
+    def after_best_moving_when_idling(self, move, table):
         """（アイドリング中の行進演算について）指す手の確定時。
         """
 

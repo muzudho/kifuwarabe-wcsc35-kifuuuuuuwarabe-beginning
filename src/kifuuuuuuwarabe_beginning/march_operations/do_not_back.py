@@ -63,7 +63,7 @@ class DoNotBack(MatchOperation):
         return constants.mind.WILL
 
 
-    def on_best_move_played(self, move, table):
+    def after_best_moving(self, move, table):
         """指す手の確定時。
         """
 

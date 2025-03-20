@@ -47,19 +47,19 @@ class MatchOperation():
         return self._is_removed
 
 
-    def on_best_move_played_when_idling(self, move, table):
+    def after_best_moving_when_idling(self, move, table):
         """（アイドリング中の行進演算について）指す手の確定時。
         """
         pass
 
 
-    def on_best_move_played(self, move, table):
+    def after_best_moving(self, move, table):
         """指す手の確定時。
         """
         pass
 
 
-    def do_anything(self, will_play_moves, table):
+    def before_move_o1(self, will_play_moves, table):
         if self.is_enabled:
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
                 m = will_play_moves[i]
