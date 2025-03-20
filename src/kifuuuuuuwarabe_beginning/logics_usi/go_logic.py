@@ -46,7 +46,12 @@ class GoLogic():
             ［指す手］
         """
         search = _Search(gymnasium)
-        return search.search()
+        (
+            result_state,
+            friend_value,
+            best_move
+        ) = search.search()
+        return (result_state, best_move)
 
 
 class _Search():
@@ -63,6 +68,10 @@ class _Search():
 
         Returns
         -------
+        result_state : int
+            結果の種類。
+        friend_value : int
+            手番から見た駒得評価値。
         best_move : int
             ［指す手］
             該当が無ければナン。
@@ -71,12 +80,12 @@ class _Search():
         if self._gymnasium.table.is_game_over():
             """投了局面時。
             """
-            return GoLogicResultState.RESIGN, None
+            return GoLogicResultState.RESIGN, 0, None
 
         if self._gymnasium.table.is_nyugyoku():
             """入玉宣言局面時。
             """
-            return GoLogicResultState.NYUGYOKU_WIN, None
+            return GoLogicResultState.NYUGYOKU_WIN, 0, None
 
         # 一手詰めを詰める
         if not self._gymnasium.table.is_check():
@@ -84,10 +93,10 @@ class _Search():
 
             if (matemove := self._gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
-                return GoLogicResultState.MATE_IN_1_MOVE, matemove
+                return GoLogicResultState.MATE_IN_1_MOVE, 0, matemove
 
         remaining_moves = list(self._gymnasium.table.legal_moves)
-        print(f"A: {len(remaining_moves)=}")
+        #print(f"A: {len(remaining_moves)=}")
 
         # 駒得評価値でフィルタリング
         #       制約：
@@ -95,7 +104,7 @@ class _Search():
         remaining_moves = KomadokuFilterLogics.filtering(
                 remaining_moves = remaining_moves,
                 gymnasium       = self._gymnasium)
-        print(f"B: {len(remaining_moves)=}")
+        #print(f"B: {len(remaining_moves)=}")
 
         # 合法手から、１手を選び出します。
         # （必ず、投了ではない手が存在します）
@@ -116,4 +125,4 @@ class _Search():
                 move        = best_move,
                 gymnasium   = self._gymnasium)
 
-        return GoLogicResultState.BEST_MOVE, best_move
+        return GoLogicResultState.BEST_MOVE, 0, best_move
