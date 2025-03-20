@@ -12,7 +12,11 @@ class KomadokuFilterLogics():
     @staticmethod
     def filtering(remaining_moves, gymnasium):
 
-        np = NineRankSidePerspective(table = gymnasium.table)
+        np = NineRankSidePerspective(
+                table = gymnasium.table)
+        np_rev = NineRankSidePerspective(
+                table           = gymnasium.table,
+                after_moving    = True)
 
         if gymnasium.config_doc['debug_mode']['search_do_undo']:
             print('in debug')
@@ -33,9 +37,8 @@ class KomadokuFilterLogics():
             #print(f'before move: {cshogi.move_to_usi(move)} {gymnasium.engine_turn=} {gymnasium.table.turn=} {np_best_value=} {gymnasium.np_value=}')
             gymnasium.do_move_o1x(move = move)
 
-            # FIXME 逆にしている。これで正しく動く。おかしいんじゃないか？
-            e1 = np.swap(gymnasium.np_value, np_best_value)
-            #print(f'after move: {cshogi.move_to_usi(move)} {gymnasium.engine_turn=} {gymnasium.table.turn=} {np_best_value=} {gymnasium.np_value=} {e1[0]=} {e1[1]=} {e1[0] < e1[1]=}')
+            e1 = np_rev.swap(np_best_value, gymnasium.np_value)
+            #print(f'after move: {cshogi.move_to_usi(move)} エンジン手番:{gymnasium.engine_turn} 手番:{gymnasium.table.turn} {np_best_value=} {gymnasium.np_value=} {e1[0]=} {e1[1]=} {e1[0] < e1[1]=}')
 
             # 更新。
             if e1[0] < e1[1]:

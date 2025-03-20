@@ -25,7 +25,12 @@ class NineRankSidePerspective():
 
 
     def is_opponent_turn(self):
-        return self._table.turn == cshogi.WHITE and not self._after_moving
+        if self._after_moving:
+            return self._table.turn == cshogi.BLACK
+        else:
+            return self._table.turn == cshogi.WHITE
+    
+        #return self._table.turn == cshogi.WHITE and not self._after_moving
 
 
     def masu(self, masu):
