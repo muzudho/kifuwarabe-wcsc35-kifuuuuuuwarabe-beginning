@@ -247,7 +247,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         """一手戻す
             code: undo
         """
-        self._gymnasium.table.undo_move()
+        self._gymnasium.table.undo_move_o1o1x()
 
 
     def test_will(self):

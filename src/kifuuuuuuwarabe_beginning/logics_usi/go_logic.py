@@ -83,6 +83,7 @@ class GoLogic():
             print(f'move: {cshogi.move_to_usi(move)}')
 
             # 一手戻す
+            gymnasium.undo_move_o1x()
 
 
         # １手に絞り込む

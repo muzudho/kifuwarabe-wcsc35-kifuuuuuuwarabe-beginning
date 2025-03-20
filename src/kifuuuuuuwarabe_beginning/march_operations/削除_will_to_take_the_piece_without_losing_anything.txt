@@ -57,7 +57,7 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
                 cap_type=cap_type,
                 table=table)
 
-        table.undo_move() # １手戻す
+        table.undo_move_o1o1x() # １手戻す
 
         return mind
 

@@ -40,8 +40,8 @@ class TableView():
     #     moves_list.append(copied_table.pop_usi())
     #     print(f"{copied_table.move_number=}")
     #     while 1 < copied_table.move_number:
-    #         # copied_table.undo_move() を使うと強制終了する？
-    #         moves_list.append(copied_table.undo_move())
+    #         # copied_table.undo_move_o1o1x() を使うと強制終了する？
+    #         moves_list.append(copied_table.undo_move_o1o1x())
     #         print(f"{copied_table.move_number=}")
         
     #     # print(f"{len(moves_list)=}")

@@ -95,4 +95,10 @@ class Gymnasium():
     def do_move_o1x(self, move):
         """一手指す。
         """
-        self._table.do_move_o1o1x(move = move)
+        return self._table.do_move_o1o1x(move = move)
+
+
+    def undo_move_o1x(self):
+        """一手戻す。
+        """
+        return self._table.undo_move_o1o1x()

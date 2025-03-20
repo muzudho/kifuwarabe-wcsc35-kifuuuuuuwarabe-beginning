@@ -37,6 +37,7 @@ class Table():
     def do_move_o1o1x(self, move):
         """一手指す。
         """
+
         result = self._board.push(move)
 
         # 指した後に記録
@@ -47,8 +48,13 @@ class Table():
         return result
 
 
-    def undo_move(self):
+    def undo_move_o1o1x(self):
+        """一手戻す。
+        """
+
+        # 状態を戻す
         self._piece_moved_list.pop()
+
         return self._board.pop()
 
 
