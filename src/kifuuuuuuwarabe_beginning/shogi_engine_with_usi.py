@@ -192,7 +192,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
                 print(f'bestmove {best_move}', flush=True)
                 return
 
-        will_play_moves = GoLogics.get_will_play_moves(
+        will_play_moves = GoLogics.before_move_o1(
                 will_play_moves = list(self._gymnasium.table.legal_moves),
                 gymnasium       = self._gymnasium)
 

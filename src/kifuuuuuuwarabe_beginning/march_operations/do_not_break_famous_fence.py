@@ -20,7 +20,7 @@ class DoNotBreakFamousFence(MatchOperation):
                 config_doc  = config_doc)
 
 
-    def before_move_o1(self, will_play_moves, table):
+    def before_move_o1o1(self, will_play_moves, table):
         if self.is_enabled:
 
             for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順

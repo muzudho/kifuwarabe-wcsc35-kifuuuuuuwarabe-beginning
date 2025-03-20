@@ -19,7 +19,7 @@ class WillSwingingRook(MatchOperation):
                 config_doc  = config_doc)
 
 
-    def before_move_o1(self, will_play_moves, table):
+    def before_move_o1o1(self, will_play_moves, table):
         # ［振り飛車をする］意志
         if self.is_enabled:
             if constants.mind.WILL == self.will_on_board(table):

@@ -2,7 +2,7 @@ class GoLogics():
 
 
     @staticmethod
-    def get_will_play_moves(will_play_moves, gymnasium):
+    def before_move_o1(will_play_moves, gymnasium):
         """主処理。
         """
 
@@ -11,7 +11,7 @@ class GoLogics():
         # 行進リスト
         for march_operation in gymnasium.march_operation_list:
             # １手も指さず、目の前にある盤に対して。
-            will_play_moves = march_operation.before_move_o1(
+            will_play_moves = march_operation.before_move_o1o1(
                     will_play_moves = will_play_moves,
                     table           = gymnasium.table)
 
@@ -21,7 +21,7 @@ class GoLogics():
 
         for march_operation in match_operation_list_to_remove:
             gymnasium.march_operation_list.remove(march_operation)
-            print(f'★ get_will_play_moves: 行進演算 削除 {march_operation.label=}')
+            print(f'★ before_move_o1: 行進演算 削除 {march_operation.label=}')
 
         return will_play_moves
 
