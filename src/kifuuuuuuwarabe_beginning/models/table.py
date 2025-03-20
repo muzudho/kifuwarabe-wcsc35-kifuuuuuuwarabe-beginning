@@ -186,8 +186,16 @@ class Table():
     # MARK: ダンプ
     ##############
     def dump(self):
+
+        def _dump_piece_moved_list():
+            items = []
+            for piece_moved in self._piece_moved_list:
+                items.append(f"{piece_moved=}")
+            
+            return ' '.join(items)
+
         return f"""
 {self._designated_sfen=}
 {self._board.sfen()=}
-{len(self._piece_moved_list)=}
+{_dump_piece_moved_list()=}
 """

@@ -1,3 +1,6 @@
+import cshogi
+
+
 class PieceMoved():
     """１手指した直後に記憶しておく様々な情報
 
@@ -36,3 +39,7 @@ class PieceMoved():
         """同形反復回数
         """
         return self._number_of_repetition
+
+
+    def dump(self):
+        return f"{cshogi.move_to_usi(self._move)=} {self._sfen_with_0_moves=} {self._number_of_repetition=}"
