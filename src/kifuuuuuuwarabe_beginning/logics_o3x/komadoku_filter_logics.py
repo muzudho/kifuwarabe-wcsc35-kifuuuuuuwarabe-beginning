@@ -29,20 +29,20 @@ class KomadokuFilterLogics():
             # MARK: 一手指す
             ################
 
-            # nine_rank_side_value は pen.value() で囲まないこと。
-            #print(f'before move: {cshogi.move_to_usi(move)} {gymnasium.engine_turn=} {gymnasium.table.turn=} {pen_best_value=} {gymnasium.nine_rank_side_value=}')
+            # np_value は pen.value() で囲まないこと。
+            #print(f'before move: {cshogi.move_to_usi(move)} {gymnasium.engine_turn=} {gymnasium.table.turn=} {pen_best_value=} {gymnasium.np_value=}')
             gymnasium.do_move_o1x(move = move)
 
             # FIXME 逆にしている。これで正しく動く。おかしいんじゃないか？
-            e1 = pen.swap(gymnasium.nine_rank_side_value, pen_best_value)
-            #print(f'after move: {cshogi.move_to_usi(move)} {gymnasium.engine_turn=} {gymnasium.table.turn=} {pen_best_value=} {gymnasium.nine_rank_side_value=} {e1[0]=} {e1[1]=} {e1[0] < e1[1]=}')
+            e1 = pen.swap(gymnasium.np_value, pen_best_value)
+            #print(f'after move: {cshogi.move_to_usi(move)} {gymnasium.engine_turn=} {gymnasium.table.turn=} {pen_best_value=} {gymnasium.np_value=} {e1[0]=} {e1[1]=} {e1[0] < e1[1]=}')
 
             # 更新。
             if e1[0] < e1[1]:
-                pen_best_value = gymnasium.nine_rank_side_value
+                pen_best_value = gymnasium.np_value
                 best_move_list = [move]
                 
-            elif pen_best_value == gymnasium.nine_rank_side_value:
+            elif pen_best_value == gymnasium.np_value:
                 best_move_list.append(move)
 
             ################

@@ -33,7 +33,7 @@ class Gymnasium():
         self._piece_value_tao = PieceValueTAO(table = self._table)
 
         # ９段目に近い方の対局者から見た駒得評価値。
-        self._nine_rank_side_value = 0
+        self._np_value = 0
 
         # 初期状態では、有効でない行進演算です。
         self._list_of_idle_negative_rules = [
@@ -78,10 +78,10 @@ class Gymnasium():
 
 
     @property
-    def nine_rank_side_value(self):
+    def np_value(self):
         """９段目に近い方の対局者から見た駒得評価値。
         """
-        return self._nine_rank_side_value
+        return self._np_value
 
 
     # @property
@@ -89,8 +89,8 @@ class Gymnasium():
     #     """この将棋エンジンの評価値。
     #     """
     #     if self._engine_turn == cshogi.BLACK:
-    #         return self.nine_rank_side_value
-    #     return -self.nine_rank_side_value
+    #         return self.np_value
+    #     return -self.np_value
 
 
     @engine_turn.setter
@@ -115,13 +115,13 @@ class Gymnasium():
         return self._list_of_negative_rules
     
 
-    @nine_rank_side_value.setter
-    def nine_rank_side_value(self, value):
-        self._nine_rank_side_value = value
+    @np_value.setter
+    def np_value(self, value):
+        self._np_value = value
 
 
     def on_new_game(self):
-        self._nine_rank_side_value = 0  # ９段目に近い方の対局者から見た駒得評価値。
+        self._np_value = 0  # ９段目に近い方の対局者から見た駒得評価値。
 
 
     ##################
@@ -139,7 +139,7 @@ class Gymnasium():
         if self.engine_turn == cshogi.WHITE:
             exchange_value *= -1
 
-        self.nine_rank_side_value += exchange_value
+        self.np_value += exchange_value
 
         return self._table.do_move_o1o1x(move = move)
 
@@ -156,7 +156,7 @@ class Gymnasium():
         if self.engine_turn == cshogi.WHITE:
             exchange_value *= -1
 
-        self.nine_rank_side_value -= exchange_value
+        self.np_value -= exchange_value
 
         return move
 
@@ -164,7 +164,7 @@ class Gymnasium():
     def dump(self):
         return f"""\
 {self._table.dump()}
-{self._nine_rank_side_value=}
+{self._np_value=}
 {len(self._list_of_idle_negative_rules)=}
 {len(self._list_of_negative_rules)=}
 """

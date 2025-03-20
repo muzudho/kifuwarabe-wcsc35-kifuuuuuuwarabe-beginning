@@ -147,7 +147,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
                 self._gymnasium.table.set_sfen(sfen_text[5:])
 
             # 盤をスキャン。
-            self._gymnasium.nine_rank_side_value = self._gymnasium.piece_value_tao.scan_table()
+            self._gymnasium.np_value = self._gymnasium.piece_value_tao.scan_table()
 
             # 棋譜再生。
             for move_as_usi in move_usi_list:
