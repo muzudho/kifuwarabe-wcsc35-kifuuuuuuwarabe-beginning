@@ -1,10 +1,10 @@
 import cshogi
 import datetime
-import random
 import sys
 
 from .models_level_2 import Gymnasium
 from .logics import MovesReductionFilterLogics
+from .logics_usi import GoLogic
 from .views import HistoryView, TableView
 
 
@@ -163,53 +163,11 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 
     def go(self):
-        """思考開始～最善手返却
         """
-
-        if self._gymnasium.table.is_game_over():
-            """投了局面時"""
-
-            # 投了
-            print(f'bestmove resign', flush=True)
-            return
-
-        if self._gymnasium.table.is_nyugyoku():
-            """入玉宣言局面時"""
-
-            # 勝利宣言
-            print(f'bestmove win', flush=True)
-            return
-
-        # 一手詰めを詰める
-        if not self._gymnasium.table.is_check():
-            """自玉に王手がかかっていない時で"""
-
-            if (matemove := self._gymnasium.table.mate_move_in_1ply()):
-                """一手詰めの指し手があれば、それを取得"""
-
-                best_move = cshogi.move_to_usi(matemove)
-                print('info score mate 1 pv {}'.format(best_move), flush=True)
-                print(f'bestmove {best_move}', flush=True)
-                return
-
-        # 合法手から、１手を選び出します。
-        # ［指前］
-        remaining_moves = MovesReductionFilterLogics.before_move_o1(
-                remaining_moves = list(self._gymnasium.table.legal_moves),
-                gymnasium       = self._gymnasium)
-
-        # 指し手が全部消えてしまった場合、何でも指すようにします
-        if len(remaining_moves) < 1:
-            remaining_moves = list(self._gymnasium.table.legal_moves)
-
-        # １手指す（投了のケースは対応済みなので、ここで対応しなくていい）
-        best_move = random.choice(remaining_moves)
-        best_move_as_usi = cshogi.move_to_usi(best_move)
-
-        # ［指後］
-        MovesReductionFilterLogics.after_best_moving(
-                move        = best_move,
-                gymnasium   = self._gymnasium)
+        """
+        # 思考開始～最善手返却
+        best_move_as_usi = GoLogic.Go(
+                gymnasium = self._gymnasium)
 
         print(f"info depth 0 seldepth 0 time 1 nodes 0 score cp 0 string Go kifuuuuuuWarabe")
         print(f'bestmove {best_move_as_usi}', flush=True)
