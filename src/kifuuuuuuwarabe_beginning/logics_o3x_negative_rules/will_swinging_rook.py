@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import Ban, Comparison, Ji
+from ..models_o2x.nine_rank_side_perspective import Ban, Comparison, Pen
 from .match_operation import MatchOperation
 
 
@@ -43,16 +43,15 @@ class WillSwingingRook(MatchOperation):
         """
         ban = Ban(table)
         cmp = Comparison(table)
-        ji = Ji(table)
+        pen = Pen(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
         dst_sq_obj = Square(cshogi.move_to(move))
 
-
         # 玉
         if cshogi.move_from_piece_type(move) == cshogi.KING:
             # 飛車が２八にいるか？
-            if table.piece(ban.masu(28)) == ji.pc(cshogi.ROOK):
+            if table.piece(ban.masu(28)) == pen.ji_pc(cshogi.ROOK):
                 # この駒は動いてはいけない
                 return constants.mind.WILL_NOT
 
@@ -63,7 +62,6 @@ class WillSwingingRook(MatchOperation):
                 return constants.mind.WILL
             
             return constants.mind.WILL_NOT
-
 
         # 飛
         if cshogi.move_from_piece_type(move) == cshogi.ROOK:
@@ -76,7 +74,6 @@ class WillSwingingRook(MatchOperation):
                 return constants.mind.WILL
             
             return constants.mind.WILL_NOT
-
 
         return constants.mind.NOT_IN_THIS_CASE
 

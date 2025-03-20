@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import Ban, Ji
+from ..models_o2x.nine_rank_side_perspective import Ban, Pen
 from .match_operation import MatchOperation
 
 
@@ -23,10 +23,10 @@ class DoNotUpToRank6(MatchOperation):
 
             ban = Ban(table)
             #cmp = Comparison(table)
-            ji = Ji(table)
+            pen = Pen(table)
 
             # 自ライオンが２八にいる
-            if table.piece(ban.masu(28)) == ji.pc(cshogi.KING):
+            if table.piece(ban.masu(28)) == pen.ji_pc(cshogi.KING):
                 # このオブジェクトを除外
                 self._is_removed = True
 
@@ -47,14 +47,14 @@ class DoNotUpToRank6(MatchOperation):
         """
         ban = Ban(table)
         #cmp = Comparison(table)
-        ji = Ji(table)
+        pen = Pen(table)
 
         #src_sq_obj = Square(cshogi.move_from(move))
         dst_sq_obj = Square(cshogi.move_to(move))
         #moved_pt = cshogi.move_from_piece_type(move)
 
         # # 自キリンが２八にいる
-        # if table.piece(ban.masu(28)) != ji.pc(cshogi.ROOK):
+        # if table.piece(ban.masu(28)) != pen.ji_pc(cshogi.ROOK):
         #     # そうでなければ対象外
         #     return constants.mind.NOT_IN_THIS_CASE
 

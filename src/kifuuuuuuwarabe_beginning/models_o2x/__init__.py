@@ -1,1 +1,1 @@
-from .nine_rank_side_perspective import Pen, Ban, Comparison, Ji
+from .nine_rank_side_perspective import Pen, Ban, Comparison

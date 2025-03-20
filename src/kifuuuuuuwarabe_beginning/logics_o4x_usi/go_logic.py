@@ -1,7 +1,7 @@
 import cshogi
 import random
 
-from ..logics import KomadokuFilterLogics, MovesReductionFilterLogics
+from ..logics_o1x import KomadokuFilterLogics, MovesReductionFilterLogics
 
 
 class GoLogicResultState():

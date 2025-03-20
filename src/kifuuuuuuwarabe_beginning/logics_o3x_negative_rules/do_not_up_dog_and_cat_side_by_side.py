@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import Ban, Ji
+from ..models_o2x.nine_rank_side_perspective import Ban, Pen
 from .match_operation import MatchOperation
 
 
@@ -35,7 +35,7 @@ class DoNotDogAndCatSideBySide(MatchOperation):
         """
         ban = Ban(table)
         #cmp = Comparison(table)
-        ji = Ji(table)
+        pen = Pen(table)
 
         is_drop = cshogi.move_is_drop(move)
         src_sq_obj = Square(cshogi.move_from(move))
@@ -61,7 +61,7 @@ class DoNotDogAndCatSideBySide(MatchOperation):
                     return None
 
                 # 右上、または左上にボブがいる。
-                if ji.pc(bob) in [
+                if pen.ji_pc(bob) in [
                     _get_piece(ban.top_right_of_sq(src_sq_obj.sq)),    # 右上
                     _get_piece(ban.top_left_of_sq(src_sq_obj.sq))      # 左上
                 ]:

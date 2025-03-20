@@ -3,8 +3,8 @@ import datetime
 import sys
 
 from .models_o4x import Gymnasium
-from .logics import MovesReductionFilterLogics
-from .logics_usi import GoLogic, GoLogicResultState
+from .logics_o1x import MovesReductionFilterLogics
+from .logics_o4x_usi import GoLogic, GoLogicResultState
 from .views import HistoryView, TableView
 
 
@@ -336,10 +336,10 @@ class ShogiEngineCompatibleWithUSIProtocol():
         """TODO 使い終わったら消す
         """
         from .helper import Helper
-        from .models_o2x.nine_rank_side_perspective import Ban, Ji
+        from .models_o2x.nine_rank_side_perspective import Ban, Pen
 
 
-        ji = Ji(self._gymnasium.table)
+        pen = Pen(self._gymnasium.table)
         ban = Ban(self._gymnasium.table)
 
         # for suji in range(1, 10):
@@ -347,20 +347,20 @@ class ShogiEngineCompatibleWithUSIProtocol():
         #         masu = Helper.suji_dan_to_masu(suji, dan)
         #         print(f'{masu=:2} {ban.masu(masu)=:2}')
 
-        # if ji.pc(cshogi.BISHOP) != cshogi.BBISHOP:
+        # if pen.ji_pc(cshogi.BISHOP) != cshogi.BBISHOP:
         #     raise ValueError('先手の角')
 
         # self._gymnasium.table.do_move_o1o1x(self._gymnasium.table.move_from_usi('7g7f'))
 
-        # if ji.pc(cshogi.BISHOP) != cshogi.WBISHOP:
+        # if pen.ji_pc(cshogi.BISHOP) != cshogi.WBISHOP:
         #     raise ValueError('後手の角')
 
-        # if self._gymnasium.table.piece(ban.masu(88)) == ji.pc(cshogi.BISHOP):
+        # if self._gymnasium.table.piece(ban.masu(88)) == pen.ji_pc(cshogi.BISHOP):
         #     print('８八は自角だ')
         # else:
-        #     print(f'８八は自角でない {self._gymnasium.table.piece(ban.masu(88))} {ji.pc(cshogi.BISHOP)=}')
+        #     print(f'８八は自角でない {self._gymnasium.table.piece(ban.masu(88))} {pen.ji_pc(cshogi.BISHOP)=}')
 
-        # if self._gymnasium.table.piece(ban.masu(79)) == ji.pc(cshogi.SILVER):
+        # if self._gymnasium.table.piece(ban.masu(79)) == pen.ji_pc(cshogi.SILVER):
         #     print('７九は自銀だ')
         # else:
         #     print(f'７九は自銀でない')

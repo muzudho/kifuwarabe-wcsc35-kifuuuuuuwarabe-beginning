@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import Ban, Comparison, Ji
+from ..models_o2x.nine_rank_side_perspective import Ban, Comparison, Pen
 from .match_operation import MatchOperation
 
 
@@ -22,10 +22,10 @@ class DoNotMoveRightLance(MatchOperation):
         if self.is_enabled:
             ban = Ban(table)
             cmp = Comparison(table)
-            ji = Ji(table)
+            pen = Pen(table)
 
             # 自ライオンが２八にいる
-            if table.piece(ban.masu(28)) == ji.pc(cshogi.KING):
+            if table.piece(ban.masu(28)) == pen.ji_pc(cshogi.KING):
                 # （処理を行わず）このオブジェクトを除外
                 self._is_removed = True
             
