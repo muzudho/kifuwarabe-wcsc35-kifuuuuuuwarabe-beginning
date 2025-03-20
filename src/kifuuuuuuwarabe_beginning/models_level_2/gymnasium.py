@@ -5,7 +5,6 @@ from ..march_operations import \
     DoNotUpToRank6, \
     DoNotMoveUntilRookMoves, DoNotMoveLeftLance, DoNotMoveRightLance, DoNotMoveRook, \
     WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToMove37Pawn, WillSwingingRook
-# 削除 WillNotToBeCut88Bishop, WillToTakeThePieceWithoutLosingAnything
 
 from ..models import Table
 from ..models.table_access_object import PieceValueTAO
@@ -47,8 +46,6 @@ class Gymnasium():
             WillForThreeGoldAndSilverCoinsToGatherToTheRight    (config_doc=config_doc),    # ［金銀３枚が右に集まる］意志
             WillNotToMove37Pawn                                 (config_doc=config_doc),    # ［３七の歩を突かない］意志
             WillSwingingRook                                    (config_doc=config_doc),    # ［振り飛車をする］意志
-            # 削除 WillNotToBeCut88Bishop                              (config_doc=config_doc),    # ［８八の角を素抜かれない］意志
-            # 削除 WillToTakeThePieceWithoutLosingAnything             (config_doc=config_doc),    # ［駒取って損しない］意志
         ]
 
 
@@ -102,3 +99,12 @@ class Gymnasium():
         """一手戻す。
         """
         return self._table.undo_move_o1o1x()
+
+
+    def dump(self):
+        return f"""\
+{self._table.dump()}
+{self._nine_rank_side_value=}
+{len(self._list_of_idle_negative_rules)=}
+{len(self._list_of_negative_rules)=}
+"""

@@ -75,6 +75,9 @@ class GoLogic():
                 remaining_moves = list(gymnasium.table.legal_moves),
                 gymnasium       = gymnasium)
 
+        # DEBUG
+        dump_1 = gymnasium.dump()
+
         # 残った手一覧
         for move in remaining_moves:
 
@@ -84,6 +87,18 @@ class GoLogic():
 
             # 一手戻す
             gymnasium.undo_move_o1x()
+
+            # DEBUG
+            dump_2 = gymnasium.dump()
+
+            # DEBUG
+            if dump_1 != dump_2:
+                raise(f"""探索でずれが発生しました。
+dump_1:
+{dump_1}
+dump_2:
+{dump_2}
+""")
 
 
         # １手に絞り込む

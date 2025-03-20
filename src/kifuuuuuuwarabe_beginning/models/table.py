@@ -180,3 +180,12 @@ class Table():
     @property
     def turn(self):
         return self._board.turn
+
+
+    ##############
+    # MARK: ダンプ
+    ##############
+    def dump(self):
+        return f"""
+{len(self._piece_moved_list)=}
+"""
