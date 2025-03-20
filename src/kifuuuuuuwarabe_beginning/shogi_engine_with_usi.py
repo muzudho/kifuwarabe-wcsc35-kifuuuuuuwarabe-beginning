@@ -154,7 +154,8 @@ class ShogiEngineCompatibleWithUSIProtocol():
                 self._gymnasium.nine_rank_side_value += self._gymnasium.piece_value_tao.put_move_usi_before_move(
                         move_as_usi = move_as_usi)
 
-                self._gymnasium.table.push_usi_o1x(move_as_usi)
+                self._gymnasium.table.push_usi_o1x(
+                        move = self._gymnasium.table.move_from_usi(move_as_usi))
 
 
         _position_detail(
@@ -230,7 +231,8 @@ class ShogiEngineCompatibleWithUSIProtocol():
         example: ７六歩
             code: do 7g7f
         """
-        self._gymnasium.table.push_usi_o1x(cmd[1])
+        self._gymnasium.table.push_usi_o1x(
+                move = self._gymnasium.table.move_from_usi(cmd[1]))
 
 
     def history(self, cmd):

@@ -5,14 +5,14 @@ class PieceMoved():
     """
 
 
-    def __init__(self, move_as_usi, sfen_with_0_moves):
+    def __init__(self, move, sfen_with_0_moves):
         """
         Parameters
         ----------
-        move_as_usi :
-            TODO move 形式で持ちたい。
+        move : int
+            ［指し手］
         """
-        self._move_as_usi = move_as_usi
+        self._move = move
         self._sfen_with_0_moves = sfen_with_0_moves
 
         # TODO 同形局面反復回数
@@ -20,8 +20,8 @@ class PieceMoved():
 
 
     @property
-    def move_as_usi(self):
-        return self._move_as_usi
+    def move(self):
+        return self._move
 
 
     @property
