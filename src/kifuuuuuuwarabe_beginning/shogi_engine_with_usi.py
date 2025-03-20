@@ -231,8 +231,15 @@ class ShogiEngineCompatibleWithUSIProtocol():
         example: ７六歩
             code: do 7g7f
         """
-        self._gymnasium.table.do_move_o1o1x(
+        self._gymnasium.do_move_o1x(
                 move = self._gymnasium.table.move_from_usi(cmd[1]))
+
+
+    def undo(self):
+        """一手戻す
+            code: undo
+        """
+        self._gymnasium.undo_move_o1x()
 
 
     def history(self, cmd):
@@ -241,13 +248,6 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 {history_view.stringify()}
 """)
-
-
-    def undo(self):
-        """一手戻す
-            code: undo
-        """
-        self._gymnasium.table.undo_move_o1o1x()
 
 
     def test_will(self):
