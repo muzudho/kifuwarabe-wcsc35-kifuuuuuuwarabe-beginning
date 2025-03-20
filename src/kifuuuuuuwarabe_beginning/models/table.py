@@ -30,9 +30,37 @@ class Table():
         return self._designated_sfen
 
 
-    # #########
-    # # MARK: C
-    # #########
+    ##################
+    # MARK: 指し手関連
+    ##################
+
+    def do_move_o1o1x(self, move):
+        """一手指す。
+        """
+        move_as_usi = cshogi.move_to_usi(move)
+        self.push_usi_o1x(move_as_usi)
+
+
+    def undo_move(self):
+        self._piece_moved_list.pop()
+        return self._board.pop()
+
+
+    def push_usi_o1x(self, usi):
+        result = self._board.push_usi(usi)
+
+        # 指した後に記録
+        self._piece_moved_list.append(PieceMoved(
+                move_as_usi=usi,
+                sfen_with_0_moves=self._board.sfen()))  # 指した後の sfen を記憶
+        
+        return result
+
+
+
+    #########
+    # MARK: C
+    #########
 
     def copy_piece_moved_list(self):
         return list(self._piece_moved_list)
@@ -121,27 +149,6 @@ class Table():
         ]
         """
         return self._board.pieces_in_hand
-
-
-    def undo_move(self):
-        self._piece_moved_list.pop()
-        return self._board.pop()
-
-
-    def do_move(self, move):
-        move_as_usi = cshogi.move_to_usi(move)
-        self.push_usi(move_as_usi)
-
-
-    def push_usi(self, usi):
-        result = self._board.push_usi(usi)
-
-        # 指した後に記録
-        self._piece_moved_list.append(PieceMoved(
-                move_as_usi=usi,
-                sfen_with_0_moves=self._board.sfen()))  # 指した後の sfen を記憶
-        
-        return result
 
 
     #########

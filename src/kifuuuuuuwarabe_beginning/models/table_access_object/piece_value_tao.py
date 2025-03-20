@@ -59,6 +59,6 @@ class PieceValueTAO():
         dst_pc = self._table.piece(dst_sq)
         nine_rank_side_value = 2 * - PieceValues.by_piece(dst_pc)  # 相手の駒を取るのでマイナスにします。交換値なので２倍します。
 
-        print(f'[PieceValueTAO#put_move_usi] ({self._table.move_number}) {move_as_usi} {nine_rank_side_value=}')
+        #print(f'[PieceValueTAO#put_move_usi] ({self._table.move_number}) {move_as_usi} {nine_rank_side_value=}')
 
         return nine_rank_side_value

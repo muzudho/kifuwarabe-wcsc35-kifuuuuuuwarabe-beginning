@@ -90,3 +90,9 @@ class Gymnasium():
 
     def on_new_game(self):
         self._nine_rank_side_value = 0  # ９段目に近い方の対局者から見た駒得評価値。
+
+
+    def do_move_o1x(self, move):
+        """一手指す。
+        """
+        self._table.do_move_o1o1x(move = move)

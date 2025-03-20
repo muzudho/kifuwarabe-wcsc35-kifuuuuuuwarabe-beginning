@@ -66,6 +66,7 @@ class GoLogic():
                 return GoLogicResultState.MATE_IN_1_MOVE, best_move_as_usi
 
         # 合法手から、１手を選び出します。
+        # （必ず、投了ではない手が存在します）
         #
         # ［指前］
         #       制約：
@@ -74,7 +75,17 @@ class GoLogic():
                 remaining_moves = list(gymnasium.table.legal_moves),
                 gymnasium       = gymnasium)
 
-        # １手指す（投了のケースは対応済みなので、ここで対応しなくていい）
+        # 残った手一覧
+        for move in remaining_moves:
+
+            # 一手指す
+            gymnasium.do_move_o1x(move = move)
+            print(f'move: {cshogi.move_to_usi(move)}')
+
+            # 一手戻す
+
+
+        # １手に絞り込む
         best_move = random.choice(remaining_moves)
         best_move_as_usi = cshogi.move_to_usi(best_move)
 

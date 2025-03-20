@@ -51,7 +51,7 @@ class TableView():
     #     # repetition = 0
     #     # for i in reversed(range(0, len(moves_list))):
     #     #     m = moves_list[i]
-    #     #     copied_table.do_move(m)
+    #     #     copied_table.do_move_o1o1x(m)
 
     #     #     # 指定局面の出現回数をカウント
     #     #     if board.sfen() == designated_sfen:

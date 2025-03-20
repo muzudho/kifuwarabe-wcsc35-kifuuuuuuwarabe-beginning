@@ -49,7 +49,7 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
         if cap_type != cshogi.PAWN:
             return constants.mind.NOT_IN_THIS_CASE
 
-        table.do_move(move)   # １手指す
+        table.do_move_o1o1x(move)   # １手指す
 
         mind = self.after_moving(
                 move=move,

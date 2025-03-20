@@ -6,6 +6,12 @@ class PieceMoved():
 
 
     def __init__(self, move_as_usi, sfen_with_0_moves):
+        """
+        Parameters
+        ----------
+        move_as_usi :
+            TODO move 形式で持ちたい。
+        """
         self._move_as_usi = move_as_usi
         self._sfen_with_0_moves = sfen_with_0_moves
 
