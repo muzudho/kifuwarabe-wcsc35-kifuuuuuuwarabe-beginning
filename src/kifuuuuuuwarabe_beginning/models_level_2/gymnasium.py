@@ -19,6 +19,9 @@ class Gymnasium():
         """初期化します。
         """
 
+        # 設定
+        self._config_doc = config_doc
+
         # 盤
         self._table = Table.create_table()
 
@@ -50,8 +53,14 @@ class Gymnasium():
 
 
     @property
+    def config_doc(self):
+        """［設定］
+        """
+        return self._config_doc
+
+    @property
     def table(self):
-        """［盤］。
+        """［盤］
         """
         return self._table
 

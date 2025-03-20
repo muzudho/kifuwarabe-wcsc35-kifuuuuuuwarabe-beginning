@@ -1,6 +1,10 @@
 [engine]
     name = "Kifuuuuuuwarabe Beginning"
 
+# デバッグ・モード
+[debug_mode]
+    search_do_undo = true
+
 # 行進演算
 [march_operations]
 
