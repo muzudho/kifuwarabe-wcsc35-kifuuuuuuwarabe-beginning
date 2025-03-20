@@ -5,9 +5,21 @@ class MovesReductionFilterLogics():
 
 
     @staticmethod
-    def before_move_o1(remaining_moves, gymnasium):
+    def before_move_o1x(remaining_moves, gymnasium):
         """［指前］
         １手指す前です。
+
+        Parameters
+        ----------
+        remaining_moves : list<usi>
+            制約：
+                指し手は必ず１つ以上残っています。
+        
+        Returns
+        -------
+        remaining_moves : list<usi>
+            制約：
+                指し手は必ず１つ以上残っています。
         """
 
         negative_rules_to_remove = []
@@ -15,7 +27,7 @@ class MovesReductionFilterLogics():
         # 行進リスト
         for negative_rule in gymnasium.list_of_negative_rules:
             # １手も指さず、目の前にある盤に対して。
-            remaining_moves = negative_rule.before_move_o1o1(
+            remaining_moves = negative_rule.before_move_o1o1x(
                     remaining_moves = remaining_moves,
                     table           = gymnasium.table)
 
@@ -25,7 +37,11 @@ class MovesReductionFilterLogics():
 
         for negative_rule in negative_rules_to_remove:
             gymnasium.list_of_negative_rules.remove(negative_rule)
-            print(f'★ before_move_o1: 行進演算 削除 {negative_rule.label=}')
+            print(f'★ b efore_move_o1x: 行進演算 削除 {negative_rule.label=}')
+
+        # 指し手が全部消えてしまった場合、何でも指すようにします
+        if len(remaining_moves) < 1:
+            remaining_moves = list(gymnasium.table.legal_moves)
 
         return remaining_moves
 

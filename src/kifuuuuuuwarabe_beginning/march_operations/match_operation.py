@@ -59,7 +59,7 @@ class MatchOperation():
         pass
 
 
-    def before_move_o1o1(self, remaining_moves, table):
+    def before_move_o1o1x(self, remaining_moves, table):
         if self.is_enabled:
             for i in range(len(remaining_moves))[::-1]:     # `[::-1]` - 逆順
                 m = remaining_moves[i]

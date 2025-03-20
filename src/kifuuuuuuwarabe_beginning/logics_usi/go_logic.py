@@ -66,14 +66,13 @@ class GoLogic():
                 return GoLogicResultState.MATE_IN_1_MOVE, best_move_as_usi
 
         # 合法手から、１手を選び出します。
+        #
         # ［指前］
-        remaining_moves = MovesReductionFilterLogics.before_move_o1(
+        #       制約：
+        #           指し手は必ず１つ以上残っています。
+        remaining_moves = MovesReductionFilterLogics.before_move_o1x(
                 remaining_moves = list(gymnasium.table.legal_moves),
                 gymnasium       = gymnasium)
-
-        # 指し手が全部消えてしまった場合、何でも指すようにします
-        if len(remaining_moves) < 1:
-            remaining_moves = list(gymnasium.table.legal_moves)
 
         # １手指す（投了のケースは対応済みなので、ここで対応しなくていい）
         best_move = random.choice(remaining_moves)

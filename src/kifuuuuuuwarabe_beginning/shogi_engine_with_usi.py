@@ -163,9 +163,9 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 
     def go(self):
+        """思考開始～最善手返却
         """
-        """
-        # 思考開始～最善手返却
+
         (
             result,
             best_move_as_usi

@@ -20,7 +20,7 @@ class DoNotMoveRightLance(MatchOperation):
                 config_doc  = config_doc)
 
 
-    def before_move_o1o1(self, remaining_moves, table):
+    def before_move_o1o1x(self, remaining_moves, table):
         if self.is_enabled:
             ban = Ban(table)
             cmp = Comparison(table)
