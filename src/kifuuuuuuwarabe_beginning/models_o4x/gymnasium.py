@@ -1,14 +1,14 @@
 import cshogi
 
-from ..march_operations import \
+from ..logics_o3x_negative_rules import \
     DoNotBack, DoNotBreakFamousFence, DoNotBuildRightWall, \
     DoNotDogAndCatSideBySide, \
     DoNotGoLeft, \
     DoNotUpToRank6, \
     DoNotMoveUntilRookMoves, DoNotMoveLeftLance, DoNotMoveRightLance, DoNotMoveRook, \
     WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToMove37Pawn, WillSwingingRook
-from ..models_level_o1x import Table
-from ..models_level_o1x.table_access_object import PieceValueTAO
+from ..models_o1x import Table
+from ..models_o1x.table_access_object import PieceValueTAO
 
 
 class Gymnasium():

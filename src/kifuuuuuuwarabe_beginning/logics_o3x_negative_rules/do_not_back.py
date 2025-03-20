@@ -1,7 +1,7 @@
 import cshogi
 
-from ..models_level_o1x import constants, Square
-from ..models_level_o2x import Ban, Comparison
+from ..models_o1x import constants, Square
+from ..models_o2x import Ban, Comparison
 from .match_operation import MatchOperation
 
 
