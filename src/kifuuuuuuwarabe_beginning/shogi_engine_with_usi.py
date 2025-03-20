@@ -192,6 +192,8 @@ class ShogiEngineCompatibleWithUSIProtocol():
                 print(f'bestmove {best_move}', flush=True)
                 return
 
+        # 合法手から、１手を選び出します。
+        # ［指前］
         remaining_moves = MovesReductionFilterLogics.before_move_o1(
                 remaining_moves = list(self._gymnasium.table.legal_moves),
                 gymnasium       = self._gymnasium)
@@ -204,10 +206,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         best_move = random.choice(remaining_moves)
         best_move_as_usi = cshogi.move_to_usi(best_move)
 
-        MovesReductionFilterLogics.after_best_moving_when_idling(
-                move        = best_move,
-                gymnasium   = self._gymnasium)
-
+        # ［指後］
         MovesReductionFilterLogics.after_best_moving(
                 move        = best_move,
                 gymnasium   = self._gymnasium)

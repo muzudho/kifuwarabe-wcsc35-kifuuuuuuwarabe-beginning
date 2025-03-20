@@ -31,44 +31,48 @@ class MovesReductionFilterLogics():
 
 
     @staticmethod
-    def after_best_moving_when_idling(move, gymnasium):
-        """［指後、待機者用］
-        １手指した後に呼び出されます。
-        （アイドリング中の行進演算について）指す手の確定時。
-        """
-
-        negative_rules_to_activate = []
-        negative_rules_to_remove = []
-
-        # 行進リスト
-        for negative_rule in gymnasium.list_of_idle_negative_rules:
-            negative_rule.after_best_moving_when_idling(
-                    move        = move,
-                    table       = gymnasium.table)
-
-            if negative_rule.is_activate:
-                negative_rules_to_activate.append(negative_rule)
-
-            # 行進演算を、必要がなくなったら、リストから除外する操作
-            if negative_rule.is_removed:
-                negative_rules_to_remove.append(negative_rule)
-
-        for negative_rule in negative_rules_to_activate:
-            gymnasium.list_of_idle_negative_rules.remove(negative_rule)
-            gymnasium.list_of_negative_rules.append(negative_rule)
-            print(f'★ ｏn_best_move_played: 行進演算 有効化 {negative_rule.label=}')
-
-        for negative_rule in negative_rules_to_remove:
-            gymnasium.list_of_negative_rules.remove(negative_rule)
-            print(f'★ ｏn_best_move_played: 行進演算 削除 {negative_rule.label=}')
-
-
-    @staticmethod
     def after_best_moving(move, gymnasium):
         """［指後］
         １手指した後に呼び出されます。
         指す手の確定時。
         """
+
+
+        def _for_idle_negative_rules(move, gymnasium):
+            """［指後、待機者用］
+            １手指した後に呼び出されます。
+            （アイドリング中の行進演算について）指す手の確定時。
+            """
+
+            negative_rules_to_activate = []
+            negative_rules_to_remove = []
+
+            # 行進リスト
+            for negative_rule in gymnasium.list_of_idle_negative_rules:
+                negative_rule.after_best_moving_in_idling(
+                        move        = move,
+                        table       = gymnasium.table)
+
+                if negative_rule.is_activate:
+                    negative_rules_to_activate.append(negative_rule)
+
+                # 行進演算を、必要がなくなったら、リストから除外する操作
+                if negative_rule.is_removed:
+                    negative_rules_to_remove.append(negative_rule)
+
+            for negative_rule in negative_rules_to_activate:
+                gymnasium.list_of_idle_negative_rules.remove(negative_rule)
+                gymnasium.list_of_negative_rules.append(negative_rule)
+                print(f'★ ｏn_best_move_played: 行進演算 有効化 {negative_rule.label=}')
+
+            for negative_rule in negative_rules_to_remove:
+                gymnasium.list_of_negative_rules.remove(negative_rule)
+                print(f'★ ｏn_best_move_played: 行進演算 削除 {negative_rule.label=}')
+
+
+        _for_idle_negative_rules(
+                move        = move,
+                gymnasium   = gymnasium)
 
         negative_rules_to_remove = []
 

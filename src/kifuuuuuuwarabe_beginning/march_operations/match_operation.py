@@ -47,7 +47,7 @@ class MatchOperation():
         return self._is_removed
 
 
-    def after_best_moving_when_idling(self, move, table):
+    def after_best_moving_in_idling(self, move, table):
         """（アイドリング中の行進演算について）指す手の確定時。
         """
         pass
