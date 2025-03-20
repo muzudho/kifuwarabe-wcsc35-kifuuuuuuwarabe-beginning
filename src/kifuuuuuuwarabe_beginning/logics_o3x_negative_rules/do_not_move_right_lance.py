@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import Pen
+from ..models_o2x.nine_rank_side_perspective import NineRankSidePerspective
 from .negative_rule import NegativeRule
 
 
@@ -20,7 +20,7 @@ class DoNotMoveRightLance(NegativeRule):
 
     def before_move_o1o1x(self, remaining_moves, table):
         if self.is_enabled:
-            pen = Pen(table)
+            pen = NineRankSidePerspective(table)
 
             # 自ライオンが２八にいる
             if table.piece(pen.masu(28)) == pen.ji_pc(cshogi.KING):
@@ -41,7 +41,7 @@ class DoNotMoveRightLance(NegativeRule):
         """指す前に。
         """
 
-        pen = Pen(table)
+        pen = NineRankSidePerspective(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
 

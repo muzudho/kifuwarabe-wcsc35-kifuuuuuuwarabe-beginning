@@ -1,1 +1,1 @@
-from .nine_rank_side_perspective import Pen
+from .nine_rank_side_perspective import NineRankSidePerspective

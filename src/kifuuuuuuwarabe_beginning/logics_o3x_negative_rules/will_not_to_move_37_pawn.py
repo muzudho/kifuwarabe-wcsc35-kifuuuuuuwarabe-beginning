@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import Pen
+from ..models_o2x.nine_rank_side_perspective import NineRankSidePerspective
 from .negative_rule import NegativeRule
 
 
@@ -20,7 +20,7 @@ class WillNotToMove37Pawn(NegativeRule):
     def before_move(self, move, table):
         """指し手は［３七の歩を突かない］意志を残しているか？
         """
-        pen = Pen(table)
+        pen = NineRankSidePerspective(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
         # print(f'★ {src_sq_obj.sq=} ', end='')

@@ -336,10 +336,10 @@ class ShogiEngineCompatibleWithUSIProtocol():
         """TODO 使い終わったら消す
         """
         from .logics_o1x.helper import Helper
-        from .models_o2x.nine_rank_side_perspective import Pen
+        from .models_o2x.nine_rank_side_perspective import NineRankSidePerspective
 
 
-        pen = Pen(self._gymnasium.table)
+        pen = NineRankSidePerspective(self._gymnasium.table)
 
         # for suji in range(1, 10):
         #     for dan in range(1, 10):

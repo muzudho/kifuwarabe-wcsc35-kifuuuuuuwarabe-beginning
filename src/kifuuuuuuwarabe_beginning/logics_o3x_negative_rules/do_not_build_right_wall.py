@@ -2,7 +2,7 @@ import cshogi
 
 from ..logics_o1x.helper import Helper
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import Pen
+from ..models_o2x.nine_rank_side_perspective import NineRankSidePerspective
 from .negative_rule import NegativeRule
 
 
@@ -26,7 +26,7 @@ class DoNotBuildRightWall(NegativeRule):
 
         定義：　移動前の玉の以右の全ての筋について、８段目、９段目の両方に駒がある状態を［右壁］とする。
         """
-        pen = Pen(table)
+        pen = NineRankSidePerspective(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
         dst_sq_obj = Square(cshogi.move_to(move))

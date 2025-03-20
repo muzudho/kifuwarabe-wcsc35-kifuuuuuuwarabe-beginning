@@ -6,7 +6,7 @@ from ..logics_o1x.helper import Helper
 from ..models_o1x import Masu, Square
 
 
-class Pen():
+class NineRankSidePerspective():
     """［筆記具のペン］
     常に［将棋盤の９段目の方からの視点］でコーディングできるようにするための仕組みです。
     """

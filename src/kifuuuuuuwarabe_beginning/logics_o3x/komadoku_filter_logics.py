@@ -1,7 +1,7 @@
 import cshogi
 
 from ..logics_o1x.logger_logics import LoggerLogics
-from ..models_o2x import Pen
+from ..models_o2x import NineRankSidePerspective
 
 
 class KomadokuFilterLogics():
@@ -12,7 +12,7 @@ class KomadokuFilterLogics():
     @staticmethod
     def filtering(remaining_moves, gymnasium):
 
-        pen = Pen(table = gymnasium.table)
+        pen = NineRankSidePerspective(table = gymnasium.table)
 
         if gymnasium.config_doc['debug_mode']['search_do_undo']:
             print('in debug')
@@ -20,7 +20,7 @@ class KomadokuFilterLogics():
 
         best_move_list = []
 
-        pen_best_value = pen.value(-99999)  # 先手なら -99999、後手なら 99999 からスタート。
+        pen_best_value = pen.value(-99999)  # スタート値。
 
         # 残った手一覧
         for move in remaining_moves:
@@ -30,13 +30,14 @@ class KomadokuFilterLogics():
             ################
 
             # nine_rank_side_value は pen.value() で囲まないこと。
-            print(f'before move: {cshogi.move_to_usi(move)} {gymnasium.engine_turn=} {gymnasium.table.turn=} {pen_best_value=} {gymnasium.nine_rank_side_value=}')
+            #print(f'before move: {cshogi.move_to_usi(move)} {gymnasium.engine_turn=} {gymnasium.table.turn=} {pen_best_value=} {gymnasium.nine_rank_side_value=}')
             gymnasium.do_move_o1x(move = move)
 
-            # NOTE 一手指した後だから、逆にしてる。
+            # FIXME 逆にしている。これで正しく動く。おかしいんじゃないか？
             e1 = pen.swap(gymnasium.nine_rank_side_value, pen_best_value)
-            print(f'after move: {cshogi.move_to_usi(move)} {gymnasium.engine_turn=} {gymnasium.table.turn=} {pen_best_value=} {gymnasium.nine_rank_side_value=} {e1[0]=} {e1[1]=} {e1[0] < e1[1]=}')
+            #print(f'after move: {cshogi.move_to_usi(move)} {gymnasium.engine_turn=} {gymnasium.table.turn=} {pen_best_value=} {gymnasium.nine_rank_side_value=} {e1[0]=} {e1[1]=} {e1[0] < e1[1]=}')
 
+            # 更新。
             if e1[0] < e1[1]:
                 pen_best_value = gymnasium.nine_rank_side_value
                 best_move_list = [move]

@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import Pen
+from ..models_o2x.nine_rank_side_perspective import NineRankSidePerspective
 from .negative_rule import NegativeRule
 
 
@@ -21,7 +21,7 @@ class DoNotMoveUntilRookMoves(NegativeRule):
     def before_move(self, move, table):
         """指す前に。
         """
-        pen = Pen(table)
+        pen = NineRankSidePerspective(table)
 
         dst_sq_obj = Square(cshogi.move_to(move))
         moved_pt = cshogi.move_from_piece_type(move)
