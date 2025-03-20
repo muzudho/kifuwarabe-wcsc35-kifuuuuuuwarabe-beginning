@@ -42,7 +42,7 @@ class GoLogic():
 
         Returns
         -------
-        best_move_as_usi : str
+        best_move : int
             ［指す手］
         """
         search = _Search(gymnasium)
@@ -63,8 +63,9 @@ class _Search():
 
         Returns
         -------
-        best_move_as_usi : str
+        best_move : int
             ［指す手］
+            該当が無ければナン。
         """
 
         if self._gymnasium.table.is_game_over():
@@ -83,8 +84,7 @@ class _Search():
 
             if (matemove := self._gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
-                best_move_as_usi = cshogi.move_to_usi(matemove)
-                return GoLogicResultState.MATE_IN_1_MOVE, best_move_as_usi
+                return GoLogicResultState.MATE_IN_1_MOVE, matemove
 
         remaining_moves = list(self._gymnasium.table.legal_moves)
         print(f"A: {len(remaining_moves)=}")
@@ -110,11 +110,10 @@ class _Search():
 
         # １手に絞り込む
         best_move = random.choice(remaining_moves)
-        best_move_as_usi = cshogi.move_to_usi(best_move)
 
         # ［指後］
         MovesReductionFilterLogics.after_best_moving(
                 move        = best_move,
                 gymnasium   = self._gymnasium)
 
-        return GoLogicResultState.BEST_MOVE, best_move_as_usi
+        return GoLogicResultState.BEST_MOVE, best_move

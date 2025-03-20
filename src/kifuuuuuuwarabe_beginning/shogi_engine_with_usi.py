@@ -169,7 +169,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
         (
             result,
-            best_move_as_usi
+            best_move
         ) = GoLogic.Go(
                 gymnasium = self._gymnasium)
 
@@ -183,8 +183,11 @@ class ShogiEngineCompatibleWithUSIProtocol():
             print(f'bestmove win', flush=True)
             return
 
+        best_move_as_usi = cshogi.move_to_usi(best_move)
+
         if result == GoLogicResultState.MATE_IN_1_MOVE:
             # １手詰め時。
+
             print('info score mate 1 pv {}'.format(best_move_as_usi), flush=True)
             print(f'bestmove {best_move_as_usi}', flush=True)
             return
