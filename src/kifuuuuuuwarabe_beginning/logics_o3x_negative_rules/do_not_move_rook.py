@@ -2,10 +2,10 @@ import cshogi
 
 from ..models_o1x import constants, Square
 from ..models_o2x.nine_rank_side_perspective import Pen
-from .match_operation import MatchOperation
+from .negative_rule import NegativeRule
 
 
-class DoNotMoveRook(MatchOperation):
+class DoNotMoveRook(NegativeRule):
     """行進［キリンは動くな］
     ［きりんは止まる］意志
 

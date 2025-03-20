@@ -3,10 +3,10 @@ import cshogi
 from ..logics_o1x.helper import Helper
 from ..models_o1x import constants, Square
 from ..models_o2x.nine_rank_side_perspective import Pen
-from .match_operation import MatchOperation
+from .negative_rule import NegativeRule
 
 
-class DoNotBuildRightWall(MatchOperation):
+class DoNotBuildRightWall(NegativeRule):
     """行進［右壁を作るな］
     ［右壁を作らない］意志
 

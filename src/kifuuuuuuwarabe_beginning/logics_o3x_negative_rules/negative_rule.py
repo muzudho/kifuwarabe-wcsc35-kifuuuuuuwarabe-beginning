@@ -1,7 +1,7 @@
 from ..models_o1x import constants
 
 
-class MatchOperation():
+class NegativeRule():
 
 
     def __init__(self, id, label, config_doc):
