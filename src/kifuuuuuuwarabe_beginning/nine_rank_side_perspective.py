@@ -6,6 +6,28 @@ from .helper import Helper
 from .models import Masu, Square
 
 
+class Pen():
+    """［筆記具のペン］
+    常に［将棋盤の９段目の方からの視点］でコーディングできるようにするための仕組みです。
+    """
+
+
+    def __init__(self, table, after_moving=False):
+        self._table = table
+        self._after_moving = after_moving
+
+
+    def is_opponent_turn(self):
+        return self._table.turn == cshogi.WHITE and not self._after_moving
+
+
+    def value(self, value):
+        """評価値"""
+        if self.is_opponent_turn():
+            return - value
+        return value
+
+
 class Ban():
     """［盤］
 

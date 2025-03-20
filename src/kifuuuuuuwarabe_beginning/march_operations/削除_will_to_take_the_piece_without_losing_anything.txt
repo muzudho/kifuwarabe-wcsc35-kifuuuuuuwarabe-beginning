@@ -3,7 +3,7 @@ import sys
 
 from ..helper import Helper
 from ..models import constants, Masu, Piece, PieceType, Square
-from ..large_board_perspective import Ban, Ji
+from ..nine_rank_side_perspective import Ban, Ji
 from .match_operation import MatchOperation
 
 

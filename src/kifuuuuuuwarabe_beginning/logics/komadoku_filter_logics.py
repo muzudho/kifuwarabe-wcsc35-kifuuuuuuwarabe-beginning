@@ -14,6 +14,7 @@ class KomadokuFilterLogics():
             dump_1 = gymnasium.dump()
 
         best_move_list = []
+        #best_value = 
         max_engine_value = -99999   # 無さそうな最低値。
 
         # 残った手一覧

@@ -336,7 +336,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         """TODO 使い終わったら消す
         """
         from .helper import Helper
-        from .large_board_perspective import Ban, Ji
+        from .nine_rank_side_perspective import Ban, Ji
 
 
         ji = Ji(self._gymnasium.table)

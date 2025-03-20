@@ -3,7 +3,7 @@ import sys
 
 from ..helper import Helper
 from ..models import constants, Square
-from ..large_board_perspective import Ban, Comparison, Ji
+from ..nine_rank_side_perspective import Ban, Comparison, Ji
 from .match_operation import MatchOperation
 
 
