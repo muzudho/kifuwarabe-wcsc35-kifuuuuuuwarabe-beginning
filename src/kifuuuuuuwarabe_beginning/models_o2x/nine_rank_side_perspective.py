@@ -2,7 +2,7 @@
 """
 import cshogi
 
-from ..helper import Helper
+from ..logics_o1x.helper import Helper
 from ..models_o1x import Masu, Square
 
 

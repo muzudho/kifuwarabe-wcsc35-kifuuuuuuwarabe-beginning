@@ -335,7 +335,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
     def test(self):
         """TODO 使い終わったら消す
         """
-        from .helper import Helper
+        from .logics_o1x.helper import Helper
         from .models_o2x.nine_rank_side_perspective import Pen
 
 
