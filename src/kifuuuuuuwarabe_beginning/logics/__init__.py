@@ -1,2 +1,3 @@
 from .komadoku_filter_logics import KomadokuFilterLogics
+from .logger_logics import LoggerLogics
 from .moves_reduction_filter_logics import MovesReductionFilterLogics

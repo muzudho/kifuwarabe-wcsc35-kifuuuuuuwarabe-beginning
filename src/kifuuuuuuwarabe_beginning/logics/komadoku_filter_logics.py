@@ -1,4 +1,4 @@
-import cshogi
+from .logger_logics import LoggerLogics
 
 
 class KomadokuFilterLogics():
@@ -21,7 +21,7 @@ class KomadokuFilterLogics():
 
             # 一手指す
             gymnasium.do_move_o1x(move = move)
-            print(f'move: {cshogi.move_to_usi(move)} {gymnasium.nine_rank_side_value=} {gymnasium.engine_turn=} {gymnasium.engine_value=}')
+            #print(f'move: {cshogi.move_to_usi(move)} {gymnasium.nine_rank_side_value=} {gymnasium.engine_turn=} {gymnasium.engine_value=}')
 
             if max_engine_value < gymnasium.engine_value:
                 max_engine_value = gymnasium.engine_value
@@ -35,12 +35,12 @@ class KomadokuFilterLogics():
             if gymnasium.config_doc['debug_mode']['search_do_undo']:
                 dump_2 = gymnasium.dump()
                 if dump_1 != dump_2:
-                    raise(f"""探索でずれが発生しました。
-dump_1:
-{dump_1}
-dump_2:
-{dump_2}
-""")
+
+                    LoggerLogics.DumpDiffError(
+                            dump_1  = dump_1,
+                            dump_2  = dump_2)
+
+                    raise ValueError(f"dump error in search")
 
         # 指し手が全部消えてしまった場合、何でも指すようにします
         if len(best_move_list) < 1:

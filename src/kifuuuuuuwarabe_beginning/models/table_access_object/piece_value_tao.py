@@ -51,16 +51,18 @@ class PieceValueTAO():
         ----------
         move : int
             ［指し手］
+        
+        Returns
+        -------
+        value : int
+            取った駒の価値
         """
 
         # 移動先にある駒を見る。
         dst_sq = cshogi.move_to(move)
         dst_pc = self._table.piece(dst_sq)
-        nine_rank_side_value = 2 * - PieceValues.by_piece(dst_pc)  # 相手の駒を取るのでマイナスにします。交換値なので２倍します。
-
-        return nine_rank_side_value
-
-
+        print(f'before_move: {dst_pc=}')
+        return 2 * PieceValues.by_piece_type(cshogi.piece_to_piece_type(dst_pc))    # 交換値なので２倍します。
 
 
     def before_undo_move(self, move):
@@ -70,10 +72,14 @@ class PieceValueTAO():
         ----------
         move : int
             ［指し手］
+        
+        Returns
+        -------
+        value : int
+            戻した駒の価値
         """
 
-        # 取ったを見る。
-        pc = cshogi.move_cap(move)
-        nine_rank_side_value = 2 * - PieceValues.by_piece(pc)  # 相手の駒を取るのでマイナスにします。交換値なので２倍します。
-
-        return - nine_rank_side_value   # アンドゥなのでマイナス
+        # 取った駒（移動先の駒だったもの）を見る。
+        dst_pc = cshogi.move_cap(move)
+        print(f'before_undo_move: {dst_pc=}')
+        return 2 * PieceValues.by_piece_type(cshogi.piece_to_piece_type(dst_pc))    # 交換値なので２倍します。

@@ -134,8 +134,13 @@ class Gymnasium():
         """一手指す。
         """
 
-        self.nine_rank_side_value += self.piece_value_tao.before_move(
+        exchange_value = self.piece_value_tao.before_move(
                 move = move)
+
+        if self.engine_turn == cshogi.WHITE:
+            exchange_value *= -1
+
+        self.nine_rank_side_value += exchange_value
 
         return self._table.do_move_o1o1x(move = move)
 
@@ -146,8 +151,13 @@ class Gymnasium():
 
         move = self._table.undo_move_o1o1x()
 
-        self.nine_rank_side_value += self.piece_value_tao.before_undo_move(
+        exchange_value = self.piece_value_tao.before_undo_move(
                 move = move)
+
+        if self.engine_turn == cshogi.WHITE:
+            exchange_value *= -1
+
+        self.nine_rank_side_value -= exchange_value
 
         return move
 
