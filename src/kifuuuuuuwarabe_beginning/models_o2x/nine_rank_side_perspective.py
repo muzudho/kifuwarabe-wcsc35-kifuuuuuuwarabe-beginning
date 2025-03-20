@@ -21,6 +21,15 @@ class Pen():
         return self._table.turn == cshogi.WHITE and not self._after_moving
 
 
+    def swap(self, a, b):
+        """［比較］
+        """
+        if self.is_opponent_turn():
+            return b, a
+        
+        return a, b
+
+
     def ji_pc(self, piece_type):
         """［自］。手番を持っている側。駒種類を手番の駒へ変換
         """
@@ -272,22 +281,3 @@ class Ban():
         """［右下］
         """
         return self.bottom_right_of_sq(sq=Masu(masu).to_sq())
-
-
-class Comparison():
-    """［比較］
-    """
-    def __init__(self, table, after_moving=False):
-        self._table = table
-        self._after_moving = after_moving
-
-
-    def is_opponent_turn(self):
-        return self._table.turn == cshogi.WHITE and not self._after_moving
-
-
-    def swap(self, a, b):
-        if self.is_opponent_turn():
-            return b, a
-        
-        return a, b

@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import Ban, Comparison, Pen
+from ..models_o2x.nine_rank_side_perspective import Ban, Pen
 from .match_operation import MatchOperation
 
 
@@ -24,7 +24,6 @@ class DoNotMoveRook(MatchOperation):
         if self.is_enabled:
 
             ban = Ban(table)
-            cmp = Comparison(table)
             pen = Pen(table)
 
             # 自ライオンが２八にいる
@@ -46,12 +45,6 @@ class DoNotMoveRook(MatchOperation):
         """指す前に。
         """
 
-        ban = Ban(table)
-        cmp = Comparison(table)
-
-        src_sq_obj = Square(cshogi.move_from(move))
-        dst_sq_obj = Square(cshogi.move_to(move))
-
         # キリン以外なら対象外
         if cshogi.move_from_piece_type(move) not in [cshogi.ROOK]:
             return constants.mind.NOT_IN_THIS_CASE
@@ -70,8 +63,7 @@ class DoNotMoveRook(MatchOperation):
         """
 
         if self.is_enabled:
-            ban = Ban(table)
-            cmp = Comparison(table)
+            pen = Pen(table)
 
             src_sq_obj = Square(cshogi.move_from(move))
             dst_sq_obj = Square(cshogi.move_to(move))
@@ -81,7 +73,7 @@ class DoNotMoveRook(MatchOperation):
                 return
 
             # キリンの移動先が異筋なら、この行進演算を有効化します。
-            e1 = cmp.swap(dst_sq_obj.file, src_sq_obj.file)
+            e1 = pen.swap(dst_sq_obj.file, src_sq_obj.file)
             if e1[0] != e1[1]:
                 print(f'★ ｏn_best_move_played: {self.label=} 有効化')
                 self._is_activate = True

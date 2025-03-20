@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import Ban, Comparison
+from ..models_o2x.nine_rank_side_perspective import Ban, Pen
 from .match_operation import MatchOperation
 
 
@@ -23,7 +23,7 @@ class DoNotGoLeft(MatchOperation):
         """
 
         ban = Ban(table)
-        cmp = Comparison(table)
+        pen = Pen(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
         dst_sq_obj = Square(cshogi.move_to(move))
@@ -31,7 +31,7 @@ class DoNotGoLeft(MatchOperation):
         # ライオンなら、以左には行くな。
         if cshogi.move_from_piece_type(move) == cshogi.KING:
             # 移動先が右なら意志あり
-            e1 = cmp.swap(dst_sq_obj.file, src_sq_obj.file)
+            e1 = pen.swap(dst_sq_obj.file, src_sq_obj.file)
             if e1[0] < e1[1]:
                 return constants.mind.WILL
 
@@ -41,12 +41,12 @@ class DoNotGoLeft(MatchOperation):
         # イヌ、ネコなら
         if cshogi.move_from_piece_type(move) in [cshogi.GOLD, cshogi.SILVER]:
             # ６筋位左にある駒は対象外
-            e1 = cmp.swap(src_sq_obj.file, ban.suji(6))
+            e1 = pen.swap(src_sq_obj.file, ban.suji(6))
             if e1[0] >= e1[1]:
                 return constants.mind.NOT_IN_THIS_CASE
 
             # 移動先が同筋位右なら意志あり
-            e1 = cmp.swap(dst_sq_obj.file, src_sq_obj.file)
+            e1 = pen.swap(dst_sq_obj.file, src_sq_obj.file)
             if e1[0] <= e1[1]:
                 return constants.mind.WILL
 

@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import Ban, Comparison, Pen
+from ..models_o2x.nine_rank_side_perspective import Ban, Pen
 from .match_operation import MatchOperation
 
 
@@ -22,10 +22,8 @@ class DoNotMoveUntilRookMoves(MatchOperation):
         """指す前に。
         """
         ban = Ban(table)
-        cmp = Comparison(table)
         pen = Pen(table)
 
-        src_sq_obj = Square(cshogi.move_from(move))
         dst_sq_obj = Square(cshogi.move_to(move))
         moved_pt = cshogi.move_from_piece_type(move)
 

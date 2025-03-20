@@ -34,13 +34,11 @@ class DoNotDogAndCatSideBySide(MatchOperation):
         """指す前に。
         """
         ban = Ban(table)
-        #cmp = Comparison(table)
         pen = Pen(table)
 
         is_drop = cshogi.move_is_drop(move)
         src_sq_obj = Square(cshogi.move_from(move))
         dst_sq_obj = Square(cshogi.move_to(move))
-        #moved_pt = cshogi.move_from_piece_type(move)
 
         if is_drop:
             # 打は順法の対象外

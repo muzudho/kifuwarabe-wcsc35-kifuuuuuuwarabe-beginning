@@ -2,7 +2,7 @@ import cshogi
 
 from ..helper import Helper
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import Ban, Comparison
+from ..models_o2x.nine_rank_side_perspective import Ban, Pen
 from .match_operation import MatchOperation
 
 
@@ -27,7 +27,7 @@ class DoNotBuildRightWall(MatchOperation):
         定義：　移動前の玉の以右の全ての筋について、８段目、９段目の両方に駒がある状態を［右壁］とする。
         """
         ban = Ban(table)
-        cmp = Comparison(table)
+        pen = Pen(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
         dst_sq_obj = Square(cshogi.move_to(move))
@@ -47,7 +47,7 @@ class DoNotBuildRightWall(MatchOperation):
             return constants.mind.NOT_IN_THIS_CASE
 
         # 玉より左に移動する手なら対象外
-        e1 = cmp.swap(k_sq_obj.file, dst_sq_obj.file)
+        e1 = pen.swap(k_sq_obj.file, dst_sq_obj.file)
         #print(f'★ {k_sq_obj.file=} {dst_sq_obj.file=} {e1[0]=} {e1[1]}')
         if e1[0] < e1[1]:
             #print(f'★ 玉より左に移動する手なら対象外')

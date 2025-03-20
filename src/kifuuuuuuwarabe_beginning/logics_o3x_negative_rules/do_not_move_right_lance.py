@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import Ban, Comparison, Pen
+from ..models_o2x.nine_rank_side_perspective import Ban, Pen
 from .match_operation import MatchOperation
 
 
@@ -21,7 +21,6 @@ class DoNotMoveRightLance(MatchOperation):
     def before_move_o1o1x(self, remaining_moves, table):
         if self.is_enabled:
             ban = Ban(table)
-            cmp = Comparison(table)
             pen = Pen(table)
 
             # 自ライオンが２八にいる
@@ -44,10 +43,8 @@ class DoNotMoveRightLance(MatchOperation):
         """
 
         ban = Ban(table)
-        cmp = Comparison(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
-        dst_sq_obj = Square(cshogi.move_to(move))
 
         # いのしし以外なら対象外
         if cshogi.move_from_piece_type(move) not in [cshogi.LANCE]:

@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import Ban, Comparison
+from ..models_o2x.nine_rank_side_perspective import Ban, Pen
 from .match_operation import MatchOperation
 
 
@@ -23,10 +23,8 @@ class DoNotMoveLeftLance(MatchOperation):
         """
 
         ban = Ban(table)
-        cmp = Comparison(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
-        dst_sq_obj = Square(cshogi.move_to(move))
 
         # いのしし以外なら対象外
         if cshogi.move_from_piece_type(move) not in [cshogi.LANCE]:

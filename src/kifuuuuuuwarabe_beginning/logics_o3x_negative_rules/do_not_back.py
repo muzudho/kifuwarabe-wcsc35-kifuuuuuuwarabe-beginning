@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x import Ban, Comparison
+from ..models_o2x import Ban, Pen
 from .match_operation import MatchOperation
 
 
@@ -26,9 +26,6 @@ class DoNotBack(MatchOperation):
     def before_move(self, move, table):
         """指す前に。
         """
-
-        ban = Ban(table)
-        cmp = Comparison(table)
 
         is_drop = cshogi.move_is_drop(move)
         src_sq_obj = Square(cshogi.move_from(move))

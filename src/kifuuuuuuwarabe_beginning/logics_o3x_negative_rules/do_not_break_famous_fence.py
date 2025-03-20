@@ -34,12 +34,9 @@ class DoNotBreakFamousFence(MatchOperation):
         """指す前に。
         """
         ban = Ban(table)
-        #cmp = Comparison(table)
         pen = Pen(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
-        #dst_sq_obj = Square(cshogi.move_to(move))
-        #moved_pt = cshogi.move_from_piece_type(move)
 
         # ［大住囲い］
         if (

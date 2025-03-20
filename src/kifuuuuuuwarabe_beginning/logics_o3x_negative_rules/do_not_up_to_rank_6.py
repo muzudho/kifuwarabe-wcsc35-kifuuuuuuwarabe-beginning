@@ -22,7 +22,6 @@ class DoNotUpToRank6(MatchOperation):
         if self.is_enabled:
 
             ban = Ban(table)
-            #cmp = Comparison(table)
             pen = Pen(table)
 
             # 自ライオンが２八にいる
@@ -46,12 +45,9 @@ class DoNotUpToRank6(MatchOperation):
         """指す前に。
         """
         ban = Ban(table)
-        #cmp = Comparison(table)
         pen = Pen(table)
 
-        #src_sq_obj = Square(cshogi.move_from(move))
         dst_sq_obj = Square(cshogi.move_to(move))
-        #moved_pt = cshogi.move_from_piece_type(move)
 
         # # 自キリンが２八にいる
         # if table.piece(ban.masu(28)) != pen.ji_pc(cshogi.ROOK):
