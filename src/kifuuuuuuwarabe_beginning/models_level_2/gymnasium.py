@@ -1,3 +1,5 @@
+import cshogi
+
 from ..march_operations import \
     DoNotBack, DoNotBreakFamousFence, DoNotBuildRightWall, \
     DoNotDogAndCatSideBySide, \
@@ -5,7 +7,6 @@ from ..march_operations import \
     DoNotUpToRank6, \
     DoNotMoveUntilRookMoves, DoNotMoveLeftLance, DoNotMoveRightLance, DoNotMoveRook, \
     WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToMove37Pawn, WillSwingingRook
-
 from ..models import Table
 from ..models.table_access_object import PieceValueTAO
 
@@ -74,6 +75,16 @@ class Gymnasium():
         """この将棋エンジンの手番。
         """
         return self._engine_turn
+
+
+    @property
+    def engine_value(self):
+        """この将棋エンジンの評価値。
+        """
+        if self._engine_turn == cshogi.BLACK:
+            return self.nine_rank_side_value
+        return -self.nine_rank_side_value
+
 
 
     @engine_turn.setter
