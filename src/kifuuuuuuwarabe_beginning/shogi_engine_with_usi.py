@@ -2,7 +2,7 @@ import cshogi
 import datetime
 import sys
 
-from .models_level_3 import Gymnasium
+from .models_level_o4x import Gymnasium
 from .logics import MovesReductionFilterLogics
 from .logics_usi import GoLogic, GoLogicResultState
 from .views import HistoryView, TableView
@@ -336,7 +336,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         """TODO 使い終わったら消す
         """
         from .helper import Helper
-        from .models_level_2.nine_rank_side_perspective import Ban, Ji
+        from .models_level_o2x.nine_rank_side_perspective import Ban, Ji
 
 
         ji = Ji(self._gymnasium.table)

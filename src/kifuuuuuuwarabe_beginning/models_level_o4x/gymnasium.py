@@ -7,8 +7,8 @@ from ..march_operations import \
     DoNotUpToRank6, \
     DoNotMoveUntilRookMoves, DoNotMoveLeftLance, DoNotMoveRightLance, DoNotMoveRook, \
     WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToMove37Pawn, WillSwingingRook
-from ..models_level_1 import Table
-from ..models_level_1.table_access_object import PieceValueTAO
+from ..models_level_o1x import Table
+from ..models_level_o1x.table_access_object import PieceValueTAO
 
 
 class Gymnasium():
