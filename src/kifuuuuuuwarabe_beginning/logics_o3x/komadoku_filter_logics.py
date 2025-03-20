@@ -1,4 +1,4 @@
-from .logger_logics import LoggerLogics
+from ..logics_o1x.logger_logics import LoggerLogics
 
 
 class KomadokuFilterLogics():
