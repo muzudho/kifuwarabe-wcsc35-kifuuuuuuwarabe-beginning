@@ -187,5 +187,7 @@ class Table():
     ##############
     def dump(self):
         return f"""
+{self._designated_sfen=}
+{self._board.sfen()=}
 {len(self._piece_moved_list)=}
 """
