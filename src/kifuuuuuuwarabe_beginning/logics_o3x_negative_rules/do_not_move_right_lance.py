@@ -20,10 +20,10 @@ class DoNotMoveRightLance(NegativeRule):
 
     def before_move_o1o1x(self, remaining_moves, table):
         if self.is_enabled:
-            pen = NineRankSidePerspective(table)
+            np = NineRankSidePerspective(table)
 
             # 自ライオンが２八にいる
-            if table.piece(pen.masu(28)) == pen.ji_pc(cshogi.KING):
+            if table.piece(np.masu(28)) == np.ji_pc(cshogi.KING):
                 # （処理を行わず）このオブジェクトを除外
                 self._is_removed = True
             
@@ -41,7 +41,7 @@ class DoNotMoveRightLance(NegativeRule):
         """指す前に。
         """
 
-        pen = NineRankSidePerspective(table)
+        np = NineRankSidePerspective(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
 
@@ -50,8 +50,8 @@ class DoNotMoveRightLance(NegativeRule):
             return constants.mind.NOT_IN_THIS_CASE
 
         # １筋の駒が動いたら意志無し
-        #print(f'★ ＤoNotMoveRightLance.before_move(): {src_sq_obj.file=} {pen.suji(1)=}')
-        if src_sq_obj.file == pen.suji(1):
+        #print(f'★ ＤoNotMoveRightLance.before_move(): {src_sq_obj.file=} {np.suji(1)=}')
+        if src_sq_obj.file == np.suji(1):
             return constants.mind.WILL_NOT
 
         # それ以外は意志有り

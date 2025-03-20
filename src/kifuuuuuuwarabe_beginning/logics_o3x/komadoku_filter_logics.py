@@ -12,7 +12,7 @@ class KomadokuFilterLogics():
     @staticmethod
     def filtering(remaining_moves, gymnasium):
 
-        pen = NineRankSidePerspective(table = gymnasium.table)
+        np = NineRankSidePerspective(table = gymnasium.table)
 
         if gymnasium.config_doc['debug_mode']['search_do_undo']:
             print('in debug')
@@ -20,7 +20,7 @@ class KomadokuFilterLogics():
 
         best_move_list = []
 
-        pen_best_value = pen.value(-99999)  # スタート値。
+        np_best_value = np.value(-99999)  # スタート値。
 
         # 残った手一覧
         for move in remaining_moves:
@@ -29,20 +29,20 @@ class KomadokuFilterLogics():
             # MARK: 一手指す
             ################
 
-            # np_value は pen.value() で囲まないこと。
-            #print(f'before move: {cshogi.move_to_usi(move)} {gymnasium.engine_turn=} {gymnasium.table.turn=} {pen_best_value=} {gymnasium.np_value=}')
+            # np_value は np.value() で囲まないこと。
+            #print(f'before move: {cshogi.move_to_usi(move)} {gymnasium.engine_turn=} {gymnasium.table.turn=} {np_best_value=} {gymnasium.np_value=}')
             gymnasium.do_move_o1x(move = move)
 
             # FIXME 逆にしている。これで正しく動く。おかしいんじゃないか？
-            e1 = pen.swap(gymnasium.np_value, pen_best_value)
-            #print(f'after move: {cshogi.move_to_usi(move)} {gymnasium.engine_turn=} {gymnasium.table.turn=} {pen_best_value=} {gymnasium.np_value=} {e1[0]=} {e1[1]=} {e1[0] < e1[1]=}')
+            e1 = np.swap(gymnasium.np_value, np_best_value)
+            #print(f'after move: {cshogi.move_to_usi(move)} {gymnasium.engine_turn=} {gymnasium.table.turn=} {np_best_value=} {gymnasium.np_value=} {e1[0]=} {e1[1]=} {e1[0] < e1[1]=}')
 
             # 更新。
             if e1[0] < e1[1]:
-                pen_best_value = gymnasium.np_value
+                np_best_value = gymnasium.np_value
                 best_move_list = [move]
                 
-            elif pen_best_value == gymnasium.np_value:
+            elif np_best_value == gymnasium.np_value:
                 best_move_list.append(move)
 
             ################

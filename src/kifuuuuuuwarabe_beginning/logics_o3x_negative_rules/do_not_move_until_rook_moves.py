@@ -21,18 +21,18 @@ class DoNotMoveUntilRookMoves(NegativeRule):
     def before_move(self, move, table):
         """指す前に。
         """
-        pen = NineRankSidePerspective(table)
+        np = NineRankSidePerspective(table)
 
         dst_sq_obj = Square(cshogi.move_to(move))
         moved_pt = cshogi.move_from_piece_type(move)
 
         # キリンが２八にいる
-        if table.piece(pen.masu(28)) != pen.ji_pc(cshogi.ROOK):
+        if table.piece(np.masu(28)) != np.ji_pc(cshogi.ROOK):
             # そうでなければ対象外
             return constants.mind.NOT_IN_THIS_CASE
 
         # 移動先は８段目だ
-        if dst_sq_obj.rank != pen.dan(8):
+        if dst_sq_obj.rank != np.dan(8):
             # そうでなければ対象外
             return constants.mind.NOT_IN_THIS_CASE
 
@@ -49,7 +49,7 @@ class DoNotMoveUntilRookMoves(NegativeRule):
         # # 動かした駒が金なら
         # if moved_pt == cshogi.GOLD:
         #     # ５筋以右にある金なら
-        #     e1 = cmp.swap(src_sq_obj.file, pen.suji(5))
+        #     e1 = cmp.swap(src_sq_obj.file, np.suji(5))
         #     if e1[0] <= e1[1]:
         #         # 動かしたら意志なし
         #         return constants.mind.WILL_NOT
@@ -65,7 +65,7 @@ class DoNotMoveUntilRookMoves(NegativeRule):
         # # 動かした駒が銀なら
         # if moved_pt == cshogi.SILVER:
         #     # ５筋以右にある銀を動かしたなら
-        #     e1 = cmp.swap(src_sq_obj.file, pen.suji(5))
+        #     e1 = cmp.swap(src_sq_obj.file, np.suji(5))
         #     if e1[0] <= e1[1]:
         #         # 意志なし
         #         return constants.mind.WILL_NOT

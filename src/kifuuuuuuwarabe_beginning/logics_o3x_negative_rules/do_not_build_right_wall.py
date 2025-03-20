@@ -26,7 +26,7 @@ class DoNotBuildRightWall(NegativeRule):
 
         定義：　移動前の玉の以右の全ての筋について、８段目、９段目の両方に駒がある状態を［右壁］とする。
         """
-        pen = NineRankSidePerspective(table)
+        np = NineRankSidePerspective(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
         dst_sq_obj = Square(cshogi.move_to(move))
@@ -38,24 +38,24 @@ class DoNotBuildRightWall(NegativeRule):
             return constants.mind.NOT_IN_THIS_CASE
 
         k_sq_obj = Square(table.king_square(table.turn))     # 移動前の自玉の位置
-        #print(f'★ {k_sq_obj.file=} {pen.suji(1)=}')
+        #print(f'★ {k_sq_obj.file=} {np.suji(1)=}')
 
         # 玉が１筋にいるなら対象外
-        if k_sq_obj.file == pen.suji(1):
+        if k_sq_obj.file == np.suji(1):
             #print(f'★ 玉が１筋にいるなら対象外')
             return constants.mind.NOT_IN_THIS_CASE
 
         # 玉より左に移動する手なら対象外
-        e1 = pen.swap(k_sq_obj.file, dst_sq_obj.file)
+        e1 = np.swap(k_sq_obj.file, dst_sq_obj.file)
         #print(f'★ {k_sq_obj.file=} {dst_sq_obj.file=} {e1[0]=} {e1[1]}')
         if e1[0] < e1[1]:
             #print(f'★ 玉より左に移動する手なら対象外')
             return constants.mind.NOT_IN_THIS_CASE
 
         # ８段目、９段目以外に移動する手なら対象外
-        dan8 = pen.dan(8)
-        dan9 = pen.dan(9)
-        #print(f'D: {dst_sq_obj.rank=} {pen.dan(8)=} {pen.dan(9)}')
+        dan8 = np.dan(8)
+        dan9 = np.dan(9)
+        #print(f'D: {dst_sq_obj.rank=} {np.dan(8)=} {np.dan(9)}')
         if dst_sq_obj.rank not in [dan8, dan9]:
             #print(f'★ {dst_sq_obj.rank=}段目 は、 {dan8}段目、{dan9}段目以外に移動する手だから対象外')
             return constants.mind.NOT_IN_THIS_CASE
@@ -65,7 +65,7 @@ class DoNotBuildRightWall(NegativeRule):
         right_side_of_k = []
 
         # 八段目、九段目
-        for rank in [pen.dan(8), pen.dan(9)]:
+        for rank in [np.dan(8), np.dan(9)]:
             sq = Helper.file_rank_to_sq(dst_sq_obj.file, rank)
             #print(f'D: {rank=} {sq=}')
             right_side_of_k.append(sq)

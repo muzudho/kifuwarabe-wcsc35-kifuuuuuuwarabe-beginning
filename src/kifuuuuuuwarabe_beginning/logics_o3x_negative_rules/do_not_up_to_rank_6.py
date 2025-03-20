@@ -21,10 +21,10 @@ class DoNotUpToRank6(NegativeRule):
     def before_move_o1o1x(self, remaining_moves, table):
         if self.is_enabled:
 
-            pen = NineRankSidePerspective(table)
+            np = NineRankSidePerspective(table)
 
             # 自ライオンが２八にいる
-            if table.piece(pen.masu(28)) == pen.ji_pc(cshogi.KING):
+            if table.piece(np.masu(28)) == np.ji_pc(cshogi.KING):
                 # このオブジェクトを除外
                 self._is_removed = True
 
@@ -43,17 +43,17 @@ class DoNotUpToRank6(NegativeRule):
     def before_move(self, move, table):
         """指す前に。
         """
-        pen = NineRankSidePerspective(table)
+        np = NineRankSidePerspective(table)
 
         dst_sq_obj = Square(cshogi.move_to(move))
 
         # # 自キリンが２八にいる
-        # if table.piece(pen.masu(28)) != pen.ji_pc(cshogi.ROOK):
+        # if table.piece(np.masu(28)) != np.ji_pc(cshogi.ROOK):
         #     # そうでなければ対象外
         #     return constants.mind.NOT_IN_THIS_CASE
 
         # 移動先は６段目だ
-        if dst_sq_obj.rank != pen.dan(6):
+        if dst_sq_obj.rank != np.dan(6):
             # そうでなければ意志を残している
             return constants.mind.WILL
 

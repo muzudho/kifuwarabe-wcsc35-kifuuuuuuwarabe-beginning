@@ -33,17 +33,17 @@ class DoNotBreakFamousFence(NegativeRule):
     def before_move(self, move, table):
         """指す前に。
         """
-        pen = NineRankSidePerspective(table)
+        np = NineRankSidePerspective(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
 
         # ［大住囲い］
         if (
-                pen.ji_pc(cshogi.KING) == table.piece(pen.masu(38))     # 自ライオンが［３八］
-            and pen.ji_pc(cshogi.GOLD) == table.piece(pen.masu(48))     # 自イヌが［４八］
-            and pen.ji_pc(cshogi.SILVER) == table.piece(pen.masu(39))   # 自ネコが［３九］
+                np.ji_pc(cshogi.KING) == table.piece(np.masu(38))     # 自ライオンが［３八］
+            and np.ji_pc(cshogi.GOLD) == table.piece(np.masu(48))     # 自イヌが［４八］
+            and np.ji_pc(cshogi.SILVER) == table.piece(np.masu(39))   # 自ネコが［３九］
             ):
-            if src_sq_obj.sq in [pen.masu(38), pen.masu(48), pen.masu(39)]:
+            if src_sq_obj.sq in [np.masu(38), np.masu(48), np.masu(39)]:
                 # 順法の意志無し
                 return constants.mind.WILL_NOT
 

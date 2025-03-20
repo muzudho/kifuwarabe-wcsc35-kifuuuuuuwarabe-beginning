@@ -23,10 +23,10 @@ class DoNotMoveRook(NegativeRule):
     def before_move_o1o1x(self, remaining_moves, table):
         if self.is_enabled:
 
-            pen = NineRankSidePerspective(table)
+            np = NineRankSidePerspective(table)
 
             # 自ライオンが２八にいる
-            if table.piece(pen.masu(28)) == pen.ji_pc(cshogi.KING):
+            if table.piece(np.masu(28)) == np.ji_pc(cshogi.KING):
                 # （処理を行わず）このオブジェクトを除外
                 self._is_removed = True
             
@@ -62,7 +62,7 @@ class DoNotMoveRook(NegativeRule):
         """
 
         if self.is_enabled:
-            pen = NineRankSidePerspective(table)
+            np = NineRankSidePerspective(table)
 
             src_sq_obj = Square(cshogi.move_from(move))
             dst_sq_obj = Square(cshogi.move_to(move))
@@ -72,7 +72,7 @@ class DoNotMoveRook(NegativeRule):
                 return
 
             # キリンの移動先が異筋なら、この行進演算を有効化します。
-            e1 = pen.swap(dst_sq_obj.file, src_sq_obj.file)
+            e1 = np.swap(dst_sq_obj.file, src_sq_obj.file)
             if e1[0] != e1[1]:
                 print(f'★ ｏn_best_move_played: {self.label=} 有効化')
                 self._is_activate = True

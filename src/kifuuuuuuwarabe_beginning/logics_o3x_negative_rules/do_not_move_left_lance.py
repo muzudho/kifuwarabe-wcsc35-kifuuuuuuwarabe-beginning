@@ -22,7 +22,7 @@ class DoNotMoveLeftLance(NegativeRule):
         """指す前に。
         """
 
-        pen = NineRankSidePerspective(table)
+        np = NineRankSidePerspective(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
 
@@ -31,8 +31,8 @@ class DoNotMoveLeftLance(NegativeRule):
             return constants.mind.NOT_IN_THIS_CASE
 
         # ９筋の駒が動いたら意志無し
-        #print(f'★ ＤoNotMoveLeftLance.before_move(): {src_sq_obj.file=} {pen.suji(9)=}')
-        if src_sq_obj.file == pen.suji(9):
+        #print(f'★ ＤoNotMoveLeftLance.before_move(): {src_sq_obj.file=} {np.suji(9)=}')
+        if src_sq_obj.file == np.suji(9):
             return constants.mind.WILL_NOT
 
         # それ以外は意志有り

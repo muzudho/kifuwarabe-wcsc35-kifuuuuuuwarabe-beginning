@@ -22,7 +22,7 @@ class DoNotGoLeft(NegativeRule):
         """指す前に。
         """
 
-        pen = NineRankSidePerspective(table)
+        np = NineRankSidePerspective(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
         dst_sq_obj = Square(cshogi.move_to(move))
@@ -30,7 +30,7 @@ class DoNotGoLeft(NegativeRule):
         # ライオンなら、以左には行くな。
         if cshogi.move_from_piece_type(move) == cshogi.KING:
             # 移動先が右なら意志あり
-            e1 = pen.swap(dst_sq_obj.file, src_sq_obj.file)
+            e1 = np.swap(dst_sq_obj.file, src_sq_obj.file)
             if e1[0] < e1[1]:
                 return constants.mind.WILL
 
@@ -40,12 +40,12 @@ class DoNotGoLeft(NegativeRule):
         # イヌ、ネコなら
         if cshogi.move_from_piece_type(move) in [cshogi.GOLD, cshogi.SILVER]:
             # ６筋位左にある駒は対象外
-            e1 = pen.swap(src_sq_obj.file, pen.suji(6))
+            e1 = np.swap(src_sq_obj.file, np.suji(6))
             if e1[0] >= e1[1]:
                 return constants.mind.NOT_IN_THIS_CASE
 
             # 移動先が同筋位右なら意志あり
-            e1 = pen.swap(dst_sq_obj.file, src_sq_obj.file)
+            e1 = np.swap(dst_sq_obj.file, src_sq_obj.file)
             if e1[0] <= e1[1]:
                 return constants.mind.WILL
 
