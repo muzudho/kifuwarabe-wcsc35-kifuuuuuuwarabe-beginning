@@ -25,6 +25,9 @@ class Gymnasium():
         # 盤
         self._table = Table.create_table()
 
+        # この将棋エンジンの手番
+        self._engine_turn = None
+
         # 盤へアクセスする関連のオブジェクト
         self._piece_value_tao = PieceValueTAO(table = self._table)
 
@@ -58,11 +61,24 @@ class Gymnasium():
         """
         return self._config_doc
 
+
     @property
     def table(self):
         """［盤］
         """
         return self._table
+
+
+    @property
+    def engine_turn(self):
+        """この将棋エンジンの手番。
+        """
+        return self._engine_turn
+
+
+    @engine_turn.setter
+    def engine_turn(self, value):
+        self._engine_turn = value
 
 
     @property

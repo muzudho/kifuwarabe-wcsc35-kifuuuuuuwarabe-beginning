@@ -138,24 +138,27 @@ class ShogiEngineCompatibleWithUSIProtocol():
             """局面データ解析
             """
 
-            # 平手初期局面に変更
+            # 平手初期局面に変更。
             if sfen_text == 'startpos':
                 self._gymnasium.table.reset()
 
-            # 指定局面に変更
+            # 指定局面に変更。
             elif sfen_text[:5] == 'sfen ':
                 self._gymnasium.table.set_sfen(sfen_text[5:])
 
-            # 盤をスキャン
+            # 盤をスキャン。
             self._gymnasium.nine_rank_side_value = self._gymnasium.piece_value_tao.scan_table()
 
-            # 棋譜再生
+            # 棋譜再生。
             for move_as_usi in move_usi_list:
                 self._gymnasium.nine_rank_side_value += self._gymnasium.piece_value_tao.put_move_usi_before_move(
                         move_as_usi = move_as_usi)
 
                 self._gymnasium.table.do_move_o1o1x(
                         move = self._gymnasium.table.move_from_usi(move_as_usi))
+
+            # この将棋エンジンの手番を記録。
+            self._gymnasium.engine_turn = self._gymnasium.table.turn
 
 
         _position_detail(
