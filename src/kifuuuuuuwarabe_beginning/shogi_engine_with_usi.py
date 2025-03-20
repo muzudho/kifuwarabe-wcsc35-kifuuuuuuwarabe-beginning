@@ -154,7 +154,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
                 self._gymnasium.nine_rank_side_value += self._gymnasium.piece_value_tao.put_move_usi_before_move(
                         move_as_usi = move_as_usi)
 
-                self._gymnasium.table.push_usi_o1x(
+                self._gymnasium.table.do_move_o1o1x(
                         move = self._gymnasium.table.move_from_usi(move_as_usi))
 
 
@@ -231,7 +231,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         example: ７六歩
             code: do 7g7f
         """
-        self._gymnasium.table.push_usi_o1x(
+        self._gymnasium.table.do_move_o1o1x(
                 move = self._gymnasium.table.move_from_usi(cmd[1]))
 
 
@@ -347,7 +347,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         # if ji.pc(cshogi.BISHOP) != cshogi.BBISHOP:
         #     raise ValueError('先手の角')
 
-        # self._gymnasium.table.push_usi_o1x('7g7f')
+        # self._gymnasium.table.do_move_o1o1x(self._gymnasium.table.move_from_usi('7g7f'))
 
         # if ji.pc(cshogi.BISHOP) != cshogi.WBISHOP:
         #     raise ValueError('後手の角')

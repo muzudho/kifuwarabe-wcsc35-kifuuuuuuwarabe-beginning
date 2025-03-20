@@ -37,16 +37,6 @@ class Table():
     def do_move_o1o1x(self, move):
         """一手指す。
         """
-        #move_as_usi = cshogi.move_to_usi(move)
-        self.push_usi_o1x(move)
-
-
-    def undo_move(self):
-        self._piece_moved_list.pop()
-        return self._board.pop()
-
-
-    def push_usi_o1x(self, move):
         result = self._board.push(move)
 
         # 指した後に記録
@@ -56,6 +46,10 @@ class Table():
         
         return result
 
+
+    def undo_move(self):
+        self._piece_moved_list.pop()
+        return self._board.pop()
 
 
     #########
