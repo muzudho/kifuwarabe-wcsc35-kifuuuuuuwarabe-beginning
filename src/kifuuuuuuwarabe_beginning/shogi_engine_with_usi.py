@@ -4,7 +4,7 @@ import sys
 
 from .models_level_2 import Gymnasium
 from .logics import MovesReductionFilterLogics
-from .logics_usi import GoLogic
+from .logics_usi import GoLogic, GoLogicResultState
 from .views import HistoryView, TableView
 
 
@@ -166,8 +166,27 @@ class ShogiEngineCompatibleWithUSIProtocol():
         """
         """
         # 思考開始～最善手返却
-        best_move_as_usi = GoLogic.Go(
+        (
+            result,
+            best_move_as_usi
+        ) = GoLogic.Go(
                 gymnasium = self._gymnasium)
+
+        if result == GoLogicResultState.RESIGN:
+            # 投了。
+            print(f'bestmove resign', flush=True)
+            return
+
+        if result == GoLogicResultState.NYUGYOKU_WIN:
+            # 勝利宣言。
+            print(f'bestmove win', flush=True)
+            return
+
+        if result == GoLogicResultState.MATE_IN_1_MOVE:
+            # １手詰め時。
+            print('info score mate 1 pv {}'.format(best_move_as_usi), flush=True)
+            print(f'bestmove {best_move_as_usi}', flush=True)
+            return
 
         print(f"info depth 0 seldepth 0 time 1 nodes 0 score cp 0 string Go kifuuuuuuWarabe")
         print(f'bestmove {best_move_as_usi}', flush=True)

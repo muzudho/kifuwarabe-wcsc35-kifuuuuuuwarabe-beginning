@@ -4,31 +4,57 @@ import random
 from ..logics import MovesReductionFilterLogics
 
 
+class GoLogicResultState():
+
+
+    @staticmethod
+    def RESIGN():
+        """投了。
+        """
+        return 1
+
+
+    @staticmethod
+    def NYUGYOKU_WIN():
+        """入玉宣言局面時。
+        """
+        return 2
+
+
+    def MATE_IN_1_MOVE():
+        """１手詰め時。
+        """
+        return 3
+
+
+    def BEST_MOVE():
+        """通常時の次の１手。
+        """
+        return 4
+
+
 class GoLogic():
 
 
     @staticmethod
     def Go(gymnasium):
-        """思考開始～最善手返却
+        """盤面が与えられるので、次の１手を返します。
 
         Returns
         -------
         best_move_as_usi : str
             ［指す手］
         """
-        if gymnasium.table.is_game_over():
-            """投了局面時"""
 
-            # 投了
-            print(f'bestmove resign', flush=True)
-            return
+        if gymnasium.table.is_game_over():
+            """投了局面時。
+            """
+            return GoLogicResultState.RESIGN, None
 
         if gymnasium.table.is_nyugyoku():
-            """入玉宣言局面時"""
-
-            # 勝利宣言
-            print(f'bestmove win', flush=True)
-            return
+            """入玉宣言局面時。
+            """
+            return GoLogicResultState.NYUGYOKU_WIN, None
 
         # 一手詰めを詰める
         if not gymnasium.table.is_check():
@@ -36,11 +62,8 @@ class GoLogic():
 
             if (matemove := gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
-
-                best_move = cshogi.move_to_usi(matemove)
-                print('info score mate 1 pv {}'.format(best_move), flush=True)
-                print(f'bestmove {best_move}', flush=True)
-                return
+                best_move_as_usi = cshogi.move_to_usi(matemove)
+                return GoLogicResultState.MATE_IN_1_MOVE, best_move_as_usi
 
         # 合法手から、１手を選び出します。
         # ［指前］
@@ -61,4 +84,4 @@ class GoLogic():
                 move        = best_move,
                 gymnasium   = gymnasium)
 
-        return best_move_as_usi
+        return GoLogicResultState.BEST_MOVE, best_move_as_usi

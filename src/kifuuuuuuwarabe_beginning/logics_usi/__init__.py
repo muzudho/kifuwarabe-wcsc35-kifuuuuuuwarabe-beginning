@@ -1,1 +1,1 @@
-from .go_logic import GoLogic
+from .go_logic import GoLogic, GoLogicResultState
