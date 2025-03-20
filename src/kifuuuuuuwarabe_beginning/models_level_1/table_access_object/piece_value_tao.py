@@ -1,6 +1,6 @@
 import cshogi
 
-from ...models import constants, PieceValues
+from ...models_level_1 import constants, PieceValues
 
 
 class PieceValueTAO():

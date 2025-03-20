@@ -1,4 +1,4 @@
-from ..models import Piece
+from ..models_level_1 import Piece
 
 
 class TableView():

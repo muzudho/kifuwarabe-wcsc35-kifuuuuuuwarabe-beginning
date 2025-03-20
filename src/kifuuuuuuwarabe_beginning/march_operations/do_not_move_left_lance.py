@@ -1,6 +1,6 @@
 import cshogi
 
-from ..models import constants, Square
+from ..models_level_1 import constants, Square
 from ..models_level_2.nine_rank_side_perspective import Ban, Comparison
 from .match_operation import MatchOperation
 

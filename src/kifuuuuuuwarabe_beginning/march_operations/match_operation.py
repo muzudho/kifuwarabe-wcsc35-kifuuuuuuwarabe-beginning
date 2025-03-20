@@ -1,4 +1,4 @@
-from ..models import constants
+from ..models_level_1 import constants
 
 
 class MatchOperation():

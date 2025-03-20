@@ -3,7 +3,7 @@
 import cshogi
 
 from ..helper import Helper
-from ..models import Masu, Square
+from ..models_level_1 import Masu, Square
 
 
 class Pen():
