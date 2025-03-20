@@ -22,7 +22,7 @@ class DoNotMoveRook(MatchOperation):
                 config_doc  = config_doc)
 
 
-    def before_move_o1o1(self, will_play_moves, table):
+    def before_move_o1o1(self, remaining_moves, table):
         if self.is_enabled:
 
             ban = Ban(table)
@@ -35,13 +35,13 @@ class DoNotMoveRook(MatchOperation):
                 self._is_removed = True
             
             else:
-                for i in range(len(will_play_moves))[::-1]:     # `[::-1]` - 逆順
-                    m = will_play_moves[i]
+                for i in range(len(remaining_moves))[::-1]:     # `[::-1]` - 逆順
+                    m = remaining_moves[i]
                     mind = self.before_move(m, table)
                     if mind == constants.mind.WILL_NOT:
-                        del will_play_moves[i]
+                        del remaining_moves[i]
 
-        return will_play_moves
+        return remaining_moves
 
 
     def before_move(self, move, table):

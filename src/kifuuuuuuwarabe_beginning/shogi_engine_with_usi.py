@@ -4,7 +4,7 @@ import random
 import sys
 
 from .models_level_2 import Gymnasium
-from .logics import GoLogics
+from .logics import MovesReductionFilterLogics
 from .views import HistoryView, TableView
 
 
@@ -192,23 +192,23 @@ class ShogiEngineCompatibleWithUSIProtocol():
                 print(f'bestmove {best_move}', flush=True)
                 return
 
-        will_play_moves = GoLogics.before_move_o1(
-                will_play_moves = list(self._gymnasium.table.legal_moves),
+        remaining_moves = MovesReductionFilterLogics.before_move_o1(
+                remaining_moves = list(self._gymnasium.table.legal_moves),
                 gymnasium       = self._gymnasium)
 
         # 指し手が全部消えてしまった場合、何でも指すようにします
-        if len(will_play_moves) < 1:
-            will_play_moves = list(self._gymnasium.table.legal_moves)
+        if len(remaining_moves) < 1:
+            remaining_moves = list(self._gymnasium.table.legal_moves)
 
         # １手指す（投了のケースは対応済みなので、ここで対応しなくていい）
-        best_move = random.choice(will_play_moves)
+        best_move = random.choice(remaining_moves)
         best_move_as_usi = cshogi.move_to_usi(best_move)
 
-        GoLogics.after_best_moving_when_idling(
+        MovesReductionFilterLogics.after_best_moving_when_idling(
                 move        = best_move,
                 gymnasium   = self._gymnasium)
 
-        GoLogics.after_best_moving(
+        MovesReductionFilterLogics.after_best_moving(
                 move        = best_move,
                 gymnasium   = self._gymnasium)
 
@@ -303,52 +303,52 @@ class ShogiEngineCompatibleWithUSIProtocol():
                 return
 
 
-        def print_moves(will_play_moves):
+        def print_moves(remaining_moves):
             print('----ここから----', flush=True, file=sys.stderr)
 
-            for move in will_play_moves:
+            for move in remaining_moves:
                 print(f'willmove {cshogi.move_to_usi(move)}', flush=True, file=sys.stderr)
 
             print(f'----ここまで----', flush=True, file=sys.stderr)
 
 
-        will_play_moves = list(self._gymnasium.table.legal_moves)
+        remaining_moves = list(self._gymnasium.table.legal_moves)
 
 
-        print(f'★ go: ［３七の歩を突かない］意志を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
-        will_play_moves = GoLogics.get_will_not_to_move_37_pawn(
+        print(f'★ go: ［３七の歩を突かない］意志を残してるか尋ねる前の指し手数={len(remaining_moves)}', file=sys.stderr)
+        remaining_moves = MovesReductionFilterLogics.get_will_not_to_move_37_pawn(
                 config_doc=self._config_doc,
                 table=self._gymnasium.table,
-                will_play_moves=will_play_moves)
-        print(f'★ go: ［３七の歩を突かない］意志を残してるか尋ねた後の指し手数={len(will_play_moves)}', file=sys.stderr)
-        print_moves(will_play_moves)
+                remaining_moves=remaining_moves)
+        print(f'★ go: ［３七の歩を突かない］意志を残してるか尋ねた後の指し手数={len(remaining_moves)}', file=sys.stderr)
+        print_moves(remaining_moves)
 
 
-        print(f'★ go: ［右壁を作らない］意志を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
-        will_play_moves = GoLogics.get_do_not_build_right_wall(
+        print(f'★ go: ［右壁を作らない］意志を残してるか尋ねる前の指し手数={len(remaining_moves)}', file=sys.stderr)
+        remaining_moves = MovesReductionFilterLogics.get_do_not_build_right_wall(
                 config_doc=self._config_doc,
                 table=self._gymnasium.table,
-                will_play_moves=will_play_moves)
-        print(f'★ go: ［右壁を作らない］意志を残してるか尋ねた後の指し手数={len(will_play_moves)}', file=sys.stderr)
-        print_moves(will_play_moves)
+                remaining_moves=remaining_moves)
+        print(f'★ go: ［右壁を作らない］意志を残してるか尋ねた後の指し手数={len(remaining_moves)}', file=sys.stderr)
+        print_moves(remaining_moves)
 
 
-        print(f'★ go: ［振り飛車をする］意志を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
-        will_play_moves = GoLogics.get_will_swinging_rook(
+        print(f'★ go: ［振り飛車をする］意志を残してるか尋ねる前の指し手数={len(remaining_moves)}', file=sys.stderr)
+        remaining_moves = MovesReductionFilterLogics.get_will_swinging_rook(
                 config_doc=self._config_doc,
                 table=self._gymnasium.table,
-                will_play_moves=will_play_moves)
-        print(f'★ go: ［振り飛車をする］意志を残してるか尋ねた後の指し手数={len(will_play_moves)}', file=sys.stderr)
-        print_moves(will_play_moves)
+                remaining_moves=remaining_moves)
+        print(f'★ go: ［振り飛車をする］意志を残してるか尋ねた後の指し手数={len(remaining_moves)}', file=sys.stderr)
+        print_moves(remaining_moves)
 
 
-        print(f'★ go: ［８八の角を素抜かれない］意志を残してるか尋ねる前の指し手数={len(will_play_moves)}', file=sys.stderr)
-        will_play_moves = GoLogics.get_will_not_to_be_cut_88_bishop(
+        print(f'★ go: ［８八の角を素抜かれない］意志を残してるか尋ねる前の指し手数={len(remaining_moves)}', file=sys.stderr)
+        remaining_moves = MovesReductionFilterLogics.get_will_not_to_be_cut_88_bishop(
                 config_doc=self._config_doc,
                 table=self._gymnasium.table,
-                will_play_moves=will_play_moves)
-        print(f'★ go: ［８八の角を素抜かれない］意志を残してるか尋ねた後の指し手数={len(will_play_moves)}', file=sys.stderr)
-        print_moves(will_play_moves)
+                remaining_moves=remaining_moves)
+        print(f'★ go: ［８八の角を素抜かれない］意志を残してるか尋ねた後の指し手数={len(remaining_moves)}', file=sys.stderr)
+        print_moves(remaining_moves)
 
 
     def test(self):

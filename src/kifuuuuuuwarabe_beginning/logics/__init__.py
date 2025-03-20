@@ -1,1 +1,1 @@
-from .go_logics import GoLogics
+from .moves_reduction_filter_logics import MovesReductionFilterLogics

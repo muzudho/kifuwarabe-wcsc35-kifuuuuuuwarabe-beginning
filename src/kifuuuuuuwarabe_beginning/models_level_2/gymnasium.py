@@ -30,11 +30,11 @@ class Gymnasium():
         self._nine_rank_side_value = 0
 
         # 初期状態では、有効でない行進演算です。
-        self._march_operation_list_when_idling = [
+        self._list_of_idle_negative_rules = [
             DoNotMoveRook(config_doc=config_doc),        # 行進［キリンは動くな］  NOTE 飛車を振るまで有効になりません
         ]
 
-        self._march_operation_list = [
+        self._list_of_negative_rules = [
             DoNotBack                                           (config_doc=config_doc),    # 行進［戻るな］
             DoNotBreakFamousFence                               (config_doc=config_doc),    # 行進［名の有る囲いを崩すな］
             DoNotBuildRightWall                                 (config_doc=config_doc),    # 行進［右壁を作るな］
@@ -72,15 +72,15 @@ class Gymnasium():
 
 
     @property
-    def march_operation_list_when_idling(self):
+    def list_of_idle_negative_rules(self):
         """初期状態では、有効でない行進演算です。
         """
-        return self._march_operation_list_when_idling
+        return self._list_of_idle_negative_rules
 
 
     @property
-    def march_operation_list(self):
-        return self._march_operation_list
+    def list_of_negative_rules(self):
+        return self._list_of_negative_rules
     
 
     @nine_rank_side_value.setter
