@@ -2,8 +2,8 @@
 """
 import cshogi
 
-from .helper import Helper
-from .models import Masu, Square
+from ..helper import Helper
+from ..models import Masu, Square
 
 
 class Pen():

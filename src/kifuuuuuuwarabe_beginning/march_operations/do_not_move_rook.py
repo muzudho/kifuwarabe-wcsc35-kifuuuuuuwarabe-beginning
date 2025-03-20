@@ -1,9 +1,7 @@
 import cshogi
-import sys
 
-from ..helper import Helper
 from ..models import constants, Square
-from ..nine_rank_side_perspective import Ban, Comparison, Ji
+from ..models_level_2.nine_rank_side_perspective import Ban, Comparison, Ji
 from .match_operation import MatchOperation
 
 
