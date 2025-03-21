@@ -2,9 +2,10 @@ import cshogi
 import datetime
 import sys
 
-from .models_o4x import Gymnasium
 from .logics_o1x import MovesReductionFilterLogics
-from .logics_o4x_usi import GoLogic, GoLogicResultState
+from .logics_o4x_usi import GoLogic
+from .models_o1x import SearchResultStateModel
+from .models_o4x import Gymnasium
 from .views import HistoryView, TableView
 
 
@@ -173,19 +174,19 @@ class ShogiEngineCompatibleWithUSIProtocol():
         ) = GoLogic.Go(
                 gymnasium = self._gymnasium)
 
-        if result == GoLogicResultState.RESIGN:
+        if result == SearchResultStateModel.RESIGN:
             # 投了。
             print(f'bestmove resign', flush=True)
             return
 
-        if result == GoLogicResultState.NYUGYOKU_WIN:
+        if result == SearchResultStateModel.NYUGYOKU_WIN:
             # 勝利宣言。
             print(f'bestmove win', flush=True)
             return
 
         best_move_as_usi = cshogi.move_to_usi(best_move)
 
-        if result == GoLogicResultState.MATE_IN_1_MOVE:
+        if result == SearchResultStateModel.MATE_IN_1_MOVE:
             # １手詰め時。
 
             print('info score mate 1 pv {}'.format(best_move_as_usi), flush=True)

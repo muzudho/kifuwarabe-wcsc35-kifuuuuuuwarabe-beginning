@@ -1,39 +1,9 @@
-import cshogi
 import random
 
-from ..logics_o1x import LoggerLogics, MovesReductionFilterLogics
-from ..models_o2x import NineRankSidePerspective
+from ..logics_o1x import MovesReductionFilterLogics
+from ..models_o1x import SearchResultStateModel
 from ..models_o3x import KomadokuFilterModel
 from .scramble_search import ScrambleSearch
-
-
-class GoLogicResultState():
-
-
-    @staticmethod
-    def RESIGN():
-        """投了。
-        """
-        return 1
-
-
-    @staticmethod
-    def NYUGYOKU_WIN():
-        """入玉宣言局面時。
-        """
-        return 2
-
-
-    def MATE_IN_1_MOVE():
-        """１手詰め時。
-        """
-        return 3
-
-
-    def BEST_MOVE():
-        """通常時の次の１手。
-        """
-        return 4
 
 
 class GoLogic():
@@ -83,12 +53,12 @@ class _Search():
         if self._gymnasium.table.is_game_over():
             """投了局面時。
             """
-            return GoLogicResultState.RESIGN, 0, None
+            return SearchResultStateModel.RESIGN, 0, None
 
         if self._gymnasium.table.is_nyugyoku():
             """入玉宣言局面時。
             """
-            return GoLogicResultState.NYUGYOKU_WIN, 0, None
+            return SearchResultStateModel.NYUGYOKU_WIN, 0, None
 
         # 一手詰めを詰める
         if not self._gymnasium.table.is_check():
@@ -96,7 +66,7 @@ class _Search():
 
             if (matemove := self._gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
-                return GoLogicResultState.MATE_IN_1_MOVE, 0, matemove
+                return SearchResultStateModel.MATE_IN_1_MOVE, 0, matemove
 
         remaining_moves = list(self._gymnasium.table.legal_moves)
         #print(f"A: {len(remaining_moves)=}")
@@ -107,60 +77,69 @@ class _Search():
 
         scramble_search = ScrambleSearch(
                 gymnasium = self._gymnasium)
-        scramble_search.start(
+
+        old_remaining_moves = remaining_moves.copy()
+
+        (
+            alpha,
+            remaining_moves
+        ) = scramble_search.start(
                 remaining_moves = remaining_moves)
+
+        if len(remaining_moves) == 0:
+            remaining_moves = old_remaining_moves
 
         ################
         # MARK: ループ前
         ################
 
-        # 駒得評価値でフィルタリング
-        #       制約：
-        #           指し手は必ず１つ以上残っています。
-        komadoku_filter_model = KomadokuFilterModel(
-                gymnasium = self._gymnasium)
+        # # 駒得評価値でフィルタリング
+        # #       制約：
+        # #           指し手は必ず１つ以上残っています。
+        # komadoku_filter_model = KomadokuFilterModel(
+        #         gymnasium = self._gymnasium)
 
-        ##################
-        # MARK: ループ直前
-        ##################
+        # ##################
+        # # MARK: ループ直前
+        # ##################
 
-        komadoku_filter_model.before_loop(
-                remaining_moves = remaining_moves)
+        # komadoku_filter_model.before_loop(
+        #         remaining_moves = remaining_moves)
 
-        # 残った手一覧
-        for move in remaining_moves:
+        # # 残った手一覧
+        # for move in remaining_moves:
 
-            ################
-            # MARK: 一手指す
-            ################
+        #     ################
+        #     # MARK: 一手指す
+        #     ################
 
-            # np_value は np.value() で囲まないこと。
-            #print(f'before move: {cshogi.move_to_usi(move)} {gymnasium.engine_turn=} {gymnasium.table.turn=} {np_best_value=} {gymnasium.np_value=}')
-            self._gymnasium.do_move_o1x(move = move)
+        #     # np_value は np.value() で囲まないこと。
+        #     #print(f'before move: {cshogi.move_to_usi(move)} {gymnasium.engine_turn=} {gymnasium.table.turn=} {np_best_value=} {gymnasium.np_value=}')
+        #     self._gymnasium.do_move_o1x(move = move)
 
-            ####################
-            # MARK: 一手指した後
-            ####################
+        #     ####################
+        #     # MARK: 一手指した後
+        #     ####################
 
-            komadoku_filter_model.after_moving(move = move)
+        #     komadoku_filter_model.after_moving(move = move)
 
-            ################
-            # MARK: 一手戻す
-            ################
+        #     ################
+        #     # MARK: 一手戻す
+        #     ################
 
-            self._gymnasium.undo_move_o1x()
+        #     self._gymnasium.undo_move_o1x()
 
-            ####################
-            # MARK: 一手戻した後
-            ####################
+        #     ####################
+        #     # MARK: 一手戻した後
+        #     ####################
 
-            komadoku_filter_model.after_undo_moving(removed_move = move)
+        #     komadoku_filter_model.after_undo_moving(removed_move = move)
 
-        ##################
-        # MARK: ループ直後
-        ##################
+        # ##################
+        # # MARK: ループ直後
+        # ##################
 
-        remaining_moves = komadoku_filter_model.after_loop()
+        # remaining_moves = komadoku_filter_model.after_loop()
 
         ################
         # MARK: ループ後
@@ -185,4 +164,4 @@ class _Search():
                 move        = best_move,
                 gymnasium   = self._gymnasium)
 
-        return GoLogicResultState.BEST_MOVE, 0, best_move
+        return SearchResultStateModel.BEST_MOVE, 0, best_move
