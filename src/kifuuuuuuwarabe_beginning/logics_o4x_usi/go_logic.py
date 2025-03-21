@@ -4,6 +4,7 @@ import random
 from ..logics_o1x import LoggerLogics, MovesReductionFilterLogics
 from ..models_o2x import NineRankSidePerspective
 from ..models_o3x import KomadokuFilterModel
+from .scramble_search import ScrambleSearch
 
 
 class GoLogicResultState():
@@ -99,6 +100,15 @@ class _Search():
 
         remaining_moves = list(self._gymnasium.table.legal_moves)
         #print(f"A: {len(remaining_moves)=}")
+
+        ############################
+        # MARK: スクランブル・サーチ
+        ############################
+
+        scramble_search = ScrambleSearch(
+                gymnasium = self._gymnasium)
+        scramble_search.start(
+                remaining_moves = remaining_moves)
 
         ################
         # MARK: ループ前

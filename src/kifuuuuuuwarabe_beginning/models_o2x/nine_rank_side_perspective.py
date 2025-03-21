@@ -32,6 +32,9 @@ class NineRankSidePerspective():
     
         #return self._table.turn == cshogi.WHITE and not self._after_moving
 
+    ################
+    # MARK: 盤上関連
+    ################
 
     def masu(self, masu):
         """［マス番号］
@@ -245,6 +248,10 @@ class NineRankSidePerspective():
         return self.bottom_right_of_sq(sq=Masu(masu).to_sq())
 
 
+    ##############
+    # MARK: 式関連
+    ##############
+
     def swap(self, a, b):
         """［比較］
         """
@@ -253,6 +260,10 @@ class NineRankSidePerspective():
         
         return a, b
 
+
+    ##############
+    # MARK: 駒関連
+    ##############
 
     def ji_pc(self, piece_type):
         """［自］。手番を持っている側。駒種類を手番の駒へ変換
@@ -264,6 +275,10 @@ class NineRankSidePerspective():
 
         return piece
 
+
+    ##################
+    # MARK: 評価値関連
+    ##################
 
     def value(self, value):
         """評価値"""
