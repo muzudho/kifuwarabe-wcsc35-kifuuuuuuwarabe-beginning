@@ -2,8 +2,8 @@ import cshogi
 import random
 
 from ..logics_o1x import LoggerLogics, MovesReductionFilterLogics
-from ..logics_o3x import KomadokuFilterLogics
 from ..models_o2x import NineRankSidePerspective
+from ..models_o3x import KomadokuFilterModel
 
 
 class GoLogicResultState():
@@ -100,30 +100,22 @@ class _Search():
         remaining_moves = list(self._gymnasium.table.legal_moves)
         #print(f"A: {len(remaining_moves)=}")
 
-
-
-
-
-
+        ################
+        # MARK: ループ前
+        ################
 
         # 駒得評価値でフィルタリング
         #       制約：
         #           指し手は必ず１つ以上残っています。
-        old_remaining_moves = remaining_moves.copy
+        komadoku_filter_model = KomadokuFilterModel(
+                gymnasium = self._gymnasium)
 
-        np = NineRankSidePerspective(
-                table = self._gymnasium.table)
-        np_rev = NineRankSidePerspective(
-                table           = self._gymnasium.table,
-                after_moving    = True)
+        ##################
+        # MARK: ループ直前
+        ##################
 
-        if self._gymnasium.config_doc['debug_mode']['search_do_undo']:
-            print('in debug')
-            dump_1 = self._gymnasium.dump()
-
-        best_move_list = []
-
-        np_best_value = np.value(-99999)  # スタート値。
+        komadoku_filter_model.before_loop(
+                remaining_moves = remaining_moves)
 
         # 残った手一覧
         for move in remaining_moves:
@@ -136,44 +128,33 @@ class _Search():
             #print(f'before move: {cshogi.move_to_usi(move)} {gymnasium.engine_turn=} {gymnasium.table.turn=} {np_best_value=} {gymnasium.np_value=}')
             self._gymnasium.do_move_o1x(move = move)
 
-            e1 = np_rev.swap(np_best_value, self._gymnasium.np_value)
-            #print(f'after move: {cshogi.move_to_usi(move)} エンジン手番:{gymnasium.engine_turn} 手番:{gymnasium.table.turn} {np_best_value=} {gymnasium.np_value=} {e1[0]=} {e1[1]=} {e1[0] < e1[1]=}')
+            ####################
+            # MARK: 一手指した後
+            ####################
 
-            # 更新。
-            if e1[0] < e1[1]:
-                np_best_value = self._gymnasium.np_value
-                best_move_list = [move]
-                
-            elif np_best_value == self._gymnasium.np_value:
-                best_move_list.append(move)
+            komadoku_filter_model.after_moving(move = move)
 
             ################
             # MARK: 一手戻す
             ################
+
             self._gymnasium.undo_move_o1x()
 
-            if self._gymnasium.config_doc['debug_mode']['search_do_undo']:
-                dump_2 = self._gymnasium.dump()
-                if dump_1 != dump_2:
+            ####################
+            # MARK: 一手戻した後
+            ####################
 
-                    LoggerLogics.DumpDiffError(
-                            dump_1  = dump_1,
-                            dump_2  = dump_2)
+            komadoku_filter_model.after_undo_moving(removed_move = move)
 
-                    raise ValueError(f"dump error in search")
+        ##################
+        # MARK: ループ直後
+        ##################
 
-        # 指し手が全部消えてしまった場合、何でも指すようにします
-        if len(best_move_list) < 1:
-            remaining_moves = old_remaining_moves
-        
-        else:
-            remaining_moves = best_move_list
+        remaining_moves = komadoku_filter_model.after_loop()
 
-
-
-
-
-
+        ################
+        # MARK: ループ後
+        ################
 
         # 合法手から、１手を選び出します。
         # （必ず、投了ではない手が存在します）
