@@ -81,9 +81,9 @@ class QuiescenceSearchForScramble():
                 """一手詰めの指し手があれば、それを取得"""
                 return constants.value.CHECKMATE, matemove, {matemove: constants.value.CHECKMATE}  # 勝ちだから
 
-        alice_s_best_profit_after_value     = constants.value.STALEMATE    # （指し手のリストが空でなければ）どんな手でも更新される。
-        alice_s_best_move_list  = []
-        alice_s_move_wp_list  = []
+        alice_s_best_profit_after_value = constants.value.STALEMATE     # （指し手のリストが空でなければ）どんな手でも更新される。
+        alice_s_best_move_list          = []
+        alice_s_move_wp_list            = []
 
         ##############################
         # MARK: アリスの合法手スキャン
@@ -99,8 +99,8 @@ class QuiescenceSearchForScramble():
             dst_sq_obj = Square(cshogi.move_to(alice_s_move))           # 移動先マス
             cap_pt = self._gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
 
-            # １回呼出時、駒を取る手で無ければ無視
-            if ignore_at_first_if_not_capture and cap_pt == cshogi.NONE:
+            # １階呼出時、設定により無視。２階呼出時、駒を取る手で無ければ無視
+            if ignore_at_first_if_not_capture or cap_pt == cshogi.NONE:
                 continue
 
             ########################
