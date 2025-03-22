@@ -78,7 +78,7 @@ class QuiescenceSearchForScramble():
                 """一手詰めの指し手があれば、それを取得"""
                 return constants.value.CHECKMATE, matemove, {matemove: constants.value.CHECKMATE}  # 勝ちだから
 
-        alice_s_best_profit_after_value = constants.value.NOTHING_CAPTURE_MOVE  # （指し手のリストが空でなければ）どんな手でも更新される。
+        alice_s_best_value = constants.value.NOTHING_CAPTURE_MOVE  # （指し手のリストが空でなければ）どんな手でも更新される。
         alice_s_best_move_list          = []
         alice_s_move_wp_list            = []
 
@@ -95,6 +95,7 @@ class QuiescenceSearchForScramble():
 
             dst_sq_obj = Square(cshogi.move_to(alice_s_move))           # 移動先マス
             cap_pt = self._gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
+            piece_value = PieceValues.by_piece_type(pt=cap_pt)
 
             # １回呼出時。
             if self._max_depth == depth:
@@ -119,8 +120,7 @@ class QuiescenceSearchForScramble():
 
             # これ以上深く読まない場合。
             if depth - 1 < 1:
-                alice_s_value = PieceValues.by_piece_type(pt=cap_pt)    # 駒を取ったことによる得。
-                bob_s_value = - alice_s_value                           # 相手から見れば、駒を取られたことによる損失。
+                alice_s_value = piece_value     # 駒を取ったことによる得。
 
             # まだ深く読む場合。
             else:
@@ -135,19 +135,21 @@ class QuiescenceSearchForScramble():
                     depth                           = depth,
                     alice_s_remaining_moves         = list(self._gymnasium.table.legal_moves))
 
+                alice_s_value = piece_value - bob_s_value   # 今取った駒の価値から、末端の枝の積み重ね（bob_s_value）を引く。
+
             # TODO アリスとしては、損が一番小さな分岐へ進みたい。
             # 手番は、一番得する手を指したい。
-            if alice_s_best_profit_after_value < -bob_s_value:
-                alice_s_best_profit_after_value = -bob_s_value
+            if alice_s_best_value < alice_s_value:
+                alice_s_best_value = alice_s_value
                 alice_s_best_move_list = [alice_s_move]
-            elif alice_s_best_profit_after_value == -bob_s_value:
+            elif alice_s_best_value == alice_s_value:
                 alice_s_best_move_list.append(alice_s_move)
 
             # 指し手と、その得を紐づけます。
             alice_s_move_wp_list.append(
                     MoveWithProfit(
                             move    = alice_s_move,
-                            profit  = -bob_s_value))
+                            profit  = alice_s_value))
 
             ########################
             # MARK: アリスが一手戻す
@@ -164,4 +166,4 @@ class QuiescenceSearchForScramble():
         ########################
         # MARK: 合法手スキャン後
         ########################
-        return alice_s_best_profit_after_value, alice_s_best_move_list, alice_s_move_wp_list
+        return alice_s_best_value, alice_s_best_move_list, alice_s_move_wp_list
