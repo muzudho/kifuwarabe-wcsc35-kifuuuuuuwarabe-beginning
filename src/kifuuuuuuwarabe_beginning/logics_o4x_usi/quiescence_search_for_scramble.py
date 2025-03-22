@@ -48,7 +48,10 @@ class QuiescenceSearchForScramble():
             アリスの点数。
         alice_s_best_move_list : list
             アリスの最善手のリスト。０～複数件の指し手。
-            # FIXME 入玉宣言勝ちは空リストが返ってくる。            
+        alice_s_moves_dist : dist
+            アリスの全ての指し手と、それに紐づく得の辞書。
+            # 投了時は空っぽの辞書。
+            # FIXME 入玉宣言勝ちは空リストが返ってくる。
         """
 
         if depth < 1:
@@ -61,12 +64,12 @@ class QuiescenceSearchForScramble():
         if self._gymnasium.table.is_game_over():
             """手番の投了局面時。
             """
-            return -10000, [] # 負けだから
+            return -10000, [], {} # 負けだから
 
         if self._gymnasium.table.is_nyugyoku():
             """手番の入玉宣言局面時。
             """
-            return 10000, []  # 勝ちだから  FIXME 入玉宣言勝ちをどうやって返す？
+            return 10000, [], {}  # 勝ちだから  FIXME 入玉宣言勝ちをどうやって返す？
 
         # 一手詰めを詰める
         if not self._gymnasium.table.is_check():
@@ -74,10 +77,11 @@ class QuiescenceSearchForScramble():
 
             if (matemove := self._gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
-                return 10000, matemove  # 勝ちだから
+                return 10000, matemove, {matemove: 10000}  # 勝ちだから
 
         alice_s_best_profit_after_value     = -10000    # （指し手のリストが空でなければ）どんな手でも更新される。
         alice_s_best_move_list  = []
+        alice_s_moves_dist  = {}
 
         ##############################
         # MARK: アリスの合法手スキャン
@@ -120,7 +124,8 @@ class QuiescenceSearchForScramble():
 
                 (
                     bob_s_value,
-                    bob_s_best_move_list   # FIXME 入玉宣言勝ちは空リストが返ってくる。
+                    bob_s_best_move_list,   # FIXME 入玉宣言勝ちは空リストが返ってくる。
+                    bob_s_moves_dict
                 ) = self.search_alice(
                     depth                       = depth,
                     alice_s_profit_before_move  = - alice_s_profit_after_move, # 相手から見た点にするため、正負を逆にします。
@@ -132,6 +137,9 @@ class QuiescenceSearchForScramble():
                 alice_s_best_move_list = [alice_s_move]
             elif alice_s_best_profit_after_value == -bob_s_value:
                 alice_s_best_move_list.append(alice_s_move)
+
+            # 指し手と、その得を紐づけます。
+            alice_s_moves_dist[alice_s_move] = -bob_s_value
 
             ########################
             # MARK: アリスが一手戻す
@@ -148,4 +156,4 @@ class QuiescenceSearchForScramble():
         ########################
         # MARK: 合法手スキャン後
         ########################
-        return alice_s_best_profit_after_value, alice_s_best_move_list
+        return alice_s_best_profit_after_value, alice_s_best_move_list, alice_s_moves_dist

@@ -1,3 +1,4 @@
+import cshogi
 import random
 
 from ..logics_o1x import MovesReductionFilterLogics
@@ -18,11 +19,13 @@ class GoLogic():
             ［指す手］
         """
         search = _Search(gymnasium)
+
         (
             result_state,
             friend_value,
             best_move
-        ) = search.search()
+        ) = search.start_alice()
+
         return (result_state, best_move)
 
 
@@ -33,10 +36,10 @@ class _Search():
         self._gymnasium = gymnasium
 
 
-    def search(self):
+    def start_alice(self):
         """盤面が与えられるので、次の１手を返します。
 
-        TODO 再帰的に呼び出されます。
+        最初の１手だけの処理です。
 
         Returns
         -------
@@ -75,6 +78,12 @@ class _Search():
         ################
 
         def _quiescence_search_for_scramble_on_board(depth, remaining_moves, gymnasium):
+            """
+            Returns
+            -------
+            remaining_moves : list
+                指し手のリスト。
+            """
             # 駒の取り合いのための静止探索
             scramble_search = QuiescenceSearchForScramble(
                     gymnasium = gymnasium)
@@ -85,23 +94,47 @@ class _Search():
             alice_s_profit_before_move  = 0
             alice_s_remaining_moves_before_move = []
 
-            if 0 < depth:
-                (
-                    alice_s_profit_after_move,
-                    alice_s_remaining_moves_before_move     # NOTE 入玉宣言勝ちは空リストが返ってくるが、事前に省いているからＯｋ。
-                ) = scramble_search.search_alice(
-                        depth                       = depth,
-                        alice_s_profit_before_move  = alice_s_profit_before_move,   # アリスの得。
-                        alice_s_remaining_moves     = remaining_moves)
+            if depth < 1:
+                print(f"D97: {depth=}")
+                return remaining_moves
+
+            (
+                alice_s_profit_after_move,
+                alice_s_remaining_moves_before_move,    # NOTE 入玉宣言勝ちは空リストが返ってくるが、事前に省いているからＯｋ。
+                alice_s_moves_dict
+            ) = scramble_search.search_alice(
+                    depth                       = depth,
+                    alice_s_profit_before_move  = alice_s_profit_before_move,   # アリスの得。
+                    alice_s_remaining_moves     = remaining_moves)
 
             #print(f"{alice_s_profit_after_move=} {len(alice_s_remaining_moves_before_move)=}")
 
-            # 駒を取る手があり、かつ、アリスに得があればその手に制限します。
-            if 0 < len(alice_s_remaining_moves_before_move) and 0 < alice_s_profit_after_move:
+            # 最善手が無ければ（全ての手がフラットなら）、元に戻します。
+            if len(alice_s_remaining_moves_before_move) < 1:
+                print(f"D113: {len(alice_s_remaining_moves_before_move)=}")
+                return old_remaining_moves
+
+            # 最善手がアリスに得のある手であれば、その手に制限します。
+            if 0 < alice_s_profit_after_move:
+                print(f"D118: {alice_s_profit_after_move=}")
                 return alice_s_remaining_moves_before_move
             
-            # それ以外なら元に戻します。
-            return old_remaining_moves
+            # アリスに非得の手しかなければ、非損の手に制限します。
+            alice_s_move_list_2 = []
+            for alice_s_move, alice_s_profit in alice_s_moves_dict.items():
+                print(f"D: {cshogi.move_to_usi(alice_s_move)=} {alice_s_profit=}")
+                if 0 <= alice_s_profit:
+                    alice_s_move_list_2.append(alice_s_move)
+            
+            # 非損の手もなければ、元に戻します。
+            if len(alice_s_move_list_2) == 0:
+                print(f"D129: {len(alice_s_move_list_2)=}")
+                return old_remaining_moves
+
+            # 非損の手のリスト。
+            print(f"D133: {len(alice_s_move_list_2)=}")
+            return alice_s_move_list_2
+
 
         remaining_moves = _quiescence_search_for_scramble_on_board(
                 depth           = 2,                # 何手読みか。
@@ -125,6 +158,8 @@ class _Search():
 
         # １手に絞り込む
         best_move = random.choice(remaining_moves)
+        print(f"C: {best_move=}")
+        print(f"C: {cshogi.move_to_usi(best_move)=}")
 
         # ［指後］
         MovesReductionFilterLogics.after_best_moving(
