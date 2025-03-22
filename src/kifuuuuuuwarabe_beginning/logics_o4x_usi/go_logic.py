@@ -82,7 +82,7 @@ class _Search():
 
         (
             alpha,
-            remaining_moves
+            remaining_moves     # NOTE 入玉宣言勝ちは空リストが返ってくるが、事前に省いているからＯｋ。
         ) = scramble_search.start(
                 remaining_moves = remaining_moves)
 

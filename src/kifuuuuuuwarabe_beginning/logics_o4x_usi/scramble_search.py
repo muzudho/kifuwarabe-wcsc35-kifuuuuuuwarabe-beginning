@@ -26,6 +26,14 @@ class ScrambleSearch():
         #   手番の２手目なら：
         #       ［動いた駒を取る手］に絞り込む。（１番安い駒から動かす）
         #   最後の評価値が、１手目の評価値。
+
+        Returns
+        -------
+        alpha : int
+            手番の点数。
+        best_move_list : list
+            最善手のリスト。０～複数件の指し手。
+            # FIXME 入玉宣言勝ちは空リストが返ってくる。            
         """
 
         np = NineRankSidePerspective(table = self._gymnasium.table)
@@ -41,32 +49,22 @@ class ScrambleSearch():
                 take_move_list.append(move)
 
         # TODO take_move_list のオーダリングがしたければ、ここでする。
+        
+        alices_value_before_move = 0    # 手番の点数。
 
-        alpha           = 0
-        best_alpha      = -10000
-        best_move_list  = []
-
-        # ［駒を取る手］のスクランブル・サーチをする。
-        for move in take_move_list:
-            #print(f'take_move={cshogi.move_to_usi(move)}')
-            
-            # alpha は自分の点数。相手の点数を逆にしたのが自分の点数。
-            alpha = - _ScrambleCaptureSearch.search(
-                depth           = 2,
-                alpha           = -alpha,   # 相手から見れば、取られているから負。
-                opponent_move   = move,
-                gymnasium       = self._gymnasium)
-
-            if best_alpha < alpha:
-                best_alpha = alpha
-                best_move_list = [move]
-            elif best_alpha == alpha:
-                best_move_list.append(move)
+        (
+            alices_value_after_move,
+            alices_best_move_list   # FIXME 入玉宣言勝ちは空リストが返ってくる。
+        ) = _ScrambleCaptureSearch.beta_search(
+            depth                   = 2,
+            bobs_value_before_move  = alices_value_before_move, # 相手から見た相手（beta）は、自分（alpha）。
+            bobs_take_move_list     = take_move_list,
+            gymnasium               = self._gymnasium)
 
         ################
         # MARK: ループ後
         ################
-        return alpha, best_move_list
+        return alices_value_after_move, alices_best_move_list
 
 
 class _ScrambleCaptureSearch():
@@ -75,87 +73,108 @@ class _ScrambleCaptureSearch():
 
 
     @staticmethod
-    def search(depth, alpha, opponent_move, gymnasium):
+    def beta_search(depth, bobs_value_before_move, bobs_take_move_list, gymnasium):
+        """
+        Returns
+        -------
+        bobs_value_before_move : int
+            相手番（ボブ）の、指す前の点数。
+        bobs_best_move_list : list
+            相手番（ボブ）の最善手のリスト。０～複数件の指し手。
+            FIXME 入玉宣言勝ちは空リストが返ってくる。
+        """
 
-        dst_sq_obj  = Square(cshogi.move_to(opponent_move))     # 移動先マス
-        dst_pc      = gymnasium.table.piece(dst_sq_obj.sq)      # 移動先マスにある駒
-        piece_value = PieceValues.by_piece_type(pt=cshogi.piece_to_piece_type(dst_pc))
+        ##########################
+        # MARK: 相手番の全取る手前
+        ##########################
 
-        alpha -= piece_value    # 自分の駒が取られたから引く
+        bobs_best_value     = -10000
+        bobs_best_move_list = []
 
-        ################
-        # MARK: 一手指す
-        ################
+        # 相手番（ボブ）が［駒を取る手］を全部調べる。
+        for bobs_move in bobs_take_move_list:
+            #print(f'take_move={cshogi.move_to_usi(opponent_move)}')
 
-        gymnasium.do_move_o1x(move = opponent_move)
+            dst_sq_obj  = Square(cshogi.move_to(bobs_move))     # 移動先マス
+            dst_pc      = gymnasium.table.piece(dst_sq_obj.sq)      # 移動先マスにある駒
+            friend_piece_value = PieceValues.by_piece_type(pt=cshogi.piece_to_piece_type(dst_pc))
 
-        ####################
-        # MARK: 一手指した後
-        ####################
+            bobs_value_after_move = bobs_value_before_move + friend_piece_value    # 自分の駒が取られたから、相手番の点数が増える
 
-        if gymnasium.table.is_game_over():
-            """投了局面時。
-            """
-            return -10000   # 負けだから
+            if 0 < depth:
 
-        if gymnasium.table.is_nyugyoku():
-            """入玉宣言局面時。
-            """
-            return 10000    # 勝ちだから
+                ########################
+                # MARK: 相手番が一手指す
+                ########################
 
-        # 一手詰めを詰める
-        if not gymnasium.table.is_check():
-            """自玉に王手がかかっていない時で"""
+                gymnasium.do_move_o1x(move = bobs_move)
 
-            if (matemove := gymnasium.table.mate_move_in_1ply()):
-                """一手詰めの指し手があれば、それを取得"""
-                return 10000    # 勝ちだから
+                ############################
+                # MARK: 相手番が一手指した後
+                ############################
 
-        if 0 < depth:
+                if gymnasium.table.is_game_over():
+                    """手番の投了局面時。
+                    """
+                    return -10000, [] # 負けだから
 
-            take_move_list = []
+                if gymnasium.table.is_nyugyoku():
+                    """手番の入玉宣言局面時。
+                    """
+                    return 10000, []  # 勝ちだから  FIXME 入玉宣言勝ちをどうやって返す？
 
-            # ［駒を取る手］を全部探す。
-            for move in list(gymnasium.table.legal_moves):
+                # 一手詰めを詰める
+                if not gymnasium.table.is_check():
+                    """手番玉に王手がかかっていない時で"""
 
-                dst_sq_obj = Square(cshogi.move_to(move))               # 移動先マス
-                dst_pc = gymnasium.table.piece(dst_sq_obj.sq)     # 移動先マスにある駒
-                if Turn.is_opponent_pc(piece=dst_pc, table=gymnasium.table):
-                    take_move_list.append(move)
+                    if (matemove := gymnasium.table.mate_move_in_1ply()):
+                        """一手詰めの指し手があれば、それを取得"""
+                        return 10000, matemove  # 勝ちだから
 
-            # TODO take_move_list のオーダリングがしたければ、ここでする。
+                ########################
+                # MARK: 手番の全取る手前
+                ########################
 
-            best_alpha = -10000
-            best_move_list = []
+                alices_take_move_list = []
 
-            # ［駒を取る手］のスクランブル・サーチをする。
-            for move in take_move_list:
-                
+                # ［駒を取る手］を全部探す。
+                for alices_move in list(gymnasium.table.legal_moves):
+
+                    dst_sq_obj = Square(cshogi.move_to(alices_move))       # 移動先マス
+                    dst_pc = gymnasium.table.piece(dst_sq_obj.sq)   # 移動先マスにある駒
+                    if Turn.is_opponent_pc(piece=dst_pc, table=gymnasium.table):
+                        alices_take_move_list.append(alices_move)
+
+                # TODO take_move_list のオーダリングがしたければ、ここでする。
+
+                alices_value_before_move = - bobs_value_after_move
+
                 # alpha は自分の点数。相手の点数を逆にしたのが自分の点数。
-                alpha = - _ScrambleCaptureSearch.search(
-                    depth           = depth - 1,
-                    alpha           = -alpha,   # 相手から見れば、取られているから負。
-                    opponent_move   = move,
-                    gymnasium       = gymnasium)
+                (
+                    alices_value_after_move,
+                    alices_best_move_list
+                ) = _ScrambleCaptureSearch.beta_search(
+                    depth                   = depth - 1,
+                    bobs_value_before_move  = alices_value_before_move,
+                    bobs_take_move_list     = alices_take_move_list,
+                    gymnasium               = gymnasium)
 
-                if best_alpha < alpha:
-                    best_alpha = alpha
-                    best_move_list = [move]
-                elif best_alpha == alpha:
-                    best_move_list.append(move)
+                ########################
+                # MARK: 相手番が一手戻す
+                ########################
 
-            ################
-            # MARK: ループ後
-            ################
+                gymnasium.undo_move_o1x()
 
-        ################
-        # MARK: 一手戻す
-        ################
+                # 相手番は、一番得する手を指したい。
+                if bobs_best_value < -alices_value_after_move:
+                    bobs_best_value = -alices_value_after_move
+                    bobs_best_move_list = [bobs_move]
+                elif bobs_best_value == -alices_value_after_move:
+                    bobs_best_move_list.append(bobs_move)
 
-        gymnasium.undo_move_o1x()
+        ##########################
+        # MARK: 相手番の全取る手後
+        ##########################
 
-        ####################
-        # MARK: 一手戻した後
-        ####################
+        return bobs_best_value, bobs_best_move_list
 
-        return alpha
