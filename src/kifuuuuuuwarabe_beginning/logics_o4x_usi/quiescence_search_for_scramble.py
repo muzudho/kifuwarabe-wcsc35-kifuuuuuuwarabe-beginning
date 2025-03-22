@@ -1,7 +1,7 @@
 import cshogi
 
 from ..logics_o1x import Helper
-from ..models_o1x import MoveWithProfit, PieceValues, PieceType, Square, Turn
+from ..models_o1x import constants, MoveWithProfit, PieceValues, PieceType, Square, Turn
 
 
 class QuiescenceSearchForScramble():
@@ -66,12 +66,12 @@ class QuiescenceSearchForScramble():
         if self._gymnasium.table.is_game_over():
             """手番の投了局面時。
             """
-            return -10000, [], {} # 負けだから
+            return constants.value.GAME_OVER, [], {} # 負けだから
 
         if self._gymnasium.table.is_nyugyoku():
             """手番の入玉宣言局面時。
             """
-            return 10000, [], {}  # 勝ちだから  FIXME 入玉宣言勝ちをどうやって返す？
+            return constants.value.NYUGYOKU_WIN, [], {}  # 勝ちだから  FIXME 入玉宣言勝ちをどうやって返す？
 
         # 一手詰めを詰める
         if not self._gymnasium.table.is_check():
@@ -79,9 +79,9 @@ class QuiescenceSearchForScramble():
 
             if (matemove := self._gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
-                return 10000, matemove, {matemove: 10000}  # 勝ちだから
+                return constants.value.CHECKMATE, matemove, {matemove: constants.value.CHECKMATE}  # 勝ちだから
 
-        alice_s_best_profit_after_value     = -10000    # （指し手のリストが空でなければ）どんな手でも更新される。
+        alice_s_best_profit_after_value     = constants.value.STALEMATE    # （指し手のリストが空でなければ）どんな手でも更新される。
         alice_s_best_move_list  = []
         alice_s_move_wp_list  = []
 

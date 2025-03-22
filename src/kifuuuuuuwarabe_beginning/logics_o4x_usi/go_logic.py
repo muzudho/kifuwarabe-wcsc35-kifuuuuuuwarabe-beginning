@@ -71,7 +71,7 @@ class _Search():
                 return SearchResultStateModel.MATE_IN_1_MOVE, 0, matemove
 
         remaining_moves = list(self._gymnasium.table.legal_moves)
-        #print(f"A: {len(remaining_moves)=}")
+        #print(f"D74: {len(remaining_moves)=}")
 
         ################
         # MARK: 静止探索
@@ -95,12 +95,12 @@ class _Search():
         remaining_moves = MovesReductionFilterLogics.before_move_o1x(
                 remaining_moves = remaining_moves,
                 gymnasium       = self._gymnasium)
-        print(f"C: {len(remaining_moves)=}")
+        print(f"D98: {len(remaining_moves)=}")
 
         # １手に絞り込む
         best_move = random.choice(remaining_moves)
-        print(f"C: {best_move=}")
-        print(f"C: {cshogi.move_to_usi(best_move)=}")
+        print(f"D102: {best_move=}")
+        print(f"D103: {cshogi.move_to_usi(best_move)=}")
 
         # ［指後］
         MovesReductionFilterLogics.after_best_moving(
@@ -129,7 +129,7 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
     alice_s_remaining_moves_before_move = []
 
     if depth < 1:
-        print(f"D97: {depth=}")
+        print(f"D132: _quiescence_search {depth=}")
         return remaining_moves
 
     (
@@ -144,11 +144,17 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
 
     #print(f"{alice_s_profit_after_move=} {len(alice_s_remaining_moves_before_move)=}")
 
+    # DEBUG
+    for alice_s_omve_wp in alice_s_move_wp_list:
+        print(f"D149: _quiescence_search {alice_s_profit_after_move=} {alice_s_omve_wp.stringify()=}")
+
     # 最善手があるなら、最善手を返します。
     if 0 < len(alice_s_remaining_moves_before_move):
+        print(f"D153: _quiescence_search {alice_s_profit_after_move=} {len(alice_s_remaining_moves_before_move)=}")
         return alice_s_remaining_moves_before_move
 
     # 最善手が無ければ（全ての手がフラットなら）、元に戻します。
+    print(f"D157: _quiescence_search {alice_s_profit_after_move=} {len(alice_s_remaining_moves_before_move)=}")
     return old_remaining_moves
 
     # if len(alice_s_remaining_moves_before_move) < 1:
