@@ -119,7 +119,6 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
         指し手のリスト。
     """
     max_depth                   = 2
-    alice_s_profit_before_move  = 0
     alice_s_remaining_moves_before_move = []
 
     # 駒の取り合いのための静止探索
@@ -139,7 +138,6 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
         alice_s_move_wp_list
     ) = scramble_search.search_alice(
             depth                           = max_depth,
-            alice_s_profit_before_move      = alice_s_profit_before_move,   # アリスの得。
             alice_s_remaining_moves         = remaining_moves)
 
     #print(f"{alice_s_profit_after_move=} {len(alice_s_remaining_moves_before_move)=}")

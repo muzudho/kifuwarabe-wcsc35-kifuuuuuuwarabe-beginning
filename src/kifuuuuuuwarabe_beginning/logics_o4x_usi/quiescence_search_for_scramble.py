@@ -21,7 +21,7 @@ class QuiescenceSearchForScramble():
         self._gymnasium = gymnasium
 
 
-    def search_alice(self, depth, alice_s_profit_before_move, alice_s_remaining_moves):
+    def search_alice(self, depth, alice_s_remaining_moves):
         """
         TODO 静止探索はせず、［スクランブル・サーチ］というのを考える。静止探索は王手が絡むと複雑だ。
         リーガル・ムーブのうち、
@@ -38,8 +38,6 @@ class QuiescenceSearchForScramble():
         ----------
         depth : int
             残りの探索深さ。
-        alice_s_profit_before_move : int
-            １手指す前のアリスの得。
         alice_s_remaining_moves : list<int>
             アリスの指し手のリスト。
 
@@ -117,14 +115,12 @@ class QuiescenceSearchForScramble():
             # MARK: アリスが一手指した後
             ############################
 
-            piece_profit = PieceValues.by_piece_type(pt=cap_pt)
-            alice_s_profit_after_move = alice_s_profit_before_move + piece_profit
-
-            #print(f"(next {self._gymnasium.table.move_number} teme) ({index}) alice's move={cshogi.move_to_usi(alice_s_move)}({Helper.sq_to_masu(dst_sq_obj.sq)}) pt({PieceType.alphabet(piece_type=cap_pt)}) {alice_s_profit_after_move=} {alice_s_profit_before_move=} {piece_profit=}")
+            #print(f"(next {self._gymnasium.table.move_number} teme) ({index}) alice's move={cshogi.move_to_usi(alice_s_move)}({Helper.sq_to_masu(dst_sq_obj.sq)}) pt({PieceType.alphabet(piece_type=cap_pt)}) {alice_s_profit_after_move=} {piece_profit=}")
 
             # これ以上深く読まない場合。
             if depth - 1 < 1:
-                bob_s_value = - alice_s_profit_after_move
+                alice_s_value = PieceValues.by_piece_type(pt=cap_pt)    # 駒を取ったことによる得。
+                bob_s_value = - alice_s_value                           # 相手から見れば、駒を取られたことによる損失。
 
             # まだ深く読む場合。
             else:
@@ -137,12 +133,9 @@ class QuiescenceSearchForScramble():
                     bob_s_move_wp_list
                 ) = self.search_alice(
                     depth                           = depth,
-                    alice_s_profit_before_move      = - alice_s_profit_after_move, # 相手から見た点にするため、正負を逆にします。
                     alice_s_remaining_moves         = list(self._gymnasium.table.legal_moves))
 
-            if bob_s_value == constants.value.NOTHING_CAPTURE_MOVE:
-                pass
-
+            # TODO アリスとしては、損が一番小さな分岐へ進みたい。
             # 手番は、一番得する手を指したい。
             if alice_s_best_profit_after_value < -bob_s_value:
                 alice_s_best_profit_after_value = -bob_s_value
