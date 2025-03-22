@@ -29,26 +29,12 @@ class ScrambleSearch():
 
         Returns
         -------
-        alpha : int
+        alices_value_after_move : int
             手番の点数。
-        best_move_list : list
+        alices_best_move_list : list
             最善手のリスト。０～複数件の指し手。
             # FIXME 入玉宣言勝ちは空リストが返ってくる。            
         """
-
-        np = NineRankSidePerspective(table = self._gymnasium.table)
-
-        take_move_list = []
-
-        # ［駒を取る手］を全部探す。
-        for move in remaining_moves:
-
-            dst_sq_obj = Square(cshogi.move_to(move))               # 移動先マス
-            dst_pc = self._gymnasium.table.piece(dst_sq_obj.sq)     # 移動先マスにある駒
-            if Turn.is_opponent_pc(piece=dst_pc, table=self._gymnasium.table):
-                take_move_list.append(move)
-
-        # TODO take_move_list のオーダリングがしたければ、ここでする。
         
         alices_value_before_move = 0    # 手番の点数。
 
@@ -58,7 +44,7 @@ class ScrambleSearch():
         ) = _ScrambleCaptureSearch.beta_search(
             depth                   = 2,
             bobs_value_before_move  = alices_value_before_move, # 相手から見た相手（beta）は、自分（alpha）。
-            bobs_take_move_list     = take_move_list,
+            bobs_remaining_moves    = remaining_moves,
             gymnasium               = self._gymnasium)
 
         ################
@@ -73,16 +59,30 @@ class _ScrambleCaptureSearch():
 
 
     @staticmethod
-    def beta_search(depth, bobs_value_before_move, bobs_take_move_list, gymnasium):
+    def beta_search(depth, bobs_value_before_move, bobs_remaining_moves, gymnasium):
         """
         Returns
         -------
         bobs_value_before_move : int
             相手番（ボブ）の、指す前の点数。
-        bobs_best_move_list : list
+        bobs_remaining_moves : list
             相手番（ボブ）の最善手のリスト。０～複数件の指し手。
             FIXME 入玉宣言勝ちは空リストが返ってくる。
+        gymnasium : Gymnasium
+            体育館。
         """
+
+        bobs_take_move_list = []
+
+        # ［駒を取る手］を全部探す。
+        for move in bobs_remaining_moves:
+
+            dst_sq_obj = Square(cshogi.move_to(move))               # 移動先マス
+            dst_pc = gymnasium.table.piece(dst_sq_obj.sq)     # 移動先マスにある駒
+            if Turn.is_opponent_pc(piece=dst_pc, table=gymnasium.table):
+                bobs_take_move_list.append(move)
+
+        # TODO take_move_list のオーダリングがしたければ、ここでする。
 
         ##########################
         # MARK: 相手番の全取る手前
@@ -135,19 +135,11 @@ class _ScrambleCaptureSearch():
                 # MARK: 手番の全取る手前
                 ########################
 
-                alices_take_move_list = []
-
-                # ［駒を取る手］を全部探す。
-                for alices_move in list(gymnasium.table.legal_moves):
-
-                    dst_sq_obj = Square(cshogi.move_to(alices_move))       # 移動先マス
-                    dst_pc = gymnasium.table.piece(dst_sq_obj.sq)   # 移動先マスにある駒
-                    if Turn.is_opponent_pc(piece=dst_pc, table=gymnasium.table):
-                        alices_take_move_list.append(alices_move)
+                alices_remaining_moves = gymnasium.table.legal_moves
 
                 # TODO take_move_list のオーダリングがしたければ、ここでする。
 
-                alices_value_before_move = - bobs_value_after_move
+                alices_value_before_move = - bobs_value_after_move  # 手番の点数。
 
                 # alpha は自分の点数。相手の点数を逆にしたのが自分の点数。
                 (
@@ -156,7 +148,7 @@ class _ScrambleCaptureSearch():
                 ) = _ScrambleCaptureSearch.beta_search(
                     depth                   = depth - 1,
                     bobs_value_before_move  = alices_value_before_move,
-                    bobs_take_move_list     = alices_take_move_list,
+                    bobs_remaining_moves    = alices_remaining_moves,
                     gymnasium               = gymnasium)
 
                 ########################
