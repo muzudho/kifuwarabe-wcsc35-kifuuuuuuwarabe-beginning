@@ -20,7 +20,7 @@ class QuiescenceSearchForScramble():
         self._gymnasium = gymnasium
 
 
-    def search_alice(self, depth, alice_s_profit_before_move, alice_s_remaining_moves):
+    def search_alice(self, depth, alice_s_profit_before_move, alice_s_remaining_moves, ignore_at_first_if_not_capture):
         """
         TODO 静止探索はせず、［スクランブル・サーチ］というのを考える。静止探索は王手が絡むと複雑だ。
         リーガル・ムーブのうち、
@@ -41,6 +41,8 @@ class QuiescenceSearchForScramble():
             １手指す前のアリスの得。
         alice_s_remaining_moves : list<int>
             アリスの指し手のリスト。
+        ignore_at_first_if_not_capture : bool
+            １回呼出時、駒を取る手でなければ無視する。
 
         Returns
         -------
@@ -97,6 +99,10 @@ class QuiescenceSearchForScramble():
             dst_sq_obj = Square(cshogi.move_to(alice_s_move))           # 移動先マス
             cap_pt = self._gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
 
+            # １回呼出時、駒を取る手で無ければ無視
+            if ignore_at_first_if_not_capture and cap_pt == cshogi.NONE:
+                continue
+
             ########################
             # MARK: アリスが一手指す
             ########################
@@ -127,9 +133,10 @@ class QuiescenceSearchForScramble():
                     bob_s_best_move_list,   # FIXME 入玉宣言勝ちは空リストが返ってくる。
                     bob_s_moves_dict
                 ) = self.search_alice(
-                    depth                       = depth,
-                    alice_s_profit_before_move  = - alice_s_profit_after_move, # 相手から見た点にするため、正負を逆にします。
-                    alice_s_remaining_moves     = list(self._gymnasium.table.legal_moves))
+                    depth                           = depth,
+                    alice_s_profit_before_move      = - alice_s_profit_after_move, # 相手から見た点にするため、正負を逆にします。
+                    alice_s_remaining_moves         = list(self._gymnasium.table.legal_moves),
+                    ignore_at_first_if_not_capture  = False) # ２階目移行の呼出では常に偽。
 
             # 手番は、一番得する手を指したい。
             if alice_s_best_profit_after_value < -bob_s_value:

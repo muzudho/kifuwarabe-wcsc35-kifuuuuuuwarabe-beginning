@@ -77,65 +77,6 @@ class _Search():
         # MARK: 静止探索
         ################
 
-        def _quiescence_search_for_scramble_on_board(depth, remaining_moves, gymnasium):
-            """
-            Returns
-            -------
-            remaining_moves : list
-                指し手のリスト。
-            """
-            # 駒の取り合いのための静止探索
-            scramble_search = QuiescenceSearchForScramble(
-                    gymnasium = gymnasium)
-
-            old_remaining_moves = remaining_moves.copy()
-
-            depth                       = 2
-            alice_s_profit_before_move  = 0
-            alice_s_remaining_moves_before_move = []
-
-            if depth < 1:
-                print(f"D97: {depth=}")
-                return remaining_moves
-
-            (
-                alice_s_profit_after_move,
-                alice_s_remaining_moves_before_move,    # NOTE 入玉宣言勝ちは空リストが返ってくるが、事前に省いているからＯｋ。
-                alice_s_moves_dict
-            ) = scramble_search.search_alice(
-                    depth                       = depth,
-                    alice_s_profit_before_move  = alice_s_profit_before_move,   # アリスの得。
-                    alice_s_remaining_moves     = remaining_moves)
-
-            #print(f"{alice_s_profit_after_move=} {len(alice_s_remaining_moves_before_move)=}")
-
-            # 最善手が無ければ（全ての手がフラットなら）、元に戻します。
-            if len(alice_s_remaining_moves_before_move) < 1:
-                print(f"D113: {len(alice_s_remaining_moves_before_move)=}")
-                return old_remaining_moves
-
-            # 最善手がアリスに得のある手であれば、その手に制限します。
-            if 0 < alice_s_profit_after_move:
-                print(f"D118: {alice_s_profit_after_move=}")
-                return alice_s_remaining_moves_before_move
-            
-            # アリスに非得の手しかなければ、非損の手に制限します。
-            alice_s_move_list_2 = []
-            for alice_s_move, alice_s_profit in alice_s_moves_dict.items():
-                print(f"D: {cshogi.move_to_usi(alice_s_move)=} {alice_s_profit=}")
-                if 0 <= alice_s_profit:
-                    alice_s_move_list_2.append(alice_s_move)
-            
-            # 非損の手もなければ、元に戻します。
-            if len(alice_s_move_list_2) == 0:
-                print(f"D129: {len(alice_s_move_list_2)=}")
-                return old_remaining_moves
-
-            # 非損の手のリスト。
-            print(f"D133: {len(alice_s_move_list_2)=}")
-            return alice_s_move_list_2
-
-
         remaining_moves = _quiescence_search_for_scramble_on_board(
                 depth           = 2,                # 何手読みか。
                 remaining_moves = remaining_moves,
@@ -167,3 +108,64 @@ class _Search():
                 gymnasium   = self._gymnasium)
 
         return SearchResultStateModel.BEST_MOVE, 0, best_move
+
+
+def _quiescence_search_for_scramble_on_board(depth, remaining_moves, gymnasium):
+    """静止探索。
+    
+    Returns
+    -------
+    remaining_moves : list
+        指し手のリスト。
+    """
+    # 駒の取り合いのための静止探索
+    scramble_search = QuiescenceSearchForScramble(
+            gymnasium = gymnasium)
+
+    old_remaining_moves = remaining_moves.copy()
+
+    depth                       = 2
+    alice_s_profit_before_move  = 0
+    alice_s_remaining_moves_before_move = []
+
+    if depth < 1:
+        print(f"D97: {depth=}")
+        return remaining_moves
+
+    (
+        alice_s_profit_after_move,
+        alice_s_remaining_moves_before_move,    # NOTE 入玉宣言勝ちは空リストが返ってくるが、事前に省いているからＯｋ。
+        alice_s_moves_dict
+    ) = scramble_search.search_alice(
+            depth                           = depth,
+            alice_s_profit_before_move      = alice_s_profit_before_move,   # アリスの得。
+            alice_s_remaining_moves         = remaining_moves,
+            ignore_at_first_if_not_capture  = True)    # １階呼出時、駒を取る手でなければ無視する。
+
+    #print(f"{alice_s_profit_after_move=} {len(alice_s_remaining_moves_before_move)=}")
+
+    # 最善手が無ければ（全ての手がフラットなら）、元に戻します。
+    if len(alice_s_remaining_moves_before_move) < 1:
+        print(f"D113: {len(alice_s_remaining_moves_before_move)=}")
+        return old_remaining_moves
+
+    # 最善手がアリスに得のある手であれば、その手に制限します。
+    if 0 < alice_s_profit_after_move:
+        print(f"D118: {alice_s_profit_after_move=}")
+        return alice_s_remaining_moves_before_move
+    
+    # アリスに非得の手しかなければ、非損の手に制限します。
+    alice_s_move_list_2 = []
+    for alice_s_move, alice_s_profit in alice_s_moves_dict.items():
+        print(f"D: {cshogi.move_to_usi(alice_s_move)=} {alice_s_profit=}")
+        if 0 <= alice_s_profit:
+            alice_s_move_list_2.append(alice_s_move)
+    
+    # 非損の手もなければ、元に戻します。
+    if len(alice_s_move_list_2) == 0:
+        print(f"D129: {len(alice_s_move_list_2)=}")
+        return old_remaining_moves
+
+    # 非損の手のリスト。
+    print(f"D133: {len(alice_s_move_list_2)=}")
+    return alice_s_move_list_2
