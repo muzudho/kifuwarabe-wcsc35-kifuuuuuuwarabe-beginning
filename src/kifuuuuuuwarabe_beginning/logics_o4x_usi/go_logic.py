@@ -2,7 +2,7 @@ import random
 
 from ..logics_o1x import MovesReductionFilterLogics
 from ..models_o1x import SearchResultStateModel
-from .scramble_search import ScrambleSearch
+from .quiescence_search_for_scramble import QuiescenceSearchForScramble
 
 
 class GoLogic():
@@ -70,38 +70,43 @@ class _Search():
         remaining_moves = list(self._gymnasium.table.legal_moves)
         #print(f"A: {len(remaining_moves)=}")
 
-        ############################
-        # MARK: スクランブル・サーチ
-        ############################
+        ################
+        # MARK: 静止探索
+        ################
 
-        scramble_search = ScrambleSearch(
-                gymnasium = self._gymnasium)
+        def _quiescence_search_for_scramble_on_board(depth, remaining_moves, gymnasium):
+            # 駒の取り合いのための静止探索
+            scramble_search = QuiescenceSearchForScramble(
+                    gymnasium = gymnasium)
 
-        old_remaining_moves = remaining_moves.copy()
+            old_remaining_moves = remaining_moves.copy()
 
-        depth                       = 2
-        alice_s_profit_before_move  = 0
-        alice_s_remaining_moves_before_move = []
+            depth                       = 2
+            alice_s_profit_before_move  = 0
+            alice_s_remaining_moves_before_move = []
 
-        if 0 < depth:
-            (
-                alice_s_profit_after_move,
-                alice_s_remaining_moves_before_move     # NOTE 入玉宣言勝ちは空リストが返ってくるが、事前に省いているからＯｋ。
-            ) = scramble_search.search_alice(
-                    depth                       = 2,                            # 何手読みか。
-                    alice_s_profit_before_move  = alice_s_profit_before_move,   # アリスの得。
-                    alice_s_remaining_moves     = remaining_moves)
+            if 0 < depth:
+                (
+                    alice_s_profit_after_move,
+                    alice_s_remaining_moves_before_move     # NOTE 入玉宣言勝ちは空リストが返ってくるが、事前に省いているからＯｋ。
+                ) = scramble_search.search_alice(
+                        depth                       = depth,
+                        alice_s_profit_before_move  = alice_s_profit_before_move,   # アリスの得。
+                        alice_s_remaining_moves     = remaining_moves)
 
-        print(f"{alice_s_profit_after_move=} {len(alice_s_remaining_moves_before_move)=}")
+            #print(f"{alice_s_profit_after_move=} {len(alice_s_remaining_moves_before_move)=}")
 
-        # 駒を取る手があり、かつ、アリスに得があればその手に制限します。
-        if 0 < len(alice_s_remaining_moves_before_move) and 0 < alice_s_profit_after_move:
-            remaining_moves = alice_s_remaining_moves_before_move
-        
-        # それ以外なら元に戻します。
-        else:
-            remaining_moves = old_remaining_moves
+            # 駒を取る手があり、かつ、アリスに得があればその手に制限します。
+            if 0 < len(alice_s_remaining_moves_before_move) and 0 < alice_s_profit_after_move:
+                return alice_s_remaining_moves_before_move
+            
+            # それ以外なら元に戻します。
+            return old_remaining_moves
 
+        remaining_moves = _quiescence_search_for_scramble_on_board(
+                depth           = 2,                # 何手読みか。
+                remaining_moves = remaining_moves,
+                gymnasium       = self._gymnasium)
 
 
 

@@ -2,12 +2,11 @@ import cshogi
 
 from ..logics_o1x import Helper
 from ..models_o1x import PieceValues, PieceType, Square, Turn
-from ..models_o2x.nine_rank_side_perspective import NineRankSidePerspective
 
 
-class ScrambleSearch():
-    """きふわらべのお父んが勝手に［スクランブル・サーチ］と読んでいるもの。
-    静止探索の代わりの物。
+class QuiescenceSearchForScramble():
+    """駒の取り合いのための静止探索。
+    駒の取り合いが終わるまで、駒の取り合いを探索します。
     """
 
 
