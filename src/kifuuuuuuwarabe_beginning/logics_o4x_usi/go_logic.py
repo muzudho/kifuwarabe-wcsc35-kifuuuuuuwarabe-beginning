@@ -118,7 +118,7 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
     remaining_moves : list
         指し手のリスト。
     """
-    max_depth                   = 2
+    max_depth                   = gymnasium.config_doc['search']['capture_depth']   # 2
     alice_s_remaining_moves_before_move = []
 
     # 駒の取り合いのための静止探索
