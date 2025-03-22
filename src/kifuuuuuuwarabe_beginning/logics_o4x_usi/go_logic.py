@@ -71,7 +71,7 @@ class _Search():
                 return SearchResultStateModel.MATE_IN_1_MOVE, 0, matemove
 
         remaining_moves = list(self._gymnasium.table.legal_moves)
-        #print(f"D74: {len(remaining_moves)=}")
+        #print(f"D-74: {len(remaining_moves)=}")
 
         ################
         # MARK: 静止探索
@@ -95,12 +95,12 @@ class _Search():
         remaining_moves = MovesReductionFilterLogics.before_move_o1x(
                 remaining_moves = remaining_moves,
                 gymnasium       = self._gymnasium)
-        print(f"D98: {len(remaining_moves)=}")
+        #print(f"D-98: {len(remaining_moves)=}")
 
         # １手に絞り込む
         best_move = random.choice(remaining_moves)
-        print(f"D102: {best_move=}")
-        print(f"D103: {cshogi.move_to_usi(best_move)=}")
+        #print(f"D-102: {best_move=}")
+        #print(f"D-103: {cshogi.move_to_usi(best_move)=}")
 
         # ［指後］
         MovesReductionFilterLogics.after_best_moving(
@@ -129,7 +129,7 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
     old_remaining_moves = remaining_moves.copy()
 
     if max_depth < 1:
-        print(f"D132: _quiescence_search {max_depth=}")
+        #print(f"D-132: _quiescence_search {max_depth=}")
         return remaining_moves
 
     (
@@ -152,47 +152,47 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
                 alice_s_move_ex_list_2.append(alice_s_move_ex)
         return alice_s_move_ex_list_2
 
-    print(f"D155: _quiescence_search before _eliminate_not_capture_not_positive {len(alice_s_move_ex_list)=}")
+    #print(f"D-155: _quiescence_search before _eliminate_not_capture_not_positive {len(alice_s_move_ex_list)=}")
 
     alice_s_move_ex_list = _eliminate_not_capture_not_positive(
             alice_s_move_ex_list = alice_s_move_ex_list)
 
-    print(f"D160: _quiescence_search after _eliminate_not_capture_not_positive {len(alice_s_move_ex_list)=}")
+    #print(f"D-160: _quiescence_search after _eliminate_not_capture_not_positive {len(alice_s_move_ex_list)=}")
 
-    # DEBUG
-    for alice_s_move_ex in alice_s_move_ex_list:
-        print(f"D149: _quiescence_search {alice_s_best_piece_value=} {alice_s_move_ex.stringify()=}")
+    # # DEBUG
+    # for alice_s_move_ex in alice_s_move_ex_list:
+    #     #print(f"D-149: _quiescence_search {alice_s_best_piece_value=} {alice_s_move_ex.stringify()=}")
 
     # 最善手があるなら、最善手を返します。
     if 0 < len(alice_s_remaining_moves_before_move):
-        print(f"D153: _quiescence_search {alice_s_best_piece_value=} {len(alice_s_remaining_moves_before_move)=}")
+        #print(f"D-153: _quiescence_search {alice_s_best_piece_value=} {len(alice_s_remaining_moves_before_move)=}")
         return alice_s_remaining_moves_before_move
 
     # 最善手が無ければ（全ての手がフラットなら）、元に戻します。
-    print(f"D157: _quiescence_search {alice_s_best_piece_value=} {len(alice_s_remaining_moves_before_move)=}")
+    #print(f"D-157: _quiescence_search {alice_s_best_piece_value=} {len(alice_s_remaining_moves_before_move)=}")
     return old_remaining_moves
 
     # if len(alice_s_remaining_moves_before_move) < 1:
-    #     print(f"D113: {len(alice_s_remaining_moves_before_move)=}")
+    #     print(f"D-113: {len(alice_s_remaining_moves_before_move)=}")
     #     return old_remaining_moves
 
     # # 最善手がアリスに得のある手であれば、その手に制限します。
     # if 0 < alice_s_best_piece_value:
-    #     print(f"D118: {alice_s_best_piece_value=}")
+    #     print(f"D-118: {alice_s_best_piece_value=}")
     #     return alice_s_remaining_moves_before_move
     
     # # アリスに非得の手しかなければ、非損の手に制限します。
     # alice_s_move_list_2 = []
     # for alice_s_move_ex in alice_s_move_ex_list:
-    #     print(f"D: {alice_s_move_ex.stringify()=}")
+    #     print(f"D-187: {alice_s_move_ex.stringify()=}")
     #     if 0 <= alice_s_move_ex.piece_value:
     #         alice_s_move_list_2.append(alice_s_move_ex.move)
     
     # # 非損の手もなければ、元に戻します。
     # if len(alice_s_move_list_2) == 0:
-    #     print(f"D129: {len(alice_s_move_list_2)=}")
+    #     print(f"D-193: {len(alice_s_move_list_2)=}")
     #     return old_remaining_moves
 
     # # 非損の手のリスト。
-    # print(f"D133: {len(alice_s_move_list_2)=}")
+    # print(f"D-133: {len(alice_s_move_list_2)=}")
     # return alice_s_move_list_2
