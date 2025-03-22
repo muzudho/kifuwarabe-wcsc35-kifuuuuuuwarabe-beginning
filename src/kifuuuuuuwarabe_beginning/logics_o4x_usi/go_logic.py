@@ -118,18 +118,19 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
     remaining_moves : list
         指し手のリスト。
     """
-    # 駒の取り合いのための静止探索
-    scramble_search = QuiescenceSearchForScramble(
-            gymnasium = gymnasium)
-
-    old_remaining_moves = remaining_moves.copy()
-
-    depth                       = 2
+    max_depth                   = 2
     alice_s_profit_before_move  = 0
     alice_s_remaining_moves_before_move = []
 
-    if depth < 1:
-        print(f"D132: _quiescence_search {depth=}")
+    # 駒の取り合いのための静止探索
+    scramble_search = QuiescenceSearchForScramble(
+            max_depth   = max_depth,
+            gymnasium   = gymnasium)
+
+    old_remaining_moves = remaining_moves.copy()
+
+    if max_depth < 1:
+        print(f"D132: _quiescence_search {max_depth=}")
         return remaining_moves
 
     (
@@ -137,10 +138,9 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
         alice_s_remaining_moves_before_move,    # NOTE 入玉宣言勝ちは空リストが返ってくるが、事前に省いているからＯｋ。
         alice_s_move_wp_list
     ) = scramble_search.search_alice(
-            depth                           = depth,
+            depth                           = max_depth,
             alice_s_profit_before_move      = alice_s_profit_before_move,   # アリスの得。
-            alice_s_remaining_moves         = remaining_moves,
-            ignore_at_first_if_not_capture  = True)    # １階呼出時、駒を取る手でなければ無視する。
+            alice_s_remaining_moves         = remaining_moves)
 
     #print(f"{alice_s_profit_after_move=} {len(alice_s_remaining_moves_before_move)=}")
 

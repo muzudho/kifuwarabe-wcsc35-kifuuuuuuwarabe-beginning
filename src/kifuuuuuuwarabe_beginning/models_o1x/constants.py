@@ -78,7 +78,7 @@ class _Value():
 
 
     @property
-    def STALEMATE(self):
+    def NOTHING_CAPTURE_MOVE(self):
         return -100004
 
 

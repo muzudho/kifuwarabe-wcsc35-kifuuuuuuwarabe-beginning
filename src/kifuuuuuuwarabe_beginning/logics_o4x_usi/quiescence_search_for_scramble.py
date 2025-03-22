@@ -10,17 +10,18 @@ class QuiescenceSearchForScramble():
     """
 
 
-    def __init__(self, gymnasium):
+    def __init__(self, max_depth, gymnasium):
         """
         Parameters
         ----------
         gymnasium : Gymnasium
             体育館。        
         """
+        self._max_depth = max_depth
         self._gymnasium = gymnasium
 
 
-    def search_alice(self, depth, alice_s_profit_before_move, alice_s_remaining_moves, ignore_at_first_if_not_capture):
+    def search_alice(self, depth, alice_s_profit_before_move, alice_s_remaining_moves):
         """
         TODO 静止探索はせず、［スクランブル・サーチ］というのを考える。静止探索は王手が絡むと複雑だ。
         リーガル・ムーブのうち、
@@ -41,8 +42,6 @@ class QuiescenceSearchForScramble():
             １手指す前のアリスの得。
         alice_s_remaining_moves : list<int>
             アリスの指し手のリスト。
-        ignore_at_first_if_not_capture : bool
-            １回呼出時、駒を取る手でなければ無視する。
 
         Returns
         -------
@@ -81,7 +80,7 @@ class QuiescenceSearchForScramble():
                 """一手詰めの指し手があれば、それを取得"""
                 return constants.value.CHECKMATE, matemove, {matemove: constants.value.CHECKMATE}  # 勝ちだから
 
-        alice_s_best_profit_after_value = constants.value.STALEMATE     # （指し手のリストが空でなければ）どんな手でも更新される。
+        alice_s_best_profit_after_value = constants.value.NOTHING_CAPTURE_MOVE  # （指し手のリストが空でなければ）どんな手でも更新される。
         alice_s_best_move_list          = []
         alice_s_move_wp_list            = []
 
@@ -99,9 +98,13 @@ class QuiescenceSearchForScramble():
             dst_sq_obj = Square(cshogi.move_to(alice_s_move))           # 移動先マス
             cap_pt = self._gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
 
-            # １階呼出時、設定により無視。２階呼出時、駒を取る手で無ければ無視
-            if ignore_at_first_if_not_capture or cap_pt == cshogi.NONE:
-                continue
+            # １回呼出時。
+            if self._max_depth == depth:
+                pass    # 何も無視しない。
+            else:
+                # 駒を取る手でなければ無視。
+                if cap_pt == cshogi.NONE:
+                    continue
 
             ########################
             # MARK: アリスが一手指す
@@ -135,8 +138,10 @@ class QuiescenceSearchForScramble():
                 ) = self.search_alice(
                     depth                           = depth,
                     alice_s_profit_before_move      = - alice_s_profit_after_move, # 相手から見た点にするため、正負を逆にします。
-                    alice_s_remaining_moves         = list(self._gymnasium.table.legal_moves),
-                    ignore_at_first_if_not_capture  = False) # ２階目移行の呼出では常に偽。
+                    alice_s_remaining_moves         = list(self._gymnasium.table.legal_moves))
+
+            if bob_s_value == constants.value.NOTHING_CAPTURE_MOVE:
+                pass
 
             # 手番は、一番得する手を指したい。
             if alice_s_best_profit_after_value < -bob_s_value:
