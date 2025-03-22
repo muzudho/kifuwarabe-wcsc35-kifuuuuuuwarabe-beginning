@@ -47,7 +47,7 @@ class QuiescenceSearchForScramble():
             アリスの点数。
         alice_s_best_move_list : list
             アリスの最善手のリスト。０～複数件の指し手。
-        alice_s_move_wp_list : dist
+        alice_s_move_ex_list : dist
             アリスの全ての指し手と得のペアのリスト。
             投了時は空っぽのリスト。
             FIXME 入玉宣言勝ちは空リスト。
@@ -80,7 +80,7 @@ class QuiescenceSearchForScramble():
 
         alice_s_best_value = constants.value.NOTHING_CAPTURE_MOVE  # （指し手のリストが空でなければ）どんな手でも更新される。
         alice_s_best_move_list          = []
-        alice_s_move_wp_list            = []
+        alice_s_move_ex_list            = []
 
         ##############################
         # MARK: アリスの合法手スキャン
@@ -131,7 +131,7 @@ class QuiescenceSearchForScramble():
                 (
                     bob_s_value,
                     bob_s_best_move_list,   # FIXME 入玉宣言勝ちは空リストが返ってくる。
-                    bob_s_move_wp_list
+                    bob_s_move_ex_list
                 ) = self.search_alice(
                     depth                           = depth,
                     alice_s_remaining_moves         = list(self._gymnasium.table.legal_moves))
@@ -147,7 +147,7 @@ class QuiescenceSearchForScramble():
                 alice_s_best_move_list.append(alice_s_move)
 
             # 指し手と、その得を紐づけます。
-            alice_s_move_wp_list.append(
+            alice_s_move_ex_list.append(
                     MoveOnScramble(
                             move        = alice_s_move,
                             piece_value = alice_s_value,
@@ -168,4 +168,4 @@ class QuiescenceSearchForScramble():
         ########################
         # MARK: 合法手スキャン後
         ########################
-        return alice_s_best_value, alice_s_best_move_list, alice_s_move_wp_list
+        return alice_s_best_value, alice_s_best_move_list, alice_s_move_ex_list

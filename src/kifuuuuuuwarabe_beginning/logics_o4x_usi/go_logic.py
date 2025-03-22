@@ -135,16 +135,33 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
     (
         alice_s_best_piece_value,
         alice_s_remaining_moves_before_move,    # NOTE 入玉宣言勝ちは空リストが返ってくるが、事前に省いているからＯｋ。
-        alice_s_move_wp_list
+        alice_s_move_ex_list
     ) = scramble_search.search_alice(
             depth                           = max_depth,
             alice_s_remaining_moves         = remaining_moves)
 
     #print(f"{alice_s_best_piece_value=} {len(alice_s_remaining_moves_before_move)=}")
 
+
+    def _eliminate_not_capture_not_positive(alice_s_move_ex_list):
+        """駒を取らない手で非正の手は邪魔だ。除去する。
+        """
+        alice_s_move_ex_list_2 = []
+        for alice_s_move_ex in alice_s_move_ex_list:
+            if alice_s_move_ex.is_capture or 0 < alice_s_move_ex.piece_value:
+                alice_s_move_ex_list_2.append(alice_s_move_ex)
+        return alice_s_move_ex_list_2
+
+    print(f"D155: _quiescence_search before _eliminate_not_capture_not_positive {len(alice_s_move_ex_list)=}")
+
+    alice_s_move_ex_list = _eliminate_not_capture_not_positive(
+            alice_s_move_ex_list = alice_s_move_ex_list)
+
+    print(f"D160: _quiescence_search after _eliminate_not_capture_not_positive {len(alice_s_move_ex_list)=}")
+
     # DEBUG
-    for alice_s_omve_wp in alice_s_move_wp_list:
-        print(f"D149: _quiescence_search {alice_s_best_piece_value=} {alice_s_omve_wp.stringify()=}")
+    for alice_s_move_ex in alice_s_move_ex_list:
+        print(f"D149: _quiescence_search {alice_s_best_piece_value=} {alice_s_move_ex.stringify()=}")
 
     # 最善手があるなら、最善手を返します。
     if 0 < len(alice_s_remaining_moves_before_move):
@@ -166,10 +183,10 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
     
     # # アリスに非得の手しかなければ、非損の手に制限します。
     # alice_s_move_list_2 = []
-    # for alice_s_move_wp in alice_s_move_wp_list:
-    #     print(f"D: {alice_s_move_wp.stringify()=}")
-    #     if 0 <= alice_s_move_wp.piece_value:
-    #         alice_s_move_list_2.append(alice_s_move_wp.move)
+    # for alice_s_move_ex in alice_s_move_ex_list:
+    #     print(f"D: {alice_s_move_ex.stringify()=}")
+    #     if 0 <= alice_s_move_ex.piece_value:
+    #         alice_s_move_list_2.append(alice_s_move_ex.move)
     
     # # 非損の手もなければ、元に戻します。
     # if len(alice_s_move_list_2) == 0:
