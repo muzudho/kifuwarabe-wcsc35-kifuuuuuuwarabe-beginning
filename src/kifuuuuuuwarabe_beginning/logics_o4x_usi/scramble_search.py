@@ -48,16 +48,12 @@ class ScrambleSearch():
 
         # ［駒を取る手］のスクランブル・サーチをする。
         for move in take_move_list:
-            print(f'take_move={cshogi.move_to_usi(move)}')
-
-            dst_sq_obj = Square(cshogi.move_to(move))               # 移動先マス
-            dst_pc = self._gymnasium.table.piece(dst_sq_obj.sq)     # 移動先マスにある駒
-            piece_value = PieceValues.by_piece_type(pt=cshogi.piece_to_piece_type(dst_pc))
+            #print(f'take_move={cshogi.move_to_usi(move)}')
             
             # alpha は自分の点数。相手の点数を逆にしたのが自分の点数。
             alpha = - _ScrambleCaptureSearch.search(
                 depth           = 2,
-                alpha           = -(alpha + piece_value),   # 相手から見れば、取られているから負。
+                alpha           = -alpha,   # 相手から見れば、取られているから負。
                 opponent_move   = move,
                 gymnasium       = self._gymnasium)
 
@@ -80,6 +76,12 @@ class _ScrambleCaptureSearch():
 
     @staticmethod
     def search(depth, alpha, opponent_move, gymnasium):
+
+        dst_sq_obj  = Square(cshogi.move_to(opponent_move))     # 移動先マス
+        dst_pc      = gymnasium.table.piece(dst_sq_obj.sq)      # 移動先マスにある駒
+        piece_value = PieceValues.by_piece_type(pt=cshogi.piece_to_piece_type(dst_pc))
+
+        alpha -= piece_value    # 自分の駒が取られたから引く
 
         ################
         # MARK: 一手指す
@@ -128,15 +130,11 @@ class _ScrambleCaptureSearch():
 
             # ［駒を取る手］のスクランブル・サーチをする。
             for move in take_move_list:
-
-                dst_sq_obj = Square(cshogi.move_to(move))               # 移動先マス
-                dst_pc = gymnasium.table.piece(dst_sq_obj.sq)     # 移動先マスにある駒
-                piece_value = PieceValues.by_piece_type(pt=cshogi.piece_to_piece_type(dst_pc))
                 
                 # alpha は自分の点数。相手の点数を逆にしたのが自分の点数。
                 alpha = - _ScrambleCaptureSearch.search(
                     depth           = depth - 1,
-                    alpha           = -(alpha + piece_value),   # 相手から見れば、取られているから負。
+                    alpha           = -alpha,   # 相手から見れば、取られているから負。
                     opponent_move   = move,
                     gymnasium       = gymnasium)
 
