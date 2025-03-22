@@ -133,26 +133,26 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
         return remaining_moves
 
     (
-        alice_s_profit_after_move,
+        alice_s_best_piece_value,
         alice_s_remaining_moves_before_move,    # NOTE 入玉宣言勝ちは空リストが返ってくるが、事前に省いているからＯｋ。
         alice_s_move_wp_list
     ) = scramble_search.search_alice(
             depth                           = max_depth,
             alice_s_remaining_moves         = remaining_moves)
 
-    #print(f"{alice_s_profit_after_move=} {len(alice_s_remaining_moves_before_move)=}")
+    #print(f"{alice_s_best_piece_value=} {len(alice_s_remaining_moves_before_move)=}")
 
     # DEBUG
     for alice_s_omve_wp in alice_s_move_wp_list:
-        print(f"D149: _quiescence_search {alice_s_profit_after_move=} {alice_s_omve_wp.stringify()=}")
+        print(f"D149: _quiescence_search {alice_s_best_piece_value=} {alice_s_omve_wp.stringify()=}")
 
     # 最善手があるなら、最善手を返します。
     if 0 < len(alice_s_remaining_moves_before_move):
-        print(f"D153: _quiescence_search {alice_s_profit_after_move=} {len(alice_s_remaining_moves_before_move)=}")
+        print(f"D153: _quiescence_search {alice_s_best_piece_value=} {len(alice_s_remaining_moves_before_move)=}")
         return alice_s_remaining_moves_before_move
 
     # 最善手が無ければ（全ての手がフラットなら）、元に戻します。
-    print(f"D157: _quiescence_search {alice_s_profit_after_move=} {len(alice_s_remaining_moves_before_move)=}")
+    print(f"D157: _quiescence_search {alice_s_best_piece_value=} {len(alice_s_remaining_moves_before_move)=}")
     return old_remaining_moves
 
     # if len(alice_s_remaining_moves_before_move) < 1:
@@ -160,15 +160,15 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
     #     return old_remaining_moves
 
     # # 最善手がアリスに得のある手であれば、その手に制限します。
-    # if 0 < alice_s_profit_after_move:
-    #     print(f"D118: {alice_s_profit_after_move=}")
+    # if 0 < alice_s_best_piece_value:
+    #     print(f"D118: {alice_s_best_piece_value=}")
     #     return alice_s_remaining_moves_before_move
     
     # # アリスに非得の手しかなければ、非損の手に制限します。
     # alice_s_move_list_2 = []
     # for alice_s_move_wp in alice_s_move_wp_list:
     #     print(f"D: {alice_s_move_wp.stringify()=}")
-    #     if 0 <= alice_s_move_wp.profit:
+    #     if 0 <= alice_s_move_wp.piece_value:
     #         alice_s_move_list_2.append(alice_s_move_wp.move)
     
     # # 非損の手もなければ、元に戻します。

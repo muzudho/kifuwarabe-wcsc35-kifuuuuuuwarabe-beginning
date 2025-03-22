@@ -1,6 +1,6 @@
 from .constants import constants
 from .masu import Masu
-from .move_with_profit import MoveWithProfit
+from .move_on_scramble import MoveOnScramble
 from .piece_and_piece_type import Piece, PieceType, Turn
 from .piece_moved import PieceMoved
 from .piece_values import PieceValues

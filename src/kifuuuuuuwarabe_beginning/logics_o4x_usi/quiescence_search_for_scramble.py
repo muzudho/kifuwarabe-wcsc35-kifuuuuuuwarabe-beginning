@@ -1,7 +1,7 @@
 import cshogi
 
 from ..logics_o1x import Helper
-from ..models_o1x import constants, MoveWithProfit, PieceValues, PieceType, Square, Turn
+from ..models_o1x import constants, MoveOnScramble, PieceValues, PieceType, Square, Turn
 
 
 class QuiescenceSearchForScramble():
@@ -95,6 +95,7 @@ class QuiescenceSearchForScramble():
 
             dst_sq_obj = Square(cshogi.move_to(alice_s_move))           # 移動先マス
             cap_pt = self._gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
+            is_capture = (cap_pt != cshogi.NONE)
             piece_value = PieceValues.by_piece_type(pt=cap_pt)
 
             # １回呼出時。
@@ -102,7 +103,7 @@ class QuiescenceSearchForScramble():
                 pass    # 何も無視しない。
             else:
                 # 駒を取る手でなければ無視。
-                if cap_pt == cshogi.NONE:
+                if not is_capture:
                     continue
 
             ########################
@@ -116,7 +117,7 @@ class QuiescenceSearchForScramble():
             # MARK: アリスが一手指した後
             ############################
 
-            #print(f"(next {self._gymnasium.table.move_number} teme) ({index}) alice's move={cshogi.move_to_usi(alice_s_move)}({Helper.sq_to_masu(dst_sq_obj.sq)}) pt({PieceType.alphabet(piece_type=cap_pt)}) {alice_s_profit_after_move=} {piece_profit=}")
+            #print(f"(next {self._gymnasium.table.move_number} teme) ({index}) alice's move={cshogi.move_to_usi(alice_s_move)}({Helper.sq_to_masu(dst_sq_obj.sq)}) pt({PieceType.alphabet(piece_type=cap_pt)}) {alice_s_best_piece_value=} {piece_value=}")
 
             # これ以上深く読まない場合。
             if depth - 1 < 1:
@@ -147,9 +148,10 @@ class QuiescenceSearchForScramble():
 
             # 指し手と、その得を紐づけます。
             alice_s_move_wp_list.append(
-                    MoveWithProfit(
-                            move    = alice_s_move,
-                            profit  = alice_s_value))
+                    MoveOnScramble(
+                            move        = alice_s_move,
+                            piece_value = alice_s_value,
+                            is_capture  = is_capture))
 
             ########################
             # MARK: アリスが一手戻す
