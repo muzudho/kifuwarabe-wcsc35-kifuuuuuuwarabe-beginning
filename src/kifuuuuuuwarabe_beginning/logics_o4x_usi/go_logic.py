@@ -2,7 +2,6 @@ import random
 
 from ..logics_o1x import MovesReductionFilterLogics
 from ..models_o1x import SearchResultStateModel
-from ..models_o3x import KomadokuFilterModel
 from .scramble_search import ScrambleSearch
 
 
@@ -80,70 +79,33 @@ class _Search():
 
         old_remaining_moves = remaining_moves.copy()
 
-        (
-            alpha,
-            remaining_moves     # NOTE 入玉宣言勝ちは空リストが返ってくるが、事前に省いているからＯｋ。
-        ) = scramble_search.start(
-                remaining_moves = remaining_moves)
+        depth                       = 1
+        alice_s_profit_before_move  = 0
+        alice_s_remaining_moves_before_move = []
 
-        if len(remaining_moves) == 0:
+        if 0 < depth:
+            (
+                alice_s_profit_after_move,
+                alice_s_remaining_moves_before_move     # NOTE 入玉宣言勝ちは空リストが返ってくるが、事前に省いているからＯｋ。
+            ) = scramble_search.search_alice(
+                    depth                       = 2,                            # 何手読みか。
+                    alice_s_profit_before_move  = alice_s_profit_before_move,   # アリスの得。
+                    alice_s_remaining_moves     = remaining_moves)
+
+        print(f"{alice_s_profit_after_move=} {len(alice_s_remaining_moves_before_move)=}")
+
+        # 駒を取る手があり、かつ、アリスに得があればその手に制限します。
+        if 0 < len(alice_s_remaining_moves_before_move) and 0 < alice_s_profit_after_move:
+            remaining_moves = alice_s_remaining_moves_before_move
+        
+        # それ以外なら元に戻します。
+        else:
             remaining_moves = old_remaining_moves
 
-        ################
-        # MARK: ループ前
-        ################
 
-        # # 駒得評価値でフィルタリング
-        # #       制約：
-        # #           指し手は必ず１つ以上残っています。
-        # komadoku_filter_model = KomadokuFilterModel(
-        #         gymnasium = self._gymnasium)
 
-        # ##################
-        # # MARK: ループ直前
-        # ##################
 
-        # komadoku_filter_model.before_loop(
-        #         remaining_moves = remaining_moves)
 
-        # # 残った手一覧
-        # for move in remaining_moves:
-
-        #     ################
-        #     # MARK: 一手指す
-        #     ################
-
-        #     # np_value は np.value() で囲まないこと。
-        #     #print(f'before move: {cshogi.move_to_usi(move)} {gymnasium.engine_turn=} {gymnasium.table.turn=} {np_best_value=} {gymnasium.np_value=}')
-        #     self._gymnasium.do_move_o1x(move = move)
-
-        #     ####################
-        #     # MARK: 一手指した後
-        #     ####################
-
-        #     komadoku_filter_model.after_moving(move = move)
-
-        #     ################
-        #     # MARK: 一手戻す
-        #     ################
-
-        #     self._gymnasium.undo_move_o1x()
-
-        #     ####################
-        #     # MARK: 一手戻した後
-        #     ####################
-
-        #     komadoku_filter_model.after_undo_moving(removed_move = move)
-
-        # ##################
-        # # MARK: ループ直後
-        # ##################
-
-        # remaining_moves = komadoku_filter_model.after_loop()
-
-        ################
-        # MARK: ループ後
-        ################
 
         # 合法手から、１手を選び出します。
         # （必ず、投了ではない手が存在します）
