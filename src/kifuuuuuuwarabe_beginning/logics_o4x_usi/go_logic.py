@@ -79,7 +79,7 @@ class _Search():
 
         old_remaining_moves = remaining_moves.copy()
 
-        depth                       = 1
+        depth                       = 2
         alice_s_profit_before_move  = 0
         alice_s_remaining_moves_before_move = []
 

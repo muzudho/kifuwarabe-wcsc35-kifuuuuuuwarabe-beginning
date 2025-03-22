@@ -108,7 +108,7 @@ class ScrambleSearch():
             piece_profit = PieceValues.by_piece_type(pt=cap_pt)
             alice_s_profit_after_move = alice_s_profit_before_move + piece_profit
 
-            print(f"(next {self._gymnasium.table.move_number} teme) ({index}) alice's move={cshogi.move_to_usi(alice_s_move)}({Helper.sq_to_masu(dst_sq_obj.sq)}) pt({PieceType.alphabet(piece_type=cap_pt)}) {alice_s_profit_after_move=} {alice_s_profit_before_move=} {piece_profit=}")
+            #print(f"(next {self._gymnasium.table.move_number} teme) ({index}) alice's move={cshogi.move_to_usi(alice_s_move)}({Helper.sq_to_masu(dst_sq_obj.sq)}) pt({PieceType.alphabet(piece_type=cap_pt)}) {alice_s_profit_after_move=} {alice_s_profit_before_move=} {piece_profit=}")
 
             # これ以上深く読まない場合。
             if depth - 1 < 1:
@@ -116,15 +116,15 @@ class ScrambleSearch():
 
             # まだ深く読む場合。
             else:
-                raise ValueError(f"depth error: {depth=}") # FIXME
-                print(f"まだ深く読む {depth=}")
+                #raise ValueError(f"depth error: {depth=}") # FIXME
+                #print(f"まだ深く読む {depth=}")
 
                 (
                     bob_s_value,
                     bob_s_best_move_list   # FIXME 入玉宣言勝ちは空リストが返ってくる。
                 ) = self.search_alice(
-                    depth                       = depth - 1,
-                    alice_s_profit_before_move  = - alice_s_profit_before_move, # 相手から見た点にするため、正負を逆にします。
+                    depth                       = depth,
+                    alice_s_profit_before_move  = - alice_s_profit_after_move, # 相手から見た点にするため、正負を逆にします。
                     alice_s_remaining_moves     = list(self._gymnasium.table.legal_moves))
 
             # 手番は、一番得する手を指したい。
