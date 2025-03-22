@@ -1,3 +1,6 @@
+import cshogi
+
+
 class MoveWithProfit():
 
 
@@ -24,3 +27,7 @@ class MoveWithProfit():
     @property
     def profit(self):
         return self._profit
+
+
+    def stringify(self):
+        return f"{cshogi.move_to_usi(self._move)} {self._profit}"

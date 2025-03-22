@@ -1,7 +1,7 @@
 import cshogi
 
 from ..logics_o1x import Helper
-from ..models_o1x import PieceValues, PieceType, Square, Turn
+from ..models_o1x import MoveWithProfit, PieceValues, PieceType, Square, Turn
 
 
 class QuiescenceSearchForScramble():
@@ -50,10 +50,10 @@ class QuiescenceSearchForScramble():
             アリスの点数。
         alice_s_best_move_list : list
             アリスの最善手のリスト。０～複数件の指し手。
-        alice_s_moves_dist : dist
-            アリスの全ての指し手と、それに紐づく得の辞書。
-            # 投了時は空っぽの辞書。
-            # FIXME 入玉宣言勝ちは空リストが返ってくる。
+        alice_s_move_wp_list : dist
+            アリスの全ての指し手と得のペアのリスト。
+            投了時は空っぽのリスト。
+            FIXME 入玉宣言勝ちは空リスト。
         """
 
         if depth < 1:
@@ -83,7 +83,7 @@ class QuiescenceSearchForScramble():
 
         alice_s_best_profit_after_value     = -10000    # （指し手のリストが空でなければ）どんな手でも更新される。
         alice_s_best_move_list  = []
-        alice_s_moves_dist  = {}
+        alice_s_move_wp_list  = []
 
         ##############################
         # MARK: アリスの合法手スキャン
@@ -131,7 +131,7 @@ class QuiescenceSearchForScramble():
                 (
                     bob_s_value,
                     bob_s_best_move_list,   # FIXME 入玉宣言勝ちは空リストが返ってくる。
-                    bob_s_moves_dict
+                    bob_s_move_wp_list
                 ) = self.search_alice(
                     depth                           = depth,
                     alice_s_profit_before_move      = - alice_s_profit_after_move, # 相手から見た点にするため、正負を逆にします。
@@ -146,7 +146,10 @@ class QuiescenceSearchForScramble():
                 alice_s_best_move_list.append(alice_s_move)
 
             # 指し手と、その得を紐づけます。
-            alice_s_moves_dist[alice_s_move] = -bob_s_value
+            alice_s_move_wp_list.append(
+                    MoveWithProfit(
+                            move    = alice_s_move,
+                            profit  = -bob_s_value))
 
             ########################
             # MARK: アリスが一手戻す
@@ -163,4 +166,4 @@ class QuiescenceSearchForScramble():
         ########################
         # MARK: 合法手スキャン後
         ########################
-        return alice_s_best_profit_after_value, alice_s_best_move_list, alice_s_moves_dist
+        return alice_s_best_profit_after_value, alice_s_best_move_list, alice_s_move_wp_list

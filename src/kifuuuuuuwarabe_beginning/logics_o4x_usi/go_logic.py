@@ -135,7 +135,7 @@ def _quiescence_search_for_scramble_on_board(depth, remaining_moves, gymnasium):
     (
         alice_s_profit_after_move,
         alice_s_remaining_moves_before_move,    # NOTE 入玉宣言勝ちは空リストが返ってくるが、事前に省いているからＯｋ。
-        alice_s_moves_dict
+        alice_s_move_wp_list
     ) = scramble_search.search_alice(
             depth                           = depth,
             alice_s_profit_before_move      = alice_s_profit_before_move,   # アリスの得。
@@ -156,10 +156,10 @@ def _quiescence_search_for_scramble_on_board(depth, remaining_moves, gymnasium):
     
     # アリスに非得の手しかなければ、非損の手に制限します。
     alice_s_move_list_2 = []
-    for alice_s_move, alice_s_profit in alice_s_moves_dict.items():
-        print(f"D: {cshogi.move_to_usi(alice_s_move)=} {alice_s_profit=}")
-        if 0 <= alice_s_profit:
-            alice_s_move_list_2.append(alice_s_move)
+    for alice_s_move_wp in alice_s_move_wp_list:
+        print(f"D: {alice_s_move_wp.stringify()=}")
+        if 0 <= alice_s_move_wp.profit:
+            alice_s_move_list_2.append(alice_s_move_wp.move)
     
     # 非損の手もなければ、元に戻します。
     if len(alice_s_move_list_2) == 0:
