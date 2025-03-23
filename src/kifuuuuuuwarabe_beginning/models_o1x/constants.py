@@ -59,6 +59,15 @@ class _Mind():
 
 class _Value():
     """評価値。
+    例： 10001
+        abbcc
+        a : 勝敗状態。
+            -1: GAME OVER（投了）
+             2: 入玉宣言勝ち
+             3: １手詰め
+            -4: 駒を取る手が無し
+        b : ゼロが２個並ぶ
+        c : 駒得の点数。
     """
 
 
@@ -69,22 +78,30 @@ class _Value():
 
     @property
     def GAME_OVER(self):
-        return -100001
+        """［投了］
+        """
+        return -10000
 
 
     @property
     def NYUGYOKU_WIN(self):
-        return 100002
+        """［入玉宣言勝ち］
+        """
+        return 20000
 
 
     @property
     def CHECKMATE(self):
-        return 100003
+        """［一手詰め］
+        """
+        return 30000
 
 
     @property
     def NOTHING_CAPTURE_MOVE(self):
-        return -100004
+        """［駒を取る手が無し］
+        """
+        return -40000
 
 
 constants = Constants()

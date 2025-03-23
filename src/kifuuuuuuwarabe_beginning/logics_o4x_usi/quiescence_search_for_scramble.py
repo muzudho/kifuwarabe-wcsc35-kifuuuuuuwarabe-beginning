@@ -129,10 +129,10 @@ class QuiescenceSearchForScramble():
                 #print(f"まだ深く読む {depth=}")
 
                 (
-                    bob_s_value,
+                    bob_s_value,            # 投了や、入玉宣言勝ち、チェックメートなどの数が返ってくることもある。
                     bob_s_best_move_list,   # FIXME 入玉宣言勝ちは空リストが返ってくる。
                     bob_s_move_ex_list
-                ) = self.search_alice(
+                ) = self.search_alice(      # 再帰呼出
                     depth                           = depth,
                     alice_s_remaining_moves         = list(self._gymnasium.table.legal_moves))
 
