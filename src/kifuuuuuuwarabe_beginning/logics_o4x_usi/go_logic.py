@@ -92,14 +92,20 @@ class _Search():
         # MARK: 静止探索
         ################
 
+        old_remaining_moves = remaining_moves.copy()
+
         remaining_moves = _quiescence_search(
                 depth           = 2,                # 何手読みか。
                 remaining_moves = remaining_moves,
                 gymnasium       = self._gymnasium)
-
         length_of_quiescence_search_by_kifuwarabe   = len(remaining_moves)
+        self._gymnasium.thinking_logger_module.append(f"{length_of_quiescence_search_by_kifuwarabe=}")
 
+        if len(remaining_moves) == 0:
+            remaining_moves = old_remaining_moves
+            self._gymnasium.thinking_logger_module.append(f"Restore={len(remaining_moves)}.")
 
+        old_remaining_moves = remaining_moves.copy()
 
         # 合法手から、１手を選び出します。
         # （必ず、投了ではない手が存在します）
@@ -110,14 +116,18 @@ class _Search():
         remaining_moves = MovesReductionFilterLogics.before_move_o1x(
                 remaining_moves = remaining_moves,
                 gymnasium       = self._gymnasium)
-        #print(f"D-98: {len(remaining_moves)=}")
-
         length_by_kifuwarabe = len(remaining_moves)
+        self._gymnasium.thinking_logger_module.append(f"{length_by_kifuwarabe=}")
+
+        if len(remaining_moves) == 0:
+            remaining_moves = old_remaining_moves
+            self._gymnasium.thinking_logger_module.append(f"Restore={len(remaining_moves)}.")
+
+        old_remaining_moves = remaining_moves.copy()
 
         # １手に絞り込む
         best_move = random.choice(remaining_moves)
-        #print(f"D-102: {best_move=}")
-        #print(f"D-103: {cshogi.move_to_usi(best_move)=}")
+        self._gymnasium.thinking_logger_module.append(f"Best move={cshogi.move_to_usi(best_move)}")
 
         # ［指後］
         MovesReductionFilterLogics.after_best_moving(
@@ -148,7 +158,6 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
     scramble_search = QuiescenceSearchForScramble(
             max_depth   = max_depth,
             gymnasium   = gymnasium)
-
     old_remaining_moves = remaining_moves.copy()
 
     if max_depth < 1:
@@ -219,45 +228,6 @@ D-172: _quiescence_search start
 
     #print(f"D-155: _quiescence_search before _eliminate_not_capture_not_positive {len(alice_s_move_ex_list)=}")
 
-    alice_s_move_list = _eliminate_not_capture_not_positive(
+    return _eliminate_not_capture_not_positive(
             alice_s_move_ex_list    = alice_s_move_ex_list,
             gymnasium               = gymnasium)
-
-
-    # # DEBUG
-    # for alice_s_move_ex in alice_s_move_ex_list:
-    #     #print(f"D-149: _quiescence_search {alice_s_best_piece_value=} {alice_s_move_ex.stringify()=}")
-
-    # 最善手があるなら、最善手を返します。
-    if 0 < len(alice_s_move_list):
-        #print(f"D-153: _quiescence_search {alice_s_best_piece_value=} {len(alice_s_move_list)=}")
-        return alice_s_move_list
-
-    # 最善手が無ければ（全ての手がフラットなら）、元に戻します。
-    #print(f"D-157: _quiescence_search {alice_s_best_piece_value=} {len(alice_s_remaining_moves_before_move)=}")
-    return old_remaining_moves
-
-    # if len(alice_s_remaining_moves_before_move) < 1:
-    #     print(f"D-113: {len(alice_s_remaining_moves_before_move)=}")
-    #     return old_remaining_moves
-
-    # # 最善手がアリスに得のある手であれば、その手に制限します。
-    # if 0 < alice_s_best_piece_value:
-    #     print(f"D-118: {alice_s_best_piece_value=}")
-    #     return alice_s_remaining_moves_before_move
-    
-    # # アリスに非得の手しかなければ、非損の手に制限します。
-    # alice_s_move_list_2 = []
-    # for alice_s_move_ex in alice_s_move_ex_list:
-    #     print(f"D-187: {alice_s_move_ex.stringify()=}")
-    #     if 0 <= alice_s_move_ex.piece_exchange_value:
-    #         alice_s_move_list_2.append(alice_s_move_ex.move)
-    
-    # # 非損の手もなければ、元に戻します。
-    # if len(alice_s_move_list_2) == 0:
-    #     print(f"D-193: {len(alice_s_move_list_2)=}")
-    #     return old_remaining_moves
-
-    # # 非損の手のリスト。
-    # print(f"D-133: {len(alice_s_move_list_2)=}")
-    # return alice_s_move_list_2
