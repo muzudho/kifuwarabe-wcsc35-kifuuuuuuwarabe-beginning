@@ -168,32 +168,29 @@ class ShogiEngineCompatibleWithUSIProtocol():
         """思考開始～最善手返却
         """
 
-        (
-            result,
-            best_move
-        ) = GoLogic.Go(
+        result_of_go = GoLogic.Go(
                 gymnasium = self._gymnasium)
 
-        if result == SearchResultStateModel.RESIGN:
+        if result_of_go.search_result_state_model == SearchResultStateModel.RESIGN:
             # 投了。
             print(f'bestmove resign', flush=True)
             return
 
-        if result == SearchResultStateModel.NYUGYOKU_WIN:
+        if result_of_go.search_result_state_model == SearchResultStateModel.NYUGYOKU_WIN:
             # 勝利宣言。
             print(f'bestmove win', flush=True)
             return
 
-        best_move_as_usi = cshogi.move_to_usi(best_move)
+        best_move_as_usi = cshogi.move_to_usi(result_of_go.best_move)
 
-        if result == SearchResultStateModel.MATE_IN_1_MOVE:
+        if result_of_go.search_result_state_model == SearchResultStateModel.MATE_IN_1_MOVE:
             # １手詰め時。
 
             print('info score mate 1 pv {}'.format(best_move_as_usi), flush=True)
             print(f'bestmove {best_move_as_usi}', flush=True)
             return
 
-        print(f"info depth 0 seldepth 0 time 1 nodes 0 score cp 0 string Go kifuuuuuuWarabe")
+        print(f"info depth 0 seldepth 0 time 1 nodes 0 score cp 0 string Number of branches of first move: {result_of_go.length_by_cshogi} -> {result_of_go.length_of_quiescence_search_by_kifuwarabe} -> {result_of_go.length_by_kifuwarabe}")
         print(f'bestmove {best_move_as_usi}', flush=True)
 
 

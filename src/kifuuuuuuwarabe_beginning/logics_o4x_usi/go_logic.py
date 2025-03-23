@@ -2,7 +2,7 @@ import cshogi
 import random
 
 from ..logics_o1x import MovesReductionFilterLogics
-from ..models_o1x import SearchResultStateModel
+from ..models_o1x import ResultOfGo, SearchResultStateModel
 from .quiescence_search_for_scramble import QuiescenceSearchForScramble
 
 
@@ -20,13 +20,7 @@ class GoLogic():
         """
         search = _Search(gymnasium)
 
-        (
-            result_state,
-            friend_value,
-            best_move
-        ) = search.start_alice()
-
-        return (result_state, best_move)
+        return search.start_alice()
 
 
 class _Search():
@@ -52,15 +46,33 @@ class _Search():
             該当が無ければナン。
         """
 
+        remaining_moves         = list(self._gymnasium.table.legal_moves)
+        length_by_cshogi        = len(remaining_moves)  # cshogi が示した合法手の数
+        length_of_quiescence_search_by_kifuwarabe   = length_by_cshogi  # きふわらべ が静止探索で絞り込んだ指し手の数
+        length_by_kifuwarabe    = length_by_cshogi      # きふわらべ が最終的に絞り込んだ指し手の数
+        #print(f"D-74: {len(remaining_moves)=}")
+
         if self._gymnasium.table.is_game_over():
             """投了局面時。
             """
-            return SearchResultStateModel.RESIGN, 0, None
+            return ResultOfGo(
+                    search_result_state_model   = SearchResultStateModel.RESIGN,
+                    alice_s_profit              = 0,
+                    best_move                   = None,
+                    length_by_cshogi            = length_by_cshogi,
+                    length_of_quiescence_search_by_kifuwarabe   = length_of_quiescence_search_by_kifuwarabe,
+                    length_by_kifuwarabe        = length_by_kifuwarabe)
 
         if self._gymnasium.table.is_nyugyoku():
             """入玉宣言局面時。
             """
-            return SearchResultStateModel.NYUGYOKU_WIN, 0, None
+            return ResultOfGo(
+                    search_result_state_model   = SearchResultStateModel.NYUGYOKU_WIN,
+                    alice_s_profit              = 0,
+                    best_move                   = None,
+                    length_by_cshogi            = length_by_cshogi,
+                    length_of_quiescence_search_by_kifuwarabe   = length_of_quiescence_search_by_kifuwarabe,
+                    length_by_kifuwarabe        = length_by_kifuwarabe)
 
         # 一手詰めを詰める
         if not self._gymnasium.table.is_check():
@@ -68,10 +80,13 @@ class _Search():
 
             if (matemove := self._gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
-                return SearchResultStateModel.MATE_IN_1_MOVE, 0, matemove
-
-        remaining_moves = list(self._gymnasium.table.legal_moves)
-        #print(f"D-74: {len(remaining_moves)=}")
+                return ResultOfGo(
+                        search_result_state_model   = SearchResultStateModel.MATE_IN_1_MOVE,
+                        alice_s_profit              = 0,
+                        best_move                   = matemove,
+                        length_by_cshogi            = length_by_cshogi,
+                        length_of_quiescence_search_by_kifuwarabe   = length_of_quiescence_search_by_kifuwarabe,
+                        length_by_kifuwarabe        = length_by_kifuwarabe)
 
         ################
         # MARK: 静止探索
@@ -82,7 +97,7 @@ class _Search():
                 remaining_moves = remaining_moves,
                 gymnasium       = self._gymnasium)
 
-
+        length_of_quiescence_search_by_kifuwarabe   = len(remaining_moves)
 
 
 
@@ -97,6 +112,8 @@ class _Search():
                 gymnasium       = self._gymnasium)
         #print(f"D-98: {len(remaining_moves)=}")
 
+        length_by_kifuwarabe = len(remaining_moves)
+
         # １手に絞り込む
         best_move = random.choice(remaining_moves)
         #print(f"D-102: {best_move=}")
@@ -107,7 +124,13 @@ class _Search():
                 move        = best_move,
                 gymnasium   = self._gymnasium)
 
-        return SearchResultStateModel.BEST_MOVE, 0, best_move
+        return ResultOfGo(
+                search_result_state_model   = SearchResultStateModel.BEST_MOVE,
+                alice_s_profit              = 0,
+                best_move                   = best_move,
+                length_by_cshogi            = length_by_cshogi,
+                length_of_quiescence_search_by_kifuwarabe   = length_of_quiescence_search_by_kifuwarabe,
+                length_by_kifuwarabe        = length_by_kifuwarabe)
 
 
 def _quiescence_search(depth, remaining_moves, gymnasium):
@@ -148,8 +171,14 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
         """
         alice_s_move_ex_list_2 = []
         for alice_s_move_ex in alice_s_move_ex_list:
+
             if alice_s_move_ex.is_capture or 0 < alice_s_move_ex.piece_value:
+                print(f"D-153: _quiescence_search select    {alice_s_move_ex.stringify()}")
                 alice_s_move_ex_list_2.append(alice_s_move_ex)
+            else:
+                print(f"D-156: _quiescence_search eliminate {alice_s_move_ex.stringify()}")
+            
+        print(f"D-158: _quiescence_search list length {len(alice_s_move_ex_list_2)}")
         return alice_s_move_ex_list_2
 
     #print(f"D-155: _quiescence_search before _eliminate_not_capture_not_positive {len(alice_s_move_ex_list)=}")
@@ -157,7 +186,6 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
     alice_s_move_ex_list = _eliminate_not_capture_not_positive(
             alice_s_move_ex_list = alice_s_move_ex_list)
 
-    #print(f"D-160: _quiescence_search after _eliminate_not_capture_not_positive {len(alice_s_move_ex_list)=}")
 
     # # DEBUG
     # for alice_s_move_ex in alice_s_move_ex_list:

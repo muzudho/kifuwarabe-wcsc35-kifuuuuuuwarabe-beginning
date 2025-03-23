@@ -168,4 +168,9 @@ class QuiescenceSearchForScramble():
         ########################
         # MARK: 合法手スキャン後
         ########################
+
+        # 指せる手がなかったなら、静止探索の終了後だ。
+        if alice_s_best_value == constants.value.NOTHING_CAPTURE_MOVE:
+            return constants.value.ZERO, [], []
+
         return alice_s_best_value, alice_s_best_move_list, alice_s_move_ex_list

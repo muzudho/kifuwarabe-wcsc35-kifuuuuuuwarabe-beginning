@@ -63,6 +63,11 @@ class _Value():
 
 
     @property
+    def ZERO(self):
+        return 0
+
+
+    @property
     def GAME_OVER(self):
         return -100001
 
