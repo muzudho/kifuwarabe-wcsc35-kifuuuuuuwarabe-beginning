@@ -122,7 +122,6 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
         # プロトコルにない独自出力
         message = f"[{datetime.datetime.now()}] usinewgame end"
-        self._gymnasium.thinking_logger_module.append(message)
         print(message, flush=True)
 
 
@@ -157,13 +156,13 @@ class ShogiEngineCompatibleWithUSIProtocol():
                 self._gymnasium.do_move_o1x(
                         move = self._gymnasium.table.move_from_usi(move_as_usi))
 
-            # この将棋エンジンの手番を記録。
-            self._gymnasium.engine_turn = self._gymnasium.table.turn
-
 
         _position_detail(
                 sfen_text   = sfen_text,
                 move_usi_list  = move_usi_list)
+
+        self._gymnasium.on_position(
+                command = f'{cmd[0]} {cmd[1]}')
 
 
     def go(self):

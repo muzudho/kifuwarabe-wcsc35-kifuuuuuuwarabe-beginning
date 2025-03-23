@@ -6,8 +6,19 @@ class ThinkingLoggerModule():
     """
 
 
-    def __init__(self, file_name):
-        self._file_name = file_name
+    def __init__(self, file_name, engine_turn):
+        self._file_name     = file_name
+        self._engine_turn   = engine_turn
+
+
+    @property
+    def engine_turn(self):
+        return self._engine_turn
+
+
+    @engine_turn.setter
+    def engine_turn(self, value):
+        self._engine_turn = value
 
 
     def delete_file(self):

@@ -151,6 +151,17 @@ class Piece():
 class Turn:
 
 
+    _codes = [
+        'black',
+        'white'
+    ]
+
+
+    @classmethod
+    def code(clazz, color):
+        return clazz._codes[color]
+
+
     @staticmethod
     def reverse(color):
         if color == cshogi.BLACK:

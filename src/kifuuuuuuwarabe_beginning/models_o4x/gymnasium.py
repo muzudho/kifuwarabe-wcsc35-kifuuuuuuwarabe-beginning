@@ -9,7 +9,7 @@ from ..logics_o3x_negative_rules import \
     DoNotUpToRank6, \
     DoNotMoveUntilRookMoves, DoNotMoveLeftLance, DoNotMoveRightLance, DoNotMoveRook, \
     WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToMove37Pawn, WillSwingingRook
-from ..models_o1x import Table
+from ..models_o1x import Table, Turn
 from ..models_o1x.table_access_object import PieceValueTAO
 from ..modules import ThinkingLoggerModule
 
@@ -27,9 +27,7 @@ class Gymnasium():
         self._config_doc = config_doc
 
         # 思考のログ・ファイル
-        now = datetime.now()
-        self._thinking_logger_module = ThinkingLoggerModule(
-                file_name=f"logs/thinking_[{now.strftime('%Y%m%d_%H%M%S')}].log")
+        self._thinking_logger_module = None
 
         # 盤
         self._table = Table.create_table()
@@ -92,6 +90,11 @@ class Gymnasium():
         return self._engine_turn
 
 
+    @engine_turn.setter
+    def engine_turn(self, value):
+        self._engine_turn = value
+
+
     @property
     def np_value(self):
         """９段目に近い方の対局者から見た駒得評価値。
@@ -106,11 +109,6 @@ class Gymnasium():
     #     if self._engine_turn == cshogi.BLACK:
     #         return self.np_value
     #     return -self.np_value
-
-
-    @engine_turn.setter
-    def engine_turn(self, value):
-        self._engine_turn = value
 
 
     @property
@@ -142,8 +140,23 @@ class Gymnasium():
     def on_new_game(self):
         """［新規対局開始］
         """
-        self._thinking_logger_module.delete_file()  # ログファイル　＞　削除。
+        self._thinking_logger_module = None     # 初期化の準備
         self._np_value = 0  # ９段目に近い方の対局者から見た駒得評価値。
+
+
+    def on_position(self, command):
+        # この将棋エンジンの手番を記録。
+        self.engine_turn = self._table.turn
+
+        if self._thinking_logger_module is None:
+            now = datetime.now()
+            self._thinking_logger_module = ThinkingLoggerModule(
+                    file_name   = f"logs/thinking_[{now.strftime('%Y%m%d_%H%M%S')}]_{Turn.code(self.engine_turn)}.log",
+                    engine_turn = self.engine_turn)
+            
+            self._thinking_logger_module.delete_file()  # ログファイル　＞　削除。
+
+        self._thinking_logger_module.append(command)
 
 
     ##################

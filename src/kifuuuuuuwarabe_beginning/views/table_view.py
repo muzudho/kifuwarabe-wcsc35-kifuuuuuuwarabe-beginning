@@ -1,15 +1,9 @@
-from ..models_o1x import Piece
+from ..models_o1x import Piece, Turn
 
 
 class TableView():
     """盤表示
     """
-
-
-    _turns = [
-        'black',
-        'white'
-    ]
 
 
     def __init__(self, table):
@@ -20,7 +14,7 @@ class TableView():
     def turn(self):
         """現在の手番を `black` か `white` で出力
         """
-        return TableView._turns[self._table.turn]
+        return Turn.code(self._table.turn)
 
 
     def count_repetition(self):
