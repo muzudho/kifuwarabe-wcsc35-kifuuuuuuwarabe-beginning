@@ -1,5 +1,7 @@
 import cshogi
 
+from datetime import datetime
+
 from ..logics_o3x_negative_rules import \
     DoNotBack, DoNotBreakFamousFence, DoNotBuildRightWall, \
     DoNotDogAndCatSideBySide, \
@@ -9,6 +11,7 @@ from ..logics_o3x_negative_rules import \
     WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToMove37Pawn, WillSwingingRook
 from ..models_o1x import Table
 from ..models_o1x.table_access_object import PieceValueTAO
+from ..modules import ThinkingLoggerModule
 
 
 class Gymnasium():
@@ -22,6 +25,11 @@ class Gymnasium():
 
         # 設定
         self._config_doc = config_doc
+
+        # 思考のログ・ファイル
+        now = datetime.now()
+        self._thinking_logger_module = ThinkingLoggerModule(
+                file_name=f"logs/thinking_[{now.strftime('%Y%m%d_%H%M%S')}].log")
 
         # 盤
         self._table = Table.create_table()
@@ -68,6 +76,13 @@ class Gymnasium():
         """［盤］
         """
         return self._table
+
+
+    @property
+    def thinking_logger_module(self):
+        """思考についてのロガー。
+        """
+        return self._thinking_logger_module
 
 
     @property
@@ -120,14 +135,20 @@ class Gymnasium():
         self._np_value = value
 
 
+    ########################
+    # MARK: イベントハンドラ
+    ########################
+
     def on_new_game(self):
+        """［新規対局開始］
+        """
+        self._thinking_logger_module.delete_file()  # ログファイル　＞　削除。
         self._np_value = 0  # ９段目に近い方の対局者から見た駒得評価値。
 
 
     ##################
     # MARK: 指し手関連
     ##################
-
 
     def do_move_o1x(self, move):
         """一手指す。

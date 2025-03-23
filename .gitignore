@@ -1,4 +1,6 @@
 # Kifuwarabe
+/logs/*
+!/logs/.gitkeep
 /private
 
 # Byte-compiled / optimized / DLL files

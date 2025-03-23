@@ -5,24 +5,24 @@ import sys
 from .logics_o1x import MovesReductionFilterLogics
 from .logics_o4x_usi import GoLogic
 from .models_o1x import SearchResultStateModel
-from .models_o4x import Gymnasium
 from .views import HistoryView, TableView
 
 
 class ShogiEngineCompatibleWithUSIProtocol():
-    """USIプロトコル互換の将棋エンジン
+    """［USIプロトコル互換の将棋エンジン］
     """
 
 
-    def __init__(self, config_doc):
+    def __init__(self, gymnasium):
         """［初期化］
+
+        Parameters
+        ----------
+        gymnasium : Gymnasium
+            ［体育館］
+            記憶は全部この中に詰め込めます。
         """
-
-        # 設定ファイル
-        self._config_doc = config_doc
-
-        # 体育館
-        self._gymnasium = Gymnasium(config_doc = self._config_doc)
+        self._gymnasium = gymnasium
 
 
     def start_usi_loop(self):
@@ -104,7 +104,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
     def usi(self):
         """USIエンジン握手
         """
-        print(f'id name {self._config_doc['engine']['name']}')
+        print(f'id name {self._gymnasium.config_doc['engine']['name']}')
         print('usiok', flush=True)
 
 
@@ -115,13 +115,15 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 
     def usinewgame(self):
-        """新しい対局
+        """［新しい対局］
         """
 
-        # 初期化
-        self._gymnasium.on_new_game()
+        self._gymnasium.on_new_game()   # 体育館の［初期化］
 
-        print(f"[{datetime.datetime.now()}] usinewgame end", flush=True)
+        # プロトコルにない独自出力
+        message = f"[{datetime.datetime.now()}] usinewgame end"
+        self._gymnasium.thinking_logger_module.append(message)
+        print(message, flush=True)
 
 
     def position(self, cmd):
@@ -296,36 +298,36 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
         print(f'★ go: ［３七の歩を突かない］意志を残してるか尋ねる前の指し手数={len(remaining_moves)}', file=sys.stderr)
         remaining_moves = MovesReductionFilterLogics.get_will_not_to_move_37_pawn(
-                config_doc=self._config_doc,
-                table=self._gymnasium.table,
-                remaining_moves=remaining_moves)
+                config_doc      = self._gymnasium.config_doc,
+                table           = self._gymnasium.table,
+                remaining_moves = remaining_moves)
         print(f'★ go: ［３七の歩を突かない］意志を残してるか尋ねた後の指し手数={len(remaining_moves)}', file=sys.stderr)
         print_moves(remaining_moves)
 
 
         print(f'★ go: ［右壁を作らない］意志を残してるか尋ねる前の指し手数={len(remaining_moves)}', file=sys.stderr)
         remaining_moves = MovesReductionFilterLogics.get_do_not_build_right_wall(
-                config_doc=self._config_doc,
-                table=self._gymnasium.table,
-                remaining_moves=remaining_moves)
+                config_do       =self._gymnasium.config_doc,
+                table           =self._gymnasium.table,
+                remaining_moves =remaining_moves)
         print(f'★ go: ［右壁を作らない］意志を残してるか尋ねた後の指し手数={len(remaining_moves)}', file=sys.stderr)
         print_moves(remaining_moves)
 
 
         print(f'★ go: ［振り飛車をする］意志を残してるか尋ねる前の指し手数={len(remaining_moves)}', file=sys.stderr)
         remaining_moves = MovesReductionFilterLogics.get_will_swinging_rook(
-                config_doc=self._config_doc,
-                table=self._gymnasium.table,
-                remaining_moves=remaining_moves)
+                config_doc      = self._gymnasium.config_doc,
+                table           = self._gymnasium.table,
+                remaining_moves = remaining_moves)
         print(f'★ go: ［振り飛車をする］意志を残してるか尋ねた後の指し手数={len(remaining_moves)}', file=sys.stderr)
         print_moves(remaining_moves)
 
 
         print(f'★ go: ［８八の角を素抜かれない］意志を残してるか尋ねる前の指し手数={len(remaining_moves)}', file=sys.stderr)
         remaining_moves = MovesReductionFilterLogics.get_will_not_to_be_cut_88_bishop(
-                config_doc=self._config_doc,
-                table=self._gymnasium.table,
-                remaining_moves=remaining_moves)
+                config_doc      = self._gymnasium.config_doc,
+                table           = self._gymnasium.table,
+                remaining_moves = remaining_moves)
         print(f'★ go: ［８八の角を素抜かれない］意志を残してるか尋ねた後の指し手数={len(remaining_moves)}', file=sys.stderr)
         print_moves(remaining_moves)
 
