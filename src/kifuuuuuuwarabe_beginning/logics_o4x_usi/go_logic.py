@@ -172,7 +172,14 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
         次の手は、候補に挙げる必要がないので除去します。
         （２）最高点でない手。
         それ以外の手は選択します。
+
+        Returns
+        -------
+        alice_s_move_list : list(int)
+            指し手のリスト。
         """
+        alice_s_move_list = []
+
         not_capture_and_not_positive_messages = []
         not_best_messages = []
         select_messages = []
@@ -183,7 +190,6 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
             if best_exchange_value < alice_s_move_ex.piece_exchange_value:
                 best_exchange_value = alice_s_move_ex.piece_exchange_value
 
-        alice_s_move_ex_list_2 = []
         for alice_s_move_ex in alice_s_move_ex_list:
 
             # （１）駒を取らない手で非正の手。
@@ -197,7 +203,7 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
             # それ以外の手は選択します。
             else:
                 select_messages.append(f"        {alice_s_move_ex.stringify()}")
-                alice_s_move_ex_list_2.append(alice_s_move_ex)
+                alice_s_move_list.append(alice_s_move_ex.move)
             
         gymnasium.thinking_logger_module.append(f"""\
 D-172: _quiescence_search start
@@ -209,11 +215,11 @@ D-172: _quiescence_search start
     SELECT (SUBTOTAL {len(select_messages)})
 {'\n'.join(select_messages)}""")
 
-        return alice_s_move_ex_list_2
+        return alice_s_move_list
 
     #print(f"D-155: _quiescence_search before _eliminate_not_capture_not_positive {len(alice_s_move_ex_list)=}")
 
-    alice_s_move_ex_list = _eliminate_not_capture_not_positive(
+    alice_s_move_list = _eliminate_not_capture_not_positive(
             alice_s_move_ex_list    = alice_s_move_ex_list,
             gymnasium               = gymnasium)
 
@@ -223,9 +229,9 @@ D-172: _quiescence_search start
     #     #print(f"D-149: _quiescence_search {alice_s_best_piece_value=} {alice_s_move_ex.stringify()=}")
 
     # 最善手があるなら、最善手を返します。
-    if 0 < len(alice_s_remaining_moves_before_move):
-        #print(f"D-153: _quiescence_search {alice_s_best_piece_value=} {len(alice_s_remaining_moves_before_move)=}")
-        return alice_s_remaining_moves_before_move
+    if 0 < len(alice_s_move_list):
+        #print(f"D-153: _quiescence_search {alice_s_best_piece_value=} {len(alice_s_move_list)=}")
+        return alice_s_move_list
 
     # 最善手が無ければ（全ての手がフラットなら）、元に戻します。
     #print(f"D-157: _quiescence_search {alice_s_best_piece_value=} {len(alice_s_remaining_moves_before_move)=}")
