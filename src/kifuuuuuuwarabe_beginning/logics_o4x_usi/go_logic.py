@@ -2,7 +2,7 @@ import cshogi
 import random
 
 from ..logics_o1x import MovesReductionFilterLogics
-from ..models_o1x import ResultOfGo, SearchResultStateModel
+from ..models_o1x import constants, ResultOfGo, SearchResultStateModel
 from .quiescence_search_for_scramble import QuiescenceSearchForScramble
 
 
@@ -167,22 +167,48 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
 
 
     def _eliminate_not_capture_not_positive(alice_s_move_ex_list, gymnasium):
-        """駒を取らない手で非正の手は邪魔だ。除去する。
+        """次の１つの手は、候補に挙げる必要がないので除去します。
+        （１）駒を取らない手で非正の手。
+        次の手は、候補に挙げる必要がないので除去します。
+        （２）最高点でない手。
+        それ以外の手は選択します。
         """
-        gymnasium.thinking_logger_module.append(f"""\
-D-172: _quiescence_search start
--------------------------------""")
+        not_capture_and_not_positive_messages = []
+        not_best_messages = []
+        select_messages = []
+
+        # まず、最高点を調べます。
+        best_exchange_value = constants.value.NOTHING_CAPTURE_MOVE
+        for alice_s_move_ex in alice_s_move_ex_list:
+            if best_exchange_value < alice_s_move_ex.piece_exchange_value:
+                best_exchange_value = alice_s_move_ex.piece_exchange_value
 
         alice_s_move_ex_list_2 = []
         for alice_s_move_ex in alice_s_move_ex_list:
 
-            if alice_s_move_ex.is_capture or 0 < alice_s_move_ex.piece_exchange_value:
-                gymnasium.thinking_logger_module.append(f"    select    {alice_s_move_ex.stringify()}")
-                alice_s_move_ex_list_2.append(alice_s_move_ex)
+            # （１）駒を取らない手で非正の手。
+            if not alice_s_move_ex.is_capture and alice_s_move_ex.piece_exchange_value < 1:
+                not_capture_and_not_positive_messages.append(f"        {alice_s_move_ex.stringify()}")
+
+            # （２）最高点でない手。
+            elif alice_s_move_ex.piece_exchange_value < best_exchange_value:
+                not_best_messages.append(f"        {alice_s_move_ex.stringify()}")
+
+            # それ以外の手は選択します。
             else:
-                gymnasium.thinking_logger_module.append(f"    eliminate {alice_s_move_ex.stringify()}")
+                select_messages.append(f"        {alice_s_move_ex.stringify()}")
+                alice_s_move_ex_list_2.append(alice_s_move_ex)
             
-        gymnasium.thinking_logger_module.append(f"    list length {len(alice_s_move_ex_list_2)}")
+        gymnasium.thinking_logger_module.append(f"""\
+D-172: _quiescence_search start
+-------------------------------
+    NOT CAPTURE AND NOT POSITIVE (SUBTOTAL {len(not_capture_and_not_positive_messages)})
+{'\n'.join(not_capture_and_not_positive_messages)}
+    NOT BEST (SUBTOTAL {len(not_best_messages)})
+{'\n'.join(not_best_messages)}
+    SELECT (SUBTOTAL {len(select_messages)})
+{'\n'.join(select_messages)}""")
+
         return alice_s_move_ex_list_2
 
     #print(f"D-155: _quiescence_search before _eliminate_not_capture_not_positive {len(alice_s_move_ex_list)=}")
