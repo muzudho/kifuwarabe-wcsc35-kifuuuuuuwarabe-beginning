@@ -93,10 +93,10 @@ class QuiescenceSearchForScramble():
             # MARK: アリスが一手指す前
             ##########################
 
-            dst_sq_obj = Square(cshogi.move_to(alice_s_move))           # 移動先マス
+            dst_sq_obj = Square(cshogi.move_to(alice_s_move))           # ［移動先マス］
             cap_pt = self._gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
             is_capture = (cap_pt != cshogi.NONE)
-            piece_value = PieceValues.by_piece_type(pt=cap_pt)
+            piece_exchange_value = 2 * PieceValues.by_piece_type(pt=cap_pt)      # 交換値に変換。
 
             # １回呼出時。
             if self._max_depth == depth:
@@ -117,11 +117,11 @@ class QuiescenceSearchForScramble():
             # MARK: アリスが一手指した後
             ############################
 
-            #print(f"(next {self._gymnasium.table.move_number} teme) ({index}) alice's move={cshogi.move_to_usi(alice_s_move)}({Helper.sq_to_masu(dst_sq_obj.sq)}) pt({PieceType.alphabet(piece_type=cap_pt)}) {alice_s_best_piece_value=} {piece_value=}")
+            #print(f"(next {self._gymnasium.table.move_number} teme) ({index}) alice's move={cshogi.move_to_usi(alice_s_move)}({Helper.sq_to_masu(dst_sq_obj.sq)}) pt({PieceType.alphabet(piece_type=cap_pt)}) {alice_s_best_piece_value=} {piece_exchange_value=}")
 
             # これ以上深く読まない場合。
             if depth - 1 < 1:
-                alice_s_value = piece_value     # 駒を取ったことによる得。
+                alice_s_value = piece_exchange_value     # 駒を取ったことによる得。
 
             # まだ深く読む場合。
             else:
@@ -136,7 +136,7 @@ class QuiescenceSearchForScramble():
                     depth                           = depth,
                     alice_s_remaining_moves         = list(self._gymnasium.table.legal_moves))
 
-                alice_s_value = piece_value - bob_s_value   # 今取った駒の価値から、末端の枝の積み重ね（bob_s_value）を引く。
+                alice_s_value = piece_exchange_value - bob_s_value   # 今取った駒の価値から、末端の枝の積み重ね（bob_s_value）を引く。
 
             # TODO アリスとしては、損が一番小さな分岐へ進みたい。
             # 手番は、一番得する手を指したい。
@@ -149,9 +149,9 @@ class QuiescenceSearchForScramble():
             # 指し手と、その得を紐づけます。
             alice_s_move_ex_list.append(
                     MoveOnScramble(
-                            move        = alice_s_move,
-                            piece_value = alice_s_value,
-                            is_capture  = is_capture))
+                            move                    = alice_s_move,
+                            piece_exchange_value    = alice_s_value,
+                            is_capture              = is_capture))
 
             ########################
             # MARK: アリスが一手戻す

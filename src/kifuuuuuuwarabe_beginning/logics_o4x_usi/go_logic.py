@@ -172,7 +172,7 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
         alice_s_move_ex_list_2 = []
         for alice_s_move_ex in alice_s_move_ex_list:
 
-            if alice_s_move_ex.is_capture or 0 < alice_s_move_ex.piece_value:
+            if alice_s_move_ex.is_capture or 0 < alice_s_move_ex.piece_exchange_value:
                 print(f"D-153: _quiescence_search select    {alice_s_move_ex.stringify()}")
                 alice_s_move_ex_list_2.append(alice_s_move_ex)
             else:
@@ -213,7 +213,7 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
     # alice_s_move_list_2 = []
     # for alice_s_move_ex in alice_s_move_ex_list:
     #     print(f"D-187: {alice_s_move_ex.stringify()=}")
-    #     if 0 <= alice_s_move_ex.piece_value:
+    #     if 0 <= alice_s_move_ex.piece_exchange_value:
     #         alice_s_move_list_2.append(alice_s_move_ex.move)
     
     # # 非損の手もなければ、元に戻します。

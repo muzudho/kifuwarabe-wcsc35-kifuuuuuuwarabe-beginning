@@ -12,14 +12,14 @@ class MoveOnScramble():
         for move in list(legal_moves):
             move_ex_list.append(MoveOnScramble(
                     move        = move,
-                    piece_value = 0))
+                    piece_exchange_value = 0))
         return move_ex_list
 
 
-    def __init__(self, move:int, piece_value:int, is_capture:bool):
-        self._move          = move
-        self._piece_value   = piece_value
-        self._is_capture    = is_capture
+    def __init__(self, move:int, piece_exchange_value:int, is_capture:bool):
+        self._move                  = move
+        self._piece_exchange_value  = piece_exchange_value
+        self._is_capture            = is_capture
     
 
     @property
@@ -28,8 +28,10 @@ class MoveOnScramble():
     
 
     @property
-    def piece_value(self):
-        return self._piece_value
+    def piece_exchange_value(self):
+        """駒の交換値。
+        """
+        return self._piece_exchange_value
     
 
     @property
@@ -43,4 +45,4 @@ class MoveOnScramble():
                 return 'cap'
             return ''
 
-        return f"{cshogi.move_to_usi(self._move)} {self._piece_value} {_cap_str()}"
+        return f"{cshogi.move_to_usi(self._move)} {self._piece_exchange_value} {_cap_str()}"
