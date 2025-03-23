@@ -169,16 +169,20 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
     def _eliminate_not_capture_not_positive(alice_s_move_ex_list, gymnasium):
         """駒を取らない手で非正の手は邪魔だ。除去する。
         """
+        gymnasium.thinking_logger_module.append(f"""\
+D-172: _quiescence_search start
+-------------------------------""")
+
         alice_s_move_ex_list_2 = []
         for alice_s_move_ex in alice_s_move_ex_list:
 
             if alice_s_move_ex.is_capture or 0 < alice_s_move_ex.piece_exchange_value:
-                gymnasium.thinking_logger_module.append(f"D-153: _quiescence_search select    {alice_s_move_ex.stringify()}")
+                gymnasium.thinking_logger_module.append(f"    select    {alice_s_move_ex.stringify()}")
                 alice_s_move_ex_list_2.append(alice_s_move_ex)
             else:
-                gymnasium.thinking_logger_module.append(f"D-156: _quiescence_search eliminate {alice_s_move_ex.stringify()}")
+                gymnasium.thinking_logger_module.append(f"    eliminate {alice_s_move_ex.stringify()}")
             
-        gymnasium.thinking_logger_module.append(f"D-158: _quiescence_search list length {len(alice_s_move_ex_list_2)}")
+        gymnasium.thinking_logger_module.append(f"    list length {len(alice_s_move_ex_list_2)}")
         return alice_s_move_ex_list_2
 
     #print(f"D-155: _quiescence_search before _eliminate_not_capture_not_positive {len(alice_s_move_ex_list)=}")
