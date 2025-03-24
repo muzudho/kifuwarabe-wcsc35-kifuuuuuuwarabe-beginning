@@ -157,13 +157,12 @@ class _Search():
         # ログ
         message = f"""\
 {TableView(self._gymnasium.table).stringify()}
-
 HEALTH CHECK
 ------------
 {self._gymnasium.health_check.stringify()}
 """
         self._gymnasium.thinking_logger_module.append(message)
-        print(message, file=sys.stderr)
+        # NOTE これを書くと、将棋ホームでフリーズ： print(message, file=sys.stderr)
 
         # １手に絞り込む
         best_move = random.choice(remaining_moves)
@@ -240,7 +239,7 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
                 gymnasium.health_check.append(
                         move    = alice_s_move_ex.move,
                         name    = 'restore171',
-                        value   = alice_s_move_ex.stringify_2())
+                        value   = f"{alice_s_move_ex.stringify_2()} not_cap_not_posite")
 
             # （２）最高点でない手。
             elif alice_s_move_ex.piece_exchange_value < best_exchange_value:

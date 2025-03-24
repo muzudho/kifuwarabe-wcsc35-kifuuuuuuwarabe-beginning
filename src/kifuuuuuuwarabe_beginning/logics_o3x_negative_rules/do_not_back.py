@@ -39,8 +39,8 @@ class DoNotBack(NegativeRule):
                 back_sq = self._back_board[src_sq_obj.sq]
             except:
                 # NOTE 角打だと 89 が返ってくる？
-                print(f'ERROR1: {src_sq_obj.sq=}')
-                #print(f'ERROR2: {src_sq_obj.sq=}', file=sys.stderr)
+                print(f'ERROR {src_sq_obj.sq=}')
+                #print(f'ERROR {src_sq_obj.sq=}', file=sys.stderr)
                 raise
 
         if back_sq in [None, constants.PIECE_STAND_SQ]:

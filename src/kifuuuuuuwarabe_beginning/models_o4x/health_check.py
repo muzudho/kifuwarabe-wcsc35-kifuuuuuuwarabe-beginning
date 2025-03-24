@@ -60,6 +60,6 @@ class HealthCheck():
         lines = []
 
         for move, move_prop in ordered_document:
-            lines.append(f"{cshogi.move_to_usi(move):5} {_legal(move_prop)} {_quiescence_search(move_prop)} {_select(move_prop)} {_restore171(move_prop)}")
+            lines.append(f"{cshogi.move_to_usi(move):5} {_legal(move_prop)} | {_quiescence_search(move_prop)} | {_select(move_prop)} | {_restore171(move_prop)}")
 
         return '\n'.join(lines)

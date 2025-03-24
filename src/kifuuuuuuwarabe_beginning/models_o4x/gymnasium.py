@@ -154,9 +154,11 @@ class Gymnasium():
 
 
     def on_position(self, command):
+        #print(f"★ [gymnasium.py > on_position] start.")
         self.engine_turn = self._table.turn     # この将棋エンジンの手番を記録。
 
         if self._thinking_logger_module is None:
+            #print(f"★ [gymnasium.py > on_position] initialize thinking_logger_module.")
             now = datetime.now()
             self._thinking_logger_module = ThinkingLoggerModule(
                     file_name   = f"logs/thinking_[{now.strftime('%Y%m%d_%H%M%S')}]_{Turn.code(self.engine_turn)}.log",
@@ -165,6 +167,7 @@ class Gymnasium():
             self._thinking_logger_module.delete_file()  # ログファイル　＞　削除。
 
         self._thinking_logger_module.append(command)
+        #print(f"★ [gymnasium.py > on_position] end.")
 
 
     ##################

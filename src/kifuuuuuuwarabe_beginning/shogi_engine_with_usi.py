@@ -33,6 +33,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
             # 入力
             cmd = input().split(' ', 1)
+            #print(f"★ [shogi_engine_with_usi.py > start_usi_loop] {cmd=}")
 
             # USIエンジン握手
             if cmd[0] == 'usi':
@@ -100,6 +101,8 @@ class ShogiEngineCompatibleWithUSIProtocol():
             elif cmd[0] == 'test':
                 self.test()
 
+            #print(f"★ [shogi_engine_with_usi.py > start_usi_loop] end loop.")
+
 
     def usi(self):
         """USIエンジン握手
@@ -146,10 +149,15 @@ class ShogiEngineCompatibleWithUSIProtocol():
         # 盤をスキャン。
         self._gymnasium.np_value = self._gymnasium.piece_value_tao.scan_table()
 
+        #print(f"★ [shogi_engine_with_usi.py > position] before replay.")
+
         # 棋譜再生。
         for move_as_usi in move_usi_list:
+            #print(f"★ [shogi_engine_with_usi.py > position] {move_as_usi=}")
             self._gymnasium.do_move_o1x(
                     move = self._gymnasium.table.move_from_usi(move_as_usi))
+
+        #print(f"★ [shogi_engine_with_usi.py > position] after replay.")
 
         self._gymnasium.on_position(
                 command = f'{cmd[0]} {cmd[1]}')

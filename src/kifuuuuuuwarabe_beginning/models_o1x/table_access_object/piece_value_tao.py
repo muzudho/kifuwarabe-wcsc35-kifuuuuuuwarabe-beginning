@@ -14,7 +14,7 @@ class PieceValueTAO():
 
 
     def scan_table(self):
-        print(f'[PieceValueTAO#scan_table] start.')
+        #print(f'★ [PieceValueTAO#scan_table] start.')
 
         np_value = 0
 
@@ -40,7 +40,7 @@ class PieceValueTAO():
         np_value += PieceValues.by_piece(cshogi.WROOK     ) * self._table.pieces_in_hand[1][6]  # ▽飛
 
         # 後手の駒台に歩が１つあれば、盤の上には先手の歩が１枚少ないので、-2 になる。（歩の交換値）
-        print(f'[PieceValueTAO#scan_table] {np_value=}')
+        #print(f'★ [PieceValueTAO#scan_table] {np_value=}')
 
         return np_value
 
