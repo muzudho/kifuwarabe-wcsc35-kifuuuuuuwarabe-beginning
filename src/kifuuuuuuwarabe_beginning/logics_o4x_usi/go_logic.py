@@ -68,6 +68,7 @@ class _Search():
         if self._gymnasium.table.is_game_over():
             """投了局面時。
             """
+            self._gymnasium.thinking_logger_module.append(f"Game over.")
             return ResultOfGoModel(
                     search_result_state_model   = SearchResultStateModel.RESIGN,
                     alice_s_profit              = 0,
@@ -79,6 +80,7 @@ class _Search():
         if self._gymnasium.table.is_nyugyoku():
             """入玉宣言局面時。
             """
+            self._gymnasium.thinking_logger_module.append(f"Nyugyoku win.")
             return ResultOfGoModel(
                     search_result_state_model   = SearchResultStateModel.NYUGYOKU_WIN,
                     alice_s_profit              = 0,
@@ -93,6 +95,7 @@ class _Search():
 
             if (matemove := self._gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
+                self._gymnasium.thinking_logger_module.append(f"Ittedume.")
                 return ResultOfGoModel(
                         search_result_state_model   = SearchResultStateModel.MATE_IN_1_MOVE,
                         alice_s_profit              = 0,
@@ -112,7 +115,7 @@ class _Search():
                 remaining_moves = remaining_moves,
                 gymnasium       = self._gymnasium)
         length_of_quiescence_search_by_kifuwarabe   = len(remaining_moves)
-        self._gymnasium.thinking_logger_module.append(f"{length_of_quiescence_search_by_kifuwarabe=}")
+        self._gymnasium.thinking_logger_module.append(f"QS_select_length={length_of_quiescence_search_by_kifuwarabe}")
 
         for move in remaining_moves:
             self._gymnasium.health_check.append(
