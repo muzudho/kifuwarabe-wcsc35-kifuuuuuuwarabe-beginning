@@ -1,5 +1,6 @@
 import cshogi
 import random
+import sys
 
 from ..logics_o1x import MovesReductionFilterLogics
 from ..models_o1x import constants, ResultOfGo, SearchResultStateModel
@@ -58,12 +59,6 @@ class _Search():
                     name    = 'legal',
                     value   =  True)
 
-        print(f"""\
-HEALTH CHECK
-------------
-{self._gymnasium.health_check.stringify()}
-""")
-
         length_by_cshogi        = len(remaining_moves)  # cshogi が示した合法手の数
         length_of_quiescence_search_by_kifuwarabe   = length_by_cshogi  # きふわらべ が静止探索で絞り込んだ指し手の数
         length_by_kifuwarabe    = length_by_cshogi      # きふわらべ が最終的に絞り込んだ指し手の数
@@ -118,6 +113,12 @@ HEALTH CHECK
         length_of_quiescence_search_by_kifuwarabe   = len(remaining_moves)
         self._gymnasium.thinking_logger_module.append(f"{length_of_quiescence_search_by_kifuwarabe=}")
 
+        for move in remaining_moves:
+            self._gymnasium.health_check.append(
+                    move    = move,
+                    name    = 'quiescence_search',
+                    value   =  True)
+
         if len(remaining_moves) == 0:
             remaining_moves = old_remaining_moves
             self._gymnasium.thinking_logger_module.append(f"Restore={len(remaining_moves)}.")
@@ -136,11 +137,29 @@ HEALTH CHECK
         length_by_kifuwarabe = len(remaining_moves)
         self._gymnasium.thinking_logger_module.append(f"{length_by_kifuwarabe=}")
 
+        for move in remaining_moves:
+            self._gymnasium.health_check.append(
+                    move    = move,
+                    name    = 'select',
+                    value   =  True)
+
         if len(remaining_moves) == 0:
             remaining_moves = old_remaining_moves
             self._gymnasium.thinking_logger_module.append(f"Restore={len(remaining_moves)}.")
 
-        old_remaining_moves = remaining_moves.copy()
+            for move in remaining_moves:
+                self._gymnasium.health_check.append(
+                        move    = move,
+                        name    = 'restore171',
+                        value   =  True)
+
+        message = f"""\
+HEALTH CHECK
+------------
+{self._gymnasium.health_check.stringify()}
+"""
+        self._gymnasium.thinking_logger_module.append(message)
+        print(message, file=sys.stderr)
 
         # １手に絞り込む
         best_move = random.choice(remaining_moves)
