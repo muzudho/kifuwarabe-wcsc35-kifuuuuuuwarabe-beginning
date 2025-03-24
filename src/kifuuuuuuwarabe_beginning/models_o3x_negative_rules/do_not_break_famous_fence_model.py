@@ -2,10 +2,10 @@ import cshogi
 
 from ..models_o1x import constants, SquareModel
 from ..models_o2x.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
-from .negative_rule import NegativeRule
+from .negative_rule_model import NegativeRuleModel
 
 
-class DoNotBreakFamousFence(NegativeRule):
+class DoNotBreakFamousFenceModel(NegativeRuleModel):
     """行進［名の有る囲いを崩すな］
     ［名の有る囲いを保つ］意志
     """

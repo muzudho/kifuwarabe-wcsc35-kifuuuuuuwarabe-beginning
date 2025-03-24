@@ -2,10 +2,10 @@ import cshogi
 
 from ..models_o1x import constants, SquareModel
 from ..models_o2x.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
-from .negative_rule import NegativeRule
+from .negative_rule_model import NegativeRuleModel
 
 
-class WillSwingingRook(NegativeRule):
+class WillSwingingRookModel(NegativeRuleModel):
     """［振り飛車をする］意志
     """
 

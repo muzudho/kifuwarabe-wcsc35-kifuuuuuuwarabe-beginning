@@ -1,10 +1,10 @@
 import cshogi
 
 from ..models_o1x import constants, SquareModel
-from .negative_rule import NegativeRule
+from .negative_rule_model import NegativeRuleModel
 
 
-class DoNotBack(NegativeRule):
+class DoNotBackModel(NegativeRuleModel):
     """行進［戻るな］
     ［常に進む］意志
     """

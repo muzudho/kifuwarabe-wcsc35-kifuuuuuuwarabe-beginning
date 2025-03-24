@@ -2,10 +2,10 @@ import cshogi
 
 from ..models_o1x import constants, SquareModel
 from ..models_o2x.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
-from .negative_rule import NegativeRule
+from .negative_rule_model import NegativeRuleModel
 
 
-class DoNotDogAndCatSideBySide(NegativeRule):
+class DoNotDogAndCatSideBySideModel(NegativeRuleModel):
     """行進［イヌとネコを横並びに上げるな］
     ［イヌを９段目に留めておく］意志を含む
     """

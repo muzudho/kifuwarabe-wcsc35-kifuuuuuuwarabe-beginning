@@ -1,7 +1,7 @@
 from ..models_o1x import constants
 
 
-class NegativeRule():
+class NegativeRuleModel():
 
 
     def __init__(self, id, label, config_doc):
