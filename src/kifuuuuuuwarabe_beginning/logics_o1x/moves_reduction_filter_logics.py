@@ -27,7 +27,7 @@ class MovesReductionFilterLogics():
         negative_rules_to_remove = []
 
         # 行進リスト
-        for negative_rule in gymnasium.list_of_negative_rules:
+        for negative_rule in gymnasium.negative_rule_collection_model.list_of_active:
             # １手も指さず、目の前にある盤に対して。
             remaining_moves = negative_rule.before_move_o1o1x(
                     remaining_moves = remaining_moves,
@@ -38,7 +38,7 @@ class MovesReductionFilterLogics():
                 negative_rules_to_remove.append(negative_rule)
 
         for negative_rule in negative_rules_to_remove:
-            gymnasium.list_of_negative_rules.remove(negative_rule)
+            gymnasium.negative_rule_collection_model.list_of_active.remove(negative_rule)
             print(f'★ b efore_move_o1x: 行進演算 削除 {negative_rule.label=}')
 
         # 指し手が全部消えてしまった場合、何でも指すようにします
@@ -66,7 +66,7 @@ class MovesReductionFilterLogics():
             negative_rules_to_remove = []
 
             # 行進リスト
-            for negative_rule in gymnasium.list_of_idle_negative_rules:
+            for negative_rule in gymnasium.negative_rule_collection_model.list_of_active:
                 negative_rule.after_best_moving_in_idling(
                         move        = move,
                         table       = gymnasium.table)
@@ -79,12 +79,12 @@ class MovesReductionFilterLogics():
                     negative_rules_to_remove.append(negative_rule)
 
             for negative_rule in negative_rules_to_activate:
-                gymnasium.list_of_idle_negative_rules.remove(negative_rule)
-                gymnasium.list_of_negative_rules.append(negative_rule)
+                gymnasium.negative_rule_collection_model.list_of_idle.remove(negative_rule)
+                gymnasium.negative_rule_collection_model.list_of_active.append(negative_rule)
                 print(f'★ ｏn_best_move_played: 行進演算 有効化 {negative_rule.label=}')
 
             for negative_rule in negative_rules_to_remove:
-                gymnasium.list_of_negative_rules.remove(negative_rule)
+                gymnasium.negative_rule_collection_model.list_of_active.remove(negative_rule)
                 print(f'★ ｏn_best_move_played: 行進演算 削除 {negative_rule.label=}')
 
 
@@ -95,7 +95,7 @@ class MovesReductionFilterLogics():
         negative_rules_to_remove = []
 
         # 行進リスト
-        for negative_rule in gymnasium.list_of_negative_rules:
+        for negative_rule in gymnasium.negative_rule_collection_model.list_of_active:
             negative_rule.after_best_moving(
                     move        = move,
                     table       = gymnasium.table)
@@ -105,5 +105,5 @@ class MovesReductionFilterLogics():
                 negative_rules_to_remove.append(negative_rule)
 
         for negative_rule in negative_rules_to_remove:
-            gymnasium.list_of_negative_rules.remove(negative_rule)
+            gymnasium.negative_rule_collection_model.list_of_active.remove(negative_rule)
             print(f'★ ｏn_best_move_played: 行進演算 削除 {negative_rule.label=}')

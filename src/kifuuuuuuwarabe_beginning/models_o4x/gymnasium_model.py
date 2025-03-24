@@ -2,17 +2,11 @@ import cshogi
 
 from datetime import datetime
 
-from ..logics_o3x_negative_rules import \
-    DoNotBack, DoNotBreakFamousFence, DoNotBuildRightWall, \
-    DoNotDogAndCatSideBySide, \
-    DoNotGoLeft, \
-    DoNotUpToRank6, \
-    DoNotMoveUntilRookMoves, DoNotMoveLeftLance, DoNotMoveRightLance, DoNotMoveRook, \
-    WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToMove37Pawn, WillSwingingRook
 from ..models_o1x import TableModel, TurnModel
 from ..models_o1x.table_access_object import PieceValueTAO
 from ..modules import ThinkingLoggerModule
 from .health_check_model import HealthCheckModel
+from .negative_rule_collection_model import NegativeRuleCollectionModel
 
 
 class GymnasiumModel():
@@ -42,25 +36,7 @@ class GymnasiumModel():
         # ９段目に近い方の対局者から見た駒得評価値。
         self._np_value = 0
 
-        # 初期状態では、有効でない行進演算です。
-        self._list_of_idle_negative_rules = [
-            DoNotMoveRook(config_doc=config_doc),        # 行進［キリンは動くな］  NOTE 飛車を振るまで有効になりません
-        ]
-
-        self._list_of_negative_rules = [
-            DoNotBack                                           (config_doc=config_doc),    # 行進［戻るな］
-            DoNotBreakFamousFence                               (config_doc=config_doc),    # 行進［名の有る囲いを崩すな］
-            DoNotBuildRightWall                                 (config_doc=config_doc),    # 行進［右壁を作るな］
-            DoNotMoveLeftLance                                  (config_doc=config_doc),    # 行進［左のイノシシは動くな］
-            DoNotMoveRightLance                                 (config_doc=config_doc),    # 行進［右のイノシシは動くな］
-            DoNotGoLeft                                         (config_doc=config_doc),    # 行進［左へ行くな］
-            DoNotDogAndCatSideBySide                            (config_doc=config_doc),    # 行進［イヌとネコを横並びに上げるな］
-            DoNotUpToRank6                                      (config_doc=config_doc),    # 行進［６段目に上がるな］
-            DoNotMoveUntilRookMoves                             (config_doc=config_doc),    # 行進［キリンが動くまで動くな］
-            WillForThreeGoldAndSilverCoinsToGatherToTheRight    (config_doc=config_doc),    # ［金銀３枚が右に集まる］意志
-            WillNotToMove37Pawn                                 (config_doc=config_doc),    # ［３七の歩を突かない］意志
-            WillSwingingRook                                    (config_doc=config_doc),    # ［振り飛車をする］意志
-        ]
+        self._negative_rule_collection_model = NegativeRuleCollectionModel(config_doc=config_doc)
 
         self._health_check = None   # 健康診断
 
@@ -117,23 +93,16 @@ class GymnasiumModel():
     @property
     def piece_value_tao(self):
         return self._piece_value_tao
-
-
-    @property
-    def list_of_idle_negative_rules(self):
-        """初期状態では、有効でない行進演算です。
-        """
-        return self._list_of_idle_negative_rules
-
-
-    @property
-    def list_of_negative_rules(self):
-        return self._list_of_negative_rules
     
 
     @np_value.setter
     def np_value(self, value):
         self._np_value = value
+
+
+    @property
+    def negative_rule_collection_model(self):
+        return self._negative_rule_collection_model
 
 
     @property
@@ -210,6 +179,6 @@ class GymnasiumModel():
         return f"""\
 {self._table.dump()}
 {self._np_value=}
-{len(self._list_of_idle_negative_rules)=}
-{len(self._list_of_negative_rules)=}
+{len(self._negative_rule_collection_model.list_of_idle)=}
+{len(self._negative_rule_collection_model.list_of_active)=}
 """
