@@ -52,13 +52,13 @@ class HealthCheckModel():
 
 
         def _select(move_prop):
-            if 'select' in move_prop:
+            if 'nr_select' in move_prop:
                 return 'select '
             return '       '
 
 
         def _reselect(move_prop):
-            if 'reselect' in move_prop:
+            if 'nr_reselect' in move_prop:
                 return 'reselect '
             return '         '
 

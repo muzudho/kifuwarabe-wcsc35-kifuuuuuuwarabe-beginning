@@ -122,7 +122,7 @@ class _Search():
 
         if len(remaining_moves) == 0:
             remaining_moves = old_remaining_moves
-            self._gymnasium.thinking_logger_module.append(f"Restore={len(remaining_moves)}.")
+            self._gymnasium.thinking_logger_module.append(f"Restore after quiescence_search. len={len(remaining_moves)}.")
 
         old_remaining_moves = remaining_moves.copy()
 
@@ -141,17 +141,17 @@ class _Search():
         for move in remaining_moves:
             self._gymnasium.health_check.append(
                     move    = move,
-                    name    = 'select',
+                    name    = 'nr_select',
                     value   =  True)
 
         if len(remaining_moves) == 0:
             remaining_moves = old_remaining_moves
-            self._gymnasium.thinking_logger_module.append(f"Restore={len(remaining_moves)}.")
+            self._gymnasium.thinking_logger_module.append(f"Restore after MovesReductionFilterLogics. len={len(remaining_moves)}.")
 
             for move in remaining_moves:
                 self._gymnasium.health_check.append(
                         move    = move,
-                        name    = 'reselect',
+                        name    = 'nr_reselect',
                         value   =  True)
 
         # ログ
