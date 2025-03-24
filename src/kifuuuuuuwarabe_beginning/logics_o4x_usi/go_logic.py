@@ -141,7 +141,7 @@ class _Search():
         for move in remaining_moves:
             self._gymnasium.health_check.append(
                     move    = move,
-                    name    = 'nr_select',
+                    name    = 'NR_select',
                     value   =  True)
 
         if len(remaining_moves) == 0:
@@ -151,7 +151,7 @@ class _Search():
             for move in remaining_moves:
                 self._gymnasium.health_check.append(
                         move    = move,
-                        name    = 'nr_reselect',
+                        name    = 'NR_reselect',
                         value   =  True)
 
         # ログ
@@ -257,7 +257,7 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
                 gymnasium.health_check.append(
                         move    = alice_s_move_ex.move,
                         name    = 'eliminate171',
-                        value   = f"{alice_s_move_ex.stringify_2():10} select")
+                        value   = f"{alice_s_move_ex.stringify_2():10} QS_select")
 
         return alice_s_move_list
 

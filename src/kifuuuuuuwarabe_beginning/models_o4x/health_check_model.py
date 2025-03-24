@@ -35,32 +35,32 @@ class HealthCheckModel():
 
         def _legal(move_prop):
             if 'legal' in move_prop:
-                return 'legal '
-            return '      '
+                return 'legal'
+            return ''
 
 
         def _quiescence_search(move_prop):
             if 'quiescence_search' in move_prop:
-                return 'quiescence_search '
-            return '                  '
+                return 'quiescence_search'
+            return ''
 
 
-        def _eliminate171(move_prop):
+        def _qs_eliminate171(move_prop):
             if 'eliminate171' in move_prop:
-                return f"{move_prop['eliminate171']:20}"
-            return f"{'':20}"
+                return move_prop['eliminate171']
+            return ''
 
 
-        def _select(move_prop):
-            if 'nr_select' in move_prop:
-                return 'select '
-            return '       '
+        def _nr_select(move_prop):
+            if 'NR_select' in move_prop:
+                return 'NR_select'
+            return ''
 
 
-        def _reselect(move_prop):
-            if 'nr_reselect' in move_prop:
-                return 'reselect '
-            return '         '
+        def _nr_reselect(move_prop):
+            if 'NR_reselect' in move_prop:
+                return 'NR_reselect'
+            return ''
 
 
         lines = []
@@ -71,6 +71,6 @@ class HealthCheckModel():
             # （３）静止探索で選ばれた手をエリミネートした手
             # （４）ネガティブ・ルールで選別した手
             # （５）ロールバックした手
-            lines.append(f"{cshogi.move_to_usi(move):5} {_legal(move_prop)} | {_quiescence_search(move_prop)} | {_eliminate171(move_prop)} | {_select(move_prop)} | {_reselect(move_prop)} |")
+            lines.append(f"{cshogi.move_to_usi(move):5} {_legal(move_prop):6} | {_quiescence_search(move_prop):18} | {_qs_eliminate171(move_prop):30} | {_nr_select(move_prop):10} | {_nr_reselect(move_prop):12} |")
 
         return '\n'.join(lines)
