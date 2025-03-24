@@ -220,9 +220,10 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
 
     def _eliminate_not_capture_not_positive(alice_s_move_ex_list, gymnasium):
         """次の１つの手は、候補に挙げる必要がないので除去します。
-        （１）駒を取らない手で非正の手。
+        （１）駒を取らない手で非正の手。このとき、［零点の手］があるかどうか調べます。
         次の手は、候補に挙げる必要がないので除去します。
         （２）最高点でない手。
+        （３）［零点の手」が存在し、かつ、負の手。（リスクヘッジの手でもないから）
         それ以外の手は選択します。
 
         Returns
@@ -231,6 +232,7 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
             指し手のリスト。
         """
         alice_s_move_list = []
+        exists_zero_value_move = False
 
         # まず、最高点を調べます。
         best_exchange_value = constants.value.NOTHING_CAPTURE_MOVE
@@ -242,6 +244,9 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
 
             # （１）駒を取らない手で非正の手。
             if not alice_s_move_ex.is_capture and alice_s_move_ex.piece_exchange_value < 1:
+                if alice_s_move_ex.piece_exchange_value == 0:
+                    exists_zero_value_move = True
+                
                 gymnasium.health_check.append(
                         move    = alice_s_move_ex.move,
                         name    = 'eliminate171',
@@ -253,6 +258,13 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
                         move    = alice_s_move_ex.move,
                         name    = 'eliminate171',
                         value   = f"{alice_s_move_ex.stringify_2():10} not_best")
+
+            # （３）リスクヘッジにならない手
+            elif exists_zero_value_move and alice_s_move_ex.piece_exchange_value < 0:
+                gymnasium.health_check.append(
+                        move    = alice_s_move_ex.move,
+                        name    = 'eliminate171',
+                        value   = f"{alice_s_move_ex.stringify_2():10} not_risk_hedge")
 
             # それ以外の手は選択します。
             else:
