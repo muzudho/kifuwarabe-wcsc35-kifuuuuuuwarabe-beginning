@@ -18,7 +18,11 @@ class GoLogic():
         best_move : int
             ［指す手］
         """
+        gymnasium.health_check.on_go_started()
+
         search = _Search(gymnasium)
+
+        gymnasium.health_check.on_go_finished()
 
         return search.start_alice()
 
@@ -47,6 +51,19 @@ class _Search():
         """
 
         remaining_moves         = list(self._gymnasium.table.legal_moves)
+
+        for move in remaining_moves:
+            self._gymnasium.health_check.append(
+                    move    = move,
+                    name    = 'legal',
+                    value   =  True)
+
+        print(f"""\
+HEALTH CHECK
+------------
+{self._gymnasium.health_check.stringify()}
+""")
+
         length_by_cshogi        = len(remaining_moves)  # cshogi が示した合法手の数
         length_of_quiescence_search_by_kifuwarabe   = length_by_cshogi  # きふわらべ が静止探索で絞り込んだ指し手の数
         length_by_kifuwarabe    = length_by_cshogi      # きふわらべ が最終的に絞り込んだ指し手の数

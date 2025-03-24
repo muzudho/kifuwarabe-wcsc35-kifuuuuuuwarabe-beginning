@@ -12,6 +12,7 @@ from ..logics_o3x_negative_rules import \
 from ..models_o1x import Table, Turn
 from ..models_o1x.table_access_object import PieceValueTAO
 from ..modules import ThinkingLoggerModule
+from .health_check import HealthCheck
 
 
 class Gymnasium():
@@ -60,6 +61,8 @@ class Gymnasium():
             WillNotToMove37Pawn                                 (config_doc=config_doc),    # ［３七の歩を突かない］意志
             WillSwingingRook                                    (config_doc=config_doc),    # ［振り飛車をする］意志
         ]
+
+        self._health_check = HealthCheck()  # 健康診断
 
 
     @property
@@ -131,6 +134,11 @@ class Gymnasium():
     @np_value.setter
     def np_value(self, value):
         self._np_value = value
+
+
+    @property
+    def health_check(self):
+        return self._health_check
 
 
     ########################
