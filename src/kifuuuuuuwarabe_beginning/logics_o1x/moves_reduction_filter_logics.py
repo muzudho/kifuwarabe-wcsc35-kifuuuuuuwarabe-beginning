@@ -20,6 +20,7 @@ class MovesReductionFilterLogics():
         remaining_moves : list<usi>
             制約：
                 指し手は必ず１つ以上残っています。
+                FIXME これで合ってるか要確認。
         """
 
         old_remaining_moves = remaining_moves.copy()
@@ -39,8 +40,7 @@ class MovesReductionFilterLogics():
 
         for negative_rule in negative_rules_to_remove:
             gymnasium.negative_rule_collection_model.list_of_active.remove(negative_rule)
-            print(f'★ b efore_move_o1x: 行進演算 削除 {negative_rule.label=}')
-
+            gymnasium.thinking_logger_module.append(f"[moves_reduction_filter_logics.py > before_move_o1x] delete negative rule. {negative_rule.label}")
         # 指し手が全部消えてしまった場合、何でも指すようにします
         if len(remaining_moves) < 1:
             return old_remaining_moves
@@ -81,11 +81,11 @@ class MovesReductionFilterLogics():
             for negative_rule in negative_rules_to_activate:
                 gymnasium.negative_rule_collection_model.list_of_idle.remove(negative_rule)
                 gymnasium.negative_rule_collection_model.list_of_active.append(negative_rule)
-                print(f'★ ｏn_best_move_played: 行進演算 有効化 {negative_rule.label=}')
+                gymnasium.thinking_logger_module.append(f"[moves_reduction_filter_logics.py > after_best_moving] activate negative rule. {negative_rule.label}")
 
             for negative_rule in negative_rules_to_remove:
                 gymnasium.negative_rule_collection_model.list_of_active.remove(negative_rule)
-                print(f'★ ｏn_best_move_played: 行進演算 削除 {negative_rule.label=}')
+                gymnasium.thinking_logger_module.append(f"[moves_reduction_filter_logics.py > after_best_moving] delete negative rule. {negative_rule.label}")
 
 
         _for_idle_negative_rules(
@@ -106,4 +106,4 @@ class MovesReductionFilterLogics():
 
         for negative_rule in negative_rules_to_remove:
             gymnasium.negative_rule_collection_model.list_of_active.remove(negative_rule)
-            print(f'★ ｏn_best_move_played: 行進演算 削除 {negative_rule.label=}')
+            gymnasium.thinking_logger_module.append(f"[moves_reduction_filter_logics.py > after_best_moving] delete negative rule. {negative_rule.label}")

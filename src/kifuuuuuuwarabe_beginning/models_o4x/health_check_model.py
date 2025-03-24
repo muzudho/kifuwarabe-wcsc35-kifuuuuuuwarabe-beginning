@@ -51,15 +51,19 @@ class HealthCheckModel():
             return '       '
 
 
-        def _restore171(move_prop):
-            if 'restore171' in move_prop:
-                return f"{move_prop['restore171']:20}"
+        def _rollback171(move_prop):
+            if 'rollback171' in move_prop:
+                return f"{move_prop['rollback171']:20}"
             return f"{'':20}"
 
 
         lines = []
 
         for move, move_prop in ordered_document:
-            lines.append(f"{cshogi.move_to_usi(move):5} {_legal(move_prop)} | {_quiescence_search(move_prop)} | {_select(move_prop)} | {_restore171(move_prop)}")
+            # （１）リーガル・ムーブ
+            # （２）静止探索で選ばれた手
+            # （３）ネガティブ・ルールで選別した手
+            # （４）ロールバックした手
+            lines.append(f"{cshogi.move_to_usi(move):5} {_legal(move_prop)} | {_quiescence_search(move_prop)} | {_rollback171(move_prop)} | {_select(move_prop)}")
 
         return '\n'.join(lines)
