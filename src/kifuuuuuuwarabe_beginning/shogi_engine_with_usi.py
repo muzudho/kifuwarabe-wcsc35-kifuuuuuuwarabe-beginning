@@ -135,31 +135,21 @@ class ShogiEngineCompatibleWithUSIProtocol():
         # 区切りは半角空白１文字とします。
         move_usi_list = (pos[1].lstrip().split(' ') if len(pos) > 1 else [])
 
+        # 平手初期局面に変更。
+        if sfen_text == 'startpos':
+            self._gymnasium.table.reset()
 
-        def _position_detail(sfen_text, move_usi_list):
-            """局面データ解析
-            """
+        # 指定局面に変更。
+        elif sfen_text[:5] == 'sfen ':
+            self._gymnasium.table.set_sfen(sfen_text[5:])
 
-            # 平手初期局面に変更。
-            if sfen_text == 'startpos':
-                self._gymnasium.table.reset()
+        # 盤をスキャン。
+        self._gymnasium.np_value = self._gymnasium.piece_value_tao.scan_table()
 
-            # 指定局面に変更。
-            elif sfen_text[:5] == 'sfen ':
-                self._gymnasium.table.set_sfen(sfen_text[5:])
-
-            # 盤をスキャン。
-            self._gymnasium.np_value = self._gymnasium.piece_value_tao.scan_table()
-
-            # 棋譜再生。
-            for move_as_usi in move_usi_list:
-                self._gymnasium.do_move_o1x(
-                        move = self._gymnasium.table.move_from_usi(move_as_usi))
-
-
-        _position_detail(
-                sfen_text   = sfen_text,
-                move_usi_list  = move_usi_list)
+        # 棋譜再生。
+        for move_as_usi in move_usi_list:
+            self._gymnasium.do_move_o1x(
+                    move = self._gymnasium.table.move_from_usi(move_as_usi))
 
         self._gymnasium.on_position(
                 command = f'{cmd[0]} {cmd[1]}')

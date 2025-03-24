@@ -154,8 +154,7 @@ class Gymnasium():
 
 
     def on_position(self, command):
-        # この将棋エンジンの手番を記録。
-        self.engine_turn = self._table.turn
+        self.engine_turn = self._table.turn     # この将棋エンジンの手番を記録。
 
         if self._thinking_logger_module is None:
             now = datetime.now()

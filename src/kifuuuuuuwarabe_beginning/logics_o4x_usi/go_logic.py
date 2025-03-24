@@ -4,6 +4,7 @@ import sys
 
 from ..logics_o1x import MovesReductionFilterLogics
 from ..models_o1x import constants, ResultOfGo, SearchResultStateModel
+from ..views import TableView
 from .quiescence_search_for_scramble import QuiescenceSearchForScramble
 
 
@@ -153,7 +154,10 @@ class _Search():
                         name    = 'restore171',
                         value   =  True)
 
+        # ログ
         message = f"""\
+{TableView(self._gymnasium.table).stringify()}
+
 HEALTH CHECK
 ------------
 {self._gymnasium.health_check.stringify()}
@@ -188,13 +192,11 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
         指し手のリスト。
     """
     max_depth                   = gymnasium.config_doc['search']['capture_depth']   # 2
-    alice_s_remaining_moves_before_move = []
 
     # 駒の取り合いのための静止探索
     scramble_search = QuiescenceSearchForScramble(
             max_depth   = max_depth,
             gymnasium   = gymnasium)
-    old_remaining_moves = remaining_moves.copy()
 
     if max_depth < 1:
         #print(f"D-132: _quiescence_search {max_depth=}")
@@ -257,7 +259,6 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
 
         return alice_s_move_list
 
-    #print(f"D-155: _quiescence_search before _eliminate_not_capture_not_positive {len(alice_s_move_ex_list)=}")
 
     return _eliminate_not_capture_not_positive(
             alice_s_move_ex_list    = alice_s_move_ex_list,
