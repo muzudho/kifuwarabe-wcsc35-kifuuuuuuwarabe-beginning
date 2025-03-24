@@ -40,9 +40,13 @@ class MoveOnScramble():
 
 
     def stringify(self):
+        return f"{cshogi.move_to_usi(self._move)} {self.stringify_2()}"
+
+
+    def stringify_2(self):
         def _cap_str():
             if self._is_capture:
                 return 'cap'
             return ''
 
-        return f"{cshogi.move_to_usi(self._move)} {self._piece_exchange_value} {_cap_str()}"
+        return f"{self._piece_exchange_value} {_cap_str()}"

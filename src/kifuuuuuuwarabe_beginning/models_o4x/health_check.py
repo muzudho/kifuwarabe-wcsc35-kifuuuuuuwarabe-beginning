@@ -42,19 +42,19 @@ class HealthCheck():
         def _quiescence_search(move_prop):
             if 'quiescence_search' in move_prop:
                 return 'quiescence_search '
-            return '                   '
+            return '                  '
 
 
         def _select(move_prop):
             if 'select' in move_prop:
                 return 'select '
-            return '        '
+            return '       '
 
 
         def _restore171(move_prop):
             if 'restore171' in move_prop:
-                return 'restore171 '
-            return '            '
+                return f"{move_prop['restore171']:20}"
+            return f"{'':20}"
 
 
         lines = []

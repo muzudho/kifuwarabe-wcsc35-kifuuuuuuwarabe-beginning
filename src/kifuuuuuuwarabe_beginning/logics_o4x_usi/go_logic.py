@@ -225,10 +225,6 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
         """
         alice_s_move_list = []
 
-        not_capture_and_not_positive_messages = []
-        not_best_messages = []
-        select_messages = []
-
         # まず、最高点を調べます。
         best_exchange_value = constants.value.NOTHING_CAPTURE_MOVE
         for alice_s_move_ex in alice_s_move_ex_list:
@@ -239,26 +235,25 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
 
             # （１）駒を取らない手で非正の手。
             if not alice_s_move_ex.is_capture and alice_s_move_ex.piece_exchange_value < 1:
-                not_capture_and_not_positive_messages.append(f"        {alice_s_move_ex.stringify()}")
+                gymnasium.health_check.append(
+                        move    = alice_s_move_ex.move,
+                        name    = 'restore171',
+                        value   = alice_s_move_ex.stringify_2())
 
             # （２）最高点でない手。
             elif alice_s_move_ex.piece_exchange_value < best_exchange_value:
-                not_best_messages.append(f"        {alice_s_move_ex.stringify()}")
+                gymnasium.health_check.append(
+                        move    = alice_s_move_ex.move,
+                        name    = 'restore171',
+                        value   = f"{alice_s_move_ex.stringify_2()} not_best")
 
             # それ以外の手は選択します。
             else:
-                select_messages.append(f"        {alice_s_move_ex.stringify()}")
                 alice_s_move_list.append(alice_s_move_ex.move)
-            
-        gymnasium.thinking_logger_module.append(f"""\
-D-172: _quiescence_search start
--------------------------------
-    NOT CAPTURE AND NOT POSITIVE (SUBTOTAL {len(not_capture_and_not_positive_messages)})
-{'\n'.join(not_capture_and_not_positive_messages)}
-    NOT BEST (SUBTOTAL {len(not_best_messages)})
-{'\n'.join(not_best_messages)}
-    SELECT (SUBTOTAL {len(select_messages)})
-{'\n'.join(select_messages)}""")
+                gymnasium.health_check.append(
+                        move    = alice_s_move_ex.move,
+                        name    = 'restore171',
+                        value   = f"{alice_s_move_ex.stringify_2()} select")
 
         return alice_s_move_list
 
