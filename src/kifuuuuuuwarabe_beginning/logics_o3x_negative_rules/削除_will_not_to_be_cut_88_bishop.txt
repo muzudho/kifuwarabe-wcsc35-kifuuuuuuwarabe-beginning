@@ -3,7 +3,7 @@ import sys
 
 from ..helper import Helper
 from ..models import constants
-from ..nine_rank_side_perspective import NineRankSidePerspective
+from ..nine_rank_side_perspective import NineRankSidePerspectiveModel
 from .match_operation import MatchOperation
 
 
@@ -40,7 +40,7 @@ class WillNotToBeCut88Bishop(MatchOperation):
         """指した後に意志があるか？        
         """
         # NOTE 指した後は相手の番になっていることに注意
-        np = NineRankSidePerspective(table, after_moving=True)
+        np = NineRankSidePerspectiveModel(table, after_moving=True)
 
         # ８八に自角がいるケースだけ対称
         if table.piece(ban.masu(88)) != ji.pc(cshogi.BISHOP):

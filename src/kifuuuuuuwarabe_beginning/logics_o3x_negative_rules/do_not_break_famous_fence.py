@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import NineRankSidePerspective
+from ..models_o2x.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
 from .negative_rule import NegativeRule
 
 
@@ -33,7 +33,7 @@ class DoNotBreakFamousFence(NegativeRule):
     def before_move(self, move, table):
         """指す前に。
         """
-        np = NineRankSidePerspective(table)
+        np = NineRankSidePerspectiveModel(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
 

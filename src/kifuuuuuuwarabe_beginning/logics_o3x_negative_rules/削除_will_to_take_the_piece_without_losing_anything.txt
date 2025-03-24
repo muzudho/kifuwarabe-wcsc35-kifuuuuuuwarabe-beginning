@@ -3,7 +3,7 @@ import sys
 
 from ..helper import Helper
 from ..models import constants, Masu, Piece, PieceType, Square
-from ..nine_rank_side_perspective import NineRankSidePerspective
+from ..nine_rank_side_perspective import NineRankSidePerspectiveModel
 from .match_operation import MatchOperation
 
 
@@ -71,7 +71,7 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
         """
 
         # NOTE 指した後は相手の番になっていることに注意
-        ban = NineRankSidePerspective(table, after_moving=True)
+        ban = NineRankSidePerspectiveModel(table, after_moving=True)
         ji = Ji(table, after_moving=True)
 
 

@@ -12,10 +12,10 @@ from ..logics_o3x_negative_rules import \
 from ..models_o1x import Table, Turn
 from ..models_o1x.table_access_object import PieceValueTAO
 from ..modules import ThinkingLoggerModule
-from .health_check import HealthCheck
+from .health_check_model import HealthCheckModel
 
 
-class Gymnasium():
+class GymnasiumModel():
     """体育館。きふわらべはなぜか体育館で将棋をしている。
     """
 
@@ -148,7 +148,7 @@ class Gymnasium():
     def on_new_game(self):
         """［新規対局開始］
         """
-        self._health_check = HealthCheck()  # 健康診断
+        self._health_check = HealthCheckModel()  # 健康診断
         self._thinking_logger_module = None     # 初期化の準備
         self._np_value = 0  # ９段目に近い方の対局者から見た駒得評価値。
 

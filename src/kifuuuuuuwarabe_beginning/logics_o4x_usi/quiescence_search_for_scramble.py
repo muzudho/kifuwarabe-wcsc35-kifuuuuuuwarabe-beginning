@@ -14,7 +14,7 @@ class QuiescenceSearchForScramble():
         """
         Parameters
         ----------
-        gymnasium : Gymnasium
+        gymnasium : GymnasiumModel
             体育館。        
         """
         self._max_depth = max_depth

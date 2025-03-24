@@ -1,1 +1,1 @@
-from .nine_rank_side_perspective import NineRankSidePerspective
+from .nine_rank_side_perspective_model import NineRankSidePerspectiveModel

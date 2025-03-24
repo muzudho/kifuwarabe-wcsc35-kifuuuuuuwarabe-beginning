@@ -1,7 +1,7 @@
 import cshogi
 
 from ..logics_o1x.logger_logics import LoggerLogics
-from ..models_o2x import NineRankSidePerspective
+from ..models_o2x import NineRankSidePerspectiveModel
 
 
 class KomadokuFilterModel():
@@ -21,9 +21,9 @@ class KomadokuFilterModel():
 
     def before_loop(self, remaining_moves):
         self._old_remaining_moves = remaining_moves.copy()
-        self._np = NineRankSidePerspective(
+        self._np = NineRankSidePerspectiveModel(
                 table = self._gymnasium.table)
-        self._np_rev = NineRankSidePerspective(
+        self._np_rev = NineRankSidePerspectiveModel(
                 table           = self._gymnasium.table,
                 after_moving    = True)
 

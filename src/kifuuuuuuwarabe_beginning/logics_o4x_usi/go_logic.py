@@ -161,6 +161,7 @@ HEALTH CHECK
 ------------
 {self._gymnasium.health_check.stringify()}
 """
+        # TODO ネガティブ・ルールの一覧も表示したい。
         self._gymnasium.thinking_logger_module.append(message)
         # NOTE これを書くと、将棋ホームでフリーズ： print(message, file=sys.stderr)
 

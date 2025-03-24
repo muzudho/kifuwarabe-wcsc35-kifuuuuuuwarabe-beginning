@@ -5,7 +5,7 @@ import traceback
 
 from tomlkit import parse as toml_parse
 
-from src.kifuuuuuuwarabe_beginning.models_o4x import Gymnasium
+from src.kifuuuuuuwarabe_beginning.models_o4x import GymnasiumModel
 from src.kifuuuuuuwarabe_beginning.shogi_engine_with_usi import ShogiEngineCompatibleWithUSIProtocol
 
 
@@ -28,7 +28,7 @@ if __name__ == '__main__':
             raise
 
         shogi_engine = ShogiEngineCompatibleWithUSIProtocol(
-                gymnasium = Gymnasium(
+                gymnasium = GymnasiumModel(
                         config_doc = config_doc))
         shogi_engine.start_usi_loop()
 

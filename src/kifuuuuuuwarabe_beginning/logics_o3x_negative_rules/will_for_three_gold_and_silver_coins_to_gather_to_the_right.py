@@ -2,7 +2,7 @@ import cshogi
 
 from ..logics_o1x.helper import Helper
 from ..models_o1x import constants, Square
-from ..models_o2x.nine_rank_side_perspective import NineRankSidePerspective
+from ..models_o2x.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
 from .negative_rule import NegativeRule
 
 
@@ -25,7 +25,7 @@ class WillForThreeGoldAndSilverCoinsToGatherToTheRight(NegativeRule):
         ５筋位左にある金銀が左へ移動するとき、６筋位左に自駒の金銀が０枚である場合のみ移動できる。
         """
 
-        np = NineRankSidePerspective(table)
+        np = NineRankSidePerspectiveModel(table)
 
         src_sq_obj = Square(cshogi.move_from(move))
         dst_sq_obj = Square(cshogi.move_to(move))

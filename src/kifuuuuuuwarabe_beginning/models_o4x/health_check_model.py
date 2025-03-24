@@ -1,7 +1,7 @@
 import cshogi
 
 
-class HealthCheck():
+class HealthCheckModel():
     """健康診断。
     """
 

@@ -18,7 +18,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
         Parameters
         ----------
-        gymnasium : Gymnasium
+        gymnasium : GymnasiumModel
             ［体育館］
             記憶は全部この中に詰め込めます。
         """
@@ -333,10 +333,10 @@ class ShogiEngineCompatibleWithUSIProtocol():
         """TODO 使い終わったら消す
         """
         from .logics_o1x.helper import Helper
-        from .models_o2x.nine_rank_side_perspective import NineRankSidePerspective
+        from .models_o2x.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
 
 
-        np = NineRankSidePerspective(self._gymnasium.table)
+        np = NineRankSidePerspectiveModel(self._gymnasium.table)
 
         # for suji in range(1, 10):
         #     for dan in range(1, 10):
