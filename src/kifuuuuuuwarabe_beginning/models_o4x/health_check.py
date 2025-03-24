@@ -29,6 +29,9 @@ class HealthCheck():
 
     def stringify(self):
 
+        # キーを int 型から str の USI 形式に変換（非破壊的）してから、ソート。
+        ordered_document = sorted(self._document.items(), key=lambda entry:cshogi.move_to_usi(entry[0]))
+
         def _legal(move_prop):
             if 'legal' in move_prop:
                 return 'legal '
@@ -36,7 +39,7 @@ class HealthCheck():
 
         lines = []
 
-        for move, move_prop in self._document.items():
+        for move, move_prop in ordered_document:
             lines.append(f"{cshogi.move_to_usi(move):5} {_legal(move_prop)}")
 
         return '\n'.join(lines)

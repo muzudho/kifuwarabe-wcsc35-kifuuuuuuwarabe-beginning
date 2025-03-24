@@ -62,7 +62,7 @@ class Gymnasium():
             WillSwingingRook                                    (config_doc=config_doc),    # ［振り飛車をする］意志
         ]
 
-        self._health_check = HealthCheck()  # 健康診断
+        self._health_check = None   # 健康診断
 
 
     @property
@@ -148,6 +148,7 @@ class Gymnasium():
     def on_new_game(self):
         """［新規対局開始］
         """
+        self._health_check = HealthCheck()  # 健康診断
         self._thinking_logger_module = None     # 初期化の準備
         self._np_value = 0  # ９段目に近い方の対局者から見た駒得評価値。
 
