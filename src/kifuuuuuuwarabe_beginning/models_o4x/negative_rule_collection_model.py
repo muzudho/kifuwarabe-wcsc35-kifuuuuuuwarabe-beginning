@@ -44,8 +44,22 @@ class NegativeRuleCollectionModel():
         return self._list_of_active
 
 
-    def dump(self):
+    def stringify(self):
+        labels_of_idle_rule = []
+        labels_of_active_rule = []
+
+        for rule in self.list_of_idle:
+            labels_of_idle_rule.append(rule.label)
+
+        for rule in self.list_of_active:
+            labels_of_active_rule.append(rule.label)
+
         return f"""\
-{len(self.list_of_idle)=}
-{len(self.list_of_active)=}
+IDLE RULES ({len(self.list_of_idle)})
+----------
+{'\n'.join(labels_of_idle_rule)}
+
+ACTIVE RULES ({len(self.list_of_active)})
+------------
+{'\n'.join(labels_of_active_rule)}
 """

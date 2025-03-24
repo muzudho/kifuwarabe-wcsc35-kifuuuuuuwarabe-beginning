@@ -160,6 +160,8 @@ class _Search():
 HEALTH CHECK
 ------------
 {self._gymnasium.health_check.stringify()}
+
+{self._gymnasium.negative_rule_collection_model.stringify()}
 """
         # TODO ネガティブ・ルールの一覧も表示したい。
         self._gymnasium.thinking_logger_module.append(message)
