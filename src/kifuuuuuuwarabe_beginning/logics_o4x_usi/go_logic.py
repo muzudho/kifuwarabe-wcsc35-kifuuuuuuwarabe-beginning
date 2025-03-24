@@ -151,7 +151,7 @@ class _Search():
             for move in remaining_moves:
                 self._gymnasium.health_check.append(
                         move    = move,
-                        name    = 'rollback171',
+                        name    = 'reselect',
                         value   =  True)
 
         # ログ
@@ -241,23 +241,23 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
             if not alice_s_move_ex.is_capture and alice_s_move_ex.piece_exchange_value < 1:
                 gymnasium.health_check.append(
                         move    = alice_s_move_ex.move,
-                        name    = 'rollback171',
-                        value   = f"{alice_s_move_ex.stringify_2()} not_cap_not_posite")
+                        name    = 'eliminate171',
+                        value   = f"{alice_s_move_ex.stringify_2():10} not_cap_not_posite")
 
             # （２）最高点でない手。
             elif alice_s_move_ex.piece_exchange_value < best_exchange_value:
                 gymnasium.health_check.append(
                         move    = alice_s_move_ex.move,
-                        name    = 'rollback171',
-                        value   = f"{alice_s_move_ex.stringify_2()} not_best")
+                        name    = 'eliminate171',
+                        value   = f"{alice_s_move_ex.stringify_2():10} not_best")
 
             # それ以外の手は選択します。
             else:
                 alice_s_move_list.append(alice_s_move_ex.move)
                 gymnasium.health_check.append(
                         move    = alice_s_move_ex.move,
-                        name    = 'rollback171',
-                        value   = f"{alice_s_move_ex.stringify_2()} select")
+                        name    = 'eliminate171',
+                        value   = f"{alice_s_move_ex.stringify_2():10} select")
 
         return alice_s_move_list
 

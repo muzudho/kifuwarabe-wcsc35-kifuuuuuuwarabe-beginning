@@ -40,7 +40,7 @@ class MoveOnScrambleModel():
 
 
     def stringify(self):
-        return f"{cshogi.move_to_usi(self._move)} {self.stringify_2()}"
+        return f"{cshogi.move_to_usi(self._move):5} {self.stringify_2()}"
 
 
     def stringify_2(self):
@@ -49,4 +49,4 @@ class MoveOnScrambleModel():
                 return 'cap'
             return ''
 
-        return f"{self._piece_exchange_value} {_cap_str()}"
+        return f"{self._piece_exchange_value:4} {_cap_str():3}"

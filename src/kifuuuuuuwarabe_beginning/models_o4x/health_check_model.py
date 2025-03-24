@@ -45,16 +45,22 @@ class HealthCheckModel():
             return '                  '
 
 
+        def _eliminate171(move_prop):
+            if 'eliminate171' in move_prop:
+                return f"{move_prop['eliminate171']:20}"
+            return f"{'':20}"
+
+
         def _select(move_prop):
             if 'select' in move_prop:
                 return 'select '
             return '       '
 
 
-        def _rollback171(move_prop):
-            if 'rollback171' in move_prop:
-                return f"{move_prop['rollback171']:20}"
-            return f"{'':20}"
+        def _reselect(move_prop):
+            if 'reselect' in move_prop:
+                return 'reselect '
+            return '         '
 
 
         lines = []
@@ -62,8 +68,9 @@ class HealthCheckModel():
         for move, move_prop in ordered_document:
             # （１）リーガル・ムーブ
             # （２）静止探索で選ばれた手
-            # （３）ネガティブ・ルールで選別した手
-            # （４）ロールバックした手
-            lines.append(f"{cshogi.move_to_usi(move):5} {_legal(move_prop)} | {_quiescence_search(move_prop)} | {_rollback171(move_prop)} | {_select(move_prop)}")
+            # （３）静止探索で選ばれた手をエリミネートした手
+            # （４）ネガティブ・ルールで選別した手
+            # （５）ロールバックした手
+            lines.append(f"{cshogi.move_to_usi(move):5} {_legal(move_prop)} | {_quiescence_search(move_prop)} | {_eliminate171(move_prop)} | {_select(move_prop)} | {_reselect(move_prop)} |")
 
         return '\n'.join(lines)
