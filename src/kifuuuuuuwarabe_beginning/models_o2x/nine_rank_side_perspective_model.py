@@ -3,7 +3,7 @@
 import cshogi
 
 from ..logics_o1x.helper import Helper
-from ..models_o1x import Masu, Square
+from ..models_o1x import MasuModel, SquareModel
 
 
 class NineRankSidePerspectiveModel():
@@ -121,7 +121,7 @@ class NineRankSidePerspectiveModel():
     def top_of_sq(self, sq):
         """［上］
         """
-        sq_obj = Square(sq)
+        sq_obj = SquareModel(sq)
 
         # 対象外なケース：        
         if sq_obj.rank == self.dan(1):      # １段目だ。
@@ -138,14 +138,14 @@ class NineRankSidePerspectiveModel():
     def top_of_masu(self, masu):
         """［上］
         """
-        return self.top_of_sq(sq=Masu(masu).to_sq())
+        return self.top_of_sq(sq=MasuModel(masu).to_sq())
 
 
     def top_right_of_sq(self, sq):
         """［右上］
         """
 
-        sq_obj = Square(sq)
+        sq_obj = SquareModel(sq)
 
         # 対象外なケース：
         if (
@@ -165,14 +165,14 @@ class NineRankSidePerspectiveModel():
     def top_right_of_masu(self, masu):
         """［右上］
         """
-        return self.top_right_of_sq(sq=Masu(masu).to_sq())
+        return self.top_right_of_sq(sq=MasuModel(masu).to_sq())
 
 
     def top_left_of_sq(self, sq):
         """［左上］
         """
 
-        sq_obj = Square(sq)
+        sq_obj = SquareModel(sq)
 
         # 対象外なケース：
         if (
@@ -192,14 +192,14 @@ class NineRankSidePerspectiveModel():
     def top_left_of_masu(self, masu):
         """［左上］
         """
-        return self.top_left_of_sq(sq=Masu(masu).to_sq())
+        return self.top_left_of_sq(sq=MasuModel(masu).to_sq())
 
 
     def bottom_left_of_sq(self, sq):
         """［左下］
         """
 
-        sq_obj = Square(sq)
+        sq_obj = SquareModel(sq)
 
         # 対象外なケース：
         if (
@@ -219,13 +219,13 @@ class NineRankSidePerspectiveModel():
     def bottom_left_of_masu(self, masu):
         """［左下］
         """
-        return self.bottom_left_of_sq(sq=Masu(masu).to_sq())
+        return self.bottom_left_of_sq(sq=MasuModel(masu).to_sq())
 
 
     def bottom_right_of_sq(self, sq):
         """［右下］
         """
-        sq_obj = Square(sq)
+        sq_obj = SquareModel(sq)
 
         # 対象外なケース：
         if (
@@ -245,7 +245,7 @@ class NineRankSidePerspectiveModel():
     def bottom_right_of_masu(self, masu):
         """［右下］
         """
-        return self.bottom_right_of_sq(sq=Masu(masu).to_sq())
+        return self.bottom_right_of_sq(sq=MasuModel(masu).to_sq())
 
 
     ##############

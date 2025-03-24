@@ -1,6 +1,6 @@
 import cshogi
 
-from ..models_o1x import constants, Square
+from ..models_o1x import constants, SquareModel
 from ..models_o2x.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
 from .negative_rule import NegativeRule
 
@@ -36,8 +36,8 @@ class DoNotDogAndCatSideBySide(NegativeRule):
         np = NineRankSidePerspectiveModel(table)
 
         is_drop = cshogi.move_is_drop(move)
-        src_sq_obj = Square(cshogi.move_from(move))
-        dst_sq_obj = Square(cshogi.move_to(move))
+        src_sq_obj = SquareModel(cshogi.move_from(move))
+        dst_sq_obj = SquareModel(cshogi.move_to(move))
 
         if is_drop:
             # 打は順法の対象外

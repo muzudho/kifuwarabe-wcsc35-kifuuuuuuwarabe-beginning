@@ -1,4 +1,4 @@
-class PieceValues():
+class PieceValuesModel():
     """駒の価値
     """
 

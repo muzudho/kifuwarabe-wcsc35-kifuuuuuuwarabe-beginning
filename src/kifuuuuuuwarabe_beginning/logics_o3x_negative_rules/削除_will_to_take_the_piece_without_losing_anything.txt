@@ -2,7 +2,7 @@ import cshogi
 import sys
 
 from ..helper import Helper
-from ..models import constants, Masu, Piece, PieceType, Square
+from ..models import constants, Masu, PieceModel, PieceTypeModel, SquareModel
 from ..nine_rank_side_perspective import NineRankSidePerspectiveModel
 from .match_operation import MatchOperation
 
@@ -25,7 +25,7 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
 
         # 動かした駒の種類
         pt = cshogi.move_from_piece_type(move)
-        #print(f'★ will_to_take_the_piece_without_losing_anything.before_move: {PieceType.kanji(pt)=}')
+        #print(f'★ will_to_take_the_piece_without_losing_anything.before_move: {PieceTypeModel.kanji(pt)=}')
 
         # 動かした駒が角以外なら対象外
         if pt != cshogi.BISHOP:
@@ -36,14 +36,14 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
 
         # そこに駒はあるか？
         cap = table.piece(dst_sq)
-        #print(f'★ will_to_take_the_piece_without_losing_anything.before_move: {Piece.kanji(cap)=}')
+        #print(f'★ will_to_take_the_piece_without_losing_anything.before_move: {PieceModel.kanji(cap)=}')
 
         # 取った駒が無ければ、対象外
         if cap == cshogi.NONE:
             return constants.mind.NOT_IN_THIS_CASE
 
         cap_type = cshogi.piece_to_piece_type(cap)
-        #print(f'★ will_to_take_the_piece_without_losing_anything.before_move: {PieceType.kanji(cap_type)=}')
+        #print(f'★ will_to_take_the_piece_without_losing_anything.before_move: {PieceTypeModel.kanji(cap_type)=}')
 
         # 取った駒が歩以外なら対象外
         if cap_type != cshogi.PAWN:
@@ -91,7 +91,7 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
         pc2 = table.piece(bottom_right_sq)
         pt2 = cshogi.piece_to_piece_type(pc2)
 
-        if table.turn == Piece.turn(pc2):
+        if table.turn == PieceModel.turn(pc2):
             if pt2 == cshogi.BISHOP:
                 # 角で取り返される。意志なし
                 return constants.mind.WILL_NOT

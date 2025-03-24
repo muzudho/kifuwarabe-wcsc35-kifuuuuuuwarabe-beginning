@@ -1,6 +1,6 @@
 import cshogi
 
-from ..models_o1x import constants, Square
+from ..models_o1x import constants, SquareModel
 from ..models_o2x.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
 from .negative_rule import NegativeRule
 
@@ -24,8 +24,8 @@ class DoNotGoLeft(NegativeRule):
 
         np = NineRankSidePerspectiveModel(table)
 
-        src_sq_obj = Square(cshogi.move_from(move))
-        dst_sq_obj = Square(cshogi.move_to(move))
+        src_sq_obj = SquareModel(cshogi.move_from(move))
+        dst_sq_obj = SquareModel(cshogi.move_to(move))
 
         # ライオンなら、以左には行くな。
         if cshogi.move_from_piece_type(move) == cshogi.KING:

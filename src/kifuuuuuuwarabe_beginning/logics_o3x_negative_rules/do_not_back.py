@@ -1,6 +1,6 @@
 import cshogi
 
-from ..models_o1x import constants, Square
+from ..models_o1x import constants, SquareModel
 from .negative_rule import NegativeRule
 
 
@@ -27,8 +27,8 @@ class DoNotBack(NegativeRule):
         """
 
         is_drop = cshogi.move_is_drop(move)
-        src_sq_obj = Square(cshogi.move_from(move))
-        dst_sq_obj = Square(cshogi.move_to(move))
+        src_sq_obj = SquareModel(cshogi.move_from(move))
+        dst_sq_obj = SquareModel(cshogi.move_to(move))
 
         if is_drop: # 打のとき
             back_sq = constants.PIECE_STAND_SQ
@@ -62,8 +62,8 @@ class DoNotBack(NegativeRule):
         """
 
         if self.is_enabled:
-            src_sq_obj = Square(cshogi.move_from(move))
-            dst_sq_obj = Square(cshogi.move_to(move))
+            src_sq_obj = SquareModel(cshogi.move_from(move))
+            dst_sq_obj = SquareModel(cshogi.move_to(move))
             is_drop = cshogi.move_is_drop(move)
 
             # 戻れない駒は対象外。

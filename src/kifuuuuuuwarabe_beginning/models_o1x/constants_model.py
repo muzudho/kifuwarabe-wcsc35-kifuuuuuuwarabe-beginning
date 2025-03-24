@@ -1,4 +1,4 @@
-class Constants():
+class ConstantsModel():
 
 
     def __init__(self):
@@ -104,4 +104,4 @@ class _Value():
         return -40000
 
 
-constants = Constants()
+constants = ConstantsModel()

@@ -1,6 +1,6 @@
 import cshogi
 
-from ..models_o1x import constants, Square
+from ..models_o1x import constants, SquareModel
 from ..models_o2x.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
 from .negative_rule import NegativeRule
 
@@ -43,8 +43,8 @@ class WillSwingingRook(NegativeRule):
         """
         np = NineRankSidePerspectiveModel(table)
 
-        src_sq_obj = Square(cshogi.move_from(move))
-        dst_sq_obj = Square(cshogi.move_to(move))
+        src_sq_obj = SquareModel(cshogi.move_from(move))
+        dst_sq_obj = SquareModel(cshogi.move_to(move))
 
         # 玉
         if cshogi.move_from_piece_type(move) == cshogi.KING:
@@ -63,7 +63,7 @@ class WillSwingingRook(NegativeRule):
 
         # 飛
         if cshogi.move_from_piece_type(move) == cshogi.ROOK:
-            k_sq_obj = Square(table.king_square(table.turn))
+            k_sq_obj = SquareModel(table.king_square(table.turn))
             # 飛車は４筋より左に振る。かつ、玉と同じ筋または玉より左の筋に振る
             e1 = np.swap(dst_sq_obj.file, np.suji(4))
             e2 = np.swap(dst_sq_obj.file, k_sq_obj.file)

@@ -1,7 +1,7 @@
 import cshogi
 
 
-class PieceMoved():
+class PieceMovedModel():
     """１手指した直後に記憶しておく様々な情報
 
     NOTE 局面の重複を調べるために、０手の SFEN をリストで持ちたい

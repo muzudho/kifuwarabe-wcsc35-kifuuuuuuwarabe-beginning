@@ -1,6 +1,6 @@
 import cshogi
 
-from ..models_o1x import constants, Square
+from ..models_o1x import constants, SquareModel
 from ..models_o2x.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
 from .negative_rule import NegativeRule
 
@@ -22,7 +22,7 @@ class WillNotToMove37Pawn(NegativeRule):
         """
         np = NineRankSidePerspectiveModel(table)
 
-        src_sq_obj = Square(cshogi.move_from(move))
+        src_sq_obj = SquareModel(cshogi.move_from(move))
         # print(f'★ {src_sq_obj.sq=} ', end='')
         # print(f'{Helper.sq_to_masu(src_sq_obj.sq)=} ', end='')
         # print(f'{table.piece_type(src_sq_obj.sq)=}')

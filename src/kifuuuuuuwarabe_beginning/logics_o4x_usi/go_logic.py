@@ -3,7 +3,7 @@ import random
 import sys
 
 from ..logics_o1x import MovesReductionFilterLogics
-from ..models_o1x import constants, ResultOfGo, SearchResultStateModel
+from ..models_o1x import constants, ResultOfGoModel, SearchResultStateModel
 from ..views import TableView
 from .quiescence_search_for_scramble import QuiescenceSearchForScramble
 
@@ -68,7 +68,7 @@ class _Search():
         if self._gymnasium.table.is_game_over():
             """投了局面時。
             """
-            return ResultOfGo(
+            return ResultOfGoModel(
                     search_result_state_model   = SearchResultStateModel.RESIGN,
                     alice_s_profit              = 0,
                     best_move                   = None,
@@ -79,7 +79,7 @@ class _Search():
         if self._gymnasium.table.is_nyugyoku():
             """入玉宣言局面時。
             """
-            return ResultOfGo(
+            return ResultOfGoModel(
                     search_result_state_model   = SearchResultStateModel.NYUGYOKU_WIN,
                     alice_s_profit              = 0,
                     best_move                   = None,
@@ -93,7 +93,7 @@ class _Search():
 
             if (matemove := self._gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
-                return ResultOfGo(
+                return ResultOfGoModel(
                         search_result_state_model   = SearchResultStateModel.MATE_IN_1_MOVE,
                         alice_s_profit              = 0,
                         best_move                   = matemove,
@@ -174,7 +174,7 @@ HEALTH CHECK
                 move        = best_move,
                 gymnasium   = self._gymnasium)
 
-        return ResultOfGo(
+        return ResultOfGoModel(
                 search_result_state_model   = SearchResultStateModel.BEST_MOVE,
                 alice_s_profit              = 0,
                 best_move                   = best_move,

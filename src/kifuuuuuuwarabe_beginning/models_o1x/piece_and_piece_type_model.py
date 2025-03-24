@@ -1,7 +1,7 @@
 import cshogi
 
 
-class PieceType():
+class PieceTypeModel():
     """駒種類
     """
 
@@ -53,7 +53,7 @@ class PieceType():
         return clazz._alphabet_list[piece_type]
 
 
-class Piece():
+class PieceModel():
     """駒
     """
 
@@ -148,7 +148,7 @@ class Piece():
         return cshogi.WHITE
 
 
-class Turn:
+class TurnModel:
 
 
     _codes = [
@@ -175,4 +175,4 @@ class Turn:
         """
         if piece == cshogi.NONE:
             return False
-        return table.turn != Piece.turn(piece=piece)
+        return table.turn != PieceModel.turn(piece=piece)

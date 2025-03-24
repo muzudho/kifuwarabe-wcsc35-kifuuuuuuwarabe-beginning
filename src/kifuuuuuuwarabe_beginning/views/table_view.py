@@ -1,4 +1,4 @@
-from ..models_o1x import Piece, Turn
+from ..models_o1x import PieceModel, TurnModel
 
 
 class TableView():
@@ -14,7 +14,7 @@ class TableView():
     def turn(self):
         """現在の手番を `black` か `white` で出力
         """
-        return Turn.code(self._table.turn)
+        return TurnModel.code(self._table.turn)
 
 
     def count_repetition(self):
@@ -76,7 +76,7 @@ class TableView():
 
         p = [0] * 81
         for sq in range(0,81):
-            p[sq] = Piece.on_board(self._table.piece(sq))
+            p[sq] = PieceModel.on_board(self._table.piece(sq))
 
         blocks.append("""\
   9   8   7   6   5   4   3   2   1

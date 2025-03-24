@@ -1,4 +1,4 @@
-class ResultOfGo():
+class ResultOfGoModel():
 
 
     def __init__(self, search_result_state_model, alice_s_profit, best_move, length_by_cshogi, length_of_quiescence_search_by_kifuwarabe, length_by_kifuwarabe):

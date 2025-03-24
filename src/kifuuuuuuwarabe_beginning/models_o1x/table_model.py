@@ -1,16 +1,16 @@
 import cshogi
 
-from .piece_moved import PieceMoved
+from .piece_moved_model import PieceMovedModel
 
 
-class Table():
+class TableModel():
     """cshogi の Board に付いていない機能を付加するラッパー
     """
 
 
     @staticmethod
     def create_table():
-        return Table(
+        return TableModel(
                 # 平手指定局面を明示
                 designated_sfen='lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1',
                 piece_moved_list=[])
@@ -41,7 +41,7 @@ class Table():
         result = self._board.push(move)
 
         # 指した後に記録
-        self._piece_moved_list.append(PieceMoved(
+        self._piece_moved_list.append(PieceMovedModel(
                 move=move,
                 sfen_with_0_moves=self._board.sfen()))  # 指した後の sfen を記憶
         
@@ -68,7 +68,7 @@ class Table():
 
     def copy_table_with_0_moves(self):
         """テーブルのコピー。ただし、指定局面の１手目に戻っている"""
-        return Table(
+        return TableModel(
                 designated_sfen=self.designated_sfen,
                 piece_moved_list=self.copy_piece_moved_list())
 

@@ -1,11 +1,11 @@
-from .constants import constants
-from .masu import Masu
-from .move_on_scramble import MoveOnScramble
-from .piece_and_piece_type import Piece, PieceType, Turn
-from .piece_moved import PieceMoved
-from .piece_values import PieceValues
-from .result_of_go import ResultOfGo
+from .constants_model import constants
+from .masu_model import MasuModel
+from .move_on_scramble_model import MoveOnScrambleModel
+from .piece_and_piece_type_model import PieceModel, PieceTypeModel, TurnModel
+from .piece_moved_model import PieceMovedModel
+from .piece_values_model import PieceValuesModel
+from .result_of_go_model import ResultOfGoModel
 from .search_result_state_model import SearchResultStateModel
-from .sfen import SFEN
-from .square import Square
-from .table import Table
+from .sfen_model import SFEN_Model
+from .square_model import SquareModel
+from .table_model import TableModel

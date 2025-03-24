@@ -1,4 +1,4 @@
-class Square():
+class SquareModel():
 
 
     def __init__(self, sq):

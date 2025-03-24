@@ -1,7 +1,7 @@
-class Masu():
+class MasuModel():
     """［マス］
 
-    Square のラッパーです。
+    SquareModel のラッパーです。
     """
 
 

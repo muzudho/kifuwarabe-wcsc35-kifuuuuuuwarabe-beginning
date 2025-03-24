@@ -1,7 +1,7 @@
 import cshogi
 
 from ..logics_o1x import Helper
-from ..models_o1x import constants, MoveOnScramble, PieceValues, PieceType, Square, Turn
+from ..models_o1x import constants, MoveOnScrambleModel, PieceValuesModel, PieceTypeModel, SquareModel, TurnModel
 
 
 class QuiescenceSearchForScramble():
@@ -93,10 +93,10 @@ class QuiescenceSearchForScramble():
             # MARK: アリスが一手指す前
             ##########################
 
-            dst_sq_obj = Square(cshogi.move_to(alice_s_move))           # ［移動先マス］
+            dst_sq_obj = SquareModel(cshogi.move_to(alice_s_move))           # ［移動先マス］
             cap_pt = self._gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
             is_capture = (cap_pt != cshogi.NONE)
-            piece_exchange_value = 2 * PieceValues.by_piece_type(pt=cap_pt)      # 交換値に変換。
+            piece_exchange_value = 2 * PieceValuesModel.by_piece_type(pt=cap_pt)      # 交換値に変換。
 
             # １回呼出時。
             if self._max_depth == depth:
@@ -117,7 +117,7 @@ class QuiescenceSearchForScramble():
             # MARK: アリスが一手指した後
             ############################
 
-            #print(f"(next {self._gymnasium.table.move_number} teme) ({index}) alice's move={cshogi.move_to_usi(alice_s_move)}({Helper.sq_to_masu(dst_sq_obj.sq)}) pt({PieceType.alphabet(piece_type=cap_pt)}) {alice_s_best_piece_value=} {piece_exchange_value=}")
+            #print(f"(next {self._gymnasium.table.move_number} teme) ({index}) alice's move={cshogi.move_to_usi(alice_s_move)}({Helper.sq_to_masu(dst_sq_obj.sq)}) pt({PieceTypeModel.alphabet(piece_type=cap_pt)}) {alice_s_best_piece_value=} {piece_exchange_value=}")
 
             # これ以上深く読まない場合。
             if depth - 1 < 1:
@@ -148,7 +148,7 @@ class QuiescenceSearchForScramble():
 
             # 指し手と、その得を紐づけます。
             alice_s_move_ex_list.append(
-                    MoveOnScramble(
+                    MoveOnScrambleModel(
                             move                    = alice_s_move,
                             piece_exchange_value    = alice_s_value,
                             is_capture              = is_capture))

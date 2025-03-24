@@ -1,4 +1,4 @@
-class SFEN():
+class SFEN_Model():
     """
     例： `lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1`
 
@@ -12,7 +12,7 @@ class SFEN():
         """
         tokens = sfen.split()
 
-        return SFEN(
+        return SFEN_Model(
                 board_str=tokens[0],
                 turn_str=tokens[1],
                 hand_str=tokens[2],

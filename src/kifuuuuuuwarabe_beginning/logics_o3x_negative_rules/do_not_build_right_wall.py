@@ -1,7 +1,7 @@
 import cshogi
 
 from ..logics_o1x.helper import Helper
-from ..models_o1x import constants, Square
+from ..models_o1x import constants, SquareModel
 from ..models_o2x.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
 from .negative_rule import NegativeRule
 
@@ -28,8 +28,8 @@ class DoNotBuildRightWall(NegativeRule):
         """
         np = NineRankSidePerspectiveModel(table)
 
-        src_sq_obj = Square(cshogi.move_from(move))
-        dst_sq_obj = Square(cshogi.move_to(move))
+        src_sq_obj = SquareModel(cshogi.move_from(move))
+        dst_sq_obj = SquareModel(cshogi.move_to(move))
         #print(f'D: {cshogi.move_to_usi(move)=} {Helper.sq_to_masu(src_sq_obj.sq)=} {Helper.sq_to_masu(dst_sq_obj.sq)=}')
 
         # ライオンの指し手なら対象外
@@ -37,7 +37,7 @@ class DoNotBuildRightWall(NegativeRule):
             #print(f'★ ライオンの指し手は対象外')
             return constants.mind.NOT_IN_THIS_CASE
 
-        k_sq_obj = Square(table.king_square(table.turn))     # 移動前の自玉の位置
+        k_sq_obj = SquareModel(table.king_square(table.turn))     # 移動前の自玉の位置
         #print(f'★ {k_sq_obj.file=} {np.suji(1)=}')
 
         # 玉が１筋にいるなら対象外

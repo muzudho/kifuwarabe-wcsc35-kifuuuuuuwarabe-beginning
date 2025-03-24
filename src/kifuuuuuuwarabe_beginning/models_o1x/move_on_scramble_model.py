@@ -1,7 +1,7 @@
 import cshogi
 
 
-class MoveOnScramble():
+class MoveOnScrambleModel():
     """駒を取る手、駒を取らない手のSEE探索で使います。
     """
 
@@ -10,7 +10,7 @@ class MoveOnScramble():
     def legal_moves_to_list(legal_moves):
         move_ex_list = []
         for move in list(legal_moves):
-            move_ex_list.append(MoveOnScramble(
+            move_ex_list.append(MoveOnScrambleModel(
                     move        = move,
                     piece_exchange_value = 0))
         return move_ex_list

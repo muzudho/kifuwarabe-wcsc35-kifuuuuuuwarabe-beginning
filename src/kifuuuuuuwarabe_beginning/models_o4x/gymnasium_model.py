@@ -9,7 +9,7 @@ from ..logics_o3x_negative_rules import \
     DoNotUpToRank6, \
     DoNotMoveUntilRookMoves, DoNotMoveLeftLance, DoNotMoveRightLance, DoNotMoveRook, \
     WillForThreeGoldAndSilverCoinsToGatherToTheRight, WillNotToMove37Pawn, WillSwingingRook
-from ..models_o1x import Table, Turn
+from ..models_o1x import TableModel, TurnModel
 from ..models_o1x.table_access_object import PieceValueTAO
 from ..modules import ThinkingLoggerModule
 from .health_check_model import HealthCheckModel
@@ -31,7 +31,7 @@ class GymnasiumModel():
         self._thinking_logger_module = None
 
         # 盤
-        self._table = Table.create_table()
+        self._table = TableModel.create_table()
 
         # この将棋エンジンの手番
         self._engine_turn = None
@@ -161,7 +161,7 @@ class GymnasiumModel():
             #print(f"★ [gymnasium.py > on_position] initialize thinking_logger_module.")
             now = datetime.now()
             self._thinking_logger_module = ThinkingLoggerModule(
-                    file_name   = f"logs/thinking_[{now.strftime('%Y%m%d_%H%M%S')}]_{Turn.code(self.engine_turn)}.log",
+                    file_name   = f"logs/thinking_[{now.strftime('%Y%m%d_%H%M%S')}]_{TurnModel.code(self.engine_turn)}.log",
                     engine_turn = self.engine_turn)
             
             self._thinking_logger_module.delete_file()  # ログファイル　＞　削除。
