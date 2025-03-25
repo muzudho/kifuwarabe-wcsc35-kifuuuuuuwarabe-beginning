@@ -110,7 +110,12 @@ class PlotModel():
 
         tokens = []
         for index in reversed(range(0, len(self._move_list))):
-            move_as_usi = cshogi.move_to_usi(self._move_list[index])
+            move = self._move_list[index]
+
+            if not isinstance(move, int):   # FIXME バグがあるよう
+                raise ValueError(f"move は int 型である必要があります。 {index=} {type(move)=} {move=} {self._move_list=}")
+
+            move_as_usi = cshogi.move_to_usi(move)
             cap = self._cap_list[index]
             piece_exchange_value = self._piece_exchange_value_list[index]
             tokens.append(f"{move_as_usi}{_cap(cap)}{_pev(piece_exchange_value)}")

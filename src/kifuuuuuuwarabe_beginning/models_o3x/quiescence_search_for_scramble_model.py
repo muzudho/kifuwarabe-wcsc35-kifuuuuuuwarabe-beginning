@@ -164,17 +164,14 @@ class QuiescenceSearchForScrambleModel():
             # MARK: アリスが一手指した後
             ############################
 
-            depth -= 1
-            is_opponent = not is_opponent   # FIXME
-
             (
                 best_plot_model,
                 is_beta_cutoff
             ) = self.search_bob(
                     best_plot_model     = best_plot_model,
                     is_beta_cutoff      = is_beta_cutoff,
-                    depth               = depth,
-                    is_opponent         = is_opponent,
+                    depth               = depth - 1,                # 深さを１下げる
+                    is_opponent         = not is_opponent,          # 手番が逆になる
                     alice_s_move        = alice_s_move,
                     cap_pt              = cap_pt,
                     beta_cutoff_value   = beta_cutoff_value)
@@ -188,9 +185,6 @@ class QuiescenceSearchForScrambleModel():
             ############################
             # MARK: アリスが一手戻した後
             ############################
-
-            depth += 1
-            is_opponent = not is_opponent   # FIXME
 
             # 探索の打切り判定
             if is_beta_cutoff:
