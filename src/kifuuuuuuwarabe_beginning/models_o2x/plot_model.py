@@ -67,17 +67,21 @@ class PlotModel():
         return self._piece_exchange_value_list[-1]
 
 
-    def append_move(self, opponent, move, piece_type):
-        self._move_list.append(move)
-        self._cap_list.append(piece_type)
+    def append_move(self, is_opponent, move, capture_piece_type):
 
-        piece_exchange_value = 2 * PieceValuesModel.by_piece_type(pt=piece_type)      # 交換値に変換。正の数とする。
+        if capture_piece_type is None:
+            raise ValueError(f"capture_piece_type をナンにしてはいけません。cshogi.NONE を使ってください。 {capture_piece_type=}")
+
+        self._move_list.append(move)
+        self._cap_list.append(capture_piece_type)
+
+        piece_exchange_value = 2 * PieceValuesModel.by_piece_type(pt=capture_piece_type)      # 交換値に変換。正の数とする。
 
         # 一手詰め時
         if len(self._move_list) == 1 and self._is_mate_in_1_move:
             piece_exchange_value += constants.value.CHECKMATE
 
-        if opponent == 1:
+        if is_opponent:
             piece_exchange_value *= -1
         
         # ひとつ前の値

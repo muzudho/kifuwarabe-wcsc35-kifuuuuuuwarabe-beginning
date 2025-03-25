@@ -30,7 +30,7 @@ class QuiescenceSearchForScrambleModel():
     def search_alice(
             self,
             depth,
-            opponent,
+            is_opponent,
             #beta_cutoff_value,
             alice_s_remaining_moves):
         """
@@ -49,7 +49,7 @@ class QuiescenceSearchForScrambleModel():
         ----------
         depth : int
             残りの探索深さ。
-        opponent : int
+        is_opponent : bool
 
         #beta_cutoff_value : int
 
@@ -77,9 +77,9 @@ class QuiescenceSearchForScrambleModel():
                     declaration         = constants.declaration.RESIGN,
                     is_mate_in_1_move   = False)
             best_plot_model.append_move(
-                    opponent    = opponent,
-                    move        = None,
-                    piece_type  = None)
+                    is_opponent         = is_opponent,
+                    move                = None,
+                    capture_piece_type  = cshogi.NONE)
             
             if depth == self._max_depth:
                 self._all_plots_at_first.append(best_plot_model)
@@ -93,9 +93,9 @@ class QuiescenceSearchForScrambleModel():
                     declaration         = constants.declaration.NYUGYOKU_WIN,
                     is_mate_in_1_move   = False)
             best_plot_model.append_move(
-                    opponent    = opponent,
-                    move        = None,
-                    piece_type  = None)
+                    is_opponent         = is_opponent,
+                    move                = None,
+                    capture_piece_type  = cshogi.NONE)
             
             if depth == self._max_depth:
                 self._all_plots_at_first.append(best_plot_model)
@@ -115,9 +115,9 @@ class QuiescenceSearchForScrambleModel():
                         declaration         = constants.declaration.NONE,
                         is_mate_in_1_move   = True)
                 best_plot_model.append_move(
-                        opponent    = opponent,
-                        move        = matemove,
-                        piece_type  = cap_pt)
+                        is_opponent         = is_opponent,
+                        move                = matemove,
+                        capture_piece_type  = cap_pt)
             
                 if depth == self._max_depth:
                     self._all_plots_at_first.append(best_plot_model)
@@ -132,6 +132,8 @@ class QuiescenceSearchForScrambleModel():
         ##############################
         # MARK: アリスの合法手スキャン
         ##############################
+
+        is_beta_cutoff = False  # この関数の緊急脱出フラグ。
 
         # 手番（アリス）が［駒を取る手］を全部調べる。
         for index, alice_s_move in enumerate(alice_s_remaining_moves):
@@ -173,42 +175,56 @@ class QuiescenceSearchForScrambleModel():
 
             # まだ深く読む場合。
             else:
-                # def _get_beta_cutoff_value(opponent, best_plot_model):
+                # def _get_beta_cutoff_value(is_opponent, best_plot_model):
                 #     if best_plot_model is None:
-                #         if opponent:
+                #         if is_opponent:
                 #             return - constants.value.BETA_CUTOFF_VALUE
                 #         return constants.value.BETA_CUTOFF_VALUE
                 #     return best_plot_model.last_piece_exchange_value
 
                 cur_plot_model = self.search_alice(      # 再帰呼出
-                        depth                           = depth,
-                        opponent                        = (1 - opponent) % 2,
-                        #beta_cutoff_value               = _get_beta_cutoff_value(opponent, best_plot_model),
-                        alice_s_remaining_moves         = list(self._gymnasium.table.legal_moves))
+                        depth                   = depth,
+                        is_opponent             = not is_opponent,
+                        #beta_cutoff_value      = _get_beta_cutoff_value(is_opponent, best_plot_model),
+                        alice_s_remaining_moves = list(self._gymnasium.table.legal_moves))
 
-            cur_plot_model.append_move(
-                    opponent    = opponent,
-                    move        = alice_s_move,
-                    piece_type  = cap_pt)
-            
-            if depth + 1 == self._max_depth:
-                self._all_plots_at_first.append(cur_plot_model)
 
-            # FIXME 将来的に相手の駒をポロリと取れるなら、手前の手は全部緩手になることがある。どう解消するか？
+            if cur_plot_model is None:  # 枝は無かったことにされた。（ベータカット）
+                pass
 
-            # NOTE （スクランブル・サーチでは）ベストがナンということもある。つまり、指さない方がマシな局面がある。
-            best_value = 0
-            if best_plot_model is not None:
-                best_value = best_plot_model.last_piece_exchange_value
-
-            # 相手は、点数が小さくなる手を選ぶ
-            if opponent:
-                if cur_plot_model.last_piece_exchange_value < best_value:
-                    best_plot_model = cur_plot_model
-            # 自分は、点数が大きくなる手を選ぶ
             else:
-                if best_value < cur_plot_model.last_piece_exchange_value:
-                    best_plot_model = cur_plot_model
+                cur_plot_model.append_move(
+                        is_opponent         = is_opponent,
+                        move                = alice_s_move,
+                        capture_piece_type  = cap_pt)
+                
+                if depth + 1 == self._max_depth:
+                    self._all_plots_at_first.append(cur_plot_model)
+
+                # FIXME 将来的に相手の駒をポロリと取れるなら、手前の手は全部緩手になることがある。どう解消するか？
+
+                # NOTE （スクランブル・サーチでは）ベストがナンということもある。つまり、指さない方がマシな局面がある。
+                threshold_value = 0     # 閾値
+                if best_plot_model is not None:
+                    threshold_value = best_plot_model.last_piece_exchange_value     # とりあえず最善の点数。
+
+                # 相手は、点数が小さくなる手を選ぶ
+                if is_opponent:
+                    if cur_plot_model.last_piece_exchange_value < threshold_value:
+                        # 最善より悪い手があれば、そっちを選びます。
+                        best_plot_model = cur_plot_model
+                        # TODO 既存の最悪手より悪い手を見つけてしまったら、ベータカットします。
+                        # if cur_plot_model.last_piece_exchange_value < beta_cutoff_value:
+                        #       is_beta_cutoff = True   # beta_cutoff
+
+                # 自分は、点数が大きくなる手を選ぶ
+                else:
+                    if threshold_value < cur_plot_model.last_piece_exchange_value:
+                        # 最善より良い手があれば、そっちを選びます。
+                        best_plot_model = cur_plot_model
+                        # TODO 既存の最善手より良い手を見つけてしまったら、ベータカットします。
+                        # if beta_cutoff_value < cur_plot_model.last_piece_exchange_value:
+                        #       is_beta_cutoff = True   # beta_cutoff
 
             ########################
             # MARK: アリスが一手戻す
@@ -222,21 +238,25 @@ class QuiescenceSearchForScrambleModel():
 
             depth += 1
 
+            # 探索の打切り判定
+            if is_beta_cutoff:
+                break   # （アンドゥや、depth の勘定をきちんとしたあとで）ループから抜ける
+            #
             # # ボブから見れば、これ以上がんばって点数を下げても、アリスは手を変えてくるだけだから、探索を打ち切ります。
-            # if opponent:
-            #     if best_value < beta_cutoff_value:
+            # if is_opponent:
+            #     if threshold_value < beta_cutoff_value:
             #         break   # ループから抜ける
 
             # # アリスから見れば、これ以上がんばって点数を上げても、ボブは手を変えてくるだけだから、探索を打ち切ります。
             # else:
-            #     if beta_cutoff_value < best_value:
+            #     if beta_cutoff_value < threshold_value:
             #         break   # ループから抜ける
 
         ########################
         # MARK: 合法手スキャン後
         ########################
 
-        # 指せる手がなかったなら、静止探索の終了後だ。
+        # 指せる手がなかったなら、静止探索の末端局面の後ろだ。
         if best_plot_model is None:
             return PlotModel(
                     declaration         = constants.declaration.NONE,
