@@ -1,6 +1,6 @@
 import cshogi
 
-from ..models_o1x import constants, PieceValuesModel
+from ..models_o1x import constants, PieceTypeModel, PieceValuesModel
 
 
 class PlotModel():
@@ -63,6 +63,14 @@ class PlotModel():
         piece_exchange_value = 2 * PieceValuesModel.by_piece_type(pt=piece_type)      # 交換値に変換。
         self._cap_list.append(piece_type)
         self._last_piece_exchange_value = piece_exchange_value - self._last_piece_exchange_value
+
+
+    def stringify(self):
+        tokens = []
+        for cap in reversed(self._cap_list):
+            tokens.append(PieceTypeModel.kanji(cap))
+
+        return ' '.join(tokens)
 
 
     def stringify_2(self):

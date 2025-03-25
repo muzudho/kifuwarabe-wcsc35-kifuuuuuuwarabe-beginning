@@ -160,7 +160,7 @@ class QuiescenceSearchForScrambleModel():
                     move        = alice_s_move,
                     piece_type  = cap_pt)
             
-            if depth == self._max_depth:
+            if depth + 1 == self._max_depth:
                 self._all_plots_at_first.append(cur_plot_model)
 
             # TODO アリスとしては、損が一番小さな分岐へ進みたい。

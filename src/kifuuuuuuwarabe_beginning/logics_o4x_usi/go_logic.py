@@ -240,7 +240,14 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
         if best_exchange_value == 0:
             exists_zero_value_move = True
 
+        gymnasium.thinking_logger_module.append(f"all_plots_at_first len={len(all_plots_at_first)}")
+
         for plot_model in all_plots_at_first:
+
+            gymnasium.health_check.append(
+                    move    = plot_model.last_move,
+                    name    = 'QS_plot',
+                    value   = plot_model)
 
             # （１）駒を取らない手で非正の手（最高点のケースを除く）。
             if not plot_model.is_capture_at_last and plot_model.last_piece_exchange_value < 1 and plot_model.last_piece_exchange_value != best_exchange_value:
