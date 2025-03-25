@@ -181,18 +181,22 @@ class QuiescenceSearchForScrambleModel():
                     # 最善手が未定なら、天井（底）を最大にします。
                     if best_plot_model is None:
                         if is_opponent:
-                            return - constants.value.BETA_CUTOFF_VALUE  # 底
-                        return constants.value.BETA_CUTOFF_VALUE        # 天井
+                            return constants.value.BETA_CUTOFF_VALUE        # 天井
+                        return - constants.value.BETA_CUTOFF_VALUE  # 底
 
                     # 最善手が既存なら、その交換値を返すだけ。
                     return best_plot_model.last_piece_exchange_value
 
 
+                is_opponent = not is_opponent   # FIXME
+
                 cur_plot_model = self.search_alice(      # 再帰呼出
                         depth                   = depth,
-                        is_opponent             = not is_opponent,
+                        is_opponent             = is_opponent,
                         beta_cutoff_value       = _get_beta_cutoff_value(is_opponent, best_plot_model),
                         alice_s_remaining_moves = list(self._gymnasium.table.legal_moves))
+
+                is_opponent = not is_opponent   # FIXME
 
 
             if cur_plot_model is None:  # 枝は無かったことにされた。（ベータカット）
