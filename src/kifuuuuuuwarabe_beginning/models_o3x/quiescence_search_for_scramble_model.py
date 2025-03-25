@@ -159,11 +159,13 @@ class QuiescenceSearchForScrambleModel():
             ########################
 
             self._gymnasium.do_move_o1x(move = alice_s_move)
-            depth -= 1
 
             ############################
             # MARK: アリスが一手指した後
             ############################
+
+            depth -= 1
+            is_opponent = not is_opponent   # FIXME
 
             #print(f"(next {self._gymnasium.table.move_number} teme) ({index}) alice's move={cshogi.move_to_usi(alice_s_move)}({Helper.sq_to_masu(dst_sq_obj.sq)}) pt({PieceTypeModel.alphabet(piece_type=cap_pt)}) {alice_s_best_piece_value=} {piece_exchange_value=}")
 
@@ -188,23 +190,18 @@ class QuiescenceSearchForScrambleModel():
                     return best_plot_model.last_piece_exchange_value
 
 
-                is_opponent = not is_opponent   # FIXME
-
                 cur_plot_model = self.search_alice(      # 再帰呼出
                         depth                   = depth,
                         is_opponent             = is_opponent,
                         beta_cutoff_value       = _get_beta_cutoff_value(is_opponent, best_plot_model),
                         alice_s_remaining_moves = list(self._gymnasium.table.legal_moves))
 
-                is_opponent = not is_opponent   # FIXME
-
-
             if cur_plot_model is None:  # 枝は無かったことにされた。（ベータカット）
                 pass
 
             else:
                 cur_plot_model.append_move(
-                        is_opponent         = is_opponent,
+                        is_opponent         = not is_opponent,
                         move                = alice_s_move,
                         capture_piece_type  = cap_pt)
                 
@@ -219,7 +216,7 @@ class QuiescenceSearchForScrambleModel():
                     threshold_value = best_plot_model.last_piece_exchange_value     # とりあえず最善の点数。
 
                 # 相手は、点数が小さくなる手を選ぶ
-                if is_opponent:
+                if not is_opponent:
                     if cur_plot_model.last_piece_exchange_value < threshold_value:
                         # 最善より悪い手があれば、そっちを選びます。
                         best_plot_model = cur_plot_model
@@ -238,6 +235,7 @@ class QuiescenceSearchForScrambleModel():
                         if beta_cutoff_value < cur_plot_model.last_piece_exchange_value:
                             is_beta_cutoff = True   # beta_cutoff
 
+
             ########################
             # MARK: アリスが一手戻す
             ########################
@@ -249,6 +247,7 @@ class QuiescenceSearchForScrambleModel():
             ############################
 
             depth += 1
+            is_opponent = not is_opponent   # FIXME
 
             # 探索の打切り判定
             if is_beta_cutoff:
