@@ -109,7 +109,6 @@ class QuiescenceSearchForScrambleModel():
 
                 return best_plot_model
 
-        best_value = constants.value.NOTHING_CAPTURE_MOVE  # （指し手のリストが空でなければ）どんな手でも更新される。
         best_plot_model = None
 
         ##############################
@@ -191,7 +190,7 @@ class QuiescenceSearchForScrambleModel():
         ########################
 
         # 指せる手がなかったなら、静止探索の終了後だ。
-        if best_value == constants.value.NOTHING_CAPTURE_MOVE:
+        if best_plot_model is None:
             return PlotModel(declaration = constants.declaration.NONE)
 
         return best_plot_model
