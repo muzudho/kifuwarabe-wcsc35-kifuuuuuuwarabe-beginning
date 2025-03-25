@@ -76,13 +76,20 @@ class PlotModel():
 
 
     def stringify(self):
-        # return f"D69: {self.declaration=} {len(self._move_list)=} {len(self._cap_list)=} {len(self._piece_exchange_value_list)=}"
+
+
+        def _cap(cap):
+            if cap != cshogi.NONE:
+                return f"x{PieceTypeModel.kanji(cap)}"
+            return ''
+        
+
         tokens = []
         for index in reversed(range(0, len(self._move_list))):
             move_as_usi = cshogi.move_to_usi(self._move_list[index])
             cap = self._cap_list[index]
             piece_exchange_value = self._piece_exchange_value_list[index]
-            tokens.append(f"{move_as_usi:5}{PieceTypeModel.kanji(cap)}{piece_exchange_value}")
+            tokens.append(f"{move_as_usi}{_cap(cap)}{piece_exchange_value}")
 
         if self._declaration != DeclarationModel.NONE:
             tokens.append(DeclarationModel.japanese(self.declaration))
