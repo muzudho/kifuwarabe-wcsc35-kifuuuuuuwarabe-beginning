@@ -5,21 +5,31 @@ from ..models_o1x import constants, PieceValuesModel
 
 class PlotModel():
     """読み筋モデル。
+
+    NOTE ［指す手］を Move、指さずにする［宣言］を Declaration と呼び分けるものとします。［指す手］と［宣言］を合わせて Play ［遊び］と呼ぶことにします。
+    ［宣言］には、［投了］、［入玉宣言勝ち］の２つがあります。［宣言］をした後に［指す手］が続くことはありません。
     """
 
 
-    def __init__(self):
+    def __init__(self, declaration):
         """初期化。
+
+        Parameters
+        ----------
+        declaration : DeclarationModel
+            ［宣言］
         """
-        self._search_result_state_model_list = []
+        self._declaration = declaration
         self._move_list = []
         self._cap_list = []
         self._last_piece_exchange_value = constants.value.ZERO
 
 
     @property
-    def search_result_state_model_list(self):
-        return self._search_result_state_model_list
+    def declaration(self):
+        """［宣言］
+        """
+        return self._declaration
 
 
     @property
@@ -47,8 +57,7 @@ class PlotModel():
         return self._cap_list[-1] != cshogi.NONE
 
 
-    def append_capture(self, search_result_state_model, move, piece_type):
-        self._search_result_state_model_list.append(search_result_state_model)
+    def append_move(self, move, piece_type):
         self._move_list.append(move)
 
         piece_exchange_value = 2 * PieceValuesModel.by_piece_type(pt=piece_type)      # 交換値に変換。
