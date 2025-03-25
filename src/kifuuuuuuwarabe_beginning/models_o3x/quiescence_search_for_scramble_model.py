@@ -31,7 +31,7 @@ class QuiescenceSearchForScrambleModel():
             self,
             depth,
             is_opponent,
-            #beta_cutoff_value,
+            beta_cutoff_value,
             alice_s_remaining_moves):
         """
         TODO 静止探索はせず、［スクランブル・サーチ］というのを考える。静止探索は王手が絡むと複雑だ。
@@ -51,7 +51,7 @@ class QuiescenceSearchForScrambleModel():
             残りの探索深さ。
         is_opponent : bool
 
-        #beta_cutoff_value : int
+        beta_cutoff_value : int
 
         alice_s_remaining_moves : list<int>
             アリスの指し手のリスト。
@@ -175,17 +175,23 @@ class QuiescenceSearchForScrambleModel():
 
             # まだ深く読む場合。
             else:
-                # def _get_beta_cutoff_value(is_opponent, best_plot_model):
-                #     if best_plot_model is None:
-                #         if is_opponent:
-                #             return - constants.value.BETA_CUTOFF_VALUE
-                #         return constants.value.BETA_CUTOFF_VALUE
-                #     return best_plot_model.last_piece_exchange_value
+
+
+                def _get_beta_cutoff_value(is_opponent, best_plot_model):
+                    # 最善手が未定なら、天井（底）を最大にします。
+                    if best_plot_model is None:
+                        if is_opponent:
+                            return - constants.value.BETA_CUTOFF_VALUE  # 底
+                        return constants.value.BETA_CUTOFF_VALUE        # 天井
+
+                    # 最善手が既存なら、その交換値を返すだけ。
+                    return best_plot_model.last_piece_exchange_value
+
 
                 cur_plot_model = self.search_alice(      # 再帰呼出
                         depth                   = depth,
                         is_opponent             = not is_opponent,
-                        #beta_cutoff_value      = _get_beta_cutoff_value(is_opponent, best_plot_model),
+                        beta_cutoff_value       = _get_beta_cutoff_value(is_opponent, best_plot_model),
                         alice_s_remaining_moves = list(self._gymnasium.table.legal_moves))
 
 
@@ -213,18 +219,20 @@ class QuiescenceSearchForScrambleModel():
                     if cur_plot_model.last_piece_exchange_value < threshold_value:
                         # 最善より悪い手があれば、そっちを選びます。
                         best_plot_model = cur_plot_model
+                        
                         # TODO 既存の最悪手より悪い手を見つけてしまったら、ベータカットします。
-                        # if cur_plot_model.last_piece_exchange_value < beta_cutoff_value:
-                        #       is_beta_cutoff = True   # beta_cutoff
+                        if cur_plot_model.last_piece_exchange_value < beta_cutoff_value:
+                            is_beta_cutoff = True   # beta_cutoff
 
                 # 自分は、点数が大きくなる手を選ぶ
                 else:
                     if threshold_value < cur_plot_model.last_piece_exchange_value:
                         # 最善より良い手があれば、そっちを選びます。
                         best_plot_model = cur_plot_model
+
                         # TODO 既存の最善手より良い手を見つけてしまったら、ベータカットします。
-                        # if beta_cutoff_value < cur_plot_model.last_piece_exchange_value:
-                        #       is_beta_cutoff = True   # beta_cutoff
+                        if beta_cutoff_value < cur_plot_model.last_piece_exchange_value:
+                            is_beta_cutoff = True   # beta_cutoff
 
             ########################
             # MARK: アリスが一手戻す
