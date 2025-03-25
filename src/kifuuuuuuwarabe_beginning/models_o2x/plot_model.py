@@ -66,7 +66,13 @@ class PlotModel():
         if opponent == 1:
             piece_exchange_value *= -1
         
-        self._piece_exchange_value_list.append(piece_exchange_value)
+        # ひとつ前の値
+        previous = 0
+        if 0 < len(self._piece_exchange_value_list):
+            previous = self._piece_exchange_value_list[-1]
+
+        # 累計していく。
+        self._piece_exchange_value_list.append(previous + piece_exchange_value)
 
 
     def stringify(self):

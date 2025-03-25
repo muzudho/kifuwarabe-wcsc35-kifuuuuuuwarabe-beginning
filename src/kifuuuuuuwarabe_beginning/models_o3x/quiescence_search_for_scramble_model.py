@@ -111,6 +111,9 @@ class QuiescenceSearchForScrambleModel():
 
         best_plot_model = None
 
+        # TODO 指し手の分析。駒を取る手と、そうでない手を分ける。
+        # TODO 駒を取る手も、価値の高い駒から取る手を考える。（相手が手抜く勝手読みをすると、大きな駒を取れてしまうことがあるから）。
+
         ##############################
         # MARK: アリスの合法手スキャン
         ##############################
@@ -166,12 +169,18 @@ class QuiescenceSearchForScrambleModel():
             if depth + 1 == self._max_depth:
                 self._all_plots_at_first.append(cur_plot_model)
 
-            # TODO アリスとしては、損が一番小さな分岐へ進みたい。
             # 手番は、一番得する手を指したい。
             if best_plot_model is None:
                 best_plot_model = cur_plot_model
-            if best_plot_model.last_piece_exchange_value < cur_plot_model.last_piece_exchange_value:
-                best_plot_model = cur_plot_model
+            else:
+                # 相手は、点数が小さくなる手を選ぶ
+                if opponent:
+                    if cur_plot_model.last_piece_exchange_value < best_plot_model.last_piece_exchange_value:
+                        best_plot_model = cur_plot_model
+                # 自分は、点数が大きくなる手を選ぶ
+                else:
+                    if best_plot_model.last_piece_exchange_value < cur_plot_model.last_piece_exchange_value:
+                        best_plot_model = cur_plot_model
 
             ########################
             # MARK: アリスが一手戻す
