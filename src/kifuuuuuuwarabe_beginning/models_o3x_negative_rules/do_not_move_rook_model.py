@@ -15,8 +15,8 @@ class DoNotMoveRookModel(NegativeRuleModel):
 
     def __init__(self, basketball_court_model):
         super().__init__(
-                id          = 'do_not_move_rook',
-                label       = 'キリンは動くな',
+                id      = 'do_not_move_rook',
+                label   = 'キリンは動くな',
                 basketball_court_model  = basketball_court_model)
 
 
@@ -33,14 +33,14 @@ class DoNotMoveRookModel(NegativeRuleModel):
             else:
                 for i in range(len(remaining_moves))[::-1]:     # `[::-1]` - 逆順
                     m = remaining_moves[i]
-                    mind = self.before_move(m, table)
+                    mind = self._before_move(m, table)
                     if mind == constants.mind.WILL_NOT:
                         del remaining_moves[i]
 
         return remaining_moves
 
 
-    def before_move(self, move, table):
+    def _before_move(self, move, table):
         """指す前に。
         """
 
@@ -68,7 +68,7 @@ class DoNotMoveRookModel(NegativeRuleModel):
             dst_sq_obj = SquareModel(cshogi.move_to(move))
 
             # キリン以外なら対象外。
-            if cshogi.move_from_piece_type(move) not in [cshogi.ROOK]:
+            if cshogi.move_from_piece_type(move) != cshogi.ROOK:
                 return
 
             # キリンの移動先が異筋なら、この行進演算を有効化します。

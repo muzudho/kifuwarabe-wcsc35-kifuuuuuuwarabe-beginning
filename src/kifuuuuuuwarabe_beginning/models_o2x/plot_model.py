@@ -82,6 +82,12 @@ class PlotModel():
             if cap != cshogi.NONE:
                 return f"x{PieceTypeModel.kanji(cap)}"
             return ''
+
+
+        def _pev(pev):
+            if pev == 0:
+                return ''
+            return f"({pev})"
         
 
         tokens = []
@@ -89,7 +95,7 @@ class PlotModel():
             move_as_usi = cshogi.move_to_usi(self._move_list[index])
             cap = self._cap_list[index]
             piece_exchange_value = self._piece_exchange_value_list[index]
-            tokens.append(f"{move_as_usi}{_cap(cap)}{piece_exchange_value}")
+            tokens.append(f"{move_as_usi}{_cap(cap)}{_pev(piece_exchange_value)}")
 
         if self._declaration != DeclarationModel.NONE:
             tokens.append(DeclarationModel.japanese(self.declaration))

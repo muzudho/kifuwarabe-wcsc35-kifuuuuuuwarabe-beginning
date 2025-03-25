@@ -66,7 +66,7 @@ class MovesReductionFilterLogics():
             negative_rules_to_remove = []
 
             # 行進リスト
-            for negative_rule in gymnasium.negative_rule_collection_model.list_of_active:
+            for negative_rule in gymnasium.negative_rule_collection_model.list_of_idle:
                 negative_rule.after_best_moving_in_idling(
                         move        = move,
                         table       = gymnasium.table)
