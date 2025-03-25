@@ -4,8 +4,8 @@ import sys
 
 from ..logics_o1x import MovesReductionFilterLogics
 from ..models_o1x import constants, ResultOfGoModel, SearchResultStateModel
+from ..models_o3x.quiescence_search_for_scramble_model import QuiescenceSearchForScrambleModel
 from ..views import TableView
-from .quiescence_search_for_scramble import QuiescenceSearchForScramble
 
 
 class GoLogic():
@@ -199,7 +199,7 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
     max_depth                   = gymnasium.config_doc['search']['capture_depth']   # 2
 
     # 駒の取り合いのための静止探索
-    scramble_search = QuiescenceSearchForScramble(
+    scramble_search = QuiescenceSearchForScrambleModel(
             max_depth   = max_depth,
             gymnasium   = gymnasium)
 

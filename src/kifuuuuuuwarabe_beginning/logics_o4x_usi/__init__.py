@@ -1,2 +1,1 @@
 from .go_logic import GoLogic
-from .quiescence_search_for_scramble import QuiescenceSearchForScramble

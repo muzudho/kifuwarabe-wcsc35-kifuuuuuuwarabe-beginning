@@ -5,10 +5,9 @@ from ..models_o1x import constants, MoveOnScrambleModel, PieceValuesModel, Piece
 from ..models_o2x import PlotModel
 
 
-class QuiescenceSearchForScramble():
+class QuiescenceSearchForScrambleModel():
     """駒の取り合いのための静止探索。
     駒の取り合いが終わるまで、駒の取り合いを探索します。
-    TODO Model
     """
 
 
