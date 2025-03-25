@@ -4,6 +4,7 @@ from datetime import datetime
 
 from ..models_o1x import TableModel, TurnModel
 from ..models_o1x.table_access_object import PieceValueTAO
+from ..models_o2x import BasketballCourtModel
 from ..modules import ThinkingLoggerModule
 from .health_check_model import HealthCheckModel
 from .negative_rule_collection_model import NegativeRuleCollectionModel
@@ -36,7 +37,10 @@ class GymnasiumModel():
         # ９段目に近い方の対局者から見た駒得評価値。
         self._np_value = 0
 
-        self._negative_rule_collection_model = NegativeRuleCollectionModel(config_doc=config_doc)
+        self._basketball_court_model = BasketballCourtModel(config_doc=config_doc)
+        self._negative_rule_collection_model = NegativeRuleCollectionModel(
+                basketball_court_model  = self._basketball_court_model,
+                config_doc              = config_doc)
 
         self._health_check = None   # 健康診断
 
@@ -98,6 +102,11 @@ class GymnasiumModel():
     @np_value.setter
     def np_value(self, value):
         self._np_value = value
+
+
+    @property
+    def basketball_court_model(self):
+        return self.__basketball_court_model
 
 
     @property

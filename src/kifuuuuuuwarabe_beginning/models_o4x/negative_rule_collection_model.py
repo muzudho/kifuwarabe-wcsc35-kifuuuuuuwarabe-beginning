@@ -10,10 +10,10 @@ from ..models_o3x_negative_rules import \
 class NegativeRuleCollectionModel():
 
 
-    def __init__(self, config_doc):
+    def __init__(self, basketball_court_model, config_doc):
         # 初期状態では、有効でない行進演算です。
         self._list_of_idle = [
-            DoNotMoveRookModel(config_doc=config_doc),        # 行進［キリンは動くな］  NOTE 飛車を振るまで有効になりません
+            DoNotMoveRookModel(config_doc=basketball_court_model.config_doc),        # 行進［キリンは動くな］  NOTE 飛車を振るまで有効になりません
         ]
 
         self._list_of_active = [

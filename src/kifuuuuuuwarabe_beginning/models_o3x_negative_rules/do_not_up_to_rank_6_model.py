@@ -23,6 +23,7 @@ class DoNotUpToRank6Model(NegativeRuleModel):
 
             np = NineRankSidePerspectiveModel(table)
 
+            # TODO ［入城終了］フラグが欲しい。
             # 自ライオンが２八にいる
             if table.piece(np.masu(28)) == np.ji_pc(cshogi.KING):
                 # このオブジェクトを除外
