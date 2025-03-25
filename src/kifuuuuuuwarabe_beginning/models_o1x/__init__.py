@@ -1,5 +1,4 @@
 from .constants_model import constants
-from .declaration_model import DeclarationModel
 from .masu_model import MasuModel
 from .move_on_scramble_model import MoveOnScrambleModel
 from .piece_and_piece_type_model import PieceModel, PieceTypeModel, TurnModel

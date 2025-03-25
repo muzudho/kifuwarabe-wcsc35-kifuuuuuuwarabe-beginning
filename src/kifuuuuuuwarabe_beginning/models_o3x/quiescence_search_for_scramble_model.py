@@ -1,7 +1,6 @@
 import cshogi
 
-from ..logics_o1x import Helper
-from ..models_o1x import constants, DeclarationModel, MoveOnScrambleModel, PieceValuesModel, PieceTypeModel, SearchResultStateModel, SquareModel, TurnModel
+from ..models_o1x import constants, SquareModel
 from ..models_o2x import PlotModel
 
 
@@ -28,7 +27,7 @@ class QuiescenceSearchForScrambleModel():
         return self._all_plots_at_first
 
 
-    def search_alice(self, depth, alice_s_remaining_moves):
+    def search_alice(self, depth, opponent, alice_s_remaining_moves):
         """
         TODO 静止探索はせず、［スクランブル・サーチ］というのを考える。静止探索は王手が絡むと複雑だ。
         リーガル・ムーブのうち、
@@ -65,8 +64,9 @@ class QuiescenceSearchForScrambleModel():
         if self._gymnasium.table.is_game_over():
             """手番の投了局面時。
             """
-            best_plot_model = PlotModel(declaration = DeclarationModel.RESIGN)
+            best_plot_model = PlotModel(declaration = constants.declaration.RESIGN)
             best_plot_model.append_move(
+                    opponent    = opponent,
                     move        = None,
                     piece_type  = None)
             
@@ -78,8 +78,9 @@ class QuiescenceSearchForScrambleModel():
         if self._gymnasium.table.is_nyugyoku():
             """手番の入玉宣言局面時。
             """
-            best_plot_model = PlotModel(declaration = DeclarationModel.NYUGYOKU_WIN)
+            best_plot_model = PlotModel(declaration = constants.declaration.NYUGYOKU_WIN)
             best_plot_model.append_move(
+                    opponent    = opponent,
                     move        = None,
                     piece_type  = None)
             
@@ -97,8 +98,9 @@ class QuiescenceSearchForScrambleModel():
                 dst_sq_obj = SquareModel(cshogi.move_to(matemove))           # ［移動先マス］
                 cap_pt = self._gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
 
-                best_plot_model = PlotModel(declaration = DeclarationModel.NONE)
+                best_plot_model = PlotModel(declaration = constants.declaration.NONE)
                 best_plot_model.append_move(
+                        opponent    = opponent,
                         move        = matemove,
                         piece_type  = cap_pt)
             
@@ -148,15 +150,17 @@ class QuiescenceSearchForScrambleModel():
 
             # これ以上深く読まない場合。
             if depth - 1 < 1:
-                cur_plot_model = PlotModel(declaration = DeclarationModel.NONE)
+                cur_plot_model = PlotModel(declaration = constants.declaration.NONE)
 
             # まだ深く読む場合。
             else:
                 cur_plot_model = self.search_alice(      # 再帰呼出
                         depth                           = depth,
+                        opponent                        = (1 - opponent) % 2,
                         alice_s_remaining_moves         = list(self._gymnasium.table.legal_moves))
 
             cur_plot_model.append_move(
+                    opponent    = opponent,
                     move        = alice_s_move,
                     piece_type  = cap_pt)
             
@@ -188,6 +192,6 @@ class QuiescenceSearchForScrambleModel():
 
         # 指せる手がなかったなら、静止探索の終了後だ。
         if best_value == constants.value.NOTHING_CAPTURE_MOVE:
-            return PlotModel(declaration = DeclarationModel.NONE)
+            return PlotModel(declaration = constants.declaration.NONE)
 
         return best_plot_model

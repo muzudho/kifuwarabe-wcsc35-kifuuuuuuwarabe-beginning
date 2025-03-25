@@ -4,6 +4,7 @@ class ConstantsModel():
     def __init__(self):
         self._mind = _Mind()
         self._value = _Value()
+        self._declaration = _Declaration()
 
 
     @property
@@ -18,6 +19,13 @@ class ConstantsModel():
         """評価値です。
         """
         return self._value
+
+
+    @property
+    def declaration(self):
+        """［宣言］です。
+        """
+        return self._declaration
 
 
     @property
@@ -102,6 +110,32 @@ class _Value():
         """［駒を取る手が無し］
         """
         return -40000
+
+
+class _Declaration():
+    """［宣言］。
+    """
+
+
+    @property
+    def NONE(self):
+        """宣言ではありません。
+        """
+        return 0
+
+
+    @property
+    def RESIGN(self):
+        """投了。
+        """
+        return 1
+
+
+    @property
+    def NYUGYOKU_WIN(self):
+        """入玉宣言局面時。
+        """
+        return 2
 
 
 constants = ConstantsModel()

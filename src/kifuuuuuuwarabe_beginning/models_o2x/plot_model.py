@@ -16,13 +16,13 @@ class PlotModel():
 
         Parameters
         ----------
-        declaration : DeclarationModel
+        declaration : int
             ［宣言］
         """
         self._declaration = declaration
         self._move_list = []
         self._cap_list = []
-        self._last_piece_exchange_value = constants.value.ZERO
+        self._piece_exchange_value_list = []
 
 
     @property
@@ -48,24 +48,29 @@ class PlotModel():
 
 
     @property
-    def last_piece_exchange_value(self):
-        return self._last_piece_exchange_value
-
-
-    @property
     def is_capture_at_last(self):
         return self._cap_list[-1] != cshogi.NONE
 
 
-    def append_move(self, move, piece_type):
-        self._move_list.append(move)
+    @property
+    def last_piece_exchange_value(self):
+        return self._piece_exchange_value_list[-1]
 
-        piece_exchange_value = 2 * PieceValuesModel.by_piece_type(pt=piece_type)      # 交換値に変換。
+
+    def append_move(self, opponent, move, piece_type):
+        self._move_list.append(move)
         self._cap_list.append(piece_type)
-        self._last_piece_exchange_value = piece_exchange_value - self._last_piece_exchange_value
+
+        piece_exchange_value = 2 * PieceValuesModel.by_piece_type(pt=piece_type)      # 交換値に変換。正の数とする。
+
+        if opponent:
+            piece_exchange_value *= -1
+        
+        self._piece_exchange_value_list.append(piece_exchange_value)
 
 
     def stringify(self):
+        return f"D69: {self.declaration=} {len(self._move_list)=} {len(self._cap_list)=} {len(self._piece_exchange_value_list)=}"
         tokens = []
         for cap in reversed(self._cap_list):
             tokens.append(PieceTypeModel.kanji(cap))

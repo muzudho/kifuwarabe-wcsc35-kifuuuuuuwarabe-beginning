@@ -209,6 +209,7 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
 
     best_plot_model = scramble_search.search_alice(
             depth                           = max_depth,
+            opponent                        = 0,
             alice_s_remaining_moves         = remaining_moves)
 
     #print(f"{alice_s_best_piece_value=} {len(scramble_search.all_plots_at_first)=}")
