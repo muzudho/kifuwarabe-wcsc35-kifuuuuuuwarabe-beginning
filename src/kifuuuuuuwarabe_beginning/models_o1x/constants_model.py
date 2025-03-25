@@ -112,6 +112,13 @@ class _Value():
         return -40000
 
 
+    @property
+    def BETA_CUTOFF_VALUE(self):
+        """ベータカットの初期値用。
+        """
+        return 50000
+
+
 class DeclarationModel():
     """［宣言］。
     """

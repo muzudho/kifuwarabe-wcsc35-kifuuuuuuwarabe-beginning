@@ -11,15 +11,18 @@ class PlotModel():
     """
 
 
-    def __init__(self, declaration):
+    def __init__(self, declaration, is_mate_in_1_move):
         """初期化。
 
         Parameters
         ----------
         declaration : int
             ［宣言］
+        is_mate_in_1_move : bool
+            ［末端局面で１手詰めか？］
         """
         self._declaration = declaration
+        self._is_mate_in_1_move = is_mate_in_1_move
         self._move_list = []
         self._cap_list = []
         self._piece_exchange_value_list = []
@@ -30,6 +33,13 @@ class PlotModel():
         """［宣言］
         """
         return self._declaration
+
+
+    @property
+    def is_mate_in_1_move(self):
+        """［末端局面で１手詰めか？］
+        """
+        return self._is_mate_in_1_move
 
 
     @property
@@ -62,6 +72,10 @@ class PlotModel():
         self._cap_list.append(piece_type)
 
         piece_exchange_value = 2 * PieceValuesModel.by_piece_type(pt=piece_type)      # 交換値に変換。正の数とする。
+
+        # 一手詰め時
+        if len(self._move_list) == 1 and self._is_mate_in_1_move:
+            piece_exchange_value += constants.value.CHECKMATE
 
         if opponent == 1:
             piece_exchange_value *= -1
