@@ -169,18 +169,21 @@ class QuiescenceSearchForScrambleModel():
             if depth + 1 == self._max_depth:
                 self._all_plots_at_first.append(cur_plot_model)
 
-            # 手番は、一番得する手を指したい。
-            if best_plot_model is None:
-                best_plot_model = cur_plot_model
+            # FIXME 将来的に相手の駒をポロリと取れるなら、手前の手は全部緩手になることがある。どう解消するか？
+
+            # NOTE （スクランブル・サーチでは）ベストがナンということもある。つまり、指さない方がマシな局面がある。
+            best_value = 0
+            if best_plot_model is not None:
+                best_value = best_plot_model.last_piece_exchange_value
+
+            # 相手は、点数が小さくなる手を選ぶ
+            if opponent:
+                if cur_plot_model.last_piece_exchange_value < best_value:
+                    best_plot_model = cur_plot_model
+            # 自分は、点数が大きくなる手を選ぶ
             else:
-                # 相手は、点数が小さくなる手を選ぶ
-                if opponent:
-                    if cur_plot_model.last_piece_exchange_value < best_plot_model.last_piece_exchange_value:
-                        best_plot_model = cur_plot_model
-                # 自分は、点数が大きくなる手を選ぶ
-                else:
-                    if best_plot_model.last_piece_exchange_value < cur_plot_model.last_piece_exchange_value:
-                        best_plot_model = cur_plot_model
+                if best_value < cur_plot_model.last_piece_exchange_value:
+                    best_plot_model = cur_plot_model
 
             ########################
             # MARK: アリスが一手戻す
