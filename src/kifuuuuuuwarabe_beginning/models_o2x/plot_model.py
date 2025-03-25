@@ -1,6 +1,6 @@
 import cshogi
 
-from ..models_o1x import constants, PieceTypeModel, PieceValuesModel
+from ..models_o1x import constants, DeclarationModel, PieceTypeModel, PieceValuesModel
 
 
 class PlotModel():
@@ -63,17 +63,23 @@ class PlotModel():
 
         piece_exchange_value = 2 * PieceValuesModel.by_piece_type(pt=piece_type)      # 交換値に変換。正の数とする。
 
-        if opponent:
+        if opponent == 1:
             piece_exchange_value *= -1
         
         self._piece_exchange_value_list.append(piece_exchange_value)
 
 
     def stringify(self):
-        return f"D69: {self.declaration=} {len(self._move_list)=} {len(self._cap_list)=} {len(self._piece_exchange_value_list)=}"
+        # return f"D69: {self.declaration=} {len(self._move_list)=} {len(self._cap_list)=} {len(self._piece_exchange_value_list)=}"
         tokens = []
-        for cap in reversed(self._cap_list):
-            tokens.append(PieceTypeModel.kanji(cap))
+        for index in reversed(range(0, len(self._move_list))):
+            move_as_usi = cshogi.move_to_usi(self._move_list[index])
+            cap = self._cap_list[index]
+            piece_exchange_value = self._piece_exchange_value_list[index]
+            tokens.append(f"{move_as_usi:5}{PieceTypeModel.kanji(cap)}{piece_exchange_value}")
+
+        if self._declaration != DeclarationModel.NONE:
+            tokens.append(DeclarationModel.japanese(self.declaration))
 
         return ' '.join(tokens)
 

@@ -4,7 +4,7 @@ class ConstantsModel():
     def __init__(self):
         self._mind = _Mind()
         self._value = _Value()
-        self._declaration = _Declaration()
+        self._declaration = DeclarationModel()
 
 
     @property
@@ -112,9 +112,22 @@ class _Value():
         return -40000
 
 
-class _Declaration():
+class DeclarationModel():
     """［宣言］。
     """
+
+
+    _japanese_dict = {
+        1 : '投了',
+        2 : '入玉勝利宣言',
+    }
+
+
+    @classmethod
+    def japanese(clazz, number):
+        if number in clazz._japanese_dict:
+            return clazz._japanese_dict[number]
+        return ''
 
 
     @property
