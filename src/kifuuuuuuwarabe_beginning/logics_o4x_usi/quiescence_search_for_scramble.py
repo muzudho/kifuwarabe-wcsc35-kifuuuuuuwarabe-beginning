@@ -1,12 +1,14 @@
 import cshogi
 
 from ..logics_o1x import Helper
-from ..models_o1x import constants, MoveOnScrambleModel, PieceValuesModel, PieceTypeModel, SquareModel, TurnModel
+from ..models_o1x import constants, MoveOnScrambleModel, PieceValuesModel, PieceTypeModel, SearchResultStateModel, SquareModel, TurnModel
+from ..models_o2x import PlotModel
 
 
 class QuiescenceSearchForScramble():
     """駒の取り合いのための静止探索。
     駒の取り合いが終わるまで、駒の取り合いを探索します。
+    TODO Model
     """
 
 
@@ -19,6 +21,12 @@ class QuiescenceSearchForScramble():
         """
         self._max_depth = max_depth
         self._gymnasium = gymnasium
+        self._all_plots_at_first = []
+
+
+    @property
+    def all_plots_at_first(self):
+        return self._all_plots_at_first
 
 
     def search_alice(self, depth, alice_s_remaining_moves):
@@ -43,14 +51,9 @@ class QuiescenceSearchForScramble():
 
         Returns
         -------
-        alice_s_best_value : int
-            アリスの点数。
-        alice_s_best_move_list : list
-            アリスの最善手のリスト。０～複数件の指し手。
-        alice_s_move_ex_list : dist
-            アリスの全ての指し手と得のペアのリスト。
-            投了時は空っぽのリスト。
-            FIXME 入玉宣言勝ちは空リスト。
+        best_prot_model : PlotModel
+            最善の読み筋。
+            これは駒得評価値も算出できる。
         """
 
         if depth < 1:
@@ -63,12 +66,30 @@ class QuiescenceSearchForScramble():
         if self._gymnasium.table.is_game_over():
             """手番の投了局面時。
             """
-            return constants.value.GAME_OVER, [], {} # 負けだから
+            best_plot_model = PlotModel()
+            best_plot_model.append_capture(
+                    search_result_state_model   = SearchResultStateModel.RESIGN,
+                    move        = None,
+                    piece_type  = None)
+            
+            if depth == self._max_depth:
+                self._all_plots_at_first.append(best_plot_model)
+
+            return best_plot_model
 
         if self._gymnasium.table.is_nyugyoku():
             """手番の入玉宣言局面時。
             """
-            return constants.value.NYUGYOKU_WIN, [], {}  # 勝ちだから  FIXME 入玉宣言勝ちをどうやって返す？
+            best_plot_model = PlotModel()
+            best_plot_model.append_capture(
+                    search_result_state_model   = SearchResultStateModel.NYUGYOKU_WIN,
+                    move        = None,
+                    piece_type  = None)
+            
+            if depth == self._max_depth:
+                self._all_plots_at_first.append(best_plot_model)
+
+            return best_plot_model
 
         # 一手詰めを詰める
         if not self._gymnasium.table.is_check():
@@ -76,11 +97,22 @@ class QuiescenceSearchForScramble():
 
             if (matemove := self._gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
-                return constants.value.CHECKMATE, matemove, {matemove: constants.value.CHECKMATE}  # 勝ちだから
+                dst_sq_obj = SquareModel(cshogi.move_to(matemove))           # ［移動先マス］
+                cap_pt = self._gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
 
-        alice_s_best_value = constants.value.NOTHING_CAPTURE_MOVE  # （指し手のリストが空でなければ）どんな手でも更新される。
-        alice_s_best_move_list          = []
-        alice_s_move_ex_list            = []
+                best_plot_model = PlotModel()
+                best_plot_model.append_capture(
+                        search_result_state_model   = SearchResultStateModel.MATE_IN_1_MOVE,
+                        move        = matemove,
+                        piece_type  = cap_pt)
+            
+                if depth == self._max_depth:
+                    self._all_plots_at_first.append(best_plot_model)
+
+                return best_plot_model
+
+        best_value = constants.value.NOTHING_CAPTURE_MOVE  # （指し手のリストが空でなければ）どんな手でも更新される。
+        best_plot_model = None
 
         ##############################
         # MARK: アリスの合法手スキャン
@@ -96,7 +128,6 @@ class QuiescenceSearchForScramble():
             dst_sq_obj = SquareModel(cshogi.move_to(alice_s_move))           # ［移動先マス］
             cap_pt = self._gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
             is_capture = (cap_pt != cshogi.NONE)
-            piece_exchange_value = 2 * PieceValuesModel.by_piece_type(pt=cap_pt)      # 交換値に変換。
 
             # １回呼出時。
             if self._max_depth == depth:
@@ -121,37 +152,28 @@ class QuiescenceSearchForScramble():
 
             # これ以上深く読まない場合。
             if depth - 1 < 1:
-                alice_s_value = piece_exchange_value     # 駒を取ったことによる得。
+                cur_plot_model = PlotModel()
 
             # まだ深く読む場合。
             else:
-                #raise ValueError(f"depth error: {depth=}") # FIXME
-                #print(f"まだ深く読む {depth=}")
+                cur_plot_model = self.search_alice(      # 再帰呼出
+                        depth                           = depth,
+                        alice_s_remaining_moves         = list(self._gymnasium.table.legal_moves))
 
-                (
-                    bob_s_value,            # 投了や、入玉宣言勝ち、チェックメートなどの数が返ってくることもある。
-                    bob_s_best_move_list,   # FIXME 入玉宣言勝ちは空リストが返ってくる。
-                    bob_s_move_ex_list
-                ) = self.search_alice(      # 再帰呼出
-                    depth                           = depth,
-                    alice_s_remaining_moves         = list(self._gymnasium.table.legal_moves))
-
-                alice_s_value = piece_exchange_value - bob_s_value   # 今取った駒の価値から、末端の枝の積み重ね（bob_s_value）を引く。
+            cur_plot_model.append_capture(
+                    search_result_state_model   = SearchResultStateModel.NONE,  # ふつうの手
+                    move        = alice_s_move,
+                    piece_type  = cap_pt)
+            
+            if depth == self._max_depth:
+                self._all_plots_at_first.append(cur_plot_model)
 
             # TODO アリスとしては、損が一番小さな分岐へ進みたい。
             # 手番は、一番得する手を指したい。
-            if alice_s_best_value < alice_s_value:
-                alice_s_best_value = alice_s_value
-                alice_s_best_move_list = [alice_s_move]
-            elif alice_s_best_value == alice_s_value:
-                alice_s_best_move_list.append(alice_s_move)
-
-            # 指し手と、その得を紐づけます。
-            alice_s_move_ex_list.append(
-                    MoveOnScrambleModel(
-                            move                    = alice_s_move,
-                            piece_exchange_value    = alice_s_value,
-                            is_capture              = is_capture))
+            if best_plot_model is None:
+                best_plot_model = cur_plot_model
+            if best_plot_model.last_piece_exchange_value < cur_plot_model.last_piece_exchange_value:
+                best_plot_model = cur_plot_model
 
             ########################
             # MARK: アリスが一手戻す
@@ -170,7 +192,7 @@ class QuiescenceSearchForScramble():
         ########################
 
         # 指せる手がなかったなら、静止探索の終了後だ。
-        if alice_s_best_value == constants.value.NOTHING_CAPTURE_MOVE:
-            return constants.value.ZERO, [], []
+        if best_value == constants.value.NOTHING_CAPTURE_MOVE:
+            return PlotModel()
 
-        return alice_s_best_value, alice_s_best_move_list, alice_s_move_ex_list
+        return best_plot_model

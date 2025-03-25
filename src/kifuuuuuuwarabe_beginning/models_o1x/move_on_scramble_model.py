@@ -18,7 +18,7 @@ class MoveOnScrambleModel():
 
     def __init__(self, move:int, piece_exchange_value:int, is_capture:bool):
         self._move                  = move
-        self._piece_exchange_value  = piece_exchange_value
+        self._piece_exchange_value  = piece_exchange_value  # FIXME 交換値だけではなく、その内訳も知りたい。取った駒リスト。
         self._is_capture            = is_capture
     
 

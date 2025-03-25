@@ -207,18 +207,14 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
         #print(f"D-132: _quiescence_search {max_depth=}")
         return remaining_moves
 
-    (
-        alice_s_best_piece_value,
-        alice_s_remaining_moves_before_move,    # NOTE 入玉宣言勝ちは空リストが返ってくるが、事前に省いているからＯｋ。
-        alice_s_move_ex_list
-    ) = scramble_search.search_alice(
+    best_plot_model = scramble_search.search_alice(
             depth                           = max_depth,
             alice_s_remaining_moves         = remaining_moves)
 
-    #print(f"{alice_s_best_piece_value=} {len(alice_s_remaining_moves_before_move)=}")
+    #print(f"{alice_s_best_piece_value=} {len(scramble_search.all_plots_at_first)=}")
 
 
-    def _eliminate_not_capture_not_positive(alice_s_move_ex_list, gymnasium):
+    def _eliminate_not_capture_not_positive(all_plots_at_first, gymnasium):
         """次の１つの手は、候補に挙げる必要がないので除去します。
         （１）駒を取らない手で非正の手（最高点のケースを除く）。このとき、［零点の手］があるかどうか調べます。
         次の手は、候補に挙げる必要がないので除去します。
@@ -236,51 +232,51 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
 
         # まず、最高点を調べます。
         best_exchange_value = constants.value.NOTHING_CAPTURE_MOVE
-        for alice_s_move_ex in alice_s_move_ex_list:
-            if best_exchange_value < alice_s_move_ex.piece_exchange_value:
-                best_exchange_value = alice_s_move_ex.piece_exchange_value
+        for plot_model in all_plots_at_first:
+            if best_exchange_value < plot_model.last_piece_exchange_value:
+                best_exchange_value = plot_model.last_piece_exchange_value
 
         # 最高点が 0 点のケース。 FIXME 千日手とかを何点に設定しているか？
         if best_exchange_value == 0:
             exists_zero_value_move = True
 
-        for alice_s_move_ex in alice_s_move_ex_list:
+        for plot_model in all_plots_at_first:
 
             # （１）駒を取らない手で非正の手（最高点のケースを除く）。
-            if not alice_s_move_ex.is_capture and alice_s_move_ex.piece_exchange_value < 1 and alice_s_move_ex.piece_exchange_value != best_exchange_value:
-                if alice_s_move_ex.piece_exchange_value == 0:
+            if not plot_model.is_capture_at_last and plot_model.last_piece_exchange_value < 1 and plot_model.last_piece_exchange_value != best_exchange_value:
+                if plot_model.last_piece_exchange_value == 0:
                     exists_zero_value_move = True
                 
                 gymnasium.health_check.append(
-                        move    = alice_s_move_ex.move,
+                        move    = plot_model.last_move,
                         name    = 'eliminate171',
-                        value   = f"{alice_s_move_ex.stringify_2():10} not_cap_not_posite")
+                        value   = f"{plot_model.stringify_2():10} not_cap_not_posite")
 
             # （２）最高点でない手。
-            elif alice_s_move_ex.piece_exchange_value < best_exchange_value:
+            elif plot_model.last_piece_exchange_value < best_exchange_value:
                 gymnasium.health_check.append(
-                        move    = alice_s_move_ex.move,
+                        move    = plot_model.last_move,
                         name    = 'eliminate171',
-                        value   = f"{alice_s_move_ex.stringify_2():10} not_best")
+                        value   = f"{plot_model.stringify_2():10} not_best")
 
             # （３）リスクヘッジにならない手
-            elif exists_zero_value_move and alice_s_move_ex.piece_exchange_value < 0:
+            elif exists_zero_value_move and plot_model.last_piece_exchange_value < 0:
                 gymnasium.health_check.append(
-                        move    = alice_s_move_ex.move,
+                        move    = plot_model.last_move,
                         name    = 'eliminate171',
-                        value   = f"{alice_s_move_ex.stringify_2():10} not_risk_hedge")
+                        value   = f"{plot_model.stringify_2():10} not_risk_hedge")
 
             # それ以外の手は選択します。
             else:
-                alice_s_move_list.append(alice_s_move_ex.move)
+                alice_s_move_list.append(plot_model.last_move)
                 gymnasium.health_check.append(
-                        move    = alice_s_move_ex.move,
+                        move    = plot_model.last_move,
                         name    = 'eliminate171',
-                        value   = f"{alice_s_move_ex.stringify_2():10} ok")
+                        value   = f"{plot_model.stringify_2():10} ok")
 
         return alice_s_move_list
 
 
     return _eliminate_not_capture_not_positive(
-            alice_s_move_ex_list    = alice_s_move_ex_list,
-            gymnasium               = gymnasium)
+            all_plots_at_first  = scramble_search.all_plots_at_first,
+            gymnasium           = gymnasium)
