@@ -10,11 +10,11 @@ class DoNotBackModel(NegativeRuleModel):
     """
 
 
-    def __init__(self, config_doc):
+    def __init__(self, basketball_court_model):
         super().__init__(
                 id          = 'do_not_back',
                 label       = '戻るな',
-                config_doc  = config_doc)
+                basketball_court_model  = basketball_court_model)
 
         #print(f'★ ＤoNotBack: back_board 生成')
         # 元の位置。該当がなければナンです。

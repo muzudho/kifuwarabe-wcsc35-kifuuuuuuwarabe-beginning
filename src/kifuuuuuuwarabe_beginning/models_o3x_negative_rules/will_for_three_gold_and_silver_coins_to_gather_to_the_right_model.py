@@ -11,11 +11,11 @@ class WillForThreeGoldAndSilverCoinsToGatherToTheRightModel(NegativeRuleModel):
     """
 
 
-    def __init__(self, config_doc):
+    def __init__(self, basketball_court_model):
         super().__init__(
                 id          = 'will_for_three_gold_and_silver_coins_to_gather_to_the_right',
                 label       = '金銀３枚が右に集まる',
-                config_doc  = config_doc)
+                basketball_court_model  = basketball_court_model)
 
 
     def before_move(self, move, table):

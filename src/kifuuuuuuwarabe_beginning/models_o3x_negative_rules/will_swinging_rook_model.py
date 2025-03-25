@@ -10,11 +10,11 @@ class WillSwingingRookModel(NegativeRuleModel):
     """
 
 
-    def __init__(self, config_doc):
+    def __init__(self, basketball_court_model):
         super().__init__(
                 id          = 'will_swinging_rook',
                 label       = '振り飛車をする',
-                config_doc  = config_doc)
+                basketball_court_model  = basketball_court_model)
 
 
     def before_move_o1o1x(self, remaining_moves, table):

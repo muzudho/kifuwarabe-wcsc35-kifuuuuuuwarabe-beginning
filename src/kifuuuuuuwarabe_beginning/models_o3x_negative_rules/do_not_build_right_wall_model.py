@@ -14,11 +14,11 @@ class DoNotBuildRightWallModel(NegativeRuleModel):
     """
 
 
-    def __init__(self, config_doc):
+    def __init__(self, basketball_court_model):
         super().__init__(
                 id          = 'do_not_build_right_wall',
                 label       = '右壁を作るな',
-                config_doc  = config_doc)
+                basketball_court_model  = basketball_court_model)
 
 
     def before_move(self, move, table):

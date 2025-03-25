@@ -4,10 +4,10 @@ from ..models_o1x import constants
 class NegativeRuleModel():
 
 
-    def __init__(self, id, label, config_doc):
+    def __init__(self, id, label, basketball_court_model):
         self._id = id
         self._label = label
-        self._config_doc = config_doc
+        self._basketball_court_model = basketball_court_model
 
         self._is_activate = False
         self._is_removed = False
@@ -31,7 +31,7 @@ class NegativeRuleModel():
 
     @property
     def is_enabled(self):
-        return self._config_doc['march_operations'][self._id]
+        return self._basketball_court_model.config_doc['march_operations'][self._id]
 
 
     @property

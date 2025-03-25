@@ -10,25 +10,25 @@ from ..models_o3x_negative_rules import \
 class NegativeRuleCollectionModel():
 
 
-    def __init__(self, basketball_court_model, config_doc):
+    def __init__(self, basketball_court_model):
         # 初期状態では、有効でない行進演算です。
         self._list_of_idle = [
-            DoNotMoveRookModel(config_doc=basketball_court_model.config_doc),        # 行進［キリンは動くな］  NOTE 飛車を振るまで有効になりません
+            DoNotMoveRookModel(basketball_court_model=basketball_court_model),        # 行進［キリンは動くな］  NOTE 飛車を振るまで有効になりません
         ]
 
         self._list_of_active = [
-            DoNotBackModel                                           (config_doc=config_doc),    # 行進［戻るな］
-            DoNotBreakFamousFenceModel                               (config_doc=config_doc),    # 行進［名の有る囲いを崩すな］
-            DoNotBuildRightWallModel                                 (config_doc=config_doc),    # 行進［右壁を作るな］
-            DoNotMoveLeftLanceModel                                  (config_doc=config_doc),    # 行進［左のイノシシは動くな］
-            DoNotMoveRightLanceModel                                 (config_doc=config_doc),    # 行進［右のイノシシは動くな］
-            DoNotGoLeftModel                                         (config_doc=config_doc),    # 行進［左へ行くな］
-            DoNotDogAndCatSideBySideModel                            (config_doc=config_doc),    # 行進［イヌとネコを横並びに上げるな］
-            DoNotUpToRank6Model                                      (config_doc=config_doc),    # 行進［６段目に上がるな］
-            DoNotMoveUntilRookMovesModel                             (config_doc=config_doc),    # 行進［キリンが動くまで動くな］
-            WillForThreeGoldAndSilverCoinsToGatherToTheRightModel    (config_doc=config_doc),    # ［金銀３枚が右に集まる］意志
-            WillNotToMove37PawnModel                                 (config_doc=config_doc),    # ［３七の歩を突かない］意志
-            WillSwingingRookModel                                    (config_doc=config_doc),    # ［振り飛車をする］意志
+            DoNotBackModel                                           (basketball_court_model=basketball_court_model),    # 行進［戻るな］
+            DoNotBreakFamousFenceModel                               (basketball_court_model=basketball_court_model),    # 行進［名の有る囲いを崩すな］
+            DoNotBuildRightWallModel                                 (basketball_court_model=basketball_court_model),    # 行進［右壁を作るな］
+            DoNotMoveLeftLanceModel                                  (basketball_court_model=basketball_court_model),    # 行進［左のイノシシは動くな］
+            DoNotMoveRightLanceModel                                 (basketball_court_model=basketball_court_model),    # 行進［右のイノシシは動くな］
+            DoNotGoLeftModel                                         (basketball_court_model=basketball_court_model),    # 行進［左へ行くな］
+            DoNotDogAndCatSideBySideModel                            (basketball_court_model=basketball_court_model),    # 行進［イヌとネコを横並びに上げるな］
+            DoNotUpToRank6Model                                      (basketball_court_model=basketball_court_model),    # 行進［６段目に上がるな］
+            DoNotMoveUntilRookMovesModel                             (basketball_court_model=basketball_court_model),    # 行進［キリンが動くまで動くな］
+            WillForThreeGoldAndSilverCoinsToGatherToTheRightModel    (basketball_court_model=basketball_court_model),    # ［金銀３枚が右に集まる］意志
+            WillNotToMove37PawnModel                                 (basketball_court_model=basketball_court_model),    # ［３七の歩を突かない］意志
+            WillSwingingRookModel                                    (basketball_court_model=basketball_court_model),    # ［振り飛車をする］意志
         ]
 
 

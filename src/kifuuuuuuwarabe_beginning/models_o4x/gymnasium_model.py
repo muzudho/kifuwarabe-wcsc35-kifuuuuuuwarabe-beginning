@@ -37,10 +37,8 @@ class GymnasiumModel():
         # ９段目に近い方の対局者から見た駒得評価値。
         self._np_value = 0
 
-        self._basketball_court_model = BasketballCourtModel(config_doc=config_doc)
-        self._negative_rule_collection_model = NegativeRuleCollectionModel(
-                basketball_court_model  = self._basketball_court_model,
-                config_doc              = config_doc)
+        self._basketball_court_model = None
+        self._negative_rule_collection_model = None
 
         self._health_check = None   # 健康診断
 
@@ -128,6 +126,11 @@ class GymnasiumModel():
         """
         self._thinking_logger_module = None     # 初期化の準備
         self._np_value = 0  # ９段目に近い方の対局者から見た駒得評価値。
+
+        self._basketball_court_model = BasketballCourtModel(
+                config_doc  = self._config_doc)
+        self._negative_rule_collection_model = NegativeRuleCollectionModel(
+                basketball_court_model  = self._basketball_court_model)
 
 
     def on_position(self, command):

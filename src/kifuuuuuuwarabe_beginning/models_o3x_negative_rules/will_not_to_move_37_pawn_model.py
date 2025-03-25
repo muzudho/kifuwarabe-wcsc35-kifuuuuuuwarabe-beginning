@@ -10,11 +10,11 @@ class WillNotToMove37PawnModel(NegativeRuleModel):
     """
 
 
-    def __init__(self, config_doc):
+    def __init__(self, basketball_court_model):
         super().__init__(
                 id          = 'will_not_to_move_37_pawn',
                 label       = '３七の歩を突かない',
-                config_doc  = config_doc)
+                basketball_court_model  = basketball_court_model)
 
 
     def before_move(self, move, table):

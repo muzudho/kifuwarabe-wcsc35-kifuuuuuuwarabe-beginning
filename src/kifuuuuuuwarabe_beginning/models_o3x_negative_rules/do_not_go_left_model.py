@@ -11,11 +11,11 @@ class DoNotGoLeftModel(NegativeRuleModel):
     """
 
 
-    def __init__(self, config_doc):
+    def __init__(self, basketball_court_model):
         super().__init__(
                 id          = 'do_not_go_left',
                 label       = '左へ行くな',
-                config_doc  = config_doc)
+                basketball_court_model  = basketball_court_model)
 
 
     def before_move(self, move, table):

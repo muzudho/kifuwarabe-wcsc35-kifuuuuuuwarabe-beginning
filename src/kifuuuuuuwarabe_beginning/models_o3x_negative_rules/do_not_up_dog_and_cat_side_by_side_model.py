@@ -11,11 +11,11 @@ class DoNotDogAndCatSideBySideModel(NegativeRuleModel):
     """
 
 
-    def __init__(self, config_doc):
+    def __init__(self, basketball_court_model):
         super().__init__(
                 id          = 'do_not_up_dog_and_cat_side_by_side',
                 label       = 'イヌとネコを横並びに上げるな',
-                config_doc  = config_doc)
+                basketball_court_model  = basketball_court_model)
 
 
     def before_move_o1o1x(self, remaining_moves, table):

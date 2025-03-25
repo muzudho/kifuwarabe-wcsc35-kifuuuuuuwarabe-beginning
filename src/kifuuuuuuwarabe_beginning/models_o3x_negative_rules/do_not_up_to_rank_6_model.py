@@ -11,11 +11,11 @@ class DoNotUpToRank6Model(NegativeRuleModel):
     """
 
 
-    def __init__(self, config_doc):
+    def __init__(self, basketball_court_model):
         super().__init__(
                 id          = 'do_not_up_to_rank_6',
                 label       = '６段目に上がるな',
-                config_doc  = config_doc)
+                basketball_court_model  = basketball_court_model)
 
 
     def before_move_o1o1x(self, remaining_moves, table):
