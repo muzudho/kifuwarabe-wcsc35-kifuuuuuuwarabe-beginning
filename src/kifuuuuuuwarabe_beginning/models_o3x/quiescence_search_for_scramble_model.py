@@ -20,12 +20,18 @@ class QuiescenceSearchForScrambleModel():
         self._max_depth = max_depth
         self._gymnasium = gymnasium
         self._all_plots_at_first = []
+        self._number_of_visited_nodes = 0
 
 
     @property
     def all_plots_at_first(self):
         return self._all_plots_at_first
 
+
+    @property
+    def number_of_visited_nodes(self):
+        return self._number_of_visited_nodes
+    
 
     def search_alice(
             self,
@@ -159,6 +165,7 @@ class QuiescenceSearchForScrambleModel():
             ########################
 
             self._gymnasium.do_move_o1x(move = alice_s_move)
+            self._number_of_visited_nodes += 1
 
             ############################
             # MARK: アリスが一手指した後

@@ -189,7 +189,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
             print(f'bestmove {best_move_as_usi}', flush=True)
             return
 
-        print(f"info depth 0 seldepth 0 time 1 nodes 0 score cp 0 string Number of branches of first move: {result_of_go.length_by_cshogi} -> {result_of_go.length_of_quiescence_search_by_kifuwarabe} -> {result_of_go.length_by_kifuwarabe}")
+        print(f"info depth 0 seldepth 0 time 1 nodes {result_of_go._number_of_visited_nodes} score cp 0 string Number of branches of first move: {result_of_go.length_by_cshogi} -> {result_of_go.length_of_quiescence_search_by_kifuwarabe} -> {result_of_go.length_by_kifuwarabe}")
         print(f'bestmove {best_move_as_usi}', flush=True)
 
 

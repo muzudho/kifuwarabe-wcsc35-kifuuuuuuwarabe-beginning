@@ -1,7 +1,15 @@
 class ResultOfGoModel():
 
 
-    def __init__(self, search_result_state_model, alice_s_profit, best_move, length_by_cshogi, length_of_quiescence_search_by_kifuwarabe, length_by_kifuwarabe):
+    def __init__(
+            self,
+            search_result_state_model,
+            alice_s_profit,
+            best_move,
+            length_by_cshogi,
+            length_of_quiescence_search_by_kifuwarabe,
+            length_by_kifuwarabe,
+            number_of_visited_nodes):
         """［初期化］
 
         Parameters
@@ -18,6 +26,8 @@ class ResultOfGoModel():
             きふわらべ が静止探索で絞り込んだ［指し手の数］
         length_by_kifuwarabe : int
             きふわらべ が最終的に絞り込んだ［指し手の数］
+        number_of_visited_nodes : int
+            訪問ノード数
         """
         self._search_result_state_model = search_result_state_model
         self._alice_s_profit            = alice_s_profit
@@ -25,6 +35,7 @@ class ResultOfGoModel():
         self._length_by_cshogi          = length_by_cshogi
         self._length_of_quiescence_search_by_kifuwarabe = length_of_quiescence_search_by_kifuwarabe
         self._length_by_kifuwarabe      = length_by_kifuwarabe
+        self._number_of_visited_nodes   = number_of_visited_nodes
 
 
     @property

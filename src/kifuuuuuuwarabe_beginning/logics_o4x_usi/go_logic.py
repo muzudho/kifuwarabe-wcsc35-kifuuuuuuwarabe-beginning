@@ -75,7 +75,8 @@ class _Search():
                     best_move                   = None,
                     length_by_cshogi            = length_by_cshogi,
                     length_of_quiescence_search_by_kifuwarabe   = length_of_quiescence_search_by_kifuwarabe,
-                    length_by_kifuwarabe        = length_by_kifuwarabe)
+                    length_by_kifuwarabe        = length_by_kifuwarabe,
+                    number_of_visited_nodes     = 0)
 
         if self._gymnasium.table.is_nyugyoku():
             """入玉宣言局面時。
@@ -87,7 +88,8 @@ class _Search():
                     best_move                   = None,
                     length_by_cshogi            = length_by_cshogi,
                     length_of_quiescence_search_by_kifuwarabe   = length_of_quiescence_search_by_kifuwarabe,
-                    length_by_kifuwarabe        = length_by_kifuwarabe)
+                    length_by_kifuwarabe        = length_by_kifuwarabe,
+                    number_of_visited_nodes     = 0)
 
         # 一手詰めを詰める
         if not self._gymnasium.table.is_check():
@@ -102,7 +104,8 @@ class _Search():
                         best_move                   = matemove,
                         length_by_cshogi            = length_by_cshogi,
                         length_of_quiescence_search_by_kifuwarabe   = length_of_quiescence_search_by_kifuwarabe,
-                        length_by_kifuwarabe        = length_by_kifuwarabe)
+                        length_by_kifuwarabe        = length_by_kifuwarabe,
+                        number_of_visited_nodes     = 0)
 
         ################
         # MARK: 静止探索
@@ -110,8 +113,10 @@ class _Search():
 
         old_remaining_moves = remaining_moves.copy()
 
-        remaining_moves = _quiescence_search(
-                depth           = 2,                # 何手読みか。
+        (
+            remaining_moves,
+            number_of_visited_nodes
+        ) = _quiescence_search(
                 remaining_moves = remaining_moves,
                 gymnasium       = self._gymnasium)
         length_of_quiescence_search_by_kifuwarabe   = len(remaining_moves)
@@ -185,16 +190,19 @@ HEALTH CHECK
                 best_move                   = best_move,
                 length_by_cshogi            = length_by_cshogi,
                 length_of_quiescence_search_by_kifuwarabe   = length_of_quiescence_search_by_kifuwarabe,
-                length_by_kifuwarabe        = length_by_kifuwarabe)
+                length_by_kifuwarabe        = length_by_kifuwarabe,
+                number_of_visited_nodes     = number_of_visited_nodes)
 
 
-def _quiescence_search(depth, remaining_moves, gymnasium):
+def _quiescence_search(remaining_moves, gymnasium):
     """静止探索。
     
     Returns
     -------
     remaining_moves : list
         指し手のリスト。
+    number_of_visited_nodes : int
+        ［訪問ノード数］
     """
     max_depth                   = gymnasium.config_doc['search']['capture_depth']   # 2
 
@@ -205,7 +213,7 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
 
     if max_depth < 1:
         #print(f"D-132: _quiescence_search {max_depth=}")
-        return remaining_moves
+        return remaining_moves, 0
 
     best_plot_model = scramble_search.search_alice(
             depth                           = max_depth,
@@ -214,7 +222,7 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
             alice_s_remaining_moves         = remaining_moves)
 
     #print(f"{alice_s_best_piece_value=} {len(scramble_search.all_plots_at_first)=}")
-
+    number_of_visited_nodes = scramble_search.number_of_visited_nodes
 
     def _eliminate_not_capture_not_positive(all_plots_at_first, gymnasium):
         """次の１つの手は、候補に挙げる必要がないので除去します。
@@ -286,6 +294,9 @@ def _quiescence_search(depth, remaining_moves, gymnasium):
         return alice_s_move_list
 
 
-    return _eliminate_not_capture_not_positive(
-            all_plots_at_first  = scramble_search.all_plots_at_first,
-            gymnasium           = gymnasium)
+    return (
+        _eliminate_not_capture_not_positive(
+                all_plots_at_first  = scramble_search.all_plots_at_first,
+                gymnasium           = gymnasium),
+        number_of_visited_nodes
+    )
