@@ -11,8 +11,8 @@ class CutoffReason():
     _label = [
         '',                                 # [0]
         '詰み形',                           # [1]
-        '入玉宣言勝ち',                     # [2]
-        '一手詰め',                         # [3]
+        '一手詰め',                         # [2]
+        '入玉宣言勝ち',                     # [3]
         '合法手の中から指したい手無し',     # [4]
         '探索深さ最大',                     # [5]
     ]
@@ -28,18 +28,18 @@ class CutoffReason():
         """投了。詰み形。
         """
         return 1
-
-
-    @property
-    def NYUGYOKU_WIN(self):
-        """入玉宣言勝ち。
-        """
-        return 2
     
 
     @property
     def MATE_MOVE_IN_1_PLY(self):
         """一手詰め。
+        """
+        return 2
+
+
+    @property
+    def NYUGYOKU_WIN(self):
+        """入玉宣言勝ち。
         """
         return 3
 
@@ -156,7 +156,7 @@ class PlotModel():
 
         if len(self._piece_exchange_value_list) < 1:
             #return constants.value.ZERO     # TODO ［指したい手がない］というのを何点と見るか？
-            raise ValueError(f"取った駒の交換値のリストが０件です。 {DeclarationModel.japanese(self._declaration)=} {self._is_absolute_opponent_at_end_position=} {self._is_mate_in_1_move=} {CutoffReason.japanese(self._cutoff_reason)=}")
+            raise ValueError(f"取った駒の交換値のリストが０件です。 {DeclarationModel.japanese(self._declaration)=} {self._is_absolute_opponent_at_end_position=} {self._is_mate_in_1_move=} {self._cutoff_reason=} {CutoffReason.japanese(self._cutoff_reason)=} {self.move_list_length()=}")
 
         return self._piece_exchange_value_list[-1]
 
@@ -168,6 +168,10 @@ class PlotModel():
 
     def is_declaration(self):
         return self._declaration != DeclarationModel.NONE
+
+
+    def move_list_length(self):
+        return len(self._move_list)
 
 
     def is_empty_moves(self):

@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, SquareModel
-from ..models_o2x import cutoff_reason, PlotModel
+from ..models_o2x import cutoff_reason, CutoffReason, PlotModel
 
 
 class QuiescenceSearchForScrambleModel():
@@ -364,8 +364,14 @@ class QuiescenceSearchForScrambleModel():
             if best_plot_model_in_children is not None:
                 threshold_value = best_plot_model_in_children.last_piece_exchange_value     # とりあえず最善の点数。
 
+            # 最大深さで戻ってきたなら、最善手ではありません。無視します。
+            #print(f"D-368: {future_plot_model.cutoff_reason=} {cutoff_reason.MAX_DEPTH=} {future_plot_model.move_list_length()=} {future_plot_model.is_empty_moves()=}")
+            if future_plot_model.cutoff_reason == cutoff_reason.MAX_DEPTH and future_plot_model.is_empty_moves():
+                #print(f"D-370: ベストではない")
+                its_best = False
+
             # 自分は、点数が大きくなる手を選ぶ
-            if not is_absolute_opponent:
+            elif not is_absolute_opponent:
                 # # TODO ただし、既存の最善手より良い手を見つけてしまったら、ベータカットします。
                 # if beta_cutoff_value < future_plot_model.last_piece_exchange_value:
                 #     #will_beta_cutoff = True   # TODO ベータカット
