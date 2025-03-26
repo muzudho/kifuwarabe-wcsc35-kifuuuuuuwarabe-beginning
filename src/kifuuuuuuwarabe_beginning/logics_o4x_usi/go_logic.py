@@ -219,10 +219,12 @@ def _quiescence_search(remaining_moves, gymnasium):
         return remaining_moves, 0
 
     best_plot_model = scramble_search.search_alice(
-            depth                           = max_depth,
-            is_absolute_opponent            = False,
-            beta_cutoff_value               = constants.value.BETA_CUTOFF_VALUE,    # すごい高い点数。
-            alice_s_remaining_moves         = remaining_moves)
+            depth                               = max_depth,
+            best_plot_model_in_older_sibling    = None,
+            is_absolute_opponent                = False,
+            beta_cutoff_value                   = constants.value.BETA_CUTOFF_VALUE,    # すごい高い点数。
+            alice_s_remaining_moves             = remaining_moves,
+            is_beta_cutoff                      = False)
 
     #print(f"{alice_s_best_piece_value=} {len(scramble_search.all_plots_at_first)=}")
     number_of_visited_nodes = scramble_search.number_of_visited_nodes

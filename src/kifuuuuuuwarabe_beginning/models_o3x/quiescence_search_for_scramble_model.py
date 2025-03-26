@@ -35,10 +35,12 @@ class QuiescenceSearchForScrambleModel():
 
     def search_alice(
             self,
+            best_plot_model_in_older_sibling,
             depth,
             is_absolute_opponent,
             beta_cutoff_value,
-            alice_s_remaining_moves):
+            alice_s_remaining_moves,
+            is_beta_cutoff):
         """
         TODO 静止探索はせず、［スクランブル・サーチ］というのを考える。静止探索は王手が絡むと複雑だ。
         リーガル・ムーブのうち、
@@ -55,6 +57,8 @@ class QuiescenceSearchForScrambleModel():
         ----------
         depth : int
             残りの探索深さ。
+        best_plot_model_in_older_sibling : PlotModel
+            兄たちの中で最善の読み筋、またはナン。
         is_absolute_opponent : bool
             対戦相手か？
         beta_cutoff_value : int
@@ -67,14 +71,31 @@ class QuiescenceSearchForScrambleModel():
         best_prot_model : PlotModel
             最善の読み筋。
             これは駒得評価値も算出できる。
+        is_beta_cutoff : bool
+            ベータカットオフするか。
         """
-
-        if depth < 1:
-            raise ValueError(f'depth が 1 未満のときにこのメソッドを呼び出してはいけません。 {depth=}')
 
         ########################
         # MARK: 指す前にやること
         ########################
+
+        # これ以上深く読まない場合。
+        if depth - 1 < 1:
+            if best_plot_model_in_older_sibling is None:
+                best_plot_model = PlotModel(
+                        declaration         = constants.declaration.NONE,
+                        is_mate_in_1_move   = False,
+                        cutoff_reason       = cutoff_reason.MAX_DEPTH)
+            else:
+                # 兄の手を引き継ぐ
+                best_plot_model = best_plot_model_in_older_sibling
+
+            return (
+                best_plot_model,
+                False
+            )
+
+        # まだ深く読む場合。
 
         if self._gymnasium.table.is_game_over():
             """手番の投了局面時。
@@ -143,21 +164,22 @@ class QuiescenceSearchForScrambleModel():
         ##############################
 
         # 関数呼び出し元から与えられた指し手を全部調べる。
-        for index, alice_s_move in enumerate(alice_s_remaining_moves):
+        for alice_s_move in alice_s_remaining_moves:
 
             ##########################
             # MARK: アリスが一手指す前
             ##########################
 
-            dst_sq_obj = SquareModel(cshogi.move_to(alice_s_move))           # ［移動先マス］
+            dst_sq_obj = SquareModel(cshogi.move_to(alice_s_move))      # ［移動先マス］
             cap_pt = self._gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
             is_capture = (cap_pt != cshogi.NONE)
 
-            # １回呼出時。
+            # １階呼出時は、どの手も無視しません。
             if self._max_depth == depth:
-                pass    # 何も無視しない。
+                pass
+
             else:
-                # 駒を取る手でなければ無視。
+                # ２階以降の呼出時は、駒を取る手でなければ無視。
                 if not is_capture:
                     continue
 
@@ -183,6 +205,11 @@ class QuiescenceSearchForScrambleModel():
                     cap_pt                              = cap_pt,
                     beta_cutoff_value                   = beta_cutoff_value)
 
+            best_plot_model_in_older_sibling.append_move(
+                    is_absolute_opponent    = is_absolute_opponent,  # FIXME １手前の手だから。
+                    move                    = alice_s_move,
+                    capture_piece_type      = cap_pt)
+
             ########################
             # MARK: アリスが一手戻す
             ########################
@@ -193,15 +220,15 @@ class QuiescenceSearchForScrambleModel():
             # MARK: アリスが一手戻した後
             ############################
 
-            # 探索の打切り判定
-            if is_beta_cutoff:
-                break   # （アンドゥや、depth の勘定をきちんとしたあとで）ループから抜ける
+            # # FIXME 探索の打切り判定
+            # if is_beta_cutoff:
+            #     break   # （アンドゥや、depth の勘定をきちんとしたあとで）ループから抜ける
 
         ########################
         # MARK: 合法手スキャン後
         ########################
 
-        # 指せる手がなかったなら、静止探索の末端局面の後ろだ。
+        # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
         if best_plot_model_in_older_sibling is None:
             return PlotModel(
                     declaration         = constants.declaration.NONE,
@@ -230,12 +257,17 @@ class QuiescenceSearchForScrambleModel():
         Returns
         -------
         best_plot_model_in_older_sibling : BestPlotModel
-
+            最善の読み筋。
+            これは駒得評価値も算出できる。
         is_beta_cutoff : bool
-
+            ベータカットオフするか。
         """
         
         #print(f"(next {self._gymnasium.table.move_number} teme) ({index}) alice's move={cshogi.move_to_usi(alice_s_move)}({Helper.sq_to_masu(dst_sq_obj.sq)}) pt({PieceTypeModel.alphabet(piece_type=cap_pt)}) {alice_s_best_piece_value=} {piece_exchange_value=}")
+
+        ########################
+        # MARK: 指す前にやること
+        ########################
 
         # これ以上深く読まない場合。
         if depth - 1 < 1:
@@ -268,15 +300,12 @@ class QuiescenceSearchForScrambleModel():
 
 
         future_plot_model = self.search_alice(      # 再帰呼出
-                depth                   = depth,
-                is_absolute_opponent    = is_absolute_opponent,
-                beta_cutoff_value       = _get_beta_cutoff_value(is_absolute_opponent, best_plot_model_in_older_sibling),
-                alice_s_remaining_moves = list(self._gymnasium.table.legal_moves))  # 合法手全部。
-
-        future_plot_model.append_move(
-                is_absolute_opponent    = not is_absolute_opponent,  # FIXME １手前の手だから。
-                move                    = previous_move,
-                capture_piece_type      = cap_pt)
+                depth                               = depth,
+                best_plot_model_in_older_sibling    = None,     # FIXME ちゃんと指定すること
+                is_absolute_opponent                = is_absolute_opponent,
+                beta_cutoff_value                   = _get_beta_cutoff_value(is_absolute_opponent, best_plot_model_in_older_sibling),
+                alice_s_remaining_moves             = list(self._gymnasium.table.legal_moves),  # 合法手全部。
+                is_beta_cutoff                      = False)    # FIXME ちゃんと指定すること
         
         if depth + 1 == self._max_depth:
             self._all_plots_at_first.append(future_plot_model)
