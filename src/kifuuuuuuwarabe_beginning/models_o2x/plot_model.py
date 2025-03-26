@@ -3,6 +3,64 @@ import cshogi
 from ..models_o1x import constants, DeclarationModel, PieceTypeModel, PieceValuesModel
 
 
+class CutoffReason():
+    """カットオフした理由。
+    """
+
+
+    _label = [
+        '',             # [0]
+        '詰み形',       # [1]
+        '入玉宣言勝ち', # [2]
+        '一手詰め',     # [3]
+        '手無し',       # [4]
+        '探索深さ最大', # [5]
+    ]
+
+
+    @classmethod
+    def label(clazz, number):
+        return clazz._label[number]
+
+
+    @property
+    def GAME_OVER(self):
+        """投了。詰み形。
+        """
+        return 1
+
+
+    @property
+    def NYUGYOKU_WIN(self):
+        """入玉宣言勝ち。
+        """
+        return 2
+    
+
+    @property
+    def MATE_MOVE_IN_1_PLY(self):
+        """一手詰め。
+        """
+        return 3
+
+
+    @property
+    def NO_MOVES(self):
+        """指したい手無し。
+        """
+        return 4
+
+
+    @property
+    def MAX_DEPTH(self):
+        """探索深さ最大。
+        """
+        return 5
+
+
+cutoff_reason = CutoffReason()
+
+
 class PlotModel():
     """読み筋モデル。
 
@@ -11,7 +69,7 @@ class PlotModel():
     """
 
 
-    def __init__(self, declaration, is_mate_in_1_move):
+    def __init__(self, declaration, is_mate_in_1_move, cutoff_reason):
         """初期化。
 
         Parameters
@@ -20,12 +78,15 @@ class PlotModel():
             ［宣言］
         is_mate_in_1_move : bool
             ［末端局面で１手詰めか？］
+        cutoff_reason : int
+            カットオフの理由
         """
         self._declaration = declaration
         self._is_mate_in_1_move = is_mate_in_1_move
         self._move_list = []
         self._cap_list = []
         self._piece_exchange_value_list = []
+        self._cutoff_reason = cutoff_reason
 
 
     @property
@@ -65,6 +126,11 @@ class PlotModel():
     @property
     def last_piece_exchange_value(self):
         return self._piece_exchange_value_list[-1]
+
+
+    @property
+    def cutoff_reason(self):
+        return self._cutoff_reason
 
 
     def append_move(self, is_opponent, move, capture_piece_type):
@@ -122,6 +188,9 @@ class PlotModel():
 
         if self._declaration != DeclarationModel.NONE:
             tokens.append(DeclarationModel.japanese(self.declaration))
+
+        # カットオフ理由
+        tokens.append(CutoffReason.label(self._cutoff_reason))
 
         return ' '.join(tokens)
 

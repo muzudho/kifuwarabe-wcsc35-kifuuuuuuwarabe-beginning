@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, SquareModel
-from ..models_o2x import PlotModel
+from ..models_o2x import cutoff_reason, PlotModel
 
 
 class QuiescenceSearchForScrambleModel():
@@ -81,7 +81,8 @@ class QuiescenceSearchForScrambleModel():
             """
             best_plot_model = PlotModel(
                     declaration         = constants.declaration.RESIGN,
-                    is_mate_in_1_move   = False)
+                    is_mate_in_1_move   = False,
+                    cutoff_reason       = cutoff_reason.GAME_OVER)
             best_plot_model.append_move(
                     is_opponent         = is_opponent,
                     move                = None,
@@ -97,7 +98,8 @@ class QuiescenceSearchForScrambleModel():
             """
             best_plot_model = PlotModel(
                     declaration         = constants.declaration.NYUGYOKU_WIN,
-                    is_mate_in_1_move   = False)
+                    is_mate_in_1_move   = False,
+                    cutoff_reason       = cutoff_reason.NYUGYOKU_WIN)
             best_plot_model.append_move(
                     is_opponent         = is_opponent,
                     move                = None,
@@ -119,7 +121,8 @@ class QuiescenceSearchForScrambleModel():
 
                 best_plot_model = PlotModel(
                         declaration         = constants.declaration.NONE,
-                        is_mate_in_1_move   = True)
+                        is_mate_in_1_move   = True,
+                        cutoff_reason       = cutoff_reason.MATE_MOVE_IN_1_PLY)
                 best_plot_model.append_move(
                         is_opponent         = is_opponent,
                         move                = matemove,
@@ -141,7 +144,7 @@ class QuiescenceSearchForScrambleModel():
 
         is_beta_cutoff = False  # この関数の緊急脱出フラグ。
 
-        # 手番（アリス）が［駒を取る手］を全部調べる。
+        # 手番（アリス）が指し手を全部調べる。
         for index, alice_s_move in enumerate(alice_s_remaining_moves):
 
             ##########################
@@ -205,7 +208,8 @@ class QuiescenceSearchForScrambleModel():
         if best_plot_model is None:
             return PlotModel(
                     declaration         = constants.declaration.NONE,
-                    is_mate_in_1_move   = False)
+                    is_mate_in_1_move   = False,
+                    cutoff_reason       = cutoff_reason.NO_MOVES)
 
         return best_plot_model
 
@@ -225,7 +229,8 @@ class QuiescenceSearchForScrambleModel():
         if depth - 1 < 1:
             cur_plot_model = PlotModel(
                     declaration         = constants.declaration.NONE,
-                    is_mate_in_1_move   = False)
+                    is_mate_in_1_move   = False,
+                    cutoff_reason       = cutoff_reason.MAX_DEPTH)
 
         # まだ深く読む場合。
         else:
