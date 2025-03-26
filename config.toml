@@ -17,7 +17,7 @@
 
     # 思考時にランダム性が少しでも加わるか。
     #       遊ぶときや、研究を外す以外のときは、ランダム性は無くてもいいぐらい。
-    there_is_randomness = false
+    there_is_randomness = true
 
 
 # 行進演算
