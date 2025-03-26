@@ -218,14 +218,14 @@ def _quiescence_search(remaining_moves, gymnasium):
         #print(f"D-132: _q uiescence_search {max_depth=}")
         return remaining_moves, 0
 
-    best_plot_model = scramble_search.search_alice(
+    all_plots_at_first = scramble_search.search_at_first(
             #best_plot_model_in_older_sibling    = None,
             depth                               = max_depth,
             is_absolute_opponent                = False,
             #beta_cutoff_value                   = constants.value.BETA_CUTOFF_VALUE,    # すごい高い点数。
             remaining_moves                     = remaining_moves)
 
-    #print(f"{alice_s_best_piece_value=} {len(scramble_search.all_plots_at_first)=}")
+    #print(f"{alice_s_best_piece_value=} {len(all_plots_at_first)=}")
     number_of_visited_nodes = scramble_search.number_of_visited_nodes
 
     def _eliminate_not_capture_not_positive(all_plots_at_first, gymnasium):
@@ -300,7 +300,7 @@ def _quiescence_search(remaining_moves, gymnasium):
 
     return (
         _eliminate_not_capture_not_positive(
-                all_plots_at_first  = scramble_search.all_plots_at_first,
+                all_plots_at_first  = all_plots_at_first,
                 gymnasium           = gymnasium),
         number_of_visited_nodes
     )

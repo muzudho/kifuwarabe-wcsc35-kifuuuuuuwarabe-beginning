@@ -69,11 +69,13 @@ class PlotModel():
     """
 
 
-    def __init__(self, declaration, is_mate_in_1_move, cutoff_reason):
+    def __init__(self, is_absolute_opponent_at_end_position, declaration, is_mate_in_1_move, cutoff_reason):
         """初期化。
 
         Parameters
         ----------
+        is_absolute_opponent_at_end_position : bool
+            末端局面で対戦相手か。
         declaration : int
             ［宣言］
         is_mate_in_1_move : bool
@@ -81,12 +83,20 @@ class PlotModel():
         cutoff_reason : int
             カットオフの理由
         """
+        self._is_absolute_opponent_at_end_position = is_absolute_opponent_at_end_position
         self._declaration = declaration
         self._is_mate_in_1_move = is_mate_in_1_move
         self._move_list = []
         self._cap_list = []
         self._piece_exchange_value_list = []
         self._cutoff_reason = cutoff_reason
+
+
+    @property
+    def is_absolute_opponent_at_end_position(self):
+        """末端局面で対戦相手か。
+        """
+        return self._is_absolute_opponent_at_end_position
 
 
     @property
@@ -116,27 +126,49 @@ class PlotModel():
     @property
     def last_move(self):
         if len(self._move_list) < 1:
-            return 0    # FIXME 投了
+            raise ValueError('指し手のリストが０件です。')
         return self._move_list[-1]
 
 
     @property
     def is_capture_at_last(self):
         if len(self._cap_list) < 1:
-            return False    # FIXME 本当は None だが。
+            raise ValueError('取った駒のリストが０件です。')
         return self._cap_list[-1] != cshogi.NONE
 
 
     @property
     def last_piece_exchange_value(self):
+        if self.is_declaration():
+            if self._declaration == DeclarationModel.RESIGN:
+                value = constants.value.GAME_OVER
+                if self._is_absolute_opponent_at_end_position:
+                    return -value
+                return value
+
+            if self._declaration == DeclarationModel.NYUGYOKU_WIN:
+                value = constants.value.NYUGYOKU_WIN
+                if self._is_absolute_opponent_at_end_position:
+                    return -value
+                return value
+
         if len(self._piece_exchange_value_list) < 1:
-            return 0
+            raise ValueError(f"取った駒の交換値のリストが０件です。 {DeclarationModel.japanese(self._declaration)=} {self._is_absolute_opponent_at_end_position=}")
+
         return self._piece_exchange_value_list[-1]
 
 
     @property
     def cutoff_reason(self):
         return self._cutoff_reason
+
+
+    def is_declaration(self):
+        return self._declaration != DeclarationModel.NONE
+
+
+    def is_empty_moves(self):
+        return len(self._move_list) < 1
 
 
     def append_move(self, is_absolute_opponent, move, capture_piece_type):
