@@ -1,7 +1,7 @@
 import cshogi
 
 from ..models_o1x import constants, SquareModel
-from ..models_o2x import cutoff_reason, CutoffReason, PlotModel
+from ..models_o2x import cutoff_reason, PlotModel
 
 
 class QuiescenceSearchForScrambleModel():
