@@ -275,7 +275,8 @@ class QuiescenceSearchForScrambleModel():
                     
                     # TODO 既存の最悪手より悪い手を見つけてしまったら、ベータカットします。
                     if cur_plot_model.last_piece_exchange_value < beta_cutoff_value:
-                        is_beta_cutoff = True   # beta_cutoff
+                        #is_beta_cutoff = True   # TODO ベータカット
+                        pass
 
             # 自分は、点数が大きくなる手を選ぶ
             else:
@@ -285,6 +286,7 @@ class QuiescenceSearchForScrambleModel():
 
                     # TODO 既存の最善手より良い手を見つけてしまったら、ベータカットします。
                     if beta_cutoff_value < cur_plot_model.last_piece_exchange_value:
-                        is_beta_cutoff = True   # beta_cutoff
+                        #is_beta_cutoff = True   # TODO ベータカット
+                        pass
 
         return best_plot_model, is_beta_cutoff
