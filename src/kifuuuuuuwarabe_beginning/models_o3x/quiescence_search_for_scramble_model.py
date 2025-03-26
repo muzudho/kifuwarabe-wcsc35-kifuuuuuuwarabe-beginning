@@ -1,6 +1,6 @@
 import cshogi
 
-from ..models_o1x import constants, SquareModel
+from ..models_o1x import constants, DeclarationModel, SquareModel
 from ..models_o2x import cutoff_reason, PlotModel
 
 
@@ -359,37 +359,52 @@ class QuiescenceSearchForScrambleModel():
                     is_absolute_opponent                = not is_absolute_opponent,     # 手番が逆になる
                     remaining_moves                     = list(self._gymnasium.table.legal_moves))  # 合法手全部。
 
-            # NOTE （スクランブル・サーチでは）ベストがナンということもある。つまり、指さない方がマシな局面がある（のが投了との違い）。
-            threshold_value = 0     # 閾値
-            if best_plot_model_in_children is not None:
-                threshold_value = best_plot_model_in_children.last_piece_exchange_value     # とりあえず最善の点数。
-
             # 最大深さで戻ってきたなら、最善手ではありません。無視します。
             #print(f"D-368: {future_plot_model.cutoff_reason=} {cutoff_reason.MAX_DEPTH=} {future_plot_model.move_list_length()=} {future_plot_model.is_empty_moves()=}")
-            if future_plot_model.cutoff_reason == cutoff_reason.MAX_DEPTH and future_plot_model.is_empty_moves():
-                #print(f"D-370: ベストではない")
-                its_best = False
+            if future_plot_model.is_empty_moves():
 
-            # 自分は、点数が大きくなる手を選ぶ
-            elif not is_absolute_opponent:
-                # # TODO ただし、既存の最善手より良い手を見つけてしまったら、ベータカットします。
-                # if beta_cutoff_value < future_plot_model.last_piece_exchange_value:
-                #     #will_beta_cutoff = True   # TODO ベータカット
-                #     pass
+                if future_plot_model.cutoff_reason == cutoff_reason.MAX_DEPTH:
+                    #print(f"D-370: ベストではない")
+                    its_best = False
 
-                # 最善より良い手があれば、そっちを選びます。
-                its_best = (threshold_value < future_plot_model.last_piece_exchange_value)
+                # 相手が投了なら、自分には最善手。
+                elif future_plot_model.declaration == constants.declaration.RESIGN:
+                    its_best = True
 
-            # 相手は、点数が小さくなる手を選ぶ
+                # 相手が入玉宣言勝ちなら、自分には最悪手。
+                elif future_plot_model.declaration == constants.declaration.NYUGYOKU_WIN:
+                    its_best = False
+
+                else:
+                    raise ValueError(f"想定外の読み筋")
+            
             else:
-                # # TODO ただし、既存の最悪手より悪い手を見つけてしまったら、ベータカットします。
-                # if future_plot_model.last_piece_exchange_value < beta_cutoff_value:
-                #     #will_beta_cutoff = True   # TODO ベータカット
-                #     pass
 
-                # 最善より悪い手があれば、そっちを選びます。
-                its_best = (future_plot_model.last_piece_exchange_value < threshold_value)
-                    
+                # NOTE （スクランブル・サーチでは）ベストがナンということもある。つまり、指さない方がマシな局面がある（のが投了との違い）。
+                threshold_value = 0     # 閾値
+                if best_plot_model_in_children is not None:
+                    threshold_value = best_plot_model_in_children.last_piece_exchange_value     # とりあえず最善の点数。
+
+                # 自分は、点数が大きくなる手を選ぶ
+                if not is_absolute_opponent:
+                    # # TODO ただし、既存の最善手より良い手を見つけてしまったら、ベータカットします。
+                    # if beta_cutoff_value < future_plot_model.last_piece_exchange_value:
+                    #     #will_beta_cutoff = True   # TODO ベータカット
+                    #     pass
+
+                    # 最善より良い手があれば、そっちを選びます。
+                    its_best = (threshold_value < future_plot_model.last_piece_exchange_value)
+
+                # 相手は、点数が小さくなる手を選ぶ
+                else:
+                    # # TODO ただし、既存の最悪手より悪い手を見つけてしまったら、ベータカットします。
+                    # if future_plot_model.last_piece_exchange_value < beta_cutoff_value:
+                    #     #will_beta_cutoff = True   # TODO ベータカット
+                    #     pass
+
+                    # 最善より悪い手があれば、そっちを選びます。
+                    its_best = (future_plot_model.last_piece_exchange_value < threshold_value)
+                        
             if its_best:
                 best_plot_model_in_children = future_plot_model
                 best_move = my_move
