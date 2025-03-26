@@ -219,7 +219,7 @@ def _quiescence_search(remaining_moves, gymnasium):
         return remaining_moves, 0
 
     best_plot_model = scramble_search.search_alice(
-            best_plot_model_in_older_sibling    = None,
+            #best_plot_model_in_older_sibling    = None,
             depth                               = max_depth,
             is_absolute_opponent                = False,
             #beta_cutoff_value                   = constants.value.BETA_CUTOFF_VALUE,    # すごい高い点数。
