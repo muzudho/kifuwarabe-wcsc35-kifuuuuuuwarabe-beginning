@@ -91,7 +91,7 @@ class QuiescenceSearchForScrambleModel():
                     move                    = None,
                     capture_piece_type      = cshogi.NONE)
             
-            if depth == self._max_depth:
+            if depth == self._max_depth:    # １階
                 self._all_plots_at_first.append(best_plot_model)
 
             return best_plot_model
@@ -114,7 +114,7 @@ class QuiescenceSearchForScrambleModel():
                         move                    = matemove,
                         capture_piece_type      = cap_pt)
             
-                if depth == self._max_depth:
+                if depth == self._max_depth:    # １階
                     self._all_plots_at_first.append(best_plot_model)
 
                 return best_plot_model
@@ -131,21 +131,19 @@ class QuiescenceSearchForScrambleModel():
                     move                    = None,
                     capture_piece_type      = cshogi.NONE)
             
-            if depth == self._max_depth:
+            if depth == self._max_depth:    # １階
                 self._all_plots_at_first.append(best_plot_model)
 
             return best_plot_model
 
         # これ以上深く読まない場合。
         if depth - 1 < 1:
-            if best_plot_model_in_older_sibling is None:
+            best_plot_model = best_plot_model_in_older_sibling  # 兄の手を引き継ぐ
+            if best_plot_model is None:
                 best_plot_model = PlotModel(
                         declaration         = constants.declaration.NONE,
                         is_mate_in_1_move   = False,
                         cutoff_reason       = cutoff_reason.MAX_DEPTH)
-            else:
-                # 兄の手を引き継ぐ
-                best_plot_model = best_plot_model_in_older_sibling
 
             return (
                 best_plot_model,
@@ -210,7 +208,7 @@ class QuiescenceSearchForScrambleModel():
                     remaining_moves                     = list(self._gymnasium.table.legal_moves))  # 合法手全部。
 
             # １階呼出時は、全ての手を記憶します。       
-            if depth + 1 == self._max_depth:
+            if depth == self._max_depth:
                 self._all_plots_at_first.append(future_plot_model)
 
             # NOTE （スクランブル・サーチでは）ベストがナンということもある。つまり、指さない方がマシな局面がある（のが投了との違い）。
@@ -220,35 +218,31 @@ class QuiescenceSearchForScrambleModel():
 
             # 自分は、点数が大きくなる手を選ぶ
             if not is_absolute_opponent:
-                if threshold_value < future_plot_model.last_piece_exchange_value:
-                    # 最善より良い手があれば、そっちを選びます。
-                    best_plot_model_in_older_sibling = future_plot_model
+                # # TODO ただし、既存の最善手より良い手を見つけてしまったら、ベータカットします。
+                # if beta_cutoff_value < future_plot_model.last_piece_exchange_value:
+                #     #will_beta_cutoff = True   # TODO ベータカット
+                #     pass
 
-                    # # TODO 既存の最善手より良い手を見つけてしまったら、ベータカットします。
-                    # if beta_cutoff_value < future_plot_model.last_piece_exchange_value:
-                    #     #will_beta_cutoff = True   # TODO ベータカット
-                    #     pass
-
-                    best_plot_model_in_children.append_move(
-                            is_absolute_opponent    = is_absolute_opponent,
-                            move                    = my_move,
-                            capture_piece_type      = cap_pt)
+                # 最善より良い手があれば、そっちを選びます。
+                its_best = (threshold_value < future_plot_model.last_piece_exchange_value)
 
             # 相手は、点数が小さくなる手を選ぶ
             else:
-                if future_plot_model.last_piece_exchange_value < threshold_value:
-                    # 最善より悪い手があれば、そっちを選びます。
-                    best_plot_model_in_older_sibling = future_plot_model
-                    
-                    # # TODO 既存の最悪手より悪い手を見つけてしまったら、ベータカットします。
-                    # if future_plot_model.last_piece_exchange_value < beta_cutoff_value:
-                    #     #will_beta_cutoff = True   # TODO ベータカット
-                    #     pass
+                # # TODO ただし、既存の最悪手より悪い手を見つけてしまったら、ベータカットします。
+                # if future_plot_model.last_piece_exchange_value < beta_cutoff_value:
+                #     #will_beta_cutoff = True   # TODO ベータカット
+                #     pass
 
-                    best_plot_model_in_children.append_move(
-                            is_absolute_opponent    = is_absolute_opponent,
-                            move                    = my_move,
-                            capture_piece_type      = cap_pt)
+                # 最善より悪い手があれば、そっちを選びます。
+                its_best = (future_plot_model.last_piece_exchange_value < threshold_value)
+                    
+            if its_best:
+                best_plot_model_in_older_sibling = future_plot_model
+
+                best_plot_model_in_children.append_move(
+                        is_absolute_opponent    = is_absolute_opponent,
+                        move                    = my_move,
+                        capture_piece_type      = cap_pt)
 
             ################
             # MARK: 一手戻す
