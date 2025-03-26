@@ -133,7 +133,13 @@ class PlotModel():
         return self._cutoff_reason
 
 
-    def append_move(self, is_opponent, move, capture_piece_type):
+    def append_move(self, is_absolute_opponent, move, capture_piece_type):
+        """
+        Parameters
+        ----------
+        is_absolute_opponent : bool
+            対戦相手か。
+        """
 
         if capture_piece_type is None:
             raise ValueError(f"capture_piece_type をナンにしてはいけません。cshogi.NONE を使ってください。 {capture_piece_type=}")
@@ -147,7 +153,7 @@ class PlotModel():
         if len(self._move_list) == 1 and self._is_mate_in_1_move:
             piece_exchange_value += constants.value.CHECKMATE
 
-        if is_opponent:
+        if is_absolute_opponent:
             piece_exchange_value *= -1
         
         # ひとつ前の値

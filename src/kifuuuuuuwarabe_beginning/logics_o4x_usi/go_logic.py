@@ -220,7 +220,7 @@ def _quiescence_search(remaining_moves, gymnasium):
 
     best_plot_model = scramble_search.search_alice(
             depth                           = max_depth,
-            is_opponent                     = False,
+            is_absolute_opponent            = False,
             beta_cutoff_value               = constants.value.BETA_CUTOFF_VALUE,    # すごい高い点数。
             alice_s_remaining_moves         = remaining_moves)
 
