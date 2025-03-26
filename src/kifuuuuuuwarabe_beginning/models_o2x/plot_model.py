@@ -19,7 +19,7 @@ class CutoffReason():
 
 
     @classmethod
-    def label(clazz, number):
+    def japanese(clazz, number):
         return clazz._label[number]
 
 
@@ -139,6 +139,8 @@ class PlotModel():
 
     @property
     def last_piece_exchange_value(self):
+        """
+        """
         if self.is_declaration():
             if self._declaration == DeclarationModel.RESIGN:
                 value = constants.value.GAME_OVER
@@ -153,7 +155,8 @@ class PlotModel():
                 return value
 
         if len(self._piece_exchange_value_list) < 1:
-            raise ValueError(f"取った駒の交換値のリストが０件です。 {DeclarationModel.japanese(self._declaration)=} {self._is_absolute_opponent_at_end_position=}")
+            return constants.value.ZERO     # TODO ［指したい手がない］というのを何点と見るか？
+            #raise ValueError(f"取った駒の交換値のリストが０件です。 {DeclarationModel.japanese(self._declaration)=} {self._is_absolute_opponent_at_end_position=} {self._is_mate_in_1_move=} {CutoffReason.japanese(self._cutoff_reason)=}")
 
         return self._piece_exchange_value_list[-1]
 
@@ -234,7 +237,7 @@ class PlotModel():
             tokens.append(DeclarationModel.japanese(self.declaration))
 
         # カットオフ理由
-        tokens.append(CutoffReason.label(self._cutoff_reason))
+        tokens.append(CutoffReason.japanese(self._cutoff_reason))
 
         return ' '.join(tokens)
 
