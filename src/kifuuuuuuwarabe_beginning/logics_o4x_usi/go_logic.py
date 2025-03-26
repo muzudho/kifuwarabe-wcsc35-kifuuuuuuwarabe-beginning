@@ -52,18 +52,18 @@ class _Search():
             該当が無ければナン。
         """
 
-        remaining_moves         = list(self._gymnasium.table.legal_moves)
+        all_regal_moves = list(self._gymnasium.table.legal_moves)
 
-        for move in remaining_moves:
+        for move in all_regal_moves:
             self._gymnasium.health_check.append(
                     move    = move,
                     name    = 'legal',
                     value   =  True)
 
-        length_by_cshogi        = len(remaining_moves)  # cshogi が示した合法手の数
+        length_by_cshogi        = len(all_regal_moves)  # cshogi が示した合法手の数
         length_of_quiescence_search_by_kifuwarabe   = length_by_cshogi  # きふわらべ が静止探索で絞り込んだ指し手の数
         length_by_kifuwarabe    = length_by_cshogi      # きふわらべ が最終的に絞り込んだ指し手の数
-        #print(f"D-74: {len(remaining_moves)=}")
+        #print(f"D-74: {len(all_regal_moves)=}")
 
         if self._gymnasium.table.is_game_over():
             """投了局面時。
@@ -111,13 +111,13 @@ class _Search():
         # MARK: 静止探索
         ################
 
-        old_remaining_moves = remaining_moves.copy()
+        old_all_legal_moves = all_regal_moves.copy()
 
         (
             remaining_moves,
             number_of_visited_nodes
         ) = _quiescence_search(
-                remaining_moves = remaining_moves,
+                remaining_moves = all_regal_moves,
                 gymnasium       = self._gymnasium)
         length_of_quiescence_search_by_kifuwarabe   = len(remaining_moves)
         self._gymnasium.thinking_logger_module.append(f"QS_select_length={length_of_quiescence_search_by_kifuwarabe}")
@@ -129,7 +129,7 @@ class _Search():
                     value   =  True)
 
         if len(remaining_moves) == 0:
-            remaining_moves = old_remaining_moves
+            remaining_moves = old_all_legal_moves
             self._gymnasium.thinking_logger_module.append(f"Restore after quiescence_search. len={len(remaining_moves)}.")
 
         old_remaining_moves = remaining_moves.copy()
@@ -215,7 +215,7 @@ def _quiescence_search(remaining_moves, gymnasium):
             gymnasium   = gymnasium)
 
     if max_depth < 1:
-        #print(f"D-132: _quiescence_search {max_depth=}")
+        #print(f"D-132: _q uiescence_search {max_depth=}")
         return remaining_moves, 0
 
     best_plot_model = scramble_search.search_alice(

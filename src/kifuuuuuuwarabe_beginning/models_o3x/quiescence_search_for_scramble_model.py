@@ -144,7 +144,7 @@ class QuiescenceSearchForScrambleModel():
 
         is_beta_cutoff = False  # この関数の緊急脱出フラグ。
 
-        # 手番（アリス）が指し手を全部調べる。
+        # 関数呼び出し元から与えられた指し手を全部調べる。
         for index, alice_s_move in enumerate(alice_s_remaining_moves):
 
             ##########################
@@ -223,75 +223,81 @@ class QuiescenceSearchForScrambleModel():
             alice_s_move,
             cap_pt,
             beta_cutoff_value):
+        """
+        Returns
+        -------
+        best_plot_model : BestPlotModel
+
+        is_beta_cutoff : bool
+
+        """
         #print(f"(next {self._gymnasium.table.move_number} teme) ({index}) alice's move={cshogi.move_to_usi(alice_s_move)}({Helper.sq_to_masu(dst_sq_obj.sq)}) pt({PieceTypeModel.alphabet(piece_type=cap_pt)}) {alice_s_best_piece_value=} {piece_exchange_value=}")
 
         # これ以上深く読まない場合。
         if depth - 1 < 1:
-            cur_plot_model = PlotModel(
-                    declaration         = constants.declaration.NONE,
-                    is_mate_in_1_move   = False,
-                    cutoff_reason       = cutoff_reason.MAX_DEPTH)
+            return (
+                PlotModel(
+                        declaration         = constants.declaration.NONE,
+                        is_mate_in_1_move   = False,
+                        cutoff_reason       = cutoff_reason.MAX_DEPTH),
+                False
+            )
 
         # まだ深く読む場合。
+
+
+        def _get_beta_cutoff_value(is_opponent, best_plot_model):
+            # 最善手が未定なら、天井（底）を最大にします。
+            if best_plot_model is None:
+                if is_opponent:
+                    return constants.value.BETA_CUTOFF_VALUE        # 天井
+                return - constants.value.BETA_CUTOFF_VALUE  # 底
+
+            # 最善手が既存なら、その交換値を返すだけ。
+            return best_plot_model.last_piece_exchange_value
+
+
+        cur_plot_model = self.search_alice(      # 再帰呼出
+                depth                   = depth,
+                is_opponent             = is_opponent,
+                beta_cutoff_value       = _get_beta_cutoff_value(is_opponent, best_plot_model),
+                alice_s_remaining_moves = list(self._gymnasium.table.legal_moves))  # 合法手全部。
+
+        cur_plot_model.append_move(
+                is_opponent         = not is_opponent,  # FIXME
+                move                = alice_s_move,
+                capture_piece_type  = cap_pt)
+        
+        if depth + 1 == self._max_depth:
+            self._all_plots_at_first.append(cur_plot_model)
+
+        # FIXME 将来的に相手の駒をポロリと取れるなら、手前の手は全部緩手になることがある。どう解消するか？
+
+        # NOTE （スクランブル・サーチでは）ベストがナンということもある。つまり、指さない方がマシな局面がある。
+        threshold_value = 0     # 閾値
+        if best_plot_model is not None:
+            threshold_value = best_plot_model.last_piece_exchange_value     # とりあえず最善の点数。
+
+        # 相手は、点数が小さくなる手を選ぶ
+        if not is_opponent:
+            if cur_plot_model.last_piece_exchange_value < threshold_value:
+                # 最善より悪い手があれば、そっちを選びます。
+                best_plot_model = cur_plot_model
+                
+                # TODO 既存の最悪手より悪い手を見つけてしまったら、ベータカットします。
+                if cur_plot_model.last_piece_exchange_value < beta_cutoff_value:
+                    #is_beta_cutoff = True   # TODO ベータカット
+                    pass
+
+        # 自分は、点数が大きくなる手を選ぶ
         else:
+            if threshold_value < cur_plot_model.last_piece_exchange_value:
+                # 最善より良い手があれば、そっちを選びます。
+                best_plot_model = cur_plot_model
 
-
-            def _get_beta_cutoff_value(is_opponent, best_plot_model):
-                # 最善手が未定なら、天井（底）を最大にします。
-                if best_plot_model is None:
-                    if is_opponent:
-                        return constants.value.BETA_CUTOFF_VALUE        # 天井
-                    return - constants.value.BETA_CUTOFF_VALUE  # 底
-
-                # 最善手が既存なら、その交換値を返すだけ。
-                return best_plot_model.last_piece_exchange_value
-
-
-            cur_plot_model = self.search_alice(      # 再帰呼出
-                    depth                   = depth,
-                    is_opponent             = is_opponent,
-                    beta_cutoff_value       = _get_beta_cutoff_value(is_opponent, best_plot_model),
-                    alice_s_remaining_moves = list(self._gymnasium.table.legal_moves))
-
-        if cur_plot_model is None:  # 枝は無かったことにされた。（ベータカット）
-            pass
-
-        else:
-            cur_plot_model.append_move(
-                    is_opponent         = not is_opponent,
-                    move                = alice_s_move,
-                    capture_piece_type  = cap_pt)
-            
-            if depth + 1 == self._max_depth:
-                self._all_plots_at_first.append(cur_plot_model)
-
-            # FIXME 将来的に相手の駒をポロリと取れるなら、手前の手は全部緩手になることがある。どう解消するか？
-
-            # NOTE （スクランブル・サーチでは）ベストがナンということもある。つまり、指さない方がマシな局面がある。
-            threshold_value = 0     # 閾値
-            if best_plot_model is not None:
-                threshold_value = best_plot_model.last_piece_exchange_value     # とりあえず最善の点数。
-
-            # 相手は、点数が小さくなる手を選ぶ
-            if not is_opponent:
-                if cur_plot_model.last_piece_exchange_value < threshold_value:
-                    # 最善より悪い手があれば、そっちを選びます。
-                    best_plot_model = cur_plot_model
-                    
-                    # TODO 既存の最悪手より悪い手を見つけてしまったら、ベータカットします。
-                    if cur_plot_model.last_piece_exchange_value < beta_cutoff_value:
-                        #is_beta_cutoff = True   # TODO ベータカット
-                        pass
-
-            # 自分は、点数が大きくなる手を選ぶ
-            else:
-                if threshold_value < cur_plot_model.last_piece_exchange_value:
-                    # 最善より良い手があれば、そっちを選びます。
-                    best_plot_model = cur_plot_model
-
-                    # TODO 既存の最善手より良い手を見つけてしまったら、ベータカットします。
-                    if beta_cutoff_value < cur_plot_model.last_piece_exchange_value:
-                        #is_beta_cutoff = True   # TODO ベータカット
-                        pass
+                # TODO 既存の最善手より良い手を見つけてしまったら、ベータカットします。
+                if beta_cutoff_value < cur_plot_model.last_piece_exchange_value:
+                    #is_beta_cutoff = True   # TODO ベータカット
+                    pass
 
         return best_plot_model, is_beta_cutoff
