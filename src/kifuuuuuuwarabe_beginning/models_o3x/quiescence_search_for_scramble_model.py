@@ -33,69 +33,51 @@ class QuiescenceSearchForScrambleModel():
         return self._number_of_visited_nodes
     
 
+    # TODO 指し手の分析。駒を取る手と、そうでない手を分ける。
+    # TODO 駒を取る手も、価値の高い駒から取る手を考える。（相手が手抜く勝手読みをすると、大きな駒を取れてしまうことがあるから）。
+    # FIXME 将来的に相手の駒をポロリと取れるなら、手前の手は全部緩手になることがある。どう解消するか？
+    """
+    TODO 静止探索はせず、［スクランブル・サーチ］というのを考える。静止探索は王手が絡むと複雑だ。
+    リーガル・ムーブのうち、
+        手番の１手目なら：
+            ［取られそうになっている駒を逃げる手］∪［駒を取る手］∪［利きに飛び込む手］に絞り込む。（１度調べた手は２度目は調べない）
+            ［放置したとき］も調べる。
+        相手番の１手目なら：
+            ［動いた駒を取る手］に絞り込む。（１番安い駒から動かす）
+        手番の２手目なら：
+            ［動いた駒を取る手］に絞り込む。（１番安い駒から動かす）
+        最後の評価値が、１手目の評価値。
+    """
     def search_alice(
             self,
             best_plot_model_in_older_sibling,
             depth,
             is_absolute_opponent,
-            beta_cutoff_value,
-            alice_s_remaining_moves,
-            is_beta_cutoff):
+            remaining_moves):
         """
-        TODO 静止探索はせず、［スクランブル・サーチ］というのを考える。静止探索は王手が絡むと複雑だ。
-        リーガル・ムーブのうち、
-          手番の１手目なら：
-              ［取られそうになっている駒を逃げる手］∪［駒を取る手］∪［利きに飛び込む手］に絞り込む。（１度調べた手は２度目は調べない）
-              ［放置したとき］も調べる。
-          相手番の１手目なら：
-              ［動いた駒を取る手］に絞り込む。（１番安い駒から動かす）
-          手番の２手目なら：
-              ［動いた駒を取る手］に絞り込む。（１番安い駒から動かす）
-          最後の評価値が、１手目の評価値。
-
         Parameters
         ----------
-        depth : int
-            残りの探索深さ。
         best_plot_model_in_older_sibling : PlotModel
             兄たちの中で最善の読み筋、またはナン。
+        depth : int
+            残りの探索深さ。
         is_absolute_opponent : bool
             対戦相手か？
-        beta_cutoff_value : int
-
-        alice_s_remaining_moves : list<int>
-            アリスの指し手のリスト。
+        remaining_moves : list<int>
+            指し手のリスト。
 
         Returns
         -------
         best_prot_model : PlotModel
             最善の読み筋。
             これは駒得評価値も算出できる。
-        is_beta_cutoff : bool
-            ベータカットオフするか。
         """
 
         ########################
         # MARK: 指す前にやること
         ########################
 
-        # これ以上深く読まない場合。
-        if depth - 1 < 1:
-            if best_plot_model_in_older_sibling is None:
-                best_plot_model = PlotModel(
-                        declaration         = constants.declaration.NONE,
-                        is_mate_in_1_move   = False,
-                        cutoff_reason       = cutoff_reason.MAX_DEPTH)
-            else:
-                # 兄の手を引き継ぐ
-                best_plot_model = best_plot_model_in_older_sibling
-
-            return (
-                best_plot_model,
-                False
-            )
-
-        # まだ深く読む場合。
+        # 指さなくても分かること（ライブラリー使用）
 
         if self._gymnasium.table.is_game_over():
             """手番の投了局面時。
@@ -104,23 +86,6 @@ class QuiescenceSearchForScrambleModel():
                     declaration         = constants.declaration.RESIGN,
                     is_mate_in_1_move   = False,
                     cutoff_reason       = cutoff_reason.GAME_OVER)
-            best_plot_model.append_move(
-                    is_absolute_opponent    = is_absolute_opponent,
-                    move                    = None,
-                    capture_piece_type      = cshogi.NONE)
-            
-            if depth == self._max_depth:
-                self._all_plots_at_first.append(best_plot_model)
-
-            return best_plot_model
-
-        if self._gymnasium.table.is_nyugyoku():
-            """手番の入玉宣言局面時。
-            """
-            best_plot_model = PlotModel(
-                    declaration         = constants.declaration.NYUGYOKU_WIN,
-                    is_mate_in_1_move   = False,
-                    cutoff_reason       = cutoff_reason.NYUGYOKU_WIN)
             best_plot_model.append_move(
                     is_absolute_opponent    = is_absolute_opponent,
                     move                    = None,
@@ -154,120 +119,22 @@ class QuiescenceSearchForScrambleModel():
 
                 return best_plot_model
 
-        best_plot_model_in_older_sibling = None
-
-        # TODO 指し手の分析。駒を取る手と、そうでない手を分ける。
-        # TODO 駒を取る手も、価値の高い駒から取る手を考える。（相手が手抜く勝手読みをすると、大きな駒を取れてしまうことがあるから）。
-
-        ##############################
-        # MARK: アリスの合法手スキャン
-        ##############################
-
-        # 関数呼び出し元から与えられた指し手を全部調べる。
-        for alice_s_move in alice_s_remaining_moves:
-
-            ##########################
-            # MARK: アリスが一手指す前
-            ##########################
-
-            dst_sq_obj = SquareModel(cshogi.move_to(alice_s_move))      # ［移動先マス］
-            cap_pt = self._gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
-            is_capture = (cap_pt != cshogi.NONE)
-
-            # １階呼出時は、どの手も無視しません。
-            if self._max_depth == depth:
-                pass
-
-            else:
-                # ２階以降の呼出時は、駒を取る手でなければ無視。
-                if not is_capture:
-                    continue
-
-            ########################
-            # MARK: アリスが一手指す
-            ########################
-
-            self._gymnasium.do_move_o1x(move = alice_s_move)
-            self._number_of_visited_nodes += 1
-
-            ############################
-            # MARK: アリスが一手指した後
-            ############################
-
-            (
-                best_plot_model_in_older_sibling,
-                is_beta_cutoff
-            ) = self.search_bob(
-                    best_plot_model_in_older_sibling    = best_plot_model_in_older_sibling,
-                    depth                               = depth - 1,                    # 深さを１下げる
-                    is_absolute_opponent                = not is_absolute_opponent,     # 手番が逆になる
-                    previous_move                       = alice_s_move,
-                    cap_pt                              = cap_pt,
-                    beta_cutoff_value                   = beta_cutoff_value)
-
-            best_plot_model_in_older_sibling.append_move(
-                    is_absolute_opponent    = is_absolute_opponent,  # FIXME １手前の手だから。
-                    move                    = alice_s_move,
-                    capture_piece_type      = cap_pt)
-
-            ########################
-            # MARK: アリスが一手戻す
-            ########################
-
-            self._gymnasium.undo_move_o1x()
-
-            ############################
-            # MARK: アリスが一手戻した後
-            ############################
-
-            # # FIXME 探索の打切り判定
-            # if is_beta_cutoff:
-            #     break   # （アンドゥや、depth の勘定をきちんとしたあとで）ループから抜ける
-
-        ########################
-        # MARK: 合法手スキャン後
-        ########################
-
-        # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
-        if best_plot_model_in_older_sibling is None:
-            return PlotModel(
-                    declaration         = constants.declaration.NONE,
+        if self._gymnasium.table.is_nyugyoku():
+            """手番の入玉宣言局面時。
+            """
+            best_plot_model = PlotModel(
+                    declaration         = constants.declaration.NYUGYOKU_WIN,
                     is_mate_in_1_move   = False,
-                    cutoff_reason       = cutoff_reason.NO_MOVES)
+                    cutoff_reason       = cutoff_reason.NYUGYOKU_WIN)
+            best_plot_model.append_move(
+                    is_absolute_opponent    = is_absolute_opponent,
+                    move                    = None,
+                    capture_piece_type      = cshogi.NONE)
+            
+            if depth == self._max_depth:
+                self._all_plots_at_first.append(best_plot_model)
 
-        return best_plot_model_in_older_sibling
-
-
-    def search_bob(
-            self,
-            best_plot_model_in_older_sibling,
-            depth,
-            is_absolute_opponent,
-            previous_move,
-            cap_pt,
-            beta_cutoff_value):
-        """
-        Parameters
-        ----------
-        best_plot_model_in_older_sibling : PlotModel
-            兄たちの中で最善の読み筋、またはナン。
-        previous_move : int
-            １手前の手。
-
-        Returns
-        -------
-        best_plot_model_in_older_sibling : BestPlotModel
-            最善の読み筋。
-            これは駒得評価値も算出できる。
-        is_beta_cutoff : bool
-            ベータカットオフするか。
-        """
-        
-        #print(f"(next {self._gymnasium.table.move_number} teme) ({index}) alice's move={cshogi.move_to_usi(alice_s_move)}({Helper.sq_to_masu(dst_sq_obj.sq)}) pt({PieceTypeModel.alphabet(piece_type=cap_pt)}) {alice_s_best_piece_value=} {piece_exchange_value=}")
-
-        ########################
-        # MARK: 指す前にやること
-        ########################
+            return best_plot_model
 
         # これ以上深く読まない場合。
         if depth - 1 < 1:
@@ -287,58 +154,125 @@ class QuiescenceSearchForScrambleModel():
 
         # まだ深く読む場合。
 
+        ######################
+        # MARK: 合法手スキャン
+        ######################
 
-        def _get_beta_cutoff_value(is_absolute_opponent, best_plot_model_in_older_sibling):
-            # 最善手が未定なら、天井（底）を最大にします。
-            if best_plot_model_in_older_sibling is None:
-                if is_absolute_opponent:
-                    return constants.value.BETA_CUTOFF_VALUE        # 天井
-                return - constants.value.BETA_CUTOFF_VALUE  # 底
-
-            # 最善手が既存なら、その交換値を返すだけ。
-            return best_plot_model_in_older_sibling.last_piece_exchange_value
+        best_plot_model_in_children = None
 
 
-        future_plot_model = self.search_alice(      # 再帰呼出
-                depth                               = depth,
-                best_plot_model_in_older_sibling    = None,     # FIXME ちゃんと指定すること
-                is_absolute_opponent                = is_absolute_opponent,
-                beta_cutoff_value                   = _get_beta_cutoff_value(is_absolute_opponent, best_plot_model_in_older_sibling),
-                alice_s_remaining_moves             = list(self._gymnasium.table.legal_moves),  # 合法手全部。
-                is_beta_cutoff                      = False)    # FIXME ちゃんと指定すること
-        
-        if depth + 1 == self._max_depth:
-            self._all_plots_at_first.append(future_plot_model)
+        # def _get_beta_cutoff_value(is_absolute_opponent, best_plot_model_in_older_sibling):
+        #     # 最善手が未定なら、天井（底）を最大にします。
+        #     if best_plot_model_in_older_sibling is None:
+        #         if is_absolute_opponent:
+        #             return constants.value.BETA_CUTOFF_VALUE        # 天井
+        #         return - constants.value.BETA_CUTOFF_VALUE  # 底
 
-        # FIXME 将来的に相手の駒をポロリと取れるなら、手前の手は全部緩手になることがある。どう解消するか？
+        #     # 最善手が既存なら、その交換値を返すだけ。
+        #     return best_plot_model_in_older_sibling.last_piece_exchange_value
 
-        # NOTE （スクランブル・サーチでは）ベストがナンということもある。つまり、指さない方がマシな局面がある。
-        threshold_value = 0     # 閾値
-        if best_plot_model_in_older_sibling is not None:
-            threshold_value = best_plot_model_in_older_sibling.last_piece_exchange_value     # とりあえず最善の点数。
 
-        is_beta_cutoff = False  # この関数の緊急脱出フラグ。
+        # 指し手を全部調べる。
+        for my_move in remaining_moves:
 
-        # 自分がボブになっているときは、点数が小さくなる手を選ぶ
-        if not is_absolute_opponent:
-            if future_plot_model.last_piece_exchange_value < threshold_value:
-                # 最善より悪い手があれば、そっちを選びます。
-                best_plot_model_in_older_sibling = future_plot_model
-                
-                # TODO 既存の最悪手より悪い手を見つけてしまったら、ベータカットします。
-                if future_plot_model.last_piece_exchange_value < beta_cutoff_value:
-                    #is_beta_cutoff = True   # TODO ベータカット
-                    pass
+            ##################
+            # MARK: 一手指す前
+            ##################
 
-        # 相手がボブになっているときは、点数が大きくなる手を選ぶ
-        else:
-            if threshold_value < future_plot_model.last_piece_exchange_value:
-                # 最善より良い手があれば、そっちを選びます。
-                best_plot_model_in_older_sibling = future_plot_model
+            dst_sq_obj = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
+            cap_pt = self._gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
+            is_capture = (cap_pt != cshogi.NONE)
 
-                # TODO 既存の最善手より良い手を見つけてしまったら、ベータカットします。
-                if beta_cutoff_value < future_plot_model.last_piece_exchange_value:
-                    #is_beta_cutoff = True   # TODO ベータカット
-                    pass
+            # １階呼出時は、どの手も無視しません。
+            if self._max_depth == depth:
+                pass
 
-        return best_plot_model_in_older_sibling, is_beta_cutoff
+            else:
+                # ２階以降の呼出時は、駒を取る手でなければ無視。
+                if not is_capture:
+                    continue
+
+            ################
+            # MARK: 一手指す
+            ################
+
+            self._gymnasium.do_move_o1x(move = my_move)
+            self._number_of_visited_nodes += 1
+
+            ####################
+            # MARK: 一手指した後
+            ####################
+
+            future_plot_model = self.search_alice(      # 再帰呼出
+                    best_plot_model_in_older_sibling    = best_plot_model_in_children,
+                    depth                               = depth - 1,                    # 深さを１下げる
+                    is_absolute_opponent                = not is_absolute_opponent,     # 手番が逆になる
+                    remaining_moves                     = list(self._gymnasium.table.legal_moves))  # 合法手全部。
+
+            # １階呼出時は、全ての手を記憶します。       
+            if depth + 1 == self._max_depth:
+                self._all_plots_at_first.append(future_plot_model)
+
+            # NOTE （スクランブル・サーチでは）ベストがナンということもある。つまり、指さない方がマシな局面がある（のが投了との違い）。
+            threshold_value = 0     # 閾値
+            if best_plot_model_in_children is not None:
+                threshold_value = best_plot_model_in_children.last_piece_exchange_value     # とりあえず最善の点数。
+
+            # 自分は、点数が大きくなる手を選ぶ
+            if not is_absolute_opponent:
+                if threshold_value < future_plot_model.last_piece_exchange_value:
+                    # 最善より良い手があれば、そっちを選びます。
+                    best_plot_model_in_older_sibling = future_plot_model
+
+                    # # TODO 既存の最善手より良い手を見つけてしまったら、ベータカットします。
+                    # if beta_cutoff_value < future_plot_model.last_piece_exchange_value:
+                    #     #will_beta_cutoff = True   # TODO ベータカット
+                    #     pass
+
+                    best_plot_model_in_children.append_move(
+                            is_absolute_opponent    = is_absolute_opponent,
+                            move                    = my_move,
+                            capture_piece_type      = cap_pt)
+
+            # 相手は、点数が小さくなる手を選ぶ
+            else:
+                if future_plot_model.last_piece_exchange_value < threshold_value:
+                    # 最善より悪い手があれば、そっちを選びます。
+                    best_plot_model_in_older_sibling = future_plot_model
+                    
+                    # # TODO 既存の最悪手より悪い手を見つけてしまったら、ベータカットします。
+                    # if future_plot_model.last_piece_exchange_value < beta_cutoff_value:
+                    #     #will_beta_cutoff = True   # TODO ベータカット
+                    #     pass
+
+                    best_plot_model_in_children.append_move(
+                            is_absolute_opponent    = is_absolute_opponent,
+                            move                    = my_move,
+                            capture_piece_type      = cap_pt)
+
+            ################
+            # MARK: 一手戻す
+            ################
+
+            self._gymnasium.undo_move_o1x()
+
+            ####################
+            # MARK: 一手戻した後
+            ####################
+
+            # # FIXME 探索の打切り判定
+            # if is_beta_cutoff:
+            #     break   # （アンドゥや、depth の勘定をきちんとしたあとで）ループから抜ける
+
+        ########################
+        # MARK: 合法手スキャン後
+        ########################
+
+        # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
+        if best_plot_model_in_children is None:
+            return PlotModel(
+                    declaration         = constants.declaration.NONE,
+                    is_mate_in_1_move   = False,
+                    cutoff_reason       = cutoff_reason.NO_MOVES)
+
+        return best_plot_model_in_children
