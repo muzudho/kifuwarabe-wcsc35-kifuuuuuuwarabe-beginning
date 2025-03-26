@@ -73,6 +73,8 @@ class QuiescenceSearchForScrambleModel():
             これは駒得評価値も算出できる。
         """
 
+        #print(f"[search_alice] {depth=} {is_absolute_opponent=}")
+
         ########################
         # MARK: 指す前にやること
         ########################
@@ -175,9 +177,9 @@ class QuiescenceSearchForScrambleModel():
             # MARK: 一手指す前
             ##################
 
-            dst_sq_obj = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
-            cap_pt = self._gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
-            is_capture = (cap_pt != cshogi.NONE)
+            dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
+            cap_pt      = self._gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
+            is_capture  = (cap_pt != cshogi.NONE)
 
             # １階呼出時は、どの手も無視しません。
             if depth == self._max_depth:

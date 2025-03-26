@@ -115,16 +115,22 @@ class PlotModel():
 
     @property
     def last_move(self):
+        if len(self._move_list) < 1:
+            return 0    # FIXME 投了
         return self._move_list[-1]
 
 
     @property
     def is_capture_at_last(self):
+        if len(self._cap_list) < 1:
+            return False    # FIXME 本当は None だが。
         return self._cap_list[-1] != cshogi.NONE
 
 
     @property
     def last_piece_exchange_value(self):
+        if len(self._piece_exchange_value_list) < 1:
+            return 0
         return self._piece_exchange_value_list[-1]
 
 
