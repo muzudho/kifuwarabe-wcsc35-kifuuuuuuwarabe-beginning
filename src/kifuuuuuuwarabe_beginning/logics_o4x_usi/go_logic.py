@@ -176,7 +176,10 @@ HEALTH CHECK
         # NOTE これを書くと、将棋ホームでフリーズ： print(message, file=sys.stderr)
 
         # １手に絞り込む
-        best_move = random.choice(remaining_moves)
+        if self._gymnasium.config_doc['search']['there_is_randomness']:
+            best_move = random.choice(remaining_moves)
+        else:
+            best_move = remaining_moves[0]
         self._gymnasium.thinking_logger_module.append(f"Best move={cshogi.move_to_usi(best_move)}")
 
         # ［指後］
