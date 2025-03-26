@@ -177,6 +177,12 @@ class QuiescenceSearchForScrambleModel():
                     is_absolute_opponent                = not is_absolute_opponent,     # 手番が逆になる
                     remaining_moves                     = list(self._gymnasium.table.legal_moves))  # 合法手全部。
 
+            # １階呼出時は、必ず今回の手を付け加える。
+            future_plot_model.append_move(
+                    is_absolute_opponent    = is_absolute_opponent,
+                    move                    = my_move,
+                    capture_piece_type      = cap_pt)
+
             # １階呼出時は、全ての手の読み筋を記憶します。最善手は選びません。
             all_plots_at_first.append(future_plot_model)
 

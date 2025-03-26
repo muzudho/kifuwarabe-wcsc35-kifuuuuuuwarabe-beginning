@@ -141,22 +141,22 @@ class PlotModel():
     def last_piece_exchange_value(self):
         """
         """
-        if self.is_declaration():
-            if self._declaration == DeclarationModel.RESIGN:
-                value = constants.value.GAME_OVER
-                if self._is_absolute_opponent_at_end_position:
-                    return -value
-                return value
+        # if self.is_declaration():
+        #     if self._declaration == DeclarationModel.RESIGN:
+        #         value = constants.value.GAME_OVER
+        #         if self._is_absolute_opponent_at_end_position:
+        #             return -value
+        #         return value
 
-            if self._declaration == DeclarationModel.NYUGYOKU_WIN:
-                value = constants.value.NYUGYOKU_WIN
-                if self._is_absolute_opponent_at_end_position:
-                    return -value
-                return value
+        #     if self._declaration == DeclarationModel.NYUGYOKU_WIN:
+        #         value = constants.value.NYUGYOKU_WIN
+        #         if self._is_absolute_opponent_at_end_position:
+        #             return -value
+        #         return value
 
         if len(self._piece_exchange_value_list) < 1:
-            return constants.value.ZERO     # TODO ［指したい手がない］というのを何点と見るか？
-            #raise ValueError(f"取った駒の交換値のリストが０件です。 {DeclarationModel.japanese(self._declaration)=} {self._is_absolute_opponent_at_end_position=} {self._is_mate_in_1_move=} {CutoffReason.japanese(self._cutoff_reason)=}")
+            #return constants.value.ZERO     # TODO ［指したい手がない］というのを何点と見るか？
+            raise ValueError(f"取った駒の交換値のリストが０件です。 {DeclarationModel.japanese(self._declaration)=} {self._is_absolute_opponent_at_end_position=} {self._is_mate_in_1_move=} {CutoffReason.japanese(self._cutoff_reason)=}")
 
         return self._piece_exchange_value_list[-1]
 
