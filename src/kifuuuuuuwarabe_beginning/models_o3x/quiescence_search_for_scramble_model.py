@@ -92,7 +92,7 @@ class QuiescenceSearchForScrambleModel():
                     declaration                             = constants.declaration.RESIGN,
                     is_mate_in_1_move                       = False,
                     cutoff_reason                           = cutoff_reason.GAME_OVER,
-                    comment                                 = '手番の投了局面時１')
+                    hint                                    = '手番の投了局面時１')
             all_plots_at_first.append(best_plot_model)
             return all_plots_at_first
 
@@ -110,13 +110,14 @@ class QuiescenceSearchForScrambleModel():
                         declaration                             = constants.declaration.NONE,
                         is_mate_in_1_move                       = True,
                         cutoff_reason                           = cutoff_reason.MATE_MOVE_IN_1_PLY,
-                        comment                                 = '一手詰め１')
+                        hint                                    = '一手詰め１')
             
                 # 今回の手を付け加える。
                 best_plot_model.append_move(
                         is_absolute_opponent    = is_absolute_opponent,
                         move                    = mate_move,
-                        capture_piece_type      = cap_pt)
+                        capture_piece_type      = cap_pt,
+                        hint                    = f"一手詰め１_{is_absolute_opponent=}")
 
                 all_plots_at_first.append(best_plot_model)
                 return all_plots_at_first
@@ -129,7 +130,7 @@ class QuiescenceSearchForScrambleModel():
                     declaration                             = constants.declaration.NYUGYOKU_WIN,
                     is_mate_in_1_move                       = False,
                     cutoff_reason                           = cutoff_reason.NYUGYOKU_WIN,
-                    comment                                 = '手番の入玉宣言局面時１')
+                    hint                                    = '手番の入玉宣言局面時１')
             all_plots_at_first.append(best_plot_model)
             return all_plots_at_first
 
@@ -140,7 +141,7 @@ class QuiescenceSearchForScrambleModel():
                     declaration                             = constants.declaration.NONE,
                     is_mate_in_1_move                       = False,
                     cutoff_reason                           = cutoff_reason.MAX_DEPTH,
-                    comment                                 = 'これ以上深く読まない場合１')
+                    hint                                    = 'これ以上深く読まない場合１')
             all_plots_at_first.append(best_plot_model)
             return all_plots_at_first
 
@@ -205,11 +206,12 @@ class QuiescenceSearchForScrambleModel():
             # MARK: 手番の処理
             ##################
 
-            # １階呼出時は、全ての手の読み筋を記憶します。最善手は選びません。
+            # １階の手は、全ての手の読み筋を記憶します。最善手は選びません。
             future_plot_model.append_move(
                     is_absolute_opponent    = is_absolute_opponent,
                     move                    = my_move,
-                    capture_piece_type      = cap_pt)
+                    capture_piece_type      = cap_pt,
+                    hint                    = f"１階の手はなんでも記憶_{is_absolute_opponent=}")
             all_plots_at_first.append(future_plot_model)
 
             # NOTE この辺りは［０階］。
@@ -227,7 +229,7 @@ class QuiescenceSearchForScrambleModel():
                     declaration                             = constants.declaration.NONE,
                     is_mate_in_1_move                       = False,
                     cutoff_reason                           = cutoff_reason.NO_MOVES,
-                    comment                                 = f"１階で指したい手無し {len(remaining_moves)=}")
+                    hint                                    = f"１階で指したい手無し {len(remaining_moves)=}")
             all_plots_at_first.append(future_plot_model)
 
         self._end_time = time.time()    # 計測終了時間
@@ -283,7 +285,7 @@ class QuiescenceSearchForScrambleModel():
                     declaration                             = constants.declaration.RESIGN,
                     is_mate_in_1_move                       = False,
                     cutoff_reason                           = cutoff_reason.GAME_OVER,
-                    comment                                 = '手番の投了局面時２')
+                    hint                                    = '手番の投了局面時２')
 
             return best_plot_model
 
@@ -301,13 +303,14 @@ class QuiescenceSearchForScrambleModel():
                         declaration                             = constants.declaration.NONE,
                         is_mate_in_1_move                       = True,
                         cutoff_reason                           = cutoff_reason.MATE_MOVE_IN_1_PLY,
-                        comment                                 = '一手詰め時２')
+                        hint                                    = '一手詰め時２')
             
                 # 今回の手を付け加える。
                 best_plot_model.append_move(
                         is_absolute_opponent    = is_absolute_opponent,
                         move                    = mate_move,
-                        capture_piece_type      = cap_pt)
+                        capture_piece_type      = cap_pt,
+                        hint                    = f"一手詰め時２_{is_absolute_opponent=}")
 
                 return best_plot_model
 
@@ -319,7 +322,7 @@ class QuiescenceSearchForScrambleModel():
                     declaration                             = constants.declaration.NYUGYOKU_WIN,
                     is_mate_in_1_move                       = False,
                     cutoff_reason                           = cutoff_reason.NYUGYOKU_WIN,
-                    comment                                 = '手番の入玉宣言局面時２')
+                    hint                                    = '手番の入玉宣言局面時２')
 
             return best_plot_model
 
@@ -331,7 +334,7 @@ class QuiescenceSearchForScrambleModel():
                     declaration                             = constants.declaration.NONE,   # ［宣言］ではない。
                     is_mate_in_1_move                       = False,                        # ［一手詰め］ではない。
                     cutoff_reason                           = cutoff_reason.MAX_DEPTH,      # ［最大探索深さ］が打切り理由。
-                    comment                                 = f"２階以上。これ以上深く読まない場合。 {depth=}/{self._max_depth=} {is_absolute_opponent=}")
+                    hint                                    = f"２階以上。これ以上深く読まない場合。 {depth=}/{self._max_depth=} {is_absolute_opponent=}")
 
         # まだ深く読む場合。
 
@@ -531,12 +534,13 @@ class QuiescenceSearchForScrambleModel():
                     declaration                             = constants.declaration.NONE,
                     is_mate_in_1_move                       = False,
                     cutoff_reason                           = cutoff_reason.NO_MOVES,
-                    comment                                 = f"{self._max_depth - depth}階で指したい手無し {is_absolute_opponent=} {len(remaining_moves)=} {case_1=} {case_2=} {case_3=} {case_4=} {case_5=} {case_6=} {case_7t=} {case_7f=}")
+                    hint                                    = f"{self._max_depth - depth}階で指したい手無し {is_absolute_opponent=} {len(remaining_moves)=} {case_1=} {case_2=} {case_3=} {case_4=} {case_5=} {case_6=} {case_7t=} {case_7f=}")
 
         # 今回の手を付け加える。
         best_plot_model_in_children.append_move(
                 is_absolute_opponent    = is_absolute_opponent,
                 move                    = best_move,
-                capture_piece_type      = best_move_cap_pt)
+                capture_piece_type      = best_move_cap_pt,
+                hint                    = f"{self._max_depth - depth}階の手記憶_{is_absolute_opponent=}")
 
         return best_plot_model_in_children

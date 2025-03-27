@@ -69,7 +69,7 @@ class PlotModel():
     """
 
 
-    def __init__(self, is_absolute_opponent_at_end_position, declaration, is_mate_in_1_move, cutoff_reason, comment):
+    def __init__(self, is_absolute_opponent_at_end_position, declaration, is_mate_in_1_move, cutoff_reason, hint):
         """初期化。
 
         Parameters
@@ -82,7 +82,7 @@ class PlotModel():
             ［末端局面で１手詰めか？］
         cutoff_reason : int
             カットオフの理由
-        comment : str
+        hint : str
             デバッグ用文字列
         """
         self._is_absolute_opponent_at_end_position = is_absolute_opponent_at_end_position
@@ -92,7 +92,7 @@ class PlotModel():
         self._cap_list = []
         self._piece_exchange_value_list = []
         self._cutoff_reason = cutoff_reason
-        self._comment = comment
+        self._hint_list = [hint]
 
 
     @property
@@ -170,8 +170,8 @@ class PlotModel():
 
 
     @property
-    def comment(self):
-        return self._comment
+    def hint_list(self):
+        return self._hint_list
 
 
     def is_declaration(self):
@@ -193,12 +193,14 @@ class PlotModel():
         return len(self._move_list) < 1
 
 
-    def append_move(self, is_absolute_opponent, move, capture_piece_type):
+    def append_move(self, is_absolute_opponent, move, capture_piece_type, hint):
         """
         Parameters
         ----------
         is_absolute_opponent : bool
             対戦相手か。
+        hint : str
+            デバッグ用文字列。
         """
 
         if capture_piece_type is None:
@@ -206,6 +208,7 @@ class PlotModel():
 
         self._move_list.append(move)
         self._cap_list.append(capture_piece_type)
+        self._hint_list.append(hint)
 
         piece_exchange_value = 2 * PieceValuesModel.by_piece_type(pt=capture_piece_type)      # 交換値に変換。正の数とする。
 
@@ -258,8 +261,8 @@ class PlotModel():
         # カットオフ理由
         tokens.append(CutoffReason.japanese(self._cutoff_reason))
 
-        # コメント
-        tokens.append(self._comment)
+        # ヒント・リスト
+        tokens.append(' '.join(self._hint_list))
 
         return ' '.join(tokens)
 
@@ -274,7 +277,7 @@ class PlotModel():
 
 
     def stringify_dump(self):
-        return f"{self._is_absolute_opponent_at_end_position=} {self._declaration=} {self._is_mate_in_1_move=} {self._move_list=} {self._cap_list=} {self._piece_exchange_value_list=} {self._cutoff_reason=} {self._comment=}"
+        return f"{self._is_absolute_opponent_at_end_position=} {self._declaration=} {self._is_mate_in_1_move=} {self._move_list=} {self._cap_list=} {self._piece_exchange_value_list=} {self._cutoff_reason=} {' '.join(self._hint_list)=}"
 
 
     def stringify_debug_1(self):
