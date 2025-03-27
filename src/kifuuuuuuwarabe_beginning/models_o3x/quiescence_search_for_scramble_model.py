@@ -198,7 +198,7 @@ class QuiescenceSearchForScrambleModel():
             # MARK: 一手戻した後
             ####################
 
-            depth                   += 1      # 深さを１上げる。
+            depth                   += 1                            # 深さを１上げる。
             is_absolute_opponent    = not is_absolute_opponent      # 手番が逆になる。
 
             ##################
@@ -391,7 +391,7 @@ class QuiescenceSearchForScrambleModel():
             ####################
 
             depth                   = depth - 1                     # 深さを１下げる。
-            is_absolute_opponent    = not is_absolute_opponent,     # 手番が逆になる。
+            is_absolute_opponent    = not is_absolute_opponent      # 手番が逆になる。
 
             ####################
             # MARK: 相手番の処理
@@ -414,7 +414,7 @@ class QuiescenceSearchForScrambleModel():
             ####################
 
             depth                   = depth + 1                     # 深さを１上げる。
-            is_absolute_opponent    = not is_absolute_opponent,     # 手番が逆になる。
+            is_absolute_opponent    = not is_absolute_opponent      # 手番が逆になる。
 
             ##################
             # MARK: 手番の処理
@@ -531,7 +531,7 @@ class QuiescenceSearchForScrambleModel():
                     declaration                             = constants.declaration.NONE,
                     is_mate_in_1_move                       = False,
                     cutoff_reason                           = cutoff_reason.NO_MOVES,
-                    comment                                 = f"２階以降指したい手無し {len(remaining_moves)=} {case_1=} {case_2=} {case_3=} {case_4=} {case_5=} {case_6=} {case_7t=} {case_7f=}")
+                    comment                                 = f"{self._max_depth - depth}階で指したい手無し {is_absolute_opponent=} {len(remaining_moves)=} {case_1=} {case_2=} {case_3=} {case_4=} {case_5=} {case_6=} {case_7t=} {case_7f=}")
 
         # 今回の手を付け加える。
         best_plot_model_in_children.append_move(
