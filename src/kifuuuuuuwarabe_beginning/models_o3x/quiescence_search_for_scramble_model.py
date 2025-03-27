@@ -188,13 +188,6 @@ class QuiescenceSearchForScrambleModel():
                     is_absolute_opponent                = is_absolute_opponent,
                     remaining_moves                     = list(self._gymnasium.table.legal_moves))  # 合法手全部。
 
-            # １階呼出時は、全ての手の読み筋を記憶します。最善手は選びません。
-            future_plot_model.append_move(
-                    is_absolute_opponent    = is_absolute_opponent,
-                    move                    = my_move,
-                    capture_piece_type      = cap_pt)
-            all_plots_at_first.append(future_plot_model)
-
             ################
             # MARK: 一手戻す
             ################
@@ -207,6 +200,17 @@ class QuiescenceSearchForScrambleModel():
 
             depth                   += 1      # 深さを１上げる。
             is_absolute_opponent    = not is_absolute_opponent      # 手番が逆になる。
+
+            ##################
+            # MARK: 手番の処理
+            ##################
+
+            # １階呼出時は、全ての手の読み筋を記憶します。最善手は選びません。
+            future_plot_model.append_move(
+                    is_absolute_opponent    = is_absolute_opponent,
+                    move                    = my_move,
+                    capture_piece_type      = cap_pt)
+            all_plots_at_first.append(future_plot_model)
 
             # NOTE この辺りは［０階］。
 
@@ -294,10 +298,10 @@ class QuiescenceSearchForScrambleModel():
 
                 best_plot_model = PlotModel(
                         is_absolute_opponent_at_end_position    = is_absolute_opponent,
-                        declaration         = constants.declaration.NONE,
-                        is_mate_in_1_move   = True,
-                        cutoff_reason       = cutoff_reason.MATE_MOVE_IN_1_PLY,
-                        comment             = '一手詰め時２')
+                        declaration                             = constants.declaration.NONE,
+                        is_mate_in_1_move                       = True,
+                        cutoff_reason                           = cutoff_reason.MATE_MOVE_IN_1_PLY,
+                        comment                                 = '一手詰め時２')
             
                 # 今回の手を付け加える。
                 best_plot_model.append_move(
@@ -312,10 +316,10 @@ class QuiescenceSearchForScrambleModel():
             """
             best_plot_model = PlotModel(
                     is_absolute_opponent_at_end_position    = is_absolute_opponent,
-                    declaration         = constants.declaration.NYUGYOKU_WIN,
-                    is_mate_in_1_move   = False,
-                    cutoff_reason       = cutoff_reason.NYUGYOKU_WIN,
-                    comment             = '手番の入玉宣言局面時２')
+                    declaration                             = constants.declaration.NYUGYOKU_WIN,
+                    is_mate_in_1_move                       = False,
+                    cutoff_reason                           = cutoff_reason.NYUGYOKU_WIN,
+                    comment                                 = '手番の入玉宣言局面時２')
 
             return best_plot_model
 
@@ -327,7 +331,7 @@ class QuiescenceSearchForScrambleModel():
                     declaration                             = constants.declaration.NONE,   # ［宣言］ではない。
                     is_mate_in_1_move                       = False,                        # ［一手詰め］ではない。
                     cutoff_reason                           = cutoff_reason.MAX_DEPTH,      # ［最大探索深さ］が打切り理由。
-                    comment                                 = 'これ以上深く読まない場合２')
+                    comment                                 = f"２階以上。これ以上深く読まない場合。 {depth=}/{self._max_depth=} {is_absolute_opponent=}")
 
         # まだ深く読む場合。
 
@@ -398,6 +402,23 @@ class QuiescenceSearchForScrambleModel():
                     depth                               = depth,
                     is_absolute_opponent                = is_absolute_opponent,
                     remaining_moves                     = list(self._gymnasium.table.legal_moves))  # 合法手全部。
+
+            ################
+            # MARK: 一手戻す
+            ################
+
+            self._gymnasium.undo_move_o1x()
+
+            ####################
+            # MARK: 一手戻した後
+            ####################
+
+            depth                   = depth + 1                     # 深さを１上げる。
+            is_absolute_opponent    = not is_absolute_opponent,     # 手番が逆になる。
+
+            ##################
+            # MARK: 手番の処理
+            ##################
 
             its_update_best = False
 
@@ -494,19 +515,6 @@ class QuiescenceSearchForScrambleModel():
                 best_plot_model_in_children = future_plot_model
                 best_move = my_move
                 best_move_cap_pt = cap_pt
-
-            ################
-            # MARK: 一手戻す
-            ################
-
-            self._gymnasium.undo_move_o1x()
-
-            ####################
-            # MARK: 一手戻した後
-            ####################
-
-            depth                   = depth + 1                     # 深さを１上げる。
-            is_absolute_opponent    = not is_absolute_opponent,     # 手番が逆になる。
 
             # # FIXME 探索の打切り判定
             # if is_beta_cutoff:
