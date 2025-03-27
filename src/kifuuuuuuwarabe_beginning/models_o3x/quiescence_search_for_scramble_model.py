@@ -536,7 +536,7 @@ class QuiescenceSearchForScrambleModel():
                     declaration                             = constants.declaration.NONE,
                     is_mate_in_1_move                       = False,
                     cutoff_reason                           = cutoff_reason.NO_MOVES,
-                    hint                                    = f"指したい{self._max_depth - depth + 1}階の手無し_{is_absolute_opponent=}_{len(legal_move_list)=}_{case_1=}_{case_2=}_{case_3=}_{case_4=}_{case_5=}_{case_6t=}({'_'.join(case_6t_hint_list)})_{case_6f=}({'_'.join(case_6f_hint_list)})_{case_7t=}_{case_7f=}")
+                    hint                                    = f"指したい{self._max_depth - depth + 1}階の手無し,敵={is_absolute_opponent},move数={len(legal_move_list)},{case_1=},{case_2=},{case_3=},{case_4=},{case_5=},{case_6t=},({'_'.join(case_6t_hint_list)}),{case_6f=},({'_'.join(case_6f_hint_list)}),{case_7t=},{case_7f=}")
 
         # 今回の手を付け加える。
         best_plot_model_in_children.append_move(
