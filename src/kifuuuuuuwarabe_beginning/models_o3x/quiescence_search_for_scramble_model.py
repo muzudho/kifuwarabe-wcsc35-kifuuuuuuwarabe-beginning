@@ -334,7 +334,7 @@ class QuiescenceSearchForScrambleModel():
                     declaration                             = constants.declaration.NONE,   # ［宣言］ではない。
                     is_mate_in_1_move                       = False,                        # ［一手詰め］ではない。
                     cutoff_reason                           = cutoff_reason.MAX_DEPTH,      # ［最大探索深さ］が打切り理由。
-                    hint                                    = f"２階以上。これ以上深く読まない場合。 {depth=}/{self._max_depth=} {is_absolute_opponent=}")
+                    hint                                    = f"{self._max_depth - depth}階でこれ以上深く読まない場合_{depth=}/{self._max_depth=}_{is_absolute_opponent=}")
 
         # まだ深く読む場合。
 
