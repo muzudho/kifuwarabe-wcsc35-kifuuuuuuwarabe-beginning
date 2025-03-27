@@ -156,7 +156,7 @@ class PlotModel():
 
         if len(self._piece_exchange_value_list) < 1:
             #return constants.value.ZERO     # TODO ［指したい手がない］というのを何点と見るか？
-            raise ValueError(f"取った駒の交換値のリストが０件です。 {DeclarationModel.japanese(self._declaration)=} {self._is_absolute_opponent_at_end_position=} {self._is_mate_in_1_move=} {self._cutoff_reason=} {CutoffReason.japanese(self._cutoff_reason)=} {self.move_list_length()=}")
+            raise ValueError(f"取った駒の交換値のリストが０件です。 {self.stringify_debug_1()} {DeclarationModel.japanese(self._declaration)=} {self._is_absolute_opponent_at_end_position=} {self._is_mate_in_1_move=} {self._cutoff_reason=} {CutoffReason.japanese(self._cutoff_reason)=}")
 
         return self._piece_exchange_value_list[-1]
 
@@ -175,6 +175,13 @@ class PlotModel():
 
 
     def is_empty_moves(self):
+        # ASSERT
+        len_move_list = len(self._move_list)
+        len_cap_list = len(self._cap_list)
+        len_pev_list = len(self._piece_exchange_value_list)
+        if not (len_move_list == len_cap_list and len_cap_list == len_pev_list):
+            raise ValueError(f"配列の長さの整合性が取れていません。 {len_move_list=} {len_cap_list=} {len_pev_list=}")
+        
         return len(self._move_list) < 1
 
 
@@ -257,3 +264,7 @@ class PlotModel():
 
     def stringify_dump(self):
         return f"{self._is_absolute_opponent_at_end_position=} {self._declaration=} {self._is_mate_in_1_move=} {self._move_list=} {self._cap_list=} {self._piece_exchange_value_list=} {self._cutoff_reason=}"
+
+
+    def stringify_debug_1(self):
+        return f"{len(self._move_list)=} {len(self._cap_list)=} {len(self._piece_exchange_value_list)=}"

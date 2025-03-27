@@ -427,7 +427,7 @@ class QuiescenceSearchForScrambleModel():
             else:
                 # NOTE （スクランブル・サーチでは）ベストがナンということもある。つまり、指さない方がマシな局面がある（のが投了との違い）。
                 threshold_value = 0     # 閾値
-                if best_plot_model_in_children is not None:
+                if best_plot_model_in_children is not None and not best_plot_model_in_children.is_empty_moves():
                     threshold_value = best_plot_model_in_children.last_piece_exchange_value     # とりあえず最善の点数。
 
                 # 自分は、点数が大きくなる手を選ぶ
