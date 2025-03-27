@@ -83,6 +83,7 @@ class QuiescenceSearchForScrambleModel():
 
         # 指さなくても分かること（ライブラリー使用）
 
+        # NOTE このあたりは［０階］。max_depth - depth。
         if self._gymnasium.table.is_game_over():
             """手番の投了局面時。
             """
@@ -168,15 +169,23 @@ class QuiescenceSearchForScrambleModel():
             ################
 
             self._gymnasium.do_move_o1x(move = my_move)
-            self._number_of_visited_nodes += 1
 
             ####################
             # MARK: 一手指した後
             ####################
 
+            self._number_of_visited_nodes   += 1
+            depth                           -= 1                            # 深さを１下げる。
+            is_absolute_opponent            = not is_absolute_opponent      # 手番が逆になる。
+
+            ####################
+            # MARK: 相手番の処理
+            ####################
+
+            # NOTE この辺りは［１階］。max_depth - depth。
             future_plot_model = self.search_alice(      # 再帰呼出
-                    depth                               = depth - 1,                    # 深さを１下げる
-                    is_absolute_opponent                = not is_absolute_opponent,     # 手番が逆になる
+                    depth                               = depth,
+                    is_absolute_opponent                = is_absolute_opponent,
                     remaining_moves                     = list(self._gymnasium.table.legal_moves))  # 合法手全部。
 
             # １階呼出時は、全ての手の読み筋を記憶します。最善手は選びません。
@@ -195,6 +204,11 @@ class QuiescenceSearchForScrambleModel():
             ####################
             # MARK: 一手戻した後
             ####################
+
+            depth                   += 1      # 深さを１上げる。
+            is_absolute_opponent    = not is_absolute_opponent      # 手番が逆になる。
+
+            # NOTE この辺りは［０階］。
 
             # ベータカットもしません。全部返すから。
 
@@ -336,6 +350,14 @@ class QuiescenceSearchForScrambleModel():
         #     # 最善手が既存なら、その交換値を返すだけ。
         #     return best_plot_model_in_older_sibling.last_piece_exchange_value
 
+        case_1 = 0
+        case_2 = 0
+        case_3 = 0
+        case_4 = 0
+        case_5 = 0
+        case_6 = 0
+        case_7t = 0
+        case_7f = 0
 
         # 指し手を全部調べる。
         for my_move in remaining_moves:
@@ -350,6 +372,7 @@ class QuiescenceSearchForScrambleModel():
 
             # ２階以降の呼出時は、駒を取る手でなければ無視。
             if not is_capture:
+                case_1 += 1
                 continue
 
             ################
@@ -363,10 +386,17 @@ class QuiescenceSearchForScrambleModel():
             # MARK: 一手指した後
             ####################
 
+            depth                   = depth - 1                     # 深さを１下げる。
+            is_absolute_opponent    = not is_absolute_opponent,     # 手番が逆になる。
+
+            ####################
+            # MARK: 相手番の処理
+            ####################
+
             future_plot_model = self.search_alice(      # 再帰呼出
                     #best_plot_model_in_older_sibling    = best_plot_model_in_children,
-                    depth                               = depth - 1,                    # 深さを１下げる
-                    is_absolute_opponent                = not is_absolute_opponent,     # 手番が逆になる
+                    depth                               = depth,
+                    is_absolute_opponent                = is_absolute_opponent,
                     remaining_moves                     = list(self._gymnasium.table.legal_moves))  # 合法手全部。
 
             its_update_best = False
@@ -399,6 +429,7 @@ class QuiescenceSearchForScrambleModel():
 
                         # （初期値の０または）最善より良い手があれば、そっちを選びます。
                         its_update_best = (threshold_value < piece_exchange_value)
+                        case_2 += 1
 
                     # 相手は、点数が小さくなる手を選ぶ
                     else:
@@ -409,15 +440,17 @@ class QuiescenceSearchForScrambleModel():
 
                         # （初期値の０または）最善より悪い手があれば、そっちを選びます。
                         its_update_best = (piece_exchange_value < threshold_value)
+                        case_3 += 1
 
 
                 # 相手が投了なら、自分には最善手。
                 elif future_plot_model.declaration == constants.declaration.RESIGN:
                     its_update_best = True
+                    case_4 += 1
 
                 # 相手が入玉宣言勝ちなら、自分には最悪手。
                 elif future_plot_model.declaration == constants.declaration.NYUGYOKU_WIN:
-                    pass
+                    case_5 += 1
 
                 else:
                     # FIXME 指したい手なし
@@ -439,6 +472,7 @@ class QuiescenceSearchForScrambleModel():
 
                     # 最善より良い手があれば、そっちを選びます。
                     its_update_best = (threshold_value < future_plot_model.last_piece_exchange_value)
+                    case_6 += 1
 
                 # 相手は、点数が小さくなる手を選ぶ
                 else:
@@ -449,6 +483,11 @@ class QuiescenceSearchForScrambleModel():
 
                     # 最善より悪い手があれば、そっちを選びます。
                     its_update_best = (future_plot_model.last_piece_exchange_value < threshold_value)
+                    if its_update_best:
+                        case_7t += 1
+                    else:
+                        case_7f += 1
+                        self._gymnasium.thinking_logger_module.append(f"[search] 7f {depth=}/{self._max_depth=} {is_absolute_opponent=} {future_plot_model.last_piece_exchange_value=} {threshold_value=}")
                         
             # 最善手の更新
             if its_update_best:
@@ -466,6 +505,9 @@ class QuiescenceSearchForScrambleModel():
             # MARK: 一手戻した後
             ####################
 
+            depth                   = depth + 1                     # 深さを１上げる。
+            is_absolute_opponent    = not is_absolute_opponent,     # 手番が逆になる。
+
             # # FIXME 探索の打切り判定
             # if is_beta_cutoff:
             #     break   # （アンドゥや、depth の勘定をきちんとしたあとで）ループから抜ける
@@ -481,7 +523,7 @@ class QuiescenceSearchForScrambleModel():
                     declaration                             = constants.declaration.NONE,
                     is_mate_in_1_move                       = False,
                     cutoff_reason                           = cutoff_reason.NO_MOVES,
-                    comment                                 = f"２階以降指したい手無し {len(remaining_moves)=}")
+                    comment                                 = f"２階以降指したい手無し {len(remaining_moves)=} {case_1=} {case_2=} {case_3=} {case_4=} {case_5=} {case_6=} {case_7t=} {case_7f=}")
 
         # 今回の手を付け加える。
         best_plot_model_in_children.append_move(
