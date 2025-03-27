@@ -391,11 +391,6 @@ class QuiescenceSearchForScrambleModel():
                     # TODO 相手が指し返してこなかったということは、自分が指した手が末端局面。
                     piece_exchange_value = 2 * PieceValuesModel.by_piece_type(pt=cap_pt)      # 交換値に変換。正の数とする。
 
-                    future_plot_model.append_move(
-                            is_absolute_opponent    = is_absolute_opponent,
-                            move                    = my_move,
-                            capture_piece_type      = cap_pt)
-
                     # NOTE （スクランブル・サーチでは）ベストがナンということもある。つまり、指さない方がマシな局面がある（のが投了との違い）。
                     threshold_value = 0     # 閾値
                     if best_plot_model_in_children is not None:
