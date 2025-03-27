@@ -374,18 +374,26 @@ class QuiescenceSearchForScrambleModel():
                     is_absolute_opponent                = not is_absolute_opponent,     # 手番が逆になる
                     remaining_moves                     = list(self._gymnasium.table.legal_moves))  # 合法手全部。
 
+            its_best    = False
+            its_compare = False
+
             # 最大深さで戻ってきたなら、最善手ではありません。無視します。
             #print(f"D-368: {future_plot_model.cutoff_reason=} {cutoff_reason.MAX_DEPTH=} {future_plot_model.move_list_length()=} {future_plot_model.is_empty_moves()=}")
             if future_plot_model.is_empty_moves():
 
                 if future_plot_model.cutoff_reason == cutoff_reason.MAX_DEPTH:
                     #print(f"D-370: ベストではない")
-                    its_best = False
+                    pass
 
                 # 指したい手なし
                 elif future_plot_model.cutoff_reason == cutoff_reason.NO_MOVES:
                     #print(f"D-370: ベストではない")
-                    its_best = False
+                    # TODO 相手が指し返してこなかったということは、自分が指した手が末端局面。
+                    future_plot_model.append_move(
+                            is_absolute_opponent    = is_absolute_opponent,
+                            move                    = my_move,
+                            capture_piece_type      = cap_pt)
+                    its_compare = True
 
                 # 相手が投了なら、自分には最善手。
                 elif future_plot_model.declaration == constants.declaration.RESIGN:
@@ -393,7 +401,7 @@ class QuiescenceSearchForScrambleModel():
 
                 # 相手が入玉宣言勝ちなら、自分には最悪手。
                 elif future_plot_model.declaration == constants.declaration.NYUGYOKU_WIN:
-                    its_best = False
+                    pass
 
                 else:
                     # FIXME 指したい手なし
@@ -401,7 +409,9 @@ class QuiescenceSearchForScrambleModel():
                     raise ValueError(f"想定外の読み筋 {future_plot_model.stringify_dump()}")
             
             else:
-
+                its_compare = True
+            
+            if its_compare:
                 # NOTE （スクランブル・サーチでは）ベストがナンということもある。つまり、指さない方がマシな局面がある（のが投了との違い）。
                 threshold_value = 0     # 閾値
                 if best_plot_model_in_children is not None:
