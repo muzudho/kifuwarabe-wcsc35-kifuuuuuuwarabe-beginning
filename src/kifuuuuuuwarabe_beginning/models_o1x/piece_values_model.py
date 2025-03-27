@@ -57,6 +57,14 @@ class PieceValuesModel():
     ]
 
 
+    @staticmethod
+    def get_piece_exchange_value(pt, is_absolute_opponent):
+        piece_exchange_value = 2 * PieceValuesModel.by_piece_type(pt=pt)      # 交換値に変換。正の数とする。
+        if is_absolute_opponent:
+            piece_exchange_value *= -1
+        return piece_exchange_value
+    
+
     @classmethod
     def by_piece_type(clazz, pt):
         return clazz._values_by_pt[pt]

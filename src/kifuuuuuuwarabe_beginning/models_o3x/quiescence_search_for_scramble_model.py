@@ -1,7 +1,7 @@
 import cshogi
 import time
 
-from ..models_o1x import constants, DeclarationModel, PieceValuesModel, SquareModel
+from ..models_o1x import constants, PieceValuesModel, SquareModel
 from ..models_o2x import cutoff_reason, PlotModel
 
 
@@ -383,7 +383,9 @@ class QuiescenceSearchForScrambleModel():
                 ):
                     #print(f"D-370: ベストではない")
                     # TODO 相手が指し返してこなかったということは、自分が指した手が末端局面。
-                    piece_exchange_value = 2 * PieceValuesModel.by_piece_type(pt=cap_pt)      # 交換値に変換。正の数とする。
+                    piece_exchange_value = PieceValuesModel.get_piece_exchange_value(      # 交換値に変換。正の数とする。
+                            pt                      = cap_pt,
+                            is_absolute_opponent    = is_absolute_opponent)
 
                     # NOTE （スクランブル・サーチでは）ベストがナンということもある。つまり、指さない方がマシな局面がある（のが投了との違い）。
                     threshold_value = 0     # 閾値
