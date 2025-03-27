@@ -69,7 +69,7 @@ class PlotModel():
     """
 
 
-    def __init__(self, is_absolute_opponent_at_end_position, declaration, is_mate_in_1_move, cutoff_reason):
+    def __init__(self, is_absolute_opponent_at_end_position, declaration, is_mate_in_1_move, cutoff_reason, comment):
         """初期化。
 
         Parameters
@@ -82,6 +82,8 @@ class PlotModel():
             ［末端局面で１手詰めか？］
         cutoff_reason : int
             カットオフの理由
+        comment : str
+            デバッグ用文字列
         """
         self._is_absolute_opponent_at_end_position = is_absolute_opponent_at_end_position
         self._declaration = declaration
@@ -90,6 +92,7 @@ class PlotModel():
         self._cap_list = []
         self._piece_exchange_value_list = []
         self._cutoff_reason = cutoff_reason
+        self._comment = comment
 
 
     @property
@@ -164,6 +167,11 @@ class PlotModel():
     @property
     def cutoff_reason(self):
         return self._cutoff_reason
+
+
+    @property
+    def comment(self):
+        return self._comment
 
 
     def is_declaration(self):
@@ -250,6 +258,9 @@ class PlotModel():
         # カットオフ理由
         tokens.append(CutoffReason.japanese(self._cutoff_reason))
 
+        # コメント
+        tokens.append(self._comment)
+
         return ' '.join(tokens)
 
 
@@ -263,7 +274,7 @@ class PlotModel():
 
 
     def stringify_dump(self):
-        return f"{self._is_absolute_opponent_at_end_position=} {self._declaration=} {self._is_mate_in_1_move=} {self._move_list=} {self._cap_list=} {self._piece_exchange_value_list=} {self._cutoff_reason=}"
+        return f"{self._is_absolute_opponent_at_end_position=} {self._declaration=} {self._is_mate_in_1_move=} {self._move_list=} {self._cap_list=} {self._piece_exchange_value_list=} {self._cutoff_reason=} {self._comment=}"
 
 
     def stringify_debug_1(self):
