@@ -232,9 +232,7 @@ class PlotModel():
 
 
         def _cap(cap):
-            if cap != cshogi.NONE:
-                return f"x{PieceTypeModel.kanji(cap)}"
-            return ''
+            return f"x{PieceTypeModel.kanji(cap)}"
 
 
         def _pev(pev):
