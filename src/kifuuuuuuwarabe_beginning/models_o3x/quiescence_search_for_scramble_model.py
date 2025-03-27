@@ -229,7 +229,7 @@ class QuiescenceSearchForScrambleModel():
                     declaration                             = constants.declaration.NONE,
                     is_mate_in_1_move                       = False,
                     cutoff_reason                           = cutoff_reason.NO_MOVES,
-                    hint                                    = f"１階で指したい手無し {len(remaining_moves)=}")
+                    hint                                    = f"指したい１階の手無し_{depth=}/{self._max_depth=}_{is_absolute_opponent}_{len(all_plots_at_first)=}/{len(remaining_moves)=}")
             all_plots_at_first.append(future_plot_model)
 
         self._end_time = time.time()    # 計測終了時間
@@ -406,23 +406,6 @@ class QuiescenceSearchForScrambleModel():
                     is_absolute_opponent                = is_absolute_opponent,
                     remaining_moves                     = list(self._gymnasium.table.legal_moves))  # 合法手全部。
 
-            ################
-            # MARK: 一手戻す
-            ################
-
-            self._gymnasium.undo_move_o1x()
-
-            ####################
-            # MARK: 一手戻した後
-            ####################
-
-            depth                   = depth + 1                     # 深さを１上げる。
-            is_absolute_opponent    = not is_absolute_opponent      # 手番が逆になる。
-
-            ##################
-            # MARK: 手番の処理
-            ##################
-
             its_update_best = False
 
             # 最大深さで戻ってきたなら、最善手ではありません。無視します。
@@ -519,6 +502,23 @@ class QuiescenceSearchForScrambleModel():
                 best_move = my_move
                 best_move_cap_pt = cap_pt
 
+            ################
+            # MARK: 一手戻す
+            ################
+
+            self._gymnasium.undo_move_o1x()
+
+            ####################
+            # MARK: 一手戻した後
+            ####################
+
+            depth                   = depth + 1                     # 深さを１上げる。
+            is_absolute_opponent    = not is_absolute_opponent      # 手番が逆になる。
+
+            ##################
+            # MARK: 手番の処理
+            ##################
+
             # # FIXME 探索の打切り判定
             # if is_beta_cutoff:
             #     break   # （アンドゥや、depth の勘定をきちんとしたあとで）ループから抜ける
@@ -534,13 +534,13 @@ class QuiescenceSearchForScrambleModel():
                     declaration                             = constants.declaration.NONE,
                     is_mate_in_1_move                       = False,
                     cutoff_reason                           = cutoff_reason.NO_MOVES,
-                    hint                                    = f"{self._max_depth - depth}階で指したい手無し {is_absolute_opponent=} {len(remaining_moves)=} {case_1=} {case_2=} {case_3=} {case_4=} {case_5=} {case_6=} {case_7t=} {case_7f=}")
+                    hint                                    = f"指したい{self._max_depth - depth + 1}階の手無し_{is_absolute_opponent=}_{len(remaining_moves)=}_{case_1=}_{case_2=}_{case_3=}_{case_4=}_{case_5=}_{case_6=}_{case_7t=}_{case_7f=}")
 
         # 今回の手を付け加える。
         best_plot_model_in_children.append_move(
                 is_absolute_opponent    = is_absolute_opponent,
                 move                    = best_move,
                 capture_piece_type      = best_move_cap_pt,
-                hint                    = f"{self._max_depth - depth}階の手記憶_{is_absolute_opponent=}")
+                hint                    = f"{self._max_depth - depth + 1}階の手記憶_{is_absolute_opponent=}")
 
         return best_plot_model_in_children
