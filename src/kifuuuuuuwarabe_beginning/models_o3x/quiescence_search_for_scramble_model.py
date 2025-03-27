@@ -71,8 +71,6 @@ class QuiescenceSearchForScrambleModel():
             これは駒得評価値も算出できる。
         """
 
-        #print(f"[search_alice] {depth=} {is_absolute_opponent=}")
-
         self._start_time = time.time()          # 探索開始時間
         self._restart_time = self._start_time   # 前回の計測開始時間
         all_plots_at_first = []
@@ -186,8 +184,7 @@ class QuiescenceSearchForScrambleModel():
             # NOTE この辺りは［１階］。max_depth - depth。
             future_plot_model = self.search_alice(      # 再帰呼出
                     depth                               = depth,
-                    is_absolute_opponent                = is_absolute_opponent,
-                    remaining_moves                     = list(self._gymnasium.table.legal_moves))  # 合法手全部。
+                    is_absolute_opponent                = is_absolute_opponent)
 
             ################
             # MARK: 一手戻す
@@ -241,8 +238,7 @@ class QuiescenceSearchForScrambleModel():
             self,
             #best_plot_model_in_older_sibling,
             depth,
-            is_absolute_opponent,
-            remaining_moves):
+            is_absolute_opponent):
         """
         Parameters
         ----------
@@ -252,8 +248,6 @@ class QuiescenceSearchForScrambleModel():
             あと何手深く読むか。
         is_absolute_opponent : bool
             対戦相手か？
-        remaining_moves : list<int>
-            指し手のリスト。
 
         Returns
         -------
@@ -261,8 +255,6 @@ class QuiescenceSearchForScrambleModel():
             最善の読み筋。
             これは駒得評価値も算出できる。
         """
-
-        #print(f"[search_alice] {depth=} {is_absolute_opponent=}")
 
         ########################
         # MARK: 指す前にやること
@@ -362,12 +354,14 @@ class QuiescenceSearchForScrambleModel():
         case_3 = 0
         case_4 = 0
         case_5 = 0
-        case_6 = 0
+        case_6t = 0
+        case_6f = 0
         case_7t = 0
         case_7f = 0
 
-        # 指し手を全部調べる。
-        for my_move in remaining_moves:
+        # 合法手を全部調べる。
+        legal_move_list = list(self._gymnasium.table.legal_moves)
+        for my_move in legal_move_list:
 
             ##################
             # MARK: 一手指す前
@@ -403,8 +397,7 @@ class QuiescenceSearchForScrambleModel():
             future_plot_model = self.search_alice(      # 再帰呼出
                     #best_plot_model_in_older_sibling    = best_plot_model_in_children,
                     depth                               = depth,
-                    is_absolute_opponent                = is_absolute_opponent,
-                    remaining_moves                     = list(self._gymnasium.table.legal_moves))  # 合法手全部。
+                    is_absolute_opponent                = is_absolute_opponent)
 
             its_update_best = False
 
@@ -479,7 +472,12 @@ class QuiescenceSearchForScrambleModel():
 
                     # 最善より良い手があれば、そっちを選びます。
                     its_update_best = (threshold_value < future_plot_model.last_piece_exchange_value)
-                    case_6 += 1
+                    if its_update_best:
+                        case_6t += 1
+                        self._gymnasium.thinking_logger_module.append(f"[search] 6t {depth=}/{self._max_depth=} {is_absolute_opponent=} {cshogi.move_to_usi(my_move)=} {future_plot_model.last_piece_exchange_value=} {threshold_value=}")
+                    else:
+                        case_6f += 1
+                        self._gymnasium.thinking_logger_module.append(f"[search] 6f {depth=}/{self._max_depth=} {is_absolute_opponent=} {cshogi.move_to_usi(my_move)=} {future_plot_model.last_piece_exchange_value=} {threshold_value=}")
 
                 # 相手は、点数が小さくなる手を選ぶ
                 else:
@@ -494,7 +492,7 @@ class QuiescenceSearchForScrambleModel():
                         case_7t += 1
                     else:
                         case_7f += 1
-                        self._gymnasium.thinking_logger_module.append(f"[search] 7f {depth=}/{self._max_depth=} {is_absolute_opponent=} {future_plot_model.last_piece_exchange_value=} {threshold_value=}")
+                        #self._gymnasium.thinking_logger_module.append(f"[search] 7f {depth=}/{self._max_depth=} {is_absolute_opponent=} {cshogi.move_to_usi(my_move)=} {future_plot_model.last_piece_exchange_value=} {threshold_value=}")
                         
             # 最善手の更新
             if its_update_best:
@@ -534,7 +532,7 @@ class QuiescenceSearchForScrambleModel():
                     declaration                             = constants.declaration.NONE,
                     is_mate_in_1_move                       = False,
                     cutoff_reason                           = cutoff_reason.NO_MOVES,
-                    hint                                    = f"指したい{self._max_depth - depth + 1}階の手無し_{is_absolute_opponent=}_{len(remaining_moves)=}_{case_1=}_{case_2=}_{case_3=}_{case_4=}_{case_5=}_{case_6=}_{case_7t=}_{case_7f=}")
+                    hint                                    = f"指したい{self._max_depth - depth + 1}階の手無し_{is_absolute_opponent=}_{len(legal_move_list)=}_{case_1=}_{case_2=}_{case_3=}_{case_4=}_{case_5=}_{case_6t=}_{case_6f=}_{case_7t=}_{case_7f=}")
 
         # 今回の手を付け加える。
         best_plot_model_in_children.append_move(
