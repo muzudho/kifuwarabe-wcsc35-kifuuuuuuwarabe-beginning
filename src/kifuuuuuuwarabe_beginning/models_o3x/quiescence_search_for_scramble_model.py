@@ -1,7 +1,7 @@
 import cshogi
 import time
 
-from ..models_o1x import constants, DeclarationModel, SquareModel
+from ..models_o1x import constants, DeclarationModel, PieceValuesModel, SquareModel
 from ..models_o2x import cutoff_reason, PlotModel
 
 
@@ -389,11 +389,38 @@ class QuiescenceSearchForScrambleModel():
                 elif future_plot_model.cutoff_reason == cutoff_reason.NO_MOVES:
                     #print(f"D-370: ベストではない")
                     # TODO 相手が指し返してこなかったということは、自分が指した手が末端局面。
+                    piece_exchange_value = 2 * PieceValuesModel.by_piece_type(pt=cap_pt)      # 交換値に変換。正の数とする。
+
                     future_plot_model.append_move(
                             is_absolute_opponent    = is_absolute_opponent,
                             move                    = my_move,
                             capture_piece_type      = cap_pt)
-                    its_compare = True
+
+                    # NOTE （スクランブル・サーチでは）ベストがナンということもある。つまり、指さない方がマシな局面がある（のが投了との違い）。
+                    threshold_value = 0     # 閾値
+                    if best_plot_model_in_children is not None:
+                        threshold_value = best_plot_model_in_children.last_piece_exchange_value     # とりあえず最善の点数。
+
+                    # 自分は、点数が大きくなる手を選ぶ
+                    if not is_absolute_opponent:
+                        # # TODO ただし、既存の最善手より良い手を見つけてしまったら、ベータカットします。
+                        # if beta_cutoff_value < piece_exchange_value:
+                        #     #will_beta_cutoff = True   # TODO ベータカット
+                        #     pass
+
+                        # 最善より良い手があれば、そっちを選びます。
+                        its_best = (threshold_value < piece_exchange_value)
+
+                    # 相手は、点数が小さくなる手を選ぶ
+                    else:
+                        # # TODO ただし、既存の最悪手より悪い手を見つけてしまったら、ベータカットします。
+                        # if piece_exchange_value < beta_cutoff_value:
+                        #     #will_beta_cutoff = True   # TODO ベータカット
+                        #     pass
+
+                        # 最善より悪い手があれば、そっちを選びます。
+                        its_best = (piece_exchange_value < threshold_value)
+
 
                 # 相手が投了なら、自分には最善手。
                 elif future_plot_model.declaration == constants.declaration.RESIGN:
@@ -409,9 +436,6 @@ class QuiescenceSearchForScrambleModel():
                     raise ValueError(f"想定外の読み筋 {future_plot_model.stringify_dump()}")
             
             else:
-                its_compare = True
-            
-            if its_compare:
                 # NOTE （スクランブル・サーチでは）ベストがナンということもある。つまり、指さない方がマシな局面がある（のが投了との違い）。
                 threshold_value = 0     # 閾値
                 if best_plot_model_in_children is not None:
