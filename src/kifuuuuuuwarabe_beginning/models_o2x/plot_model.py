@@ -253,3 +253,7 @@ class PlotModel():
             return ''
 
         return f"{self.last_piece_exchange_value:4} {_cap_str():3}"
+
+
+    def stringify_dump(self):
+        return f"{self._is_absolute_opponent_at_end_position=} {self._declaration=} {self._is_mate_in_1_move=} {self._move_list=} {self._cap_list=} {self._piece_exchange_value_list=} {self._cutoff_reason=}"

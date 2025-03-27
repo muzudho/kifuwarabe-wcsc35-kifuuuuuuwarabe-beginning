@@ -1,4 +1,5 @@
 import cshogi
+import time
 
 from ..models_o1x import constants, DeclarationModel, SquareModel
 from ..models_o2x import cutoff_reason, PlotModel
@@ -20,6 +21,9 @@ class QuiescenceSearchForScrambleModel():
         self._max_depth = max_depth
         self._gymnasium = gymnasium
         self._number_of_visited_nodes = 0
+        self._start_time = 0
+        self._restart_time = 0
+        self._end_time = 0
 
 
     @property
@@ -69,6 +73,8 @@ class QuiescenceSearchForScrambleModel():
 
         #print(f"[search_alice] {depth=} {is_absolute_opponent=}")
 
+        self._start_time = time.time()
+        self._restart_time = self._start_time
         all_plots_at_first = []
 
         ########################
@@ -211,6 +217,8 @@ class QuiescenceSearchForScrambleModel():
                     cutoff_reason       = cutoff_reason.NO_MOVES)
             all_plots_at_first.append(future_plot_model)
 
+        self._end_time = time.time()
+
         return all_plots_at_first
 
 
@@ -244,6 +252,13 @@ class QuiescenceSearchForScrambleModel():
         ########################
         # MARK: 指す前にやること
         ########################
+
+        cur_time = time.time()  # FIXME
+        seconds = cur_time - self._restart_time
+        if 4 <= seconds:
+            print(f"info depth {self._max_depth - depth} seldepth 0 time 1 nodes {self._number_of_visited_nodes} score cp 0 string thinking")
+            self._restart_time = cur_time
+
 
         # 指さなくても分かること（ライブラリー使用）
 
@@ -367,6 +382,11 @@ class QuiescenceSearchForScrambleModel():
                     #print(f"D-370: ベストではない")
                     its_best = False
 
+                # 指したい手なし
+                elif future_plot_model.cutoff_reason == cutoff_reason.NO_MOVES:
+                    #print(f"D-370: ベストではない")
+                    its_best = False
+
                 # 相手が投了なら、自分には最善手。
                 elif future_plot_model.declaration == constants.declaration.RESIGN:
                     its_best = True
@@ -376,7 +396,9 @@ class QuiescenceSearchForScrambleModel():
                     its_best = False
 
                 else:
-                    raise ValueError(f"想定外の読み筋")
+                    # FIXME 指したい手なし
+                    # ValueError: 想定外の読み筋 self._is_absolute_opponent_at_end_position=False self._declaration=0 self._is_mate_in_1_move=False self._move_list=[] self._cap_list=[] self._piece_exchange_value_list=[] self._cutoff_reason=4
+                    raise ValueError(f"想定外の読み筋 {future_plot_model.stringify_dump()}")
             
             else:
 
