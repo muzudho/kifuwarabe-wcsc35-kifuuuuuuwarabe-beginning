@@ -21,9 +21,9 @@ class QuiescenceSearchForScrambleModel():
         self._max_depth = max_depth
         self._gymnasium = gymnasium
         self._number_of_visited_nodes = 0
-        self._start_time = 0
-        self._restart_time = 0
-        self._end_time = 0
+        self._start_time = None
+        self._restart_time = None
+        self._end_time = None
 
 
     @property
@@ -73,8 +73,8 @@ class QuiescenceSearchForScrambleModel():
 
         #print(f"[search_alice] {depth=} {is_absolute_opponent=}")
 
-        self._start_time = time.time()
-        self._restart_time = self._start_time
+        self._start_time = time.time()          # 探索開始時間
+        self._restart_time = self._start_time   # 前回の計測開始時間
         all_plots_at_first = []
 
         ########################
@@ -217,7 +217,7 @@ class QuiescenceSearchForScrambleModel():
                     cutoff_reason       = cutoff_reason.NO_MOVES)
             all_plots_at_first.append(future_plot_model)
 
-        self._end_time = time.time()
+        self._end_time = time.time()    # 計測終了時間
 
         return all_plots_at_first
 
@@ -253,11 +253,11 @@ class QuiescenceSearchForScrambleModel():
         # MARK: 指す前にやること
         ########################
 
-        cur_time = time.time()  # FIXME
-        seconds = cur_time - self._restart_time
-        if 4 <= seconds:
+        cur_time = time.time()                              # 現在の時間
+        erapsed_seconds = cur_time - self._restart_time     # 経過秒
+        if 4 <= erapsed_seconds:                            # 4秒以上経過してたら、情報出力
             print(f"info depth {self._max_depth - depth} seldepth 0 time 1 nodes {self._number_of_visited_nodes} score cp 0 string thinking")
-            self._restart_time = cur_time
+            self._restart_time = cur_time                   # 前回の計測時間を更新
 
 
         # 指さなくても分かること（ライブラリー使用）
@@ -309,11 +309,12 @@ class QuiescenceSearchForScrambleModel():
 
         # これ以上深く読まない場合。
         if depth < 1:
+            # 末端局面。
             return PlotModel(
                     is_absolute_opponent_at_end_position    = is_absolute_opponent,
-                    declaration         = constants.declaration.NONE,
-                    is_mate_in_1_move   = False,
-                    cutoff_reason       = cutoff_reason.MAX_DEPTH)
+                    declaration                             = constants.declaration.NONE,   # ［宣言］ではない。
+                    is_mate_in_1_move                       = False,                        # ［一手詰め］ではない。
+                    cutoff_reason                           = cutoff_reason.MAX_DEPTH)      # ［最大探索深さ］が打切り理由。
 
         # まだ深く読む場合。
 
@@ -348,14 +349,9 @@ class QuiescenceSearchForScrambleModel():
             cap_pt      = self._gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
             is_capture  = (cap_pt != cshogi.NONE)
 
-            # １階呼出時は、どの手も無視しません。
-            if depth == self._max_depth:
-                pass
-
-            else:
-                # ２階以降の呼出時は、駒を取る手でなければ無視。
-                if not is_capture:
-                    continue
+            # ２階以降の呼出時は、駒を取る手でなければ無視。
+            if not is_capture:
+                continue
 
             ################
             # MARK: 一手指す
@@ -374,26 +370,24 @@ class QuiescenceSearchForScrambleModel():
                     is_absolute_opponent                = not is_absolute_opponent,     # 手番が逆になる
                     remaining_moves                     = list(self._gymnasium.table.legal_moves))  # 合法手全部。
 
-            its_best    = False
-            its_compare = False
+            its_update_best = False
+            its_compare     = False
 
             # 最大深さで戻ってきたなら、最善手ではありません。無視します。
             #print(f"D-368: {future_plot_model.cutoff_reason=} {cutoff_reason.MAX_DEPTH=} {future_plot_model.move_list_length()=} {future_plot_model.is_empty_moves()=}")
-            if future_plot_model.is_empty_moves():
+            if future_plot_model.is_empty_moves():  # ［宣言］などには［指し手］は含まれません。
 
-                if future_plot_model.cutoff_reason == cutoff_reason.MAX_DEPTH:
-                    #print(f"D-370: ベストではない")
-                    pass
-
-                # 指したい手なし
-                elif future_plot_model.cutoff_reason == cutoff_reason.NO_MOVES:
+                if (
+                        future_plot_model.cutoff_reason == cutoff_reason.MAX_DEPTH      # ［最大探索深さ］が打切り理由。
+                    or  future_plot_model.cutoff_reason == cutoff_reason.NO_MOVES       # ［指したい手なし］（駒を取り返す手がないなど）が打切り理由。
+                ):
                     #print(f"D-370: ベストではない")
                     # TODO 相手が指し返してこなかったということは、自分が指した手が末端局面。
                     piece_exchange_value = 2 * PieceValuesModel.by_piece_type(pt=cap_pt)      # 交換値に変換。正の数とする。
 
                     # NOTE （スクランブル・サーチでは）ベストがナンということもある。つまり、指さない方がマシな局面がある（のが投了との違い）。
                     threshold_value = 0     # 閾値
-                    if best_plot_model_in_children is not None:
+                    if best_plot_model_in_children is not None and not best_plot_model_in_children.is_empty_moves():
                         threshold_value = best_plot_model_in_children.last_piece_exchange_value     # とりあえず最善の点数。
 
                     # 自分は、点数が大きくなる手を選ぶ
@@ -403,8 +397,8 @@ class QuiescenceSearchForScrambleModel():
                         #     #will_beta_cutoff = True   # TODO ベータカット
                         #     pass
 
-                        # 最善より良い手があれば、そっちを選びます。
-                        its_best = (threshold_value < piece_exchange_value)
+                        # （初期値の０または）最善より良い手があれば、そっちを選びます。
+                        its_update_best = (threshold_value < piece_exchange_value)
 
                     # 相手は、点数が小さくなる手を選ぶ
                     else:
@@ -413,13 +407,13 @@ class QuiescenceSearchForScrambleModel():
                         #     #will_beta_cutoff = True   # TODO ベータカット
                         #     pass
 
-                        # 最善より悪い手があれば、そっちを選びます。
-                        its_best = (piece_exchange_value < threshold_value)
+                        # （初期値の０または）最善より悪い手があれば、そっちを選びます。
+                        its_update_best = (piece_exchange_value < threshold_value)
 
 
                 # 相手が投了なら、自分には最善手。
                 elif future_plot_model.declaration == constants.declaration.RESIGN:
-                    its_best = True
+                    its_update_best = True
 
                 # 相手が入玉宣言勝ちなら、自分には最悪手。
                 elif future_plot_model.declaration == constants.declaration.NYUGYOKU_WIN:
@@ -444,7 +438,7 @@ class QuiescenceSearchForScrambleModel():
                     #     pass
 
                     # 最善より良い手があれば、そっちを選びます。
-                    its_best = (threshold_value < future_plot_model.last_piece_exchange_value)
+                    its_update_best = (threshold_value < future_plot_model.last_piece_exchange_value)
 
                 # 相手は、点数が小さくなる手を選ぶ
                 else:
@@ -454,9 +448,10 @@ class QuiescenceSearchForScrambleModel():
                     #     pass
 
                     # 最善より悪い手があれば、そっちを選びます。
-                    its_best = (future_plot_model.last_piece_exchange_value < threshold_value)
+                    its_update_best = (future_plot_model.last_piece_exchange_value < threshold_value)
                         
-            if its_best:
+            # 最善手の更新
+            if its_update_best:
                 best_plot_model_in_children = future_plot_model
                 best_move = my_move
                 best_move_cap_pt = cap_pt
