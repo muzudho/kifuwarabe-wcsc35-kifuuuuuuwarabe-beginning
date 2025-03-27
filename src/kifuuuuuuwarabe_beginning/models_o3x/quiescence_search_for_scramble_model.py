@@ -355,7 +355,9 @@ class QuiescenceSearchForScrambleModel():
         case_4 = 0
         case_5 = 0
         case_6t = 0
+        case_6t_hint_list = []
         case_6f = 0
+        case_6f_hint_list = []
         case_7t = 0
         case_7f = 0
 
@@ -394,6 +396,10 @@ class QuiescenceSearchForScrambleModel():
             # MARK: 相手番の処理
             ####################
 
+            piece_exchange_value = PieceValuesModel.get_piece_exchange_value(      # 交換値に変換。正の数とする。
+                    pt                      = cap_pt,
+                    is_absolute_opponent    = is_absolute_opponent)
+
             future_plot_model = self.search_alice(      # 再帰呼出
                     #best_plot_model_in_older_sibling    = best_plot_model_in_children,
                     depth                               = depth,
@@ -411,9 +417,6 @@ class QuiescenceSearchForScrambleModel():
                 ):
                     #print(f"D-370: ベストではない")
                     # TODO 相手が指し返してこなかったということは、自分が指した手が末端局面。
-                    piece_exchange_value = PieceValuesModel.get_piece_exchange_value(      # 交換値に変換。正の数とする。
-                            pt                      = cap_pt,
-                            is_absolute_opponent    = is_absolute_opponent)
 
                     # NOTE （スクランブル・サーチでは）ベストがナンということもある。つまり、指さない方がマシな局面がある（のが投了との違い）。
                     threshold_value = 0     # 閾値
@@ -463,23 +466,24 @@ class QuiescenceSearchForScrambleModel():
                 if best_plot_model_in_children is not None and not best_plot_model_in_children.is_empty_moves():
                     threshold_value = best_plot_model_in_children.last_piece_exchange_value     # とりあえず最善の点数。
 
-                # 自分は、点数が大きくなる手を選ぶ
+                # NOTE 自分は常に、相手の点数が小さくなる将来を選ぶ
                 if not is_absolute_opponent:
                     # # TODO ただし、既存の最善手より良い手を見つけてしまったら、ベータカットします。
                     # if beta_cutoff_value < future_plot_model.last_piece_exchange_value:
                     #     #will_beta_cutoff = True   # TODO ベータカット
                     #     pass
 
-                    # 最善より良い手があれば、そっちを選びます。
-                    its_update_best = (threshold_value < future_plot_model.last_piece_exchange_value)
+                    its_update_best = (future_plot_model.last_piece_exchange_value < threshold_value)
                     if its_update_best:
                         case_6t += 1
-                        self._gymnasium.thinking_logger_module.append(f"[search] 6t {depth=}/{self._max_depth=} {is_absolute_opponent=} {cshogi.move_to_usi(my_move)=} {future_plot_model.last_piece_exchange_value=} {threshold_value=}")
+                        case_6t_hint_list.append(f"{future_plot_model.last_piece_exchange_value=}<{threshold_value=}")
+                        self._gymnasium.thinking_logger_module.append(f"[search] 6t {depth=}/{self._max_depth=} {is_absolute_opponent=} {cshogi.move_to_usi(my_move)=} {piece_exchange_value=} {future_plot_model.last_piece_exchange_value=}<{threshold_value=}")
                     else:
                         case_6f += 1
-                        self._gymnasium.thinking_logger_module.append(f"[search] 6f {depth=}/{self._max_depth=} {is_absolute_opponent=} {cshogi.move_to_usi(my_move)=} {future_plot_model.last_piece_exchange_value=} {threshold_value=}")
+                        case_6f_hint_list.append(f"{future_plot_model.last_piece_exchange_value=}<{threshold_value=}")
+                        self._gymnasium.thinking_logger_module.append(f"[search] 6f {depth=}/{self._max_depth=} {is_absolute_opponent=} {cshogi.move_to_usi(my_move)=} {piece_exchange_value=} {future_plot_model.last_piece_exchange_value=}<{threshold_value=}")
 
-                # 相手は、点数が小さくなる手を選ぶ
+                # 相手は常に、点数が小さくなる手を選ぶ
                 else:
                     # # TODO ただし、既存の最悪手より悪い手を見つけてしまったら、ベータカットします。
                     # if future_plot_model.last_piece_exchange_value < beta_cutoff_value:
@@ -532,7 +536,7 @@ class QuiescenceSearchForScrambleModel():
                     declaration                             = constants.declaration.NONE,
                     is_mate_in_1_move                       = False,
                     cutoff_reason                           = cutoff_reason.NO_MOVES,
-                    hint                                    = f"指したい{self._max_depth - depth + 1}階の手無し_{is_absolute_opponent=}_{len(legal_move_list)=}_{case_1=}_{case_2=}_{case_3=}_{case_4=}_{case_5=}_{case_6t=}_{case_6f=}_{case_7t=}_{case_7f=}")
+                    hint                                    = f"指したい{self._max_depth - depth + 1}階の手無し_{is_absolute_opponent=}_{len(legal_move_list)=}_{case_1=}_{case_2=}_{case_3=}_{case_4=}_{case_5=}_{case_6t=}({'_'.join(case_6t_hint_list)})_{case_6f=}({'_'.join(case_6f_hint_list)})_{case_7t=}_{case_7f=}")
 
         # 今回の手を付け加える。
         best_plot_model_in_children.append_move(
