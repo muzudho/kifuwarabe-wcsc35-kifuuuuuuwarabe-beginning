@@ -247,8 +247,8 @@ def _quiescence_search(remaining_moves, gymnasium):
         # まず、最高点を調べます。
         best_exchange_value = constants.value.NOTHING_CAPTURE_MOVE
         for plot_model in all_plots_at_first:
-            if best_exchange_value < plot_model.last_piece_exchange_value:
-                best_exchange_value = plot_model.last_piece_exchange_value
+            if best_exchange_value < plot_model.last_piece_exchange_value_on_earth:
+                best_exchange_value = plot_model.last_piece_exchange_value_on_earth
 
         # 最高点が 0 点のケース。 FIXME 千日手とかを何点に設定しているか？
         if best_exchange_value == 0:
@@ -264,8 +264,8 @@ def _quiescence_search(remaining_moves, gymnasium):
                     value   = plot_model)
 
             # （１）駒を取らない手で非正の手（最高点のケースを除く）。
-            if not plot_model.is_capture_at_last and plot_model.last_piece_exchange_value < 1 and plot_model.last_piece_exchange_value != best_exchange_value:
-                if plot_model.last_piece_exchange_value == 0:
+            if not plot_model.is_capture_at_last and plot_model.last_piece_exchange_value_on_earth < 1 and plot_model.last_piece_exchange_value_on_earth != best_exchange_value:
+                if plot_model.last_piece_exchange_value_on_earth == 0:
                     exists_zero_value_move = True
                 
                 gymnasium.health_check.append(
@@ -274,14 +274,14 @@ def _quiescence_search(remaining_moves, gymnasium):
                         value   = f"{plot_model.stringify_2():10} not_cap_not_posite")
 
             # （２）最高点でない手。
-            elif plot_model.last_piece_exchange_value < best_exchange_value:
+            elif plot_model.last_piece_exchange_value_on_earth < best_exchange_value:
                 gymnasium.health_check.append(
                         move    = plot_model.last_move,
                         name    = 'eliminate171',
                         value   = f"{plot_model.stringify_2():10} not_best")
 
             # （３）リスクヘッジにならない手
-            elif exists_zero_value_move and plot_model.last_piece_exchange_value < 0:
+            elif exists_zero_value_move and plot_model.last_piece_exchange_value_on_earth < 0:
                 gymnasium.health_check.append(
                         move    = plot_model.last_move,
                         name    = 'eliminate171',

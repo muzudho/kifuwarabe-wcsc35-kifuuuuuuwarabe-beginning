@@ -350,7 +350,7 @@ class QuiescenceSearchForScrambleModel():
         #         return - constants.value.BETA_CUTOFF_VALUE  # 底
 
         #     # 最善手が既存なら、その交換値を返すだけ。
-        #     return best_plot_model_in_older_sibling.last_piece_exchange_value
+        #     return best_plot_model_in_older_sibling.last_piece_exchange_value_on_earth
 
         case_1 = 0
         case_2 = 0
@@ -426,14 +426,15 @@ class QuiescenceSearchForScrambleModel():
 
             its_update_best = False
 
-            piece_exchange_value = PieceValuesModel.get_piece_exchange_value(      # 交換値に変換。正の数とする。
+            # NOTE `earth` - 自分。 `mars` - 対戦相手。
+            piece_exchange_value_on_earth = PieceValuesModel.get_piece_exchange_value(      # 交換値に変換。正の数とする。
                     pt                      = cap_pt,
                     is_absolute_opponent    = is_absolute_opponent)
 
             # 兄枝のベスト評価値
             old_sibling_value = constants.value.ZERO    # NOTE （スクランブル・サーチでは）ベストがナンということもある。つまり、指さない方がマシな局面がある（のが投了との違い）。
             if best_plot_model_in_children is not None and not best_plot_model_in_children.is_empty_moves():
-                old_sibling_value = best_plot_model_in_children.last_piece_exchange_value     # とりあえず最善の読み筋の点数。
+                old_sibling_value = best_plot_model_in_children.last_piece_exchange_value_on_earth     # とりあえず最善の読み筋の点数。
 
             # 最大深さで戻ってきたなら、最善手ではありません。無視します。
             #print(f"D-368: {future_plot_model.cutoff_reason=} {cutoff_reason.MAX_DEPTH=} {future_plot_model.move_list_length()=} {future_plot_model.is_empty_moves()=}")
@@ -446,7 +447,7 @@ class QuiescenceSearchForScrambleModel():
                     #print(f"D-370: ベストではない")
                     # 相手が指し返してこなかったということは、自分が指した手が末端局面。
                     # 取った駒の交換値が、そのまま評価値になる。
-                    this_branch_value = piece_exchange_value
+                    this_branch_value = piece_exchange_value_on_earth
 
                     # とりあえず、自分と対戦相手で処理を分ける。
                     if not is_absolute_opponent:    # 自分。点数が大きくなる手を選ぶ。
@@ -488,49 +489,53 @@ class QuiescenceSearchForScrambleModel():
 
                 # とりあえず、自分と対戦相手で処理を分ける。
                 if not is_absolute_opponent:    # 自分。点数が大きくなる手を選ぶ。
+                    this_branch_value = future_plot_model.last_piece_exchange_value_on_earth + piece_exchange_value_on_earth
+
                     # # TODO ただし、既存の最善手より良い手を見つけてしまったら、ベータカットします。
                     # if beta_cutoff_value < this_branch_value:
                     #     #will_beta_cutoff = True   # TODO ベータカット
                     #     pass
 
-                    its_update_best = (old_sibling_value < future_plot_model.last_piece_exchange_value)
+                    its_update_best = (old_sibling_value < this_branch_value)
                     if its_update_best:
                         case_6t += 1
-                        case_6t_hint_list.append(f"{old_sibling_value=} < {future_plot_model.last_piece_exchange_value=}")
+                        case_6t_hint_list.append(f"{old_sibling_value=} < {this_branch_value=}")
 
                         #self._gymnasium.thinking_logger_module.append(f"[search] 6t {self._move_usi_list_for_debug=}")
                         if self._move_usi_list_for_debug == ['3a4b']:   # デバッグ絞込み
-                            self._gymnasium.thinking_logger_module.append(f"[search] 6t {depth=}/{self._max_depth=} {AbsoluteOpponent.japanese(is_absolute_opponent)} {','.join(self._move_usi_list_for_debug)},{cshogi.move_to_usi(my_move)}(私{piece_exchange_value}) {old_sibling_value=} < {future_plot_model.strigify()=}")
+                            self._gymnasium.thinking_logger_module.append(f"[search] 6t {depth=}/{self._max_depth=} {AbsoluteOpponent.japanese(is_absolute_opponent)} {','.join(self._move_usi_list_for_debug)},{cshogi.move_to_usi(my_move)}(私{this_branch_value}) {old_sibling_value=} < {future_plot_model.stringify()=}")
 
                     else:
                         case_6f += 1
-                        case_6f_hint_list.append(f"{old_sibling_value=} < {future_plot_model.last_piece_exchange_value=}")
+                        case_6f_hint_list.append(f"{old_sibling_value=} < {this_branch_value=}")
 
                         #self._gymnasium.thinking_logger_module.append(f"[search] 6f {self._move_usi_list_for_debug=}")
                         if self._move_usi_list_for_debug == ['3a4b']:   # デバッグ絞込み
-                            self._gymnasium.thinking_logger_module.append(f"[search] 6f {depth=}/{self._max_depth=} {AbsoluteOpponent.japanese(is_absolute_opponent)} {','.join(self._move_usi_list_for_debug)},{cshogi.move_to_usi(my_move)}(私{piece_exchange_value}) {old_sibling_value=} < {future_plot_model.strigify()=}")
+                            self._gymnasium.thinking_logger_module.append(f"[search] 6f {depth=}/{self._max_depth=} {AbsoluteOpponent.japanese(is_absolute_opponent)} {','.join(self._move_usi_list_for_debug)},{cshogi.move_to_usi(my_move)}(私{this_branch_value}) {old_sibling_value=} < {future_plot_model.stringify()=}")
 
                 else:   # 対戦相手。点数が小さくなる手を選ぶ。
+                    this_branch_value = future_plot_model.last_piece_exchange_value_on_earth + piece_exchange_value_on_earth
+
                     # # TODO ただし、既存の最悪手より悪い手を見つけてしまったら、ベータカットします。
                     # if this_branch_value < beta_cutoff_value:
                     #     #will_beta_cutoff = True   # TODO ベータカット
                     #     pass
 
                     # 最善より悪い手があれば、そっちを選びます。
-                    its_update_best = (future_plot_model.last_piece_exchange_value < old_sibling_value)
+                    its_update_best = (this_branch_value < old_sibling_value)
                     if its_update_best:
                         case_7t += 1
 
                         #self._gymnasium.thinking_logger_module.append(f"[search] 7t {self._move_usi_list_for_debug=}")
                         if self._move_usi_list_for_debug == ['3a4b']:   # デバッグ絞込み
-                            self._gymnasium.thinking_logger_module.append(f"[search] 7t {depth=}/{self._max_depth=} {AbsoluteOpponent.japanese(is_absolute_opponent)} {','.join(self._move_usi_list_for_debug)},{cshogi.move_to_usi(my_move)}(私{piece_exchange_value}) {future_plot_model.strigify()} < {old_sibling_value=}")
+                            self._gymnasium.thinking_logger_module.append(f"[search] 7t {depth=}/{self._max_depth=} {AbsoluteOpponent.japanese(is_absolute_opponent)} {','.join(self._move_usi_list_for_debug)},{cshogi.move_to_usi(my_move)}(私{this_branch_value}) {future_plot_model.stringify()} < {old_sibling_value=}")
 
                     else:
                         case_7f += 1
 
                         #self._gymnasium.thinking_logger_module.append(f"[search] 7f {self._move_usi_list_for_debug=}")
                         if self._move_usi_list_for_debug == ['3a4b']:   # デバッグ絞込み
-                            self._gymnasium.thinking_logger_module.append(f"[search] 7f {depth=}/{self._max_depth=} {AbsoluteOpponent.japanese(is_absolute_opponent)} {','.join(self._move_usi_list_for_debug)},{cshogi.move_to_usi(my_move)}(私{piece_exchange_value}) {future_plot_model.stringify()} < {old_sibling_value=}")
+                            self._gymnasium.thinking_logger_module.append(f"[search] 7f {depth=}/{self._max_depth=} {AbsoluteOpponent.japanese(is_absolute_opponent)} {','.join(self._move_usi_list_for_debug)},{cshogi.move_to_usi(my_move)}(私{this_branch_value}) {future_plot_model.stringify()} < {old_sibling_value=}")
                         
             # 最善手の更新
             if its_update_best:

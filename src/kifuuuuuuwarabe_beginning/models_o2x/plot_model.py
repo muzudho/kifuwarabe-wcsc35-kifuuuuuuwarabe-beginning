@@ -141,7 +141,7 @@ class PlotModel():
 
 
     @property
-    def last_piece_exchange_value(self):
+    def last_piece_exchange_value_on_earth(self):
         """
         """
         # if self.is_declaration():
@@ -273,7 +273,7 @@ class PlotModel():
                 return 'cap'
             return ''
 
-        return f"{self.last_piece_exchange_value:4} {_cap_str():3}"
+        return f"{self.last_piece_exchange_value_on_earth:4} {_cap_str():3}"
 
 
     def stringify_dump(self):
