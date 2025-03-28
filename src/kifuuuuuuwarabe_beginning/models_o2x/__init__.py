@@ -1,3 +1,4 @@
+from .backwards_plot_model import cutoff_reason, BackwardsPlotModel
 from .basketball_court_model import BasketballCourtModel
-from .plot_model import cutoff_reason, PlotModel
+from .frontwards_plot_model import FrontwardsPlotModel
 from .nine_rank_side_perspective_model import NineRankSidePerspectiveModel

@@ -61,8 +61,9 @@ class CutoffReason():
 cutoff_reason = CutoffReason()
 
 
-class PlotModel():
+class BackwardsPlotModel():
     """読み筋モデル。
+    末端局面から開始局面に向かって、後ろ向きに格納します。
 
     NOTE ［指す手］を Move、指さずにする［宣言］を Declaration と呼び分けるものとします。［指す手］と［宣言］を合わせて Play ［遊び］と呼ぶことにします。
     ［宣言］には、［投了］、［入玉宣言勝ち］の２つがあります。［宣言］をした後に［指す手］が続くことはありません。

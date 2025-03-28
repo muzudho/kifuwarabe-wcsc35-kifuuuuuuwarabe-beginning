@@ -2,7 +2,7 @@ import cshogi
 import time
 
 from ..models_o1x import AbsoluteOpponent, constants, PieceValuesModel, SquareModel
-from ..models_o2x import cutoff_reason, PlotModel
+from ..models_o2x import BackwardsPlotModel, cutoff_reason, FrontwardsPlotModel
 
 
 class QuiescenceSearchForScrambleModel():
@@ -24,7 +24,7 @@ class QuiescenceSearchForScrambleModel():
         self._start_time = None
         self._restart_time = None
         self._end_time = None
-        self._move_usi_list_for_debug = None  # デバッグ用に手を記憶。
+        self._move_list_for_debug = FrontwardsPlotModel()  # デバッグ用に手を記憶。
 
 
     @property
@@ -56,7 +56,7 @@ class QuiescenceSearchForScrambleModel():
         """
         Parameters
         ----------
-        # best_plot_model_in_older_sibling : PlotModel
+        # best_plot_model_in_older_sibling : BackwardsPlotModel
         #     兄たちの中で最善の読み筋、またはナン。ベータカットに使う。
         depth : int
             あと何手深く読むか。
@@ -67,7 +67,7 @@ class QuiescenceSearchForScrambleModel():
 
         Returns
         -------
-        best_prot_model : PlotModel
+        best_prot_model : BackwardsPlotModel
             最善の読み筋。
             これは駒得評価値も算出できる。
         """
@@ -86,7 +86,7 @@ class QuiescenceSearchForScrambleModel():
         if self._gymnasium.table.is_game_over():
             """手番の投了局面時。
             """
-            best_plot_model = PlotModel(
+            best_plot_model = BackwardsPlotModel(
                     is_absolute_opponent_at_end_position    = is_absolute_opponent,
                     declaration                             = constants.declaration.RESIGN,
                     is_mate_in_1_move                       = False,
@@ -104,7 +104,7 @@ class QuiescenceSearchForScrambleModel():
                 dst_sq_obj = SquareModel(cshogi.move_to(mate_move))           # ［移動先マス］
                 cap_pt = self._gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
 
-                best_plot_model = PlotModel(
+                best_plot_model = BackwardsPlotModel(
                         is_absolute_opponent_at_end_position    = is_absolute_opponent,
                         declaration                             = constants.declaration.NONE,
                         is_mate_in_1_move                       = True,
@@ -124,7 +124,7 @@ class QuiescenceSearchForScrambleModel():
         if self._gymnasium.table.is_nyugyoku():
             """手番の入玉宣言局面時。
             """
-            best_plot_model = PlotModel(
+            best_plot_model = BackwardsPlotModel(
                     is_absolute_opponent_at_end_position    = is_absolute_opponent,
                     declaration                             = constants.declaration.NYUGYOKU_WIN,
                     is_mate_in_1_move                       = False,
@@ -135,7 +135,7 @@ class QuiescenceSearchForScrambleModel():
 
         # これ以上深く読まない場合。
         if depth < 1:
-            best_plot_model = PlotModel(
+            best_plot_model = BackwardsPlotModel(
                     is_absolute_opponent_at_end_position    = is_absolute_opponent,
                     declaration                             = constants.declaration.NONE,
                     is_mate_in_1_move                       = False,
@@ -174,7 +174,7 @@ class QuiescenceSearchForScrambleModel():
             # MARK: 一手指した後
             ####################
 
-            self._move_usi_list_for_debug = [cshogi.move_to_usi(my_move)]   # デバッグ用に手を記憶
+            self._move_list_for_debug.append_move(my_move)      # デバッグ用に手を記憶
             self._number_of_visited_nodes   += 1
             depth                           -= 1                            # 深さを１下げる。
             is_absolute_opponent            = not is_absolute_opponent      # 手番が逆になる。
@@ -198,7 +198,7 @@ class QuiescenceSearchForScrambleModel():
             # MARK: 一手戻した後
             ####################
 
-            self._move_usi_list_for_debug.pop()                     # デバッグ用に手を記憶
+            self._move_list_for_debug.pop_move()                         # デバッグ用に手を記憶
             depth                   += 1                            # 深さを１上げる。
             is_absolute_opponent    = not is_absolute_opponent      # 手番が逆になる。
 
@@ -224,7 +224,7 @@ class QuiescenceSearchForScrambleModel():
 
         # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
         if len(all_plots_at_first) < 1:
-            future_plot_model = PlotModel(
+            future_plot_model = BackwardsPlotModel(
                     is_absolute_opponent_at_end_position    = is_absolute_opponent,
                     declaration                             = constants.declaration.NONE,
                     is_mate_in_1_move                       = False,
@@ -245,7 +245,7 @@ class QuiescenceSearchForScrambleModel():
         """
         Parameters
         ----------
-        # best_plot_model_in_older_sibling : PlotModel
+        # best_plot_model_in_older_sibling : BackwardsPlotModel
         #     兄たちの中で最善の読み筋、またはナン。ベータカットに使う。
         depth : int
             あと何手深く読むか。
@@ -254,7 +254,7 @@ class QuiescenceSearchForScrambleModel():
 
         Returns
         -------
-        best_prot_model : PlotModel
+        best_prot_model : BackwardsPlotModel
             最善の読み筋。
             これは駒得評価値も算出できる。
         """
@@ -275,7 +275,7 @@ class QuiescenceSearchForScrambleModel():
         if self._gymnasium.table.is_game_over():
             """手番の投了局面時。
             """
-            best_plot_model = PlotModel(
+            best_plot_model = BackwardsPlotModel(
                     is_absolute_opponent_at_end_position    = is_absolute_opponent,
                     declaration                             = constants.declaration.RESIGN,
                     is_mate_in_1_move                       = False,
@@ -293,7 +293,7 @@ class QuiescenceSearchForScrambleModel():
                 dst_sq_obj = SquareModel(cshogi.move_to(mate_move))           # ［移動先マス］
                 cap_pt = self._gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
 
-                best_plot_model = PlotModel(
+                best_plot_model = BackwardsPlotModel(
                         is_absolute_opponent_at_end_position    = is_absolute_opponent,
                         declaration                             = constants.declaration.NONE,
                         is_mate_in_1_move                       = True,
@@ -312,7 +312,7 @@ class QuiescenceSearchForScrambleModel():
         if self._gymnasium.table.is_nyugyoku():
             """手番の入玉宣言局面時。
             """
-            best_plot_model = PlotModel(
+            best_plot_model = BackwardsPlotModel(
                     is_absolute_opponent_at_end_position    = is_absolute_opponent,
                     declaration                             = constants.declaration.NYUGYOKU_WIN,
                     is_mate_in_1_move                       = False,
@@ -324,7 +324,7 @@ class QuiescenceSearchForScrambleModel():
         # これ以上深く読まない場合。
         if depth < 1:
             # 末端局面。
-            return PlotModel(
+            return BackwardsPlotModel(
                     is_absolute_opponent_at_end_position    = is_absolute_opponent,
                     declaration                             = constants.declaration.NONE,   # ［宣言］ではない。
                     is_mate_in_1_move                       = False,                        # ［一手詰め］ではない。
@@ -392,7 +392,7 @@ class QuiescenceSearchForScrambleModel():
             # MARK: 一手指した後
             ####################
 
-            self._move_usi_list_for_debug.append(cshogi.move_to_usi(my_move))   # デバッグ用に手を記憶
+            self._move_list_for_debug.append_move(my_move)           # デバッグ用に手を記憶
             depth                   = depth - 1                 # 深さを１下げる。
             is_absolute_opponent    = not is_absolute_opponent  # 手番が逆になる。
 
@@ -416,7 +416,7 @@ class QuiescenceSearchForScrambleModel():
             # MARK: 一手戻した後
             ####################
 
-            self._move_usi_list_for_debug.pop()                 # デバッグ用に手を記憶
+            self._move_list_for_debug.pop_move()                     # デバッグ用に手を記憶
             depth                   = depth + 1                 # 深さを１上げる。
             is_absolute_opponent    = not is_absolute_opponent  # 手番が逆になる。
 
@@ -501,17 +501,17 @@ class QuiescenceSearchForScrambleModel():
                         case_6t += 1
                         case_6t_hint_list.append(f"{old_sibling_value=} < {this_branch_value=}")
 
-                        #self._gymnasium.thinking_logger_module.append(f"[search] 6t {self._move_usi_list_for_debug=}")
-                        if self._move_usi_list_for_debug == ['3a4b']:   # デバッグ絞込み
-                            self._gymnasium.thinking_logger_module.append(f"[search] 6t {depth=}/{self._max_depth=} {AbsoluteOpponent.japanese(is_absolute_opponent)} {','.join(self._move_usi_list_for_debug)},{cshogi.move_to_usi(my_move)}(私{this_branch_value}) {old_sibling_value=} < {future_plot_model.stringify()=}")
+                        #self._gymnasium.thinking_logger_module.append(f"[search] 6t {self._move_list_for_debug=}")
+                        if self._move_list_for_debug.equals_move_usi_list(['3a4b']):   # FIXME デバッグ絞込み
+                            self._gymnasium.thinking_logger_module.append(f"[search] 6t {depth=}/{self._max_depth=} {AbsoluteOpponent.japanese(is_absolute_opponent)} {self.stringify()},{cshogi.move_to_usi(my_move)}(私{this_branch_value}) {old_sibling_value=} < {future_plot_model.stringify()=}")
 
                     else:
                         case_6f += 1
                         case_6f_hint_list.append(f"{old_sibling_value=} < {this_branch_value=}")
 
-                        #self._gymnasium.thinking_logger_module.append(f"[search] 6f {self._move_usi_list_for_debug=}")
-                        if self._move_usi_list_for_debug == ['3a4b']:   # デバッグ絞込み
-                            self._gymnasium.thinking_logger_module.append(f"[search] 6f {depth=}/{self._max_depth=} {AbsoluteOpponent.japanese(is_absolute_opponent)} {','.join(self._move_usi_list_for_debug)},{cshogi.move_to_usi(my_move)}(私{this_branch_value}) {old_sibling_value=} < {future_plot_model.stringify()=}")
+                        #self._gymnasium.thinking_logger_module.append(f"[search] 6f {self._move_list_for_debug=}")
+                        if self._move_list_for_debug.equals_move_usi_list(['3a4b']):   # FIXME デバッグ絞込み
+                            self._gymnasium.thinking_logger_module.append(f"[search] 6f {depth=}/{self._max_depth=} {AbsoluteOpponent.japanese(is_absolute_opponent)} {self.stringify()},{cshogi.move_to_usi(my_move)}(私{this_branch_value}) {old_sibling_value=} < {future_plot_model.stringify()=}")
 
                 else:   # 対戦相手。点数が小さくなる手を選ぶ。
                     this_branch_value = future_plot_model.last_piece_exchange_value_on_earth + piece_exchange_value_on_earth
@@ -526,16 +526,16 @@ class QuiescenceSearchForScrambleModel():
                     if its_update_best:
                         case_7t += 1
 
-                        #self._gymnasium.thinking_logger_module.append(f"[search] 7t {self._move_usi_list_for_debug=}")
-                        if self._move_usi_list_for_debug == ['3a4b']:   # デバッグ絞込み
-                            self._gymnasium.thinking_logger_module.append(f"[search] 7t {depth=}/{self._max_depth=} {AbsoluteOpponent.japanese(is_absolute_opponent)} {','.join(self._move_usi_list_for_debug)},{cshogi.move_to_usi(my_move)}(私{this_branch_value}) {future_plot_model.stringify()} < {old_sibling_value=}")
+                        #self._gymnasium.thinking_logger_module.append(f"[search] 7t {self._move_list_for_debug=}")
+                        if self._move_list_for_debug.equals_move_usi_list(['3a4b']):   # FIXME デバッグ絞込み
+                            self._gymnasium.thinking_logger_module.append(f"[search] 7t {depth=}/{self._max_depth=} {AbsoluteOpponent.japanese(is_absolute_opponent)} {self.stringify()},{cshogi.move_to_usi(my_move)}(私{this_branch_value}) {future_plot_model.stringify()} < {old_sibling_value=}")
 
                     else:
                         case_7f += 1
 
-                        #self._gymnasium.thinking_logger_module.append(f"[search] 7f {self._move_usi_list_for_debug=}")
-                        if self._move_usi_list_for_debug == ['3a4b']:   # デバッグ絞込み
-                            self._gymnasium.thinking_logger_module.append(f"[search] 7f {depth=}/{self._max_depth=} {AbsoluteOpponent.japanese(is_absolute_opponent)} {','.join(self._move_usi_list_for_debug)},{cshogi.move_to_usi(my_move)}(私{this_branch_value}) {future_plot_model.stringify()} < {old_sibling_value=}")
+                        #self._gymnasium.thinking_logger_module.append(f"[search] 7f {self._move_list_for_debug=}")
+                        if self._move_list_for_debug.equals_move_usi_list(['3a4b']):   # FIXME デバッグ絞込み
+                            self._gymnasium.thinking_logger_module.append(f"[search] 7f {depth=}/{self._max_depth=} {AbsoluteOpponent.japanese(is_absolute_opponent)} {self.stringify()},{cshogi.move_to_usi(my_move)}(私{this_branch_value}) {future_plot_model.stringify()} < {old_sibling_value=}")
                         
             # 最善手の更新
             if its_update_best:
@@ -553,7 +553,7 @@ class QuiescenceSearchForScrambleModel():
 
         # 指したい手がなかったなら、静止探索の末端局面を返す。
         if best_plot_model_in_children is None:
-            return PlotModel(
+            return BackwardsPlotModel(
                     is_absolute_opponent_at_end_position    = is_absolute_opponent,
                     declaration                             = constants.declaration.NONE,
                     is_mate_in_1_move                       = False,
