@@ -1,7 +1,7 @@
 import cshogi
 import time
 
-from ..models_o1x import constants, PieceValuesModel, SquareModel
+from ..models_o1x import AbsoluteOpponent, constants, PieceValuesModel, SquareModel
 from ..models_o2x import cutoff_reason, PlotModel
 
 
@@ -498,17 +498,17 @@ class QuiescenceSearchForScrambleModel():
                         case_6t += 1
                         case_6t_hint_list.append(f"{old_sibling_value=} < {future_plot_model.last_piece_exchange_value=}")
 
-                        self._gymnasium.thinking_logger_module.append(f"[search] 6t {self._move_usi_list_for_debug=}")
+                        #self._gymnasium.thinking_logger_module.append(f"[search] 6t {self._move_usi_list_for_debug=}")
                         if self._move_usi_list_for_debug == ['3a4b']:   # デバッグ絞込み
-                            self._gymnasium.thinking_logger_module.append(f"[search] 6t {depth=}/{self._max_depth=} {is_absolute_opponent=} {cshogi.move_to_usi(my_move)=} {piece_exchange_value=} {old_sibling_value=} < {future_plot_model.strigify()=}")
+                            self._gymnasium.thinking_logger_module.append(f"[search] 6t {depth=}/{self._max_depth=} {AbsoluteOpponent.japanese(is_absolute_opponent)} {','.join(self._move_usi_list_for_debug)},{cshogi.move_to_usi(my_move)}(私{piece_exchange_value}) {old_sibling_value=} < {future_plot_model.strigify()=}")
 
                     else:
                         case_6f += 1
                         case_6f_hint_list.append(f"{old_sibling_value=} < {future_plot_model.last_piece_exchange_value=}")
 
-                        self._gymnasium.thinking_logger_module.append(f"[search] 6f {self._move_usi_list_for_debug=}")
+                        #self._gymnasium.thinking_logger_module.append(f"[search] 6f {self._move_usi_list_for_debug=}")
                         if self._move_usi_list_for_debug == ['3a4b']:   # デバッグ絞込み
-                            self._gymnasium.thinking_logger_module.append(f"[search] 6f {depth=}/{self._max_depth=} {is_absolute_opponent=} {cshogi.move_to_usi(my_move)=} {piece_exchange_value=} {old_sibling_value=} < {future_plot_model.strigify()=}")
+                            self._gymnasium.thinking_logger_module.append(f"[search] 6f {depth=}/{self._max_depth=} {AbsoluteOpponent.japanese(is_absolute_opponent)} {','.join(self._move_usi_list_for_debug)},{cshogi.move_to_usi(my_move)}(私{piece_exchange_value}) {old_sibling_value=} < {future_plot_model.strigify()=}")
 
                 else:   # 対戦相手。点数が小さくなる手を選ぶ。
                     # # TODO ただし、既存の最悪手より悪い手を見つけてしまったら、ベータカットします。
@@ -521,16 +521,16 @@ class QuiescenceSearchForScrambleModel():
                     if its_update_best:
                         case_7t += 1
 
-                        self._gymnasium.thinking_logger_module.append(f"[search] 7t {self._move_usi_list_for_debug=}")
+                        #self._gymnasium.thinking_logger_module.append(f"[search] 7t {self._move_usi_list_for_debug=}")
                         if self._move_usi_list_for_debug == ['3a4b']:   # デバッグ絞込み
-                            self._gymnasium.thinking_logger_module.append(f"[search] 7t {depth=}/{self._max_depth=} {is_absolute_opponent=} {cshogi.move_to_usi(my_move)=} {piece_exchange_value=} {future_plot_model.strigify()} < {old_sibling_value=}")
+                            self._gymnasium.thinking_logger_module.append(f"[search] 7t {depth=}/{self._max_depth=} {AbsoluteOpponent.japanese(is_absolute_opponent)} {','.join(self._move_usi_list_for_debug)},{cshogi.move_to_usi(my_move)}(私{piece_exchange_value}) {future_plot_model.strigify()} < {old_sibling_value=}")
 
                     else:
                         case_7f += 1
 
-                        self._gymnasium.thinking_logger_module.append(f"[search] 7f {self._move_usi_list_for_debug=}")
+                        #self._gymnasium.thinking_logger_module.append(f"[search] 7f {self._move_usi_list_for_debug=}")
                         if self._move_usi_list_for_debug == ['3a4b']:   # デバッグ絞込み
-                            self._gymnasium.thinking_logger_module.append(f"[search] 7f {depth=}/{self._max_depth=} {is_absolute_opponent=} {cshogi.move_to_usi(my_move)=} {piece_exchange_value=} {future_plot_model.stringify()} < {old_sibling_value=}")
+                            self._gymnasium.thinking_logger_module.append(f"[search] 7f {depth=}/{self._max_depth=} {AbsoluteOpponent.japanese(is_absolute_opponent)} {','.join(self._move_usi_list_for_debug)},{cshogi.move_to_usi(my_move)}(私{piece_exchange_value}) {future_plot_model.stringify()} < {old_sibling_value=}")
                         
             # 最善手の更新
             if its_update_best:

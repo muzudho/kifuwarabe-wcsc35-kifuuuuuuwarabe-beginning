@@ -1,3 +1,4 @@
+from .absolute_opponent import AbsoluteOpponent
 from .constants_model import constants, DeclarationModel
 from .masu_model import MasuModel
 from .move_on_scramble_model import MoveOnScrambleModel
