@@ -229,6 +229,8 @@ class PlotModel():
 
 
     def stringify(self):
+        """読み筋を１行で文字列化。
+        """
 
 
         def _cap(cap):
