@@ -7,7 +7,8 @@ from .negative_rule_model import NegativeRuleModel
 
 class DoNotUpToRank6Model(NegativeRuleModel):
     """行進［６段目に上がるな］
-    ［玉が２八に行くまで歩を突かない］意志
+    ［玉が２八に行くまで歩を突かない］意志。
+    ただし、７六に歩を突くのはＯｋ。
     """
 
 
@@ -46,6 +47,7 @@ class DoNotUpToRank6Model(NegativeRuleModel):
         """
         np = NineRankSidePerspectiveModel(table)
 
+        src_sq_obj = SquareModel(cshogi.move_from(move))
         dst_sq_obj = SquareModel(cshogi.move_to(move))
 
         # # 自キリンが２八にいる
@@ -53,9 +55,14 @@ class DoNotUpToRank6Model(NegativeRuleModel):
         #     # そうでなければ対象外
         #     return constants.mind.NOT_IN_THIS_CASE
 
-        # 移動先は６段目だ
+        # 移動先は６段目ではない。
         if dst_sq_obj.rank != np.dan(6):
             # そうでなければ意志を残している
+            return constants.mind.WILL
+
+        # 動いた先は７六で、動いた駒は歩だ。
+        if dst_sq_obj.sq == np.masu(76) and cshogi.piece_to_piece_type(table.piece(src_sq_obj.sq)) == cshogi.PAWN:
+            # ７六に歩を突くのはＯｋ。
             return constants.mind.WILL
 
         # 意志なし
