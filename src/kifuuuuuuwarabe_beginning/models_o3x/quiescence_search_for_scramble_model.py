@@ -363,7 +363,10 @@ class QuiescenceSearchForScrambleModel():
         case_6f_hint_list = []
         case_7t = 0
         case_7f = 0
-        case_8a = 0
+        case_8aet = 0
+        case_8aef = 0
+        case_8amt = 0
+        case_8amf = 0
         case_8b = 0
         case_8c = 0
         case_8d = 0
@@ -496,9 +499,23 @@ class QuiescenceSearchForScrambleModel():
 
                 # 兄手がまだ無いなら。
                 if best_plot_model_in_children is None:
-                    # ０点以上の手なら最善手（［Not Bad］）として回答。この最善手が最終的に即採用されるというわけではない。
-                    case_8a += 1
-                    its_update_best = (0 <= this_branch_value)
+
+                    # とりあえず、自分と対戦相手で処理を分ける。
+                    if not is_absolute_opponent:    # 自分。点数が大きくなる手を選ぶ。
+                        # ０点以上の手なら最善手（［Not Bad］）として回答。この最善手が最終的に即採用されるというわけではない。
+                        its_update_best = (0 <= this_branch_value)
+                        if its_update_best:
+                            case_8aet += 1
+                        else:
+                            case_8aef += 1
+
+                    else:
+                        # ０点以下の手なら最善手（［Not Bad］）として回答。この最善手が最終的に即採用されるというわけではない。
+                        its_update_best = (this_branch_value <= 0)
+                        if its_update_best:
+                            case_8amt += 1
+                        else:
+                            case_8amf += 1
                     #case_8_hint_list.append(f"{old_sibling_value=} < {this_branch_value=}")
                 
                 # 兄枝は有るが、［手］が無い場合。（［宣言］の直前とか、最大深さとか）
@@ -606,7 +623,7 @@ class QuiescenceSearchForScrambleModel():
                     declaration                             = constants.declaration.NO_CANDIDATES,  # 有力な候補手無し。
                     is_mate_in_1_move                       = False,
                     cutoff_reason                           = cutoff_reason.NO_MOVES,
-                    hint                                    = f"指したい{self._max_depth - depth + 1}階の手無し,敵={is_absolute_opponent},move数={len(legal_move_list)},{case_1=},{case_2=},{case_3=},{case_4=},{case_5=},{case_6t=},({'_'.join(case_6t_hint_list)}),{case_6f=},({'_'.join(case_6f_hint_list)}),{case_7t=},{case_7f=},{case_8a=},{case_8b=},{case_8c=},{case_8d=},{case_8e=}")
+                    hint                                    = f"指したい{self._max_depth - depth + 1}階の手無し,敵={is_absolute_opponent},move数={len(legal_move_list)},{case_1=},{case_2=},{case_3=},{case_4=},{case_5=},{case_6t=},({'_'.join(case_6t_hint_list)}),{case_6f=},({'_'.join(case_6f_hint_list)}),{case_7t=},{case_7f=},{case_8aet=},{case_8aef=},{case_8amt=},{case_8amf=},{case_8b=},{case_8c=},{case_8d=},{case_8e=}")
 
         # 今回の手を付け加える。
         best_plot_model_in_children.append_move(
