@@ -58,7 +58,7 @@ class PieceValuesModel():
 
 
     @staticmethod
-    def get_piece_exchange_value(pt, is_absolute_opponent):
+    def get_piece_exchange_value_on_earth(pt, is_absolute_opponent):
         piece_exchange_value = 2 * PieceValuesModel.by_piece_type(pt=pt)      # 交換値に変換。正の数とする。
         if is_absolute_opponent:
             piece_exchange_value *= -1
