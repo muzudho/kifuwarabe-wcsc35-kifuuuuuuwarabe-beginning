@@ -146,13 +146,13 @@ class BackwardsPlotModel():
         """
         """
         # if self.is_declaration():
-        #     if self._declaration == DeclarationModel.RESIGN:
+        #     if self._declaration == constants.declaration.RESIGN:
         #         value = constants.value.GAME_OVER
         #         if self._is_absolute_opponent_at_end_position:
         #             return -value
         #         return value
 
-        #     if self._declaration == DeclarationModel.NYUGYOKU_WIN:
+        #     if self._declaration == constants.declaration.NYUGYOKU_WIN:
         #         value = constants.value.NYUGYOKU_WIN
         #         if self._is_absolute_opponent_at_end_position:
         #             return -value
@@ -176,7 +176,7 @@ class BackwardsPlotModel():
 
 
     def is_declaration(self):
-        return self._declaration != DeclarationModel.NONE
+        return self._declaration != constants.declaration.NONE
 
 
     def move_list_length(self):
@@ -256,7 +256,7 @@ class BackwardsPlotModel():
             piece_exchange_value = self._piece_exchange_value_list[index]
             tokens.append(f"{move_as_usi}{_cap(cap)}{_pev(piece_exchange_value)}")
 
-        if self._declaration != DeclarationModel.NONE:
+        if self._declaration != constants.declaration.NONE:
             tokens.append(DeclarationModel.japanese(self.declaration))
 
         # カットオフ理由

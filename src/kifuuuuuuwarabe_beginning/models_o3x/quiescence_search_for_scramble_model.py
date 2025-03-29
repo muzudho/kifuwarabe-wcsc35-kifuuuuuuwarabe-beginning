@@ -1,7 +1,7 @@
 import cshogi
 import time
 
-from ..models_o1x import AbsoluteOpponent, constants, PieceValuesModel, SquareModel
+from ..models_o1x import AbsoluteOpponent, constants, DeclarationModel, PieceValuesModel, SquareModel
 from ..models_o2x import BackwardsPlotModel, cutoff_reason, FrontwardsPlotModel
 
 
@@ -226,7 +226,7 @@ class QuiescenceSearchForScrambleModel():
         if len(all_plots_at_first) < 1:
             future_plot_model = BackwardsPlotModel(
                     is_absolute_opponent_at_end_position    = is_absolute_opponent,
-                    declaration                             = constants.declaration.NONE,
+                    declaration                             = constants.declaration.NO_CANDIDATES, # 有力な候補手無し。
                     is_mate_in_1_move                       = False,
                     cutoff_reason                           = cutoff_reason.NO_MOVES,
                     hint                                    = f"指したい１階の手無し_{depth=}/{self._max_depth=}_{is_absolute_opponent}_{len(all_plots_at_first)=}/{len(remaining_moves)=}")
@@ -326,7 +326,7 @@ class QuiescenceSearchForScrambleModel():
             # 末端局面。
             return BackwardsPlotModel(
                     is_absolute_opponent_at_end_position    = is_absolute_opponent,
-                    declaration                             = constants.declaration.NONE,   # ［宣言］ではない。
+                    declaration                             = constants.declaration.MAX_DEPTH_BY_THINK, # 読みの最大深さ。
                     is_mate_in_1_move                       = False,                        # ［一手詰め］ではない。
                     cutoff_reason                           = cutoff_reason.MAX_DEPTH,      # ［最大探索深さ］が打切り理由。
                     hint                                    = f"{self._max_depth - depth}階でこれ以上深く読まない場合_{depth=}/{self._max_depth=}_{is_absolute_opponent=}")
@@ -363,7 +363,11 @@ class QuiescenceSearchForScrambleModel():
         case_6f_hint_list = []
         case_7t = 0
         case_7f = 0
-        case_8 = 0
+        case_8a = 0
+        case_8b = 0
+        case_8c = 0
+        case_8d = 0
+        case_8e = 0
 
         # 合法手を全部調べる。
         legal_move_list = list(self._gymnasium.table.legal_moves)
@@ -484,32 +488,52 @@ class QuiescenceSearchForScrambleModel():
                 else:
                     # FIXME 指したい手なし
                     # ValueError: 想定外の読み筋 self._is_absolute_opponent_at_end_position=False self._declaration=0 self._is_mate_in_1_move=False self._move_list=[] self._cap_list=[] self._piece_exchange_value_list=[] self._cutoff_reason=4
-                    raise ValueError(f"想定外の読み筋 {future_plot_model.stringify_dump()}")
+                    raise ValueError(f"想定外の読み筋A {future_plot_model.stringify_dump()}")
             
             # 指し手がある。
             else:
+                this_branch_value = future_plot_model.last_piece_exchange_value_on_earth + piece_exchange_value_on_earth
 
-                # 最善手がまだ無いなら。
-                if best_plot_model_in_children is not None:
+                # 兄手がまだ無いなら。
+                if best_plot_model_in_children is None:
                     # ０点以上の手なら最善手（［Not Bad］）として回答。この最善手が最終的に即採用されるというわけではない。
-                    case_8 += 1
+                    case_8a += 1
                     its_update_best = (0 <= this_branch_value)
                     #case_8_hint_list.append(f"{old_sibling_value=} < {this_branch_value=}")
-                    
+                
+                # 兄枝は有るが、［手］が無い場合。（［宣言］の直前とか、最大深さとか）
+                elif best_plot_model_in_children.is_empty_moves():
+                    if best_plot_model_in_children.declaration == constants.declaration.RESIGN: # 相手が投了なら、最善手だ。
+                        case_8b += 1
+                        its_update_best = True
+
+                    elif best_plot_model_in_children.declaration == constants.declaration.NYUGYOKU_WIN: # 相手が入玉宣言勝ちなら、最悪手だ。
+                        case_8c += 1
+
+                    elif best_plot_model_in_children.declaration == constants.declaration.MAX_DEPTH_BY_THINK: # 読みの最大深さ。
+                        case_8d += 1
+
+                    elif best_plot_model_in_children.declaration == constants.declaration.NO_CANDIDATES: # 有力な候補手無し。
+                        case_8e += 1
+
+                    elif best_plot_model_in_children.declaration == constants.declaration.NONE:  # ［宣言］ではない。
+                        raise ValueError(f"宣言ではなかったB。 best={best_plot_model_in_children.stringify_dump()} future={future_plot_model.stringify_dump()}")
+
+                    else:
+                        raise ValueError(f"想定外の読み筋B best={best_plot_model_in_children.stringify_dump()} future={future_plot_model.stringify_dump()}")
+
+                # 兄枝が有り、［手］も有るなら比較対象。
                 else:
+                    # 兄枝のベスト評価値
+                    old_sibling_value = best_plot_model_in_children.last_piece_exchange_value_on_earth     # とりあえず最善の読み筋の点数。
 
 
                     def _log_1(case_1):
                         return f"[search] {case_1} {depth=}/{self._max_depth=} {AbsoluteOpponent.japanese(is_absolute_opponent)} {self.stringify()},{cshogi.move_to_usi(my_move)}(私{this_branch_value}) {old_sibling_value=} < {future_plot_model.stringify()=}"
 
+
                     # とりあえず、自分と対戦相手で処理を分ける。
                     if not is_absolute_opponent:    # 自分。点数が大きくなる手を選ぶ。
-                        # 兄枝のベスト評価値
-                        old_sibling_value = constants.value.ZERO    # NOTE （スクランブル・サーチでは）ベストがナンということもある。つまり、指さない方がマシな局面がある（のが投了との違い）。
-                        if best_plot_model_in_children is not None and not best_plot_model_in_children.is_empty_moves():
-                            old_sibling_value = best_plot_model_in_children.last_piece_exchange_value_on_earth     # とりあえず最善の読み筋の点数。
-
-                        this_branch_value = future_plot_model.last_piece_exchange_value_on_earth + piece_exchange_value_on_earth
 
                         # # TODO ただし、既存の最善手より良い手を見つけてしまったら、ベータカットします。
                         # if beta_cutoff_value < this_branch_value:
@@ -536,11 +560,6 @@ class QuiescenceSearchForScrambleModel():
                     else:   # 対戦相手。点数が小さくなる手を選ぶ。
                         # 兄枝のベスト評価値
                         #       TODO ０点以上の手があり、最善手がまだ無ければ、０点以上の手を選びたい。
-
-                        old_sibling_value = constants.value.ZERO    # NOTE （スクランブル・サーチでは）ベストがナンということもある。つまり、指さない方がマシな局面がある（のが投了との違い）。
-                        if best_plot_model_in_children is not None and not best_plot_model_in_children.is_empty_moves():
-                            old_sibling_value = best_plot_model_in_children.last_piece_exchange_value_on_earth     # とりあえず最善の読み筋の点数。
-
                         this_branch_value = future_plot_model.last_piece_exchange_value_on_earth + piece_exchange_value_on_earth
 
                         # # TODO ただし、既存の最悪手より悪い手を見つけてしまったら、ベータカットします。
@@ -584,10 +603,10 @@ class QuiescenceSearchForScrambleModel():
         if best_plot_model_in_children is None:
             return BackwardsPlotModel(
                     is_absolute_opponent_at_end_position    = is_absolute_opponent,
-                    declaration                             = constants.declaration.NONE,
+                    declaration                             = constants.declaration.NO_CANDIDATES,  # 有力な候補手無し。
                     is_mate_in_1_move                       = False,
                     cutoff_reason                           = cutoff_reason.NO_MOVES,
-                    hint                                    = f"指したい{self._max_depth - depth + 1}階の手無し,敵={is_absolute_opponent},move数={len(legal_move_list)},{case_1=},{case_2=},{case_3=},{case_4=},{case_5=},{case_6t=},({'_'.join(case_6t_hint_list)}),{case_6f=},({'_'.join(case_6f_hint_list)}),{case_7t=},{case_7f=},{case_8=}")
+                    hint                                    = f"指したい{self._max_depth - depth + 1}階の手無し,敵={is_absolute_opponent},move数={len(legal_move_list)},{case_1=},{case_2=},{case_3=},{case_4=},{case_5=},{case_6t=},({'_'.join(case_6t_hint_list)}),{case_6f=},({'_'.join(case_6f_hint_list)}),{case_7t=},{case_7f=},{case_8a=},{case_8b=},{case_8c=},{case_8d=},{case_8e=}")
 
         # 今回の手を付け加える。
         best_plot_model_in_children.append_move(

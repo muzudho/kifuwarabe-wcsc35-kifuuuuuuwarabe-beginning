@@ -127,6 +127,8 @@ class DeclarationModel():
     _japanese_dict = {
         1 : '投了',
         2 : '入玉勝利宣言',
+        3 : '読みの最大深さ',
+        4 : '有力な候補手無し',
     }
 
 
@@ -156,6 +158,22 @@ class DeclarationModel():
         """入玉宣言局面時。
         """
         return 2
+
+
+    @property
+    def MAX_DEPTH_BY_THINK(self):
+        """読みの最大深さ。
+
+        """
+        return 3
+
+
+    @property
+    def NO_CANDIDATES(self):
+        """有力な候補手無し。
+
+        """
+        return 4
 
 
 constants = ConstantsModel()
