@@ -491,9 +491,9 @@ class QuiescenceSearchForScrambleModel():
 
                 # 最善手がまだ無いなら。
                 if best_plot_model_in_children is not None:
-                    # 問答無用で良し悪しを最善手として回答。この最善手が最終的に即採用されるというわけではない。
+                    # ０点以上の手なら最善手（［Not Bad］）として回答。この最善手が最終的に即採用されるというわけではない。
                     case_8 += 1
-                    its_update_best = True
+                    its_update_best = (0 <= this_branch_value)
                     #case_8_hint_list.append(f"{old_sibling_value=} < {this_branch_value=}")
                     
                 else:
