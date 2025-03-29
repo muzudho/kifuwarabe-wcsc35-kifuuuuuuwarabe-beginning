@@ -433,7 +433,7 @@ class QuiescenceSearchForScrambleModel():
             its_update_best = False
 
             # NOTE `earth` - 自分。 `mars` - 対戦相手。
-            piece_exchange_value_on_earth = PieceValuesModel.get_piece_exchange_value(      # 交換値に変換。正の数とする。
+            piece_exchange_value_on_earth = PieceValuesModel.get_piece_exchange_value_on_earth(      # 交換値に変換。正の数とする。
                     pt                      = cap_pt,
                     is_absolute_opponent    = is_absolute_opponent)
 
