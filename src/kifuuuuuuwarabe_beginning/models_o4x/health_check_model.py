@@ -6,9 +6,10 @@ class HealthCheckModel():
     """
 
 
-    def __init__(self):
+    def __init__(self, config_doc):
         """初期化。
         """
+        self._config_doc = config_doc
         self._document = {}
 
 
@@ -70,6 +71,8 @@ class HealthCheckModel():
 
 
         lines = []
+
+        lines.append(f"* {self._config_doc['search']['capture_depth']} 手読み")
 
         for move, move_prop in ordered_document:
             # （１）リーガル・ムーブ
