@@ -60,7 +60,6 @@ class QuiescenceSearchForScrambleModel():
             print(f"info depth {self._search_model.max_depth - depth} seldepth 0 time 1 nodes {self.search_model.number_of_visited_nodes} score cp 0 string thinking")
             self.search_model.restart_time = cur_time                   # 前回の計測時間を更新
 
-
         # 指さなくても分かること（ライブラリー使用）
 
         if self.search_model.gymnasium.table.is_game_over():
@@ -252,7 +251,7 @@ class QuiescenceSearchForScrambleModel():
                     #     #will_beta_cutoff = True   # TODO ベータカット
                     #     pass
 
-                    # （初期値の０または）最善より良い手があれば、そっちを選びます。
+                    # （初期値の０または）最善より良い手なら、これを選びます。
                     its_update_best = (e1[0] < e1[1])
                     case_2 += 1
 

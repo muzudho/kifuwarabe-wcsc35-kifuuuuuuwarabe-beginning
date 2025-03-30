@@ -206,24 +206,49 @@ class BackwardsPlotModel():
 
         if capture_piece_type is None:
             raise ValueError(f"capture_piece_type をナンにしてはいけません。cshogi.NONE を使ってください。 {capture_piece_type=}")
+        
+        # ひとつ前の値
+        is_move = False
+        previous = 0
+        if len(self._piece_exchange_value_list) == 0:
+            if self.declaration == constants.declaration.RESIGN:
+                previous = constants.value.GAME_OVER
+            elif self.declaration == constants.declaration.NYUGYOKU_WIN:
+                previous = constants.value.NYUGYOKU_WIN
+            elif self.declaration == constants.declaration.MAX_DEPTH_BY_THINK:
+                previous = constants.value.ZERO
+            elif self.declaration == constants.declaration.NO_CANDIDATES:
+                previous = constants.value.ZERO
+            elif self.declaration == constants.declaration.NONE:    # 末端の手。
+                previous = constants.value.ZERO
+                is_move = True
+            else:
+                raise ValueError(f"想定外の［宣言］。{self.declaration=}")
+        else:
+            previous = self._piece_exchange_value_list[len(self._piece_exchange_value_list)-1]
+            is_move = True  # 末端より手前の手。
 
+        if is_move:
+            # 対戦相手なら正負を逆転。
+            if is_absolute_opponent:
+                previous *= -1
+
+        ##########
+        # １手追加
+        ##########
         self._move_list.append(move)
         self._cap_list.append(capture_piece_type)
         self._hint_list.append(hint)
 
         piece_exchange_value = 2 * PieceValuesModel.by_piece_type(pt=capture_piece_type)      # 交換値に変換。正の数とする。
 
-        # 一手詰め時
+        # 一手詰めなら、点は最大。
         if len(self._move_list) == 1 and self._is_mate_in_1_move:
             piece_exchange_value += constants.value.CHECKMATE
 
+        # 対戦相手なら正負を逆転。
         if is_absolute_opponent:
             piece_exchange_value *= -1
-        
-        # ひとつ前の値
-        previous = 0
-        if 0 < len(self._piece_exchange_value_list):
-            previous = self._piece_exchange_value_list[-1]
 
         # 累計していく。
         self._piece_exchange_value_list.append(previous + piece_exchange_value)
