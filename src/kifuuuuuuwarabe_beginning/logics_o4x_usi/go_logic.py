@@ -4,7 +4,7 @@ import sys
 
 from ..logics_o1x import MovesReductionFilterLogics
 from ..models_o1x import constants, ResultOfGoModel, SearchResultStateModel
-from ..models_o3x.quiescence_search_for_scramble_model import QuiescenceSearchForScrambleModel
+from ..models_o3x import QuiescenceSearchForAllLegalMovesAtFirstModel
 from ..views import TableView
 
 
@@ -210,7 +210,7 @@ def _quiescence_search(remaining_moves, gymnasium):
     max_depth                   = gymnasium.config_doc['search']['capture_depth']   # 2
 
     # 駒の取り合いのための静止探索
-    scramble_search = QuiescenceSearchForScrambleModel(
+    qs_at_first = QuiescenceSearchForAllLegalMovesAtFirstModel(
             max_depth   = max_depth,
             gymnasium   = gymnasium)
 
@@ -218,7 +218,7 @@ def _quiescence_search(remaining_moves, gymnasium):
         #print(f"D-132: _q uiescence_search {max_depth=}")
         return remaining_moves, 0
 
-    all_plots_at_first = scramble_search.search_at_first(
+    all_plots_at_first = qs_at_first.search_at_first(
             #best_plot_model_in_older_sibling    = None,
             depth                               = max_depth,
             is_absolute_opponent                = False,
@@ -226,7 +226,7 @@ def _quiescence_search(remaining_moves, gymnasium):
             remaining_moves                     = remaining_moves)
 
     #print(f"{alice_s_best_piece_value=} {len(all_plots_at_first)=}")
-    number_of_visited_nodes = scramble_search.number_of_visited_nodes
+    number_of_visited_nodes = qs_at_first.search_model.number_of_visited_nodes
 
     def _eliminate_not_capture_not_positive(all_plots_at_first, gymnasium):
         """次の１つの手は、候補に挙げる必要がないので除去します。

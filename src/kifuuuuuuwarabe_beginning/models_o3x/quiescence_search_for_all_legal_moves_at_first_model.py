@@ -1,0 +1,237 @@
+import cshogi
+import time
+
+from ..models_o1x import AbsoluteOpponent, constants, PieceValuesModel, PtolemaicTheoryModel, SquareModel
+from ..models_o2x import BackwardsPlotModel, cutoff_reason, FrontwardsPlotModel
+
+from .quiescence_search_for_scramble_model import QuiescenceSearchForScrambleModel
+from .search_model import SearchModel
+
+
+class QuiescenceSearchForAllLegalMovesAtFirstModel():
+    """１階の全てのリーガル・ムーブについて静止探索。
+    """
+
+
+    def __init__(self, max_depth, gymnasium):
+        """
+        Parameters
+        ----------
+        gymnasium : GymnasiumModel
+            体育館。        
+        """
+        self._search_model = SearchModel(
+                max_depth   = max_depth,
+                gymnasium   = gymnasium)
+    
+
+    @property
+    def search_model(self):
+        return self._search_model
+
+
+    # TODO 指し手の分析。駒を取る手と、そうでない手を分ける。
+    # TODO 駒を取る手も、価値の高い駒から取る手を考える。（相手が手抜く勝手読みをすると、大きな駒を取れてしまうことがあるから）。
+    # FIXME 将来的に相手の駒をポロリと取れるなら、手前の手は全部緩手になることがある。どう解消するか？
+    """
+    TODO 静止探索はせず、［スクランブル・サーチ］というのを考える。静止探索は王手が絡むと複雑だ。
+    リーガル・ムーブのうち、
+        手番の１手目なら：
+            ［取られそうになっている駒を逃げる手］∪［駒を取る手］∪［利きに飛び込む手］に絞り込む。（１度調べた手は２度目は調べない）
+            ［放置したとき］も調べる。
+        相手番の１手目なら：
+            ［動いた駒を取る手］に絞り込む。（１番安い駒から動かす）
+        手番の２手目なら：
+            ［動いた駒を取る手］に絞り込む。（１番安い駒から動かす）
+        最後の評価値が、１手目の評価値。
+    """
+    def search_at_first(
+            self,
+            #best_plot_model_in_older_sibling,
+            depth,
+            is_absolute_opponent,
+            remaining_moves):
+        """
+        Parameters
+        ----------
+        # best_plot_model_in_older_sibling : BackwardsPlotModel
+        #     兄たちの中で最善の読み筋、またはナン。ベータカットに使う。
+        depth : int
+            あと何手深く読むか。
+        is_absolute_opponent : bool
+            対戦相手か？
+        remaining_moves : list<int>
+            指し手のリスト。
+
+        Returns
+        -------
+        best_prot_model : BackwardsPlotModel
+            最善の読み筋。
+            これは駒得評価値も算出できる。
+        """
+
+        self._search_model.start_time = time.time()          # 探索開始時間
+        self._search_model.restart_time = self._search_model.start_time   # 前回の計測開始時間
+        all_plots_at_first = []
+
+        ########################
+        # MARK: 指す前にやること
+        ########################
+
+        # 指さなくても分かること（ライブラリー使用）
+
+        # NOTE このあたりは［０階］。max_depth - depth。
+        if self._search_model.gymnasium.table.is_game_over():
+            """手番の投了局面時。
+            """
+            best_plot_model = BackwardsPlotModel(
+                    is_absolute_opponent_at_end_position    = is_absolute_opponent,
+                    declaration                             = constants.declaration.RESIGN,
+                    is_mate_in_1_move                       = False,
+                    cutoff_reason                           = cutoff_reason.GAME_OVER,
+                    hint                                    = '手番の投了局面時１')
+            all_plots_at_first.append(best_plot_model)
+            return all_plots_at_first
+
+        # 一手詰めを詰める
+        if not self._search_model.gymnasium.table.is_check():
+            """手番玉に王手がかかっていない時で"""
+
+            if (mate_move := self._search_model.gymnasium.table.mate_move_in_1ply()):
+                """一手詰めの指し手があれば、それを取得"""
+                dst_sq_obj = SquareModel(cshogi.move_to(mate_move))           # ［移動先マス］
+                cap_pt = self._search_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
+
+                best_plot_model = BackwardsPlotModel(
+                        is_absolute_opponent_at_end_position    = is_absolute_opponent,
+                        declaration                             = constants.declaration.NONE,
+                        is_mate_in_1_move                       = True,
+                        cutoff_reason                           = cutoff_reason.MATE_MOVE_IN_1_PLY,
+                        hint                                    = '一手詰め１')
+            
+                # 今回の手を付け加える。
+                best_plot_model.append_move(
+                        is_absolute_opponent    = is_absolute_opponent,
+                        move                    = mate_move,
+                        capture_piece_type      = cap_pt,
+                        hint                    = f"一手詰め１_{is_absolute_opponent=}")
+
+                all_plots_at_first.append(best_plot_model)
+                return all_plots_at_first
+
+        if self._search_model.gymnasium.table.is_nyugyoku():
+            """手番の入玉宣言局面時。
+            """
+            best_plot_model = BackwardsPlotModel(
+                    is_absolute_opponent_at_end_position    = is_absolute_opponent,
+                    declaration                             = constants.declaration.NYUGYOKU_WIN,
+                    is_mate_in_1_move                       = False,
+                    cutoff_reason                           = cutoff_reason.NYUGYOKU_WIN,
+                    hint                                    = '手番の入玉宣言局面時１')
+            all_plots_at_first.append(best_plot_model)
+            return all_plots_at_first
+
+        # これ以上深く読まない場合。
+        if depth < 1:
+            best_plot_model = BackwardsPlotModel(
+                    is_absolute_opponent_at_end_position    = is_absolute_opponent,
+                    declaration                             = constants.declaration.NONE,
+                    is_mate_in_1_move                       = False,
+                    cutoff_reason                           = cutoff_reason.MAX_DEPTH,
+                    hint                                    = 'これ以上深く読まない場合１')
+            all_plots_at_first.append(best_plot_model)
+            return all_plots_at_first
+
+        # まだ深く読む場合。
+
+        ######################
+        # MARK: 合法手スキャン
+        ######################
+
+        # 最善手は探さなくていい。全部返すから。
+
+        # 指し手を全部調べる。
+        for my_move in remaining_moves:
+
+            ##################
+            # MARK: 一手指す前
+            ##################
+
+            dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
+            cap_pt      = self._search_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
+
+            # １階呼出時は、どの手も無視しません。
+
+            ################
+            # MARK: 一手指す
+            ################
+
+            self._search_model.gymnasium.do_move_o1x(move = my_move)
+
+            ####################
+            # MARK: 一手指した後
+            ####################
+
+            self._search_model.move_list_for_debug.append_move(my_move)      # デバッグ用に手を記憶
+            self._search_model.number_of_visited_nodes  += 1
+            depth                                       -= 1                            # 深さを１下げる。
+            is_absolute_opponent                        = not is_absolute_opponent      # 手番が逆になる。
+
+            ####################
+            # MARK: 相手番の処理
+            ####################
+
+            # NOTE この辺りは［１階］。max_depth - depth。
+            quiescenec_search_for_scramble_model = QuiescenceSearchForScrambleModel(
+                    search_model    = self._search_model)
+            future_plot_model = quiescenec_search_for_scramble_model.search_alice(      # 再帰呼出
+                    depth                               = depth,
+                    is_absolute_opponent                = is_absolute_opponent)
+
+            ################
+            # MARK: 一手戻す
+            ################
+
+            self._search_model.gymnasium.undo_move_o1x()
+
+            ####################
+            # MARK: 一手戻した後
+            ####################
+
+            self._search_model.move_list_for_debug.pop_move()                         # デバッグ用に手を記憶
+            depth                   += 1                            # 深さを１上げる。
+            is_absolute_opponent    = not is_absolute_opponent      # 手番が逆になる。
+
+            ##################
+            # MARK: 手番の処理
+            ##################
+
+            # １階の手は、全ての手の読み筋を記憶します。最善手は選びません。
+            future_plot_model.append_move(
+                    is_absolute_opponent    = is_absolute_opponent,
+                    move                    = my_move,
+                    capture_piece_type      = cap_pt,
+                    hint                    = f"１階の手はなんでも記憶_{is_absolute_opponent=}")
+            all_plots_at_first.append(future_plot_model)
+
+            # NOTE この辺りは［０階］。
+
+            # ベータカットもしません。全部返すから。
+
+        ########################
+        # MARK: 合法手スキャン後
+        ########################
+
+        # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
+        if len(all_plots_at_first) < 1:
+            future_plot_model = BackwardsPlotModel(
+                    is_absolute_opponent_at_end_position    = is_absolute_opponent,
+                    declaration                             = constants.declaration.NO_CANDIDATES, # 有力な候補手無し。
+                    is_mate_in_1_move                       = False,
+                    cutoff_reason                           = cutoff_reason.NO_MOVES,
+                    hint                                    = f"指したい１階の手無し_{depth=}/{self._search_model.max_depth=}_{is_absolute_opponent}_{len(all_plots_at_first)=}/{len(remaining_moves)=}")
+            all_plots_at_first.append(future_plot_model)
+
+        self._search_model.end_time = time.time()    # 計測終了時間
+
+        return all_plots_at_first
