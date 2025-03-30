@@ -267,7 +267,7 @@ class QuiescenceSearchForScrambleModel():
 
                 else:
                     # FIXME 指したい手なし
-                    # ValueError: 想定外の読み筋 self._is_absolute_opponent_at_end_position=False self._declaration=0 self._is_mate_in_1_move=False self._move_list=[] self._cap_list=[] self._piece_exchange_value_list=[] self._cutoff_reason=4
+                    # ValueError: 想定外の読み筋 self._is_absolute_opponent_at_end_position=False self._declaration=0 self._is_mate_in_1_move=False self._move_list=[] self._cap_list=[] self._piece_exchange_value_list_on_earth=[] self._cutoff_reason=4
                     raise ValueError(f"想定外の読み筋A {future_plot_model.stringify_dump()}")
             
             # 指し手がある。

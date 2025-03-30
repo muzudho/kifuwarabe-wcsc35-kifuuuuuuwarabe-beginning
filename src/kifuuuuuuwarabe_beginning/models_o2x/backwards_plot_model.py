@@ -91,7 +91,7 @@ class BackwardsPlotModel():
         self._is_mate_in_1_move = is_mate_in_1_move
         self._move_list = []
         self._cap_list = []
-        self._piece_exchange_value_list = []
+        self._piece_exchange_value_list_on_earth = []
         self._cutoff_reason = cutoff_reason
         self._hint_list = [hint]
 
@@ -158,11 +158,11 @@ class BackwardsPlotModel():
         #             return -value
         #         return value
 
-        if len(self._piece_exchange_value_list) < 1:
+        if len(self._piece_exchange_value_list_on_earth) < 1:
             #return constants.value.ZERO     # TODO ［指したい手がない］というのを何点と見るか？
             raise ValueError(f"取った駒の交換値のリストが０件です。 {self.stringify_debug_1()} {DeclarationModel.japanese(self._declaration)=} {self._is_absolute_opponent_at_end_position=} {self._is_mate_in_1_move=} {self._cutoff_reason=} {CutoffReason.japanese(self._cutoff_reason)=}")
 
-        return self._piece_exchange_value_list[-1]
+        return self._piece_exchange_value_list_on_earth[-1]
 
 
     @property
@@ -187,7 +187,7 @@ class BackwardsPlotModel():
         # ASSERT
         len_move_list = len(self._move_list)
         len_cap_list = len(self._cap_list)
-        len_pev_list = len(self._piece_exchange_value_list)
+        len_pev_list = len(self._piece_exchange_value_list_on_earth)
         if not (len_move_list == len_cap_list and len_cap_list == len_pev_list):
             raise ValueError(f"配列の長さの整合性が取れていません。 {len_move_list=} {len_cap_list=} {len_pev_list=}")
         
@@ -209,29 +209,29 @@ class BackwardsPlotModel():
         
         # ひとつ前の値
         is_move = False
-        previous = 0
-        if len(self._piece_exchange_value_list) == 0:
+        previous_on_earth = 0
+        if len(self._piece_exchange_value_list_on_earth) == 0:
             if self.declaration == constants.declaration.RESIGN:
-                previous = constants.value.GAME_OVER
+                previous_on_earth = constants.value.GAME_OVER
             elif self.declaration == constants.declaration.NYUGYOKU_WIN:
-                previous = constants.value.NYUGYOKU_WIN
+                previous_on_earth = constants.value.NYUGYOKU_WIN
             elif self.declaration == constants.declaration.MAX_DEPTH_BY_THINK:
-                previous = constants.value.ZERO
+                previous_on_earth = constants.value.ZERO
             elif self.declaration == constants.declaration.NO_CANDIDATES:
-                previous = constants.value.ZERO
+                previous_on_earth = constants.value.ZERO
             elif self.declaration == constants.declaration.NONE:    # 末端の手。
-                previous = constants.value.ZERO
+                previous_on_earth = constants.value.ZERO
                 is_move = True
             else:
                 raise ValueError(f"想定外の［宣言］。{self.declaration=}")
         else:
-            previous = self._piece_exchange_value_list[len(self._piece_exchange_value_list)-1]
+            previous_on_earth = self._piece_exchange_value_list_on_earth[-1]
             is_move = True  # 末端より手前の手。
 
         if is_move:
             # 対戦相手なら正負を逆転。
             if is_absolute_opponent:
-                previous *= -1
+                previous_on_earth *= -1
 
         ##########
         # １手追加
@@ -240,18 +240,18 @@ class BackwardsPlotModel():
         self._cap_list.append(capture_piece_type)
         self._hint_list.append(hint)
 
-        piece_exchange_value = 2 * PieceValuesModel.by_piece_type(pt=capture_piece_type)      # 交換値に変換。正の数とする。
+        piece_exchange_value_on_earth = 2 * PieceValuesModel.by_piece_type(pt=capture_piece_type)      # 交換値に変換。正の数とする。
 
         # 一手詰めなら、点は最大。
         if len(self._move_list) == 1 and self._is_mate_in_1_move:
-            piece_exchange_value += constants.value.CHECKMATE
+            piece_exchange_value_on_earth += constants.value.CHECKMATE
 
         # 対戦相手なら正負を逆転。
         if is_absolute_opponent:
-            piece_exchange_value *= -1
+            piece_exchange_value_on_earth *= -1
 
         # 累計していく。
-        self._piece_exchange_value_list.append(previous + piece_exchange_value)
+        self._piece_exchange_value_list_on_earth.append(previous_on_earth + piece_exchange_value_on_earth)
 
 
     def stringify(self):
@@ -261,12 +261,6 @@ class BackwardsPlotModel():
 
         def _cap(cap):
             return f"x{PieceTypeModel.kanji(cap)}"
-
-
-        def _pev(pev):
-            if pev == 0:
-                return ''
-            return f"({pev})"
         
 
         tokens = []
@@ -278,8 +272,8 @@ class BackwardsPlotModel():
 
             move_as_usi = cshogi.move_to_usi(move)
             cap = self._cap_list[index]
-            piece_exchange_value = self._piece_exchange_value_list[index]
-            tokens.append(f"{move_as_usi}{_cap(cap)}{_pev(piece_exchange_value)}")
+            piece_exchange_value_on_earth = self._piece_exchange_value_list_on_earth[index]
+            tokens.append(f"{move_as_usi}{_cap(cap)}({piece_exchange_value_on_earth})")
 
         if self._declaration != constants.declaration.NONE:
             tokens.append(DeclarationModel.japanese(self.declaration))
@@ -303,8 +297,8 @@ class BackwardsPlotModel():
 
 
     def stringify_dump(self):
-        return f"{self._is_absolute_opponent_at_end_position=} {self._declaration=} {self._is_mate_in_1_move=} {self._move_list=} {self._cap_list=} {self._piece_exchange_value_list=} {self._cutoff_reason=} {' '.join(self._hint_list)=}"
+        return f"{self._is_absolute_opponent_at_end_position=} {self._declaration=} {self._is_mate_in_1_move=} {self._move_list=} {self._cap_list=} {self._piece_exchange_value_list_on_earth=} {self._cutoff_reason=} {' '.join(self._hint_list)=}"
 
 
     def stringify_debug_1(self):
-        return f"{len(self._move_list)=} {len(self._cap_list)=} {len(self._piece_exchange_value_list)=}"
+        return f"{len(self._move_list)=} {len(self._cap_list)=} {len(self._piece_exchange_value_list_on_earth)=}"
