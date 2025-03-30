@@ -158,6 +158,7 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
             ##################
 
             dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
+            # 打の場合、取った駒無し。空マス。
             cap_pt      = self._search_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
 
             # １階呼出時は、どの手も無視しません。
