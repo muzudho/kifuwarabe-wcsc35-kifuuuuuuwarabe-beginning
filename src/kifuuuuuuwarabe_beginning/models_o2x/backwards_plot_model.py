@@ -111,6 +111,7 @@ class BackwardsPlotModel():
         self._is_absolute_opponent_at_end_position = is_absolute_opponent_at_end_position
         self._declaration = declaration
         self._is_mate_in_1_move = is_mate_in_1_move
+        self._absolute_opponent_list = []
         self._move_list = []
         self._cap_list = []
         self._piece_exchange_value_list_on_earth = []
@@ -137,6 +138,11 @@ class BackwardsPlotModel():
         """［末端局面で１手詰めか？］
         """
         return self._is_mate_in_1_move
+
+
+    @property
+    def absolute_opponent_list(self):
+        return self._absolute_opponent_list
 
 
     @property
@@ -207,10 +213,11 @@ class BackwardsPlotModel():
 
     def is_empty_moves(self):
         # ASSERT
+        len_absolute_opponent_list = len(self._absolute_opponent_list)
         len_move_list = len(self._move_list)
         len_cap_list = len(self._cap_list)
         len_pev_list = len(self._piece_exchange_value_list_on_earth)
-        if not (len_move_list == len_cap_list and len_cap_list == len_pev_list):
+        if not (len_absolute_opponent_list == len_move_list and len_move_list == len_cap_list and len_cap_list == len_pev_list):
             raise ValueError(f"配列の長さの整合性が取れていません。 {len_move_list=} {len_cap_list=} {len_pev_list=}")
         
         return len(self._move_list) < 1
@@ -241,6 +248,7 @@ class BackwardsPlotModel():
         ##########
         # １手追加
         ##########
+        self._absolute_opponent_list.append(is_absolute_opponent)
         self._move_list.append(move)
         self._cap_list.append(capture_piece_type)
         self._hint_list.append(hint)
@@ -264,21 +272,28 @@ class BackwardsPlotModel():
         """
 
 
+        def _planet(is_absolute_opponent):
+            if is_absolute_opponent:
+                return '火'     # Mars
+            return '地'         # Earth
+
+
         def _cap(cap):
             return f"x{PieceTypeModel.kanji(cap)}"
         
 
         tokens = []
-        for index in reversed(range(0, len(self._move_list))):
-            move = self._move_list[index]
+        for layer in reversed(range(0, len(self._move_list))):  # 逆順。
+            move = self._move_list[layer]
 
             if not isinstance(move, int):   # FIXME バグがあるよう
-                raise ValueError(f"move は int 型である必要があります。 {index=} {type(move)=} {move=} {self._move_list=}")
+                raise ValueError(f"move は int 型である必要があります。 {layer=} {type(move)=} {move=} {self._move_list=}")
 
-            move_as_usi = cshogi.move_to_usi(move)
-            cap = self._cap_list[index]
-            piece_exchange_value_on_earth = self._piece_exchange_value_list_on_earth[index]
-            tokens.append(f"{move_as_usi}{_cap(cap)}({piece_exchange_value_on_earth})")
+            move_as_usi                     = cshogi.move_to_usi(move)
+            is_absolute_opponent            = self._absolute_opponent_list[layer]
+            cap                             = self._cap_list[layer]
+            piece_exchange_value_on_earth   = self._piece_exchange_value_list_on_earth[layer]
+            tokens.append(f"{layer+1}.{_planet(is_absolute_opponent)}{move_as_usi}{_cap(cap)}({piece_exchange_value_on_earth})")
 
         if self._declaration != constants.declaration.NONE:
             tokens.append(DeclarationModel.japanese(self.declaration))
