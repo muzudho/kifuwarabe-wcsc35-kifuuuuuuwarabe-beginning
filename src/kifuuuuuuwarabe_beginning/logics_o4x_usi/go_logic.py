@@ -218,17 +218,17 @@ def _quiescence_search(remaining_moves, gymnasium):
         #print(f"D-132: _q uiescence_search {max_depth=}")
         return remaining_moves, 0
 
-    all_plots_at_first = qs_at_first.search_at_first(
+    all_backwards_plot_models_at_first = qs_at_first.search_at_first(
             #best_plot_model_in_older_sibling    = None,
             depth                               = max_depth,
             is_absolute_opponent                = False,
             #beta_cutoff_value                   = constants.value.BETA_CUTOFF_VALUE,    # すごい高い点数。
             remaining_moves                     = remaining_moves)
 
-    #print(f"{alice_s_best_piece_value=} {len(all_plots_at_first)=}")
+    #print(f"{alice_s_best_piece_value=} {len(all_backwards_plot_models_at_first)=}")
     number_of_visited_nodes = qs_at_first.search_model.number_of_visited_nodes
 
-    def _eliminate_not_capture_not_positive(all_plots_at_first, gymnasium):
+    def _eliminate_not_capture_not_positive(all_backwards_plot_models_at_first, gymnasium):
         """次の１つの手は、候補に挙げる必要がないので除去します。
         （１）駒を取らない手で非正の手（最高点のケースを除く）。このとき、［零点の手］があるかどうか調べます。
         次の手は、候補に挙げる必要がないので除去します。
@@ -246,61 +246,61 @@ def _quiescence_search(remaining_moves, gymnasium):
 
         # まず、最高点を調べます。
         best_exchange_value = constants.value.NOTHING_CAPTURE_MOVE
-        for plot_model in all_plots_at_first:
-            if best_exchange_value < plot_model.last_piece_exchange_value_on_earth:
-                best_exchange_value = plot_model.last_piece_exchange_value_on_earth
+        for backwards_plot_model in all_backwards_plot_models_at_first:
+            if best_exchange_value < backwards_plot_model.last_piece_exchange_value_on_earth:
+                best_exchange_value = backwards_plot_model.last_piece_exchange_value_on_earth
 
         # 最高点が 0 点のケース。 FIXME 千日手とかを何点に設定しているか？
         if best_exchange_value == 0:
             exists_zero_value_move = True
 
-        gymnasium.thinking_logger_module.append(f"all_plots_at_first len={len(all_plots_at_first)}")
+        gymnasium.thinking_logger_module.append(f"all_backwards_plot_models_at_first len={len(all_backwards_plot_models_at_first)}")
 
-        for plot_model in all_plots_at_first:
+        for backwards_plot_model in all_backwards_plot_models_at_first:
 
             gymnasium.health_check.append(
-                    move    = plot_model.last_move,
-                    name    = 'QS_plot',
-                    value   = plot_model)
+                    move    = backwards_plot_model.last_move,
+                    name    = 'QS_backwards_plot_model',
+                    value   = backwards_plot_model)
 
             # （１）駒を取らない手で非正の手（最高点のケースを除く）。
-            if not plot_model.is_capture_at_last and plot_model.last_piece_exchange_value_on_earth < 1 and plot_model.last_piece_exchange_value_on_earth != best_exchange_value:
-                if plot_model.last_piece_exchange_value_on_earth == 0:
+            if not backwards_plot_model.is_capture_at_last and backwards_plot_model.last_piece_exchange_value_on_earth < 1 and backwards_plot_model.last_piece_exchange_value_on_earth != best_exchange_value:
+                if backwards_plot_model.last_piece_exchange_value_on_earth == 0:
                     exists_zero_value_move = True
                 
                 gymnasium.health_check.append(
-                        move    = plot_model.last_move,
+                        move    = backwards_plot_model.last_move,
                         name    = 'eliminate171',
-                        value   = f"{plot_model.stringify_2():10} not_cap_not_posite")
+                        value   = f"{backwards_plot_model.stringify_2():10} not_cap_not_posite")
 
             # （２）最高点でない手。
-            elif plot_model.last_piece_exchange_value_on_earth < best_exchange_value:
+            elif backwards_plot_model.last_piece_exchange_value_on_earth < best_exchange_value:
                 gymnasium.health_check.append(
-                        move    = plot_model.last_move,
+                        move    = backwards_plot_model.last_move,
                         name    = 'eliminate171',
-                        value   = f"{plot_model.stringify_2():10} not_best")
+                        value   = f"{backwards_plot_model.stringify_2():10} not_best")
 
             # （３）リスクヘッジにならない手
-            elif exists_zero_value_move and plot_model.last_piece_exchange_value_on_earth < 0:
+            elif exists_zero_value_move and backwards_plot_model.last_piece_exchange_value_on_earth < 0:
                 gymnasium.health_check.append(
-                        move    = plot_model.last_move,
+                        move    = backwards_plot_model.last_move,
                         name    = 'eliminate171',
-                        value   = f"{plot_model.stringify_2():10} not_risk_hedge")
+                        value   = f"{backwards_plot_model.stringify_2():10} not_risk_hedge")
 
             # それ以外の手は選択します。
             else:
-                alice_s_move_list.append(plot_model.last_move)
+                alice_s_move_list.append(backwards_plot_model.last_move)
                 gymnasium.health_check.append(
-                        move    = plot_model.last_move,
+                        move    = backwards_plot_model.last_move,
                         name    = 'eliminate171',
-                        value   = f"{plot_model.stringify_2():10} ok")
+                        value   = f"{backwards_plot_model.stringify_2():10} ok")
 
         return alice_s_move_list
 
 
     return (
         _eliminate_not_capture_not_positive(
-                all_plots_at_first  = all_plots_at_first,
-                gymnasium           = gymnasium),
+                all_backwards_plot_models_at_first  = all_backwards_plot_models_at_first,
+                gymnasium                           = gymnasium),
         number_of_visited_nodes
     )

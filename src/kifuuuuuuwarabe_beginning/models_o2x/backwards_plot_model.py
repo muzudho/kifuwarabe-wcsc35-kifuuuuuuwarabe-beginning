@@ -230,7 +230,6 @@ class BackwardsPlotModel():
             raise ValueError(f"capture_piece_type をナンにしてはいけません。cshogi.NONE を使ってください。 {capture_piece_type=}")
         
         # ひとつ前の値
-        previous_on_earth = 0
         if len(self._piece_exchange_value_list_on_earth) == 0:
             previous_on_earth = BackwardsPlotModel._declaration_to_value(
                     declaration             = self.declaration,

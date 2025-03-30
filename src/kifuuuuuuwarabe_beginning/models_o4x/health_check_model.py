@@ -65,8 +65,8 @@ class HealthCheckModel():
 
 
         def _qs_plot(move_prop):
-            if 'QS_plot' in move_prop:
-                return move_prop['QS_plot'].stringify()
+            if 'QS_backwards_plot_model' in move_prop:
+                return move_prop['QS_backwards_plot_model'].stringify()
             return ''
 
 
