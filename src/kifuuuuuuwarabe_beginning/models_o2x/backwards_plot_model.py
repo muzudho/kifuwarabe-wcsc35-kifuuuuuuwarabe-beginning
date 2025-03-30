@@ -70,6 +70,28 @@ class BackwardsPlotModel():
     """
 
 
+    @staticmethod
+    def _declaration_to_value(declaration, is_absolute_opponent):
+        if declaration == constants.declaration.RESIGN:
+            previous = constants.value.GAME_OVER
+        elif declaration == constants.declaration.NYUGYOKU_WIN:
+            previous = constants.value.NYUGYOKU_WIN
+        elif declaration == constants.declaration.MAX_DEPTH_BY_THINK:
+            previous = constants.value.ZERO
+        elif declaration == constants.declaration.NO_CANDIDATES:
+            previous = constants.value.ZERO
+        elif declaration == constants.declaration.NONE:    # 末端の手。
+            previous = constants.value.ZERO
+        else:
+            raise ValueError(f"想定外の［宣言］。{declaration=}")
+
+        # 対戦相手なら正負を逆転。
+        if is_absolute_opponent:
+            previous *= -1
+
+        return previous
+
+
     def __init__(self, is_absolute_opponent_at_end_position, declaration, is_mate_in_1_move, cutoff_reason, hint):
         """初期化。
 
@@ -208,30 +230,14 @@ class BackwardsPlotModel():
             raise ValueError(f"capture_piece_type をナンにしてはいけません。cshogi.NONE を使ってください。 {capture_piece_type=}")
         
         # ひとつ前の値
-        is_move = False
         previous_on_earth = 0
         if len(self._piece_exchange_value_list_on_earth) == 0:
-            if self.declaration == constants.declaration.RESIGN:
-                previous_on_earth = constants.value.GAME_OVER
-            elif self.declaration == constants.declaration.NYUGYOKU_WIN:
-                previous_on_earth = constants.value.NYUGYOKU_WIN
-            elif self.declaration == constants.declaration.MAX_DEPTH_BY_THINK:
-                previous_on_earth = constants.value.ZERO
-            elif self.declaration == constants.declaration.NO_CANDIDATES:
-                previous_on_earth = constants.value.ZERO
-            elif self.declaration == constants.declaration.NONE:    # 末端の手。
-                previous_on_earth = constants.value.ZERO
-                is_move = True
-            else:
-                raise ValueError(f"想定外の［宣言］。{self.declaration=}")
+            previous_on_earth = BackwardsPlotModel._declaration_to_value(
+                    declaration             = self.declaration,
+                    is_absolute_opponent    = not is_absolute_opponent) # １つ前の値だから手番は反転
+
         else:
             previous_on_earth = self._piece_exchange_value_list_on_earth[-1]
-            is_move = True  # 末端より手前の手。
-
-        if is_move:
-            # 対戦相手なら正負を逆転。
-            if is_absolute_opponent:
-                previous_on_earth *= -1
 
         ##########
         # １手追加
