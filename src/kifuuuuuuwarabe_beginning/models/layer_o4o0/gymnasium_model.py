@@ -2,10 +2,10 @@ import cshogi
 
 from datetime import datetime
 
-from ..models.layer_o1o0 import TableModel, TurnModel
-from ..models.layer_o1o0.table_access_object import PieceValueTAO
-from ..models_o2x import BasketballCourtModel
-from ..modules import ThinkingLoggerModule
+from ...modules import ThinkingLoggerModule
+from ..layer_o1o0 import TableModel, TurnModel
+from ..layer_o1o0.table_access_object import PieceValueTAO
+from ..layer_o2o0 import BasketballCourtModel
 from .health_check_model import HealthCheckModel
 from .negative_rule_collection_model import NegativeRuleCollectionModel
 

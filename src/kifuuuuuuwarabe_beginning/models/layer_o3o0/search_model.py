@@ -1,4 +1,4 @@
-from ..models_o2x import FrontwardsPlotModel
+from ..layer_o2o0 import FrontwardsPlotModel
 
 
 class SearchModel():

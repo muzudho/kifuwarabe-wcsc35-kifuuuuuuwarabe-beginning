@@ -1,4 +1,4 @@
-from ..models_o3x_negative_rules import \
+from ..layer_o3o1o0_negative_rules import \
     DoNotBackModel, DoNotBreakFamousFenceModel, DoNotBuildRightWallModel, \
     DoNotDogAndCatSideBySideModel, \
     DoNotGoLeftModel, \

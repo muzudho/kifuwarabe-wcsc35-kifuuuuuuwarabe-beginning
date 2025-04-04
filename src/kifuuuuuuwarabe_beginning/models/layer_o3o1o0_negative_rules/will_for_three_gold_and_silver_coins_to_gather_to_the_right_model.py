@@ -1,8 +1,8 @@
 import cshogi
 
-from ..logics_o1x.helper import Helper
-from ..models.layer_o1o0 import constants, SquareModel
-from ..models_o2x.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
+from ...logics_o1x.helper import Helper
+from ..layer_o1o0 import constants, SquareModel
+from ..layer_o2o0.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
 from .negative_rule_model import NegativeRuleModel
 
 

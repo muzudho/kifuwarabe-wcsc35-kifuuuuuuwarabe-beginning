@@ -2,8 +2,8 @@
 """
 import cshogi
 
-from ..logics_o1x.helper import Helper
-from ..models.layer_o1o0 import MasuModel, SquareModel
+from ..layer_o1o0 import MasuModel, SquareModel
+from ...logics_o1x.helper import Helper
 
 
 class NineRankSidePerspectiveModel():

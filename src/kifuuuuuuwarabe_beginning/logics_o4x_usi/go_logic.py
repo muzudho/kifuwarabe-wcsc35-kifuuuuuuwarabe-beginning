@@ -4,7 +4,7 @@ import sys
 
 from ..logics_o1x import MovesReductionFilterLogics
 from ..models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateModel
-from ..models_o3x import QuiescenceSearchForAllLegalMovesAtFirstModel
+from ..models.layer_o3o0 import QuiescenceSearchForAllLegalMovesAtFirstModel
 from ..views import TableView
 
 

@@ -333,7 +333,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         """TODO 使い終わったら消す
         """
         from .logics_o1x.helper import Helper
-        from .models_o2x.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
+        from .layer_o2o0.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
 
 
         np = NineRankSidePerspectiveModel(self._gymnasium.table)
