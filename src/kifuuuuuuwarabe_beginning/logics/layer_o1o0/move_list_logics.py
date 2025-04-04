@@ -4,7 +4,36 @@ from ...models.layer_o1o_9o0 import PieceValuesModel
 from ...models.layer_o1o0 import SquareModel
 
 
-class LegalMovesLogics():
+class MoveListLogics():
+
+
+    def when_replacing_pieces_start_with_the_cheaper_ones(move_list, gymnasium):
+        """駒を交換するときは、安い駒から。
+        """
+
+        # 全ての指し手を調べ、駒を取る手と、そうでない手に分ける。
+        (
+            move_not_eat_list,
+            move_eat_list,
+            cap_list
+        ) = MoveListLogics.split_eating_before_move(
+                move_list   = move_list,
+                gymnasium   = gymnasium)
+
+        # 相手の駒Ａを、自分の駒Ｂ１、Ｂ２、…のいずれの駒でも取れる場合、
+        # Ｂ１、Ｂ２、…の駒について、１番駒得の価値が低い駒を全て選び、それ以外の駒は除外します。
+        (
+            move_eat_list_2,
+            cap_list_2
+        ) = MoveListLogics.select_cheap_eaters(
+                move_eat_list   = move_eat_list,
+                cap_list        = cap_list,
+                gymnasium       = gymnasium)
+
+        move_list = move_not_eat_list
+        move_list.extend(move_eat_list_2)
+
+        return move_list
 
 
     def split_eating_before_move(move_list, gymnasium):

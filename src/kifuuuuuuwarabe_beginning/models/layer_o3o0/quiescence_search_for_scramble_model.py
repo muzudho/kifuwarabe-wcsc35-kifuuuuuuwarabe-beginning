@@ -1,11 +1,10 @@
 import cshogi
 import time
 
+from ...logics.layer_o1o0 import MoveListLogics
 from ..layer_o1o_9o0 import PieceValuesModel
 from ..layer_o1o0 import AbsoluteOpponent, constants, PtolemaicTheoryModel, SquareModel
-from ..layer_o2o0 import BackwardsPlotModel, cutoff_reason, FrontwardsPlotModel
-
-from .search_model import SearchModel
+from ..layer_o2o0 import BackwardsPlotModel, cutoff_reason
 
 
 class QuiescenceSearchForScrambleModel():
@@ -160,7 +159,12 @@ class QuiescenceSearchForScrambleModel():
 
         # 合法手を全部調べる。
         legal_move_list = list(self.search_model.gymnasium.table.legal_moves)
-        for my_move in legal_move_list:
+
+        remaining_moves = MoveListLogics.when_replacing_pieces_start_with_the_cheaper_ones(
+                move_list   = legal_move_list,
+                gymnasium   = self._search_model.gymnasium)
+
+        for my_move in remaining_moves:
 
             ##################
             # MARK: 一手指す前

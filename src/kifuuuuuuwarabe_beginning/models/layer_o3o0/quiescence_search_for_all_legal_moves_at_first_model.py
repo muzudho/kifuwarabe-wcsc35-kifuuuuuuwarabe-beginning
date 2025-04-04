@@ -1,7 +1,7 @@
 import cshogi
 import time
 
-from ...logics.layer_o1o0 import LegalMovesLogics
+from ...logics.layer_o1o0 import MoveListLogics
 from ..layer_o1o0 import constants, SquareModel
 from ..layer_o2o0 import BackwardsPlotModel, cutoff_reason
 from .quiescence_search_for_scramble_model import QuiescenceSearchForScrambleModel
@@ -149,38 +149,9 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
 
         # 最善手は探さなくていい。全部返すから。
 
-        def _when_replacing_pieces_start_with_the_cheaper_ones(remaining_moves, gymnasium):
-            """駒を交換するときは、安い駒から。
-            """
-
-            # TODO 全ての指し手を調べ、駒を取る手と、そうでない手に分ける。
-            (
-                move_not_eat_list,
-                move_eat_list,
-                cap_list
-            ) = LegalMovesLogics.split_eating_before_move(
-                    move_list   = remaining_moves,
-                    gymnasium   = gymnasium)
-
-            # 相手の駒Ａを、自分の駒Ｂ１、Ｂ２、…のいずれの駒でも取れる場合、
-            # Ｂ１、Ｂ２、…の駒について、１番駒得の価値が低い駒を全て選び、それ以外の駒は除外します。
-            (
-                move_eat_list_2,
-                cap_list_2
-            ) = LegalMovesLogics.select_cheap_eaters(
-                    move_eat_list   = move_eat_list,
-                    cap_list        = cap_list,
-                    gymnasium       = gymnasium)
-
-            remaining_moves = move_not_eat_list
-            remaining_moves.extend(move_eat_list_2)
-
-            return remaining_moves
-
-
-        remaining_moves = _when_replacing_pieces_start_with_the_cheaper_ones(
-                remaining_moves = remaining_moves,
-                gymnasium       = self._search_model.gymnasium)
+        remaining_moves = MoveListLogics.when_replacing_pieces_start_with_the_cheaper_ones(
+                move_list   = remaining_moves,
+                gymnasium   = self._search_model.gymnasium)
 
         # 指し手を全部調べる。
         for my_move in remaining_moves:
