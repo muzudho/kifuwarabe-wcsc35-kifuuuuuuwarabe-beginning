@@ -1,7 +1,8 @@
 import cshogi
 import time
 
-from ..layer_o1o0 import AbsoluteOpponent, constants, PieceValuesModel, PtolemaicTheoryModel, SquareModel
+from ..layer_o1o_9o0 import PieceValuesModel
+from ..layer_o1o0 import AbsoluteOpponent, constants, PtolemaicTheoryModel, SquareModel
 from ..layer_o2o0 import BackwardsPlotModel, cutoff_reason, FrontwardsPlotModel
 
 from .search_model import SearchModel

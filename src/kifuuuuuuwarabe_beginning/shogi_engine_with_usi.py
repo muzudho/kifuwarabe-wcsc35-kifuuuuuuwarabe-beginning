@@ -167,7 +167,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         """思考開始～最善手返却
         """
 
-        result_of_go = GoLogic.Go(
+        result_of_go = GoLogic.start_with_health_check(
                 gymnasium = self._gymnasium)
 
         if result_of_go.search_result_state_model == SearchResultStateModel.RESIGN:

@@ -12,7 +12,7 @@ class GoLogic():
 
 
     @staticmethod
-    def Go(gymnasium):
+    def start_with_health_check(gymnasium):
         """盤面が与えられるので、次の１手を返します。
 
         Returns
@@ -22,21 +22,21 @@ class GoLogic():
         """
         gymnasium.health_check.on_go_started()
 
-        search = _Search(gymnasium)
+        go_2nd = _Go2nd(gymnasium)
 
         gymnasium.health_check.on_go_finished()
 
-        return search.start_alice()
+        return go_2nd.start_all_phases()
 
 
-class _Search():
+class _Go2nd():
 
 
     def __init__(self, gymnasium):
         self._gymnasium = gymnasium
 
 
-    def start_alice(self):
+    def start_all_phases(self):
         """盤面が与えられるので、次の１手を返します。
 
         最初の１手だけの処理です。
