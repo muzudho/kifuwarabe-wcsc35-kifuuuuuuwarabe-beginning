@@ -1,1 +1,2 @@
+from .select_cheap_eaters_model import SelectCheapEatersModel
 from .split_eating_before_move_model import SplitEatingBeforeMoveModel
