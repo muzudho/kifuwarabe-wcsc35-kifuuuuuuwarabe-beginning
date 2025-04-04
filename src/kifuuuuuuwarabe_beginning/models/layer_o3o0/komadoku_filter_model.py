@@ -1,6 +1,6 @@
 import cshogi
 
-from ...logics_o1x.logger_logics import LoggerLogics
+from ...logics.layer_o1o0.logger_logics import LoggerLogics
 from ..layer_o2o0 import NineRankSidePerspectiveModel
 
 

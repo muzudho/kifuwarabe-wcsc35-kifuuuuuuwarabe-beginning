@@ -2,10 +2,10 @@ import cshogi
 import random
 import sys
 
-from ..logics_o1x import MovesReductionFilterLogics
-from ..models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateModel
-from ..models.layer_o3o0 import QuiescenceSearchForAllLegalMovesAtFirstModel
-from ..views import TableView
+from ...models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateModel
+from ...models.layer_o3o0 import QuiescenceSearchForAllLegalMovesAtFirstModel
+from ...views import TableView
+from ..layer_o1o0 import MovesReductionFilterLogics
 
 
 class GoLogic():

@@ -2,8 +2,8 @@ import cshogi
 import datetime
 import sys
 
-from .logics_o1x import MovesReductionFilterLogics
-from .logics_o4x_usi import GoLogic
+from .logics.layer_o1o0 import MovesReductionFilterLogics
+from .logics.layer_o4o0_usi import GoLogic
 from .models.layer_o1o0 import SearchResultStateModel
 from .views import HistoryView, TableView
 
