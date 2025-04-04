@@ -16,6 +16,8 @@ class SelectCheapEatersLogic():
 
         move_group_by_dst_sq = {}
 
+        best_cheap_value = PieceValuesModel.get_big_value()
+
         # 移動先でグループ化する。
         for move in move_eat_list:
             is_drop = cshogi.move_is_drop(move) # ［打］
@@ -29,8 +31,6 @@ class SelectCheapEatersLogic():
             src_pc = gymnasium.table.piece(src_sq_obj.sq)           # ［移動元の駒］
             src_pt = cshogi.piece_to_piece_type(src_pc)
             src_value = PieceValuesModel.by_piece_type(pt=src_pt)   # ［動かした駒の価値］
-
-            best_cheap_value = PieceValuesModel.get_big_value()
 
             # 駒得の価値を比較。安ければアップデート
             if src_value < best_cheap_value:
