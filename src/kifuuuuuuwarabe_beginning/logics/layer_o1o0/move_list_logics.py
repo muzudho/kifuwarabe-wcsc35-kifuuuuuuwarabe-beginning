@@ -14,11 +14,26 @@ class MoveListLogics():
         # 全ての指し手を調べ、駒を取る手と、そうでない手に分ける。
         (
             move_not_eat_list,
-            move_eat_list,
-            cap_list
+            move_eat_list_1,
+            cap_list_1
         ) = MoveListLogics.split_eating_before_move(
                 move_list   = move_list,
                 gymnasium   = gymnasium)
+
+        # ヘルスチェック
+        for i in range(0, len(move_eat_list_1)):
+            move_eat = move_eat_list_1[i]
+            cap_pt = cap_list_1[i]
+            cur_value = PieceValuesModel.by_piece_type(pt=cap_pt)
+            src_sq_obj  = SquareModel(cshogi.move_from(move_eat))   # ［移動元マス］
+            src_pc = gymnasium.table.piece(src_sq_obj.sq)           # ［移動元の駒］
+            src_pt = cshogi.piece_to_piece_type(src_pc)
+            src_value = PieceValuesModel.by_piece_type(pt=src_pt)   # ［取った駒の価値］
+
+            gymnasium.health_check.append(
+                    move    = move_eat,
+                    name    = 'SQ_eater',
+                    value   = f"SQ_eater{src_value}")
 
         # 相手の駒Ａを、自分の駒Ｂ１、Ｂ２、…のいずれの駒でも取れる場合、
         # Ｂ１、Ｂ２、…の駒について、１番駒得の価値が低い駒を全て選び、それ以外の駒は除外します。
@@ -26,8 +41,8 @@ class MoveListLogics():
             move_eat_list_2,
             cap_list_2
         ) = MoveListLogics.select_cheap_eaters(
-                move_eat_list   = move_eat_list,
-                cap_list        = cap_list,
+                move_eat_list   = move_eat_list_1,
+                cap_list        = cap_list_1,
                 gymnasium       = gymnasium)
 
         # ヘルスチェック
