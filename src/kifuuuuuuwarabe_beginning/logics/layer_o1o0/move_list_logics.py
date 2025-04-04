@@ -58,13 +58,13 @@ class MoveListLogics():
                 gymnasium       = gymnasium)
         #select_cheap_eaters_model = select_cheap_eaters_model(move_eat_list = split_eating_before_move_model.move_eat_list)
 
-        # ロガー
-        for dst_sq, move_list in select_cheap_eaters_model.move_group_by_dst_sq.items():
-            gymnasium.thinking_logger_module.append(f"D-3a: {Helper.sq_to_masu(dst_sq)=} {MoveListLogics.move_list_map_usi_list(move_list)=}")
+        # # ロガー
+        # for dst_sq, move_list in select_cheap_eaters_model.move_group_by_dst_sq.items():
+        #     gymnasium.thinking_logger_module.append(f"D-3a: {Helper.sq_to_masu(dst_sq)=} {MoveListLogics.move_list_map_usi_list(move_list)=}")
 
-        # ロガー
-        for cheapest_eat_move in select_cheap_eaters_model.cheapest_eat_move_list:
-            gymnasium.thinking_logger_module.append(f"D-3b: {cshogi.move_to_usi(cheapest_eat_move)=}")
+        # # ロガー
+        # for cheapest_eat_move in select_cheap_eaters_model.cheapest_eat_move_list:
+        #     gymnasium.thinking_logger_module.append(f"D-3b: {cshogi.move_to_usi(cheapest_eat_move)=}")
 
         # ヘルスチェック
         for i in range(0, len(select_cheap_eaters_model.cheapest_eat_move_list)):
