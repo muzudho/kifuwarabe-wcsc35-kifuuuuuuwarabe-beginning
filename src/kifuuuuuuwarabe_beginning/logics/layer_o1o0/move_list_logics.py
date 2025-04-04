@@ -82,23 +82,36 @@ class MoveListLogics():
         for i in range(0, len(move_eat_list)):
             move = move_eat_list[i]
             cap_pt = cap_list[i]
-            dst_sq_obj  = SquareModel(cshogi.move_to(move))      # ［移動先マス］
-            cur_value = PieceValuesModel.by_piece_type(pt=cap_pt)
+            src_sq_obj  = SquareModel(cshogi.move_from(move))       # ［移動元マス］
+            dst_sq_obj  = SquareModel(cshogi.move_to(move))         # ［移動先マス］
+            # 動かした駒の価値
+            cap_value = PieceValuesModel.by_piece_type(pt=cap_pt)   # ［取った駒の価値］
+
+            is_drop = cshogi.move_is_drop(move) # ［打］
+            if is_drop:
+                continue    # 打は除外
+
+            src_pc = gymnasium.table.piece(src_sq_obj.sq)           # ［移動元の駒］
+            src_pt = cshogi.piece_to_piece_type(src_pc)
+            src_value = PieceValuesModel.by_piece_type(pt=src_pt)   # ［取った駒の価値］
+
             best_cheap_value = PieceValuesModel.get_big_value()
 
-            if dst_sq_obj.sq in move_group_by_dst_sq:
-                # 駒得の価値を比較。安ければアップデート
-                if cur_value < best_cheap_value:
-                    best_cheap_value = cur_value
-                    move_group_by_dst_sq[dst_sq_obj.sq] = [(move, cap_pt)]
-                # 等しければ追加
-                elif cur_value == best_cheap_value:
-                    move_group_by_dst_sq[dst_sq_obj.sq].append((move, cap_pt))
-                # それ以外は無視。
-
-            else:
-                best_cheap_value = cur_value
+            # 駒得の価値を比較。安ければアップデート
+            if src_value < best_cheap_value:
+                best_cheap_value = src_value
+                move_group_by_dst_sq = {}   # クリアー（他の move も全削除）
                 move_group_by_dst_sq[dst_sq_obj.sq] = [(move, cap_pt)]
+
+            # 等しければ
+            elif src_value == best_cheap_value:
+                # 辞書に move が既存なら、そこへ追加
+                if dst_sq_obj.sq in move_group_by_dst_sq:
+                    move_group_by_dst_sq[dst_sq_obj.sq].append((move, cap_pt))
+
+                # 辞書に move を作ってなければ、新規挿入
+                else:
+                    move_group_by_dst_sq[dst_sq_obj.sq] = [(move, cap_pt)]
 
         move_eat_list_2 = []
         cap_list_2 = []
