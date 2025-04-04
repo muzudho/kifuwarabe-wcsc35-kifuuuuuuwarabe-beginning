@@ -4,7 +4,7 @@ import sys
 
 from .logics_o1x import MovesReductionFilterLogics
 from .logics_o4x_usi import GoLogic
-from .models_o1x import SearchResultStateModel
+from .models.layer_o1o0 import SearchResultStateModel
 from .views import HistoryView, TableView
 
 

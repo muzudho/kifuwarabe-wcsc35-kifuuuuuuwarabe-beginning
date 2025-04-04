@@ -2,8 +2,8 @@ import cshogi
 
 from datetime import datetime
 
-from ..models_o1x import TableModel, TurnModel
-from ..models_o1x.table_access_object import PieceValueTAO
+from ..models.layer_o1o0 import TableModel, TurnModel
+from ..models.layer_o1o0.table_access_object import PieceValueTAO
 from ..models_o2x import BasketballCourtModel
 from ..modules import ThinkingLoggerModule
 from .health_check_model import HealthCheckModel

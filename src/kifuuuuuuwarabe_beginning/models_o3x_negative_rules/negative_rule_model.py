@@ -1,4 +1,4 @@
-from ..models_o1x import constants
+from ..models.layer_o1o0 import constants
 
 
 class NegativeRuleModel():

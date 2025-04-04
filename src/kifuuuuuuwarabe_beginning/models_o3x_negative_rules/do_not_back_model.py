@@ -1,6 +1,6 @@
 import cshogi
 
-from ..models_o1x import constants, SquareModel
+from ..models.layer_o1o0 import constants, SquareModel
 from .negative_rule_model import NegativeRuleModel
 
 

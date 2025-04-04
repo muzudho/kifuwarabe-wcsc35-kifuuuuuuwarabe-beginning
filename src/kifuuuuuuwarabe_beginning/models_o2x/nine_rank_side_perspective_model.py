@@ -3,7 +3,7 @@
 import cshogi
 
 from ..logics_o1x.helper import Helper
-from ..models_o1x import MasuModel, SquareModel
+from ..models.layer_o1o0 import MasuModel, SquareModel
 
 
 class NineRankSidePerspectiveModel():

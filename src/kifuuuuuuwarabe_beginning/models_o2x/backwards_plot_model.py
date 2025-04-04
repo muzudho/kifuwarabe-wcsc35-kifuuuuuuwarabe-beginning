@@ -1,6 +1,6 @@
 import cshogi
 
-from ..models_o1x import constants, DeclarationModel, PieceTypeModel, PieceValuesModel
+from ..models.layer_o1o0 import constants, DeclarationModel, PieceTypeModel, PieceValuesModel
 
 
 class CutoffReason():

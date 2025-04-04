@@ -3,7 +3,7 @@ import random
 import sys
 
 from ..logics_o1x import MovesReductionFilterLogics
-from ..models_o1x import constants, ResultOfGoModel, SearchResultStateModel
+from ..models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateModel
 from ..models_o3x import QuiescenceSearchForAllLegalMovesAtFirstModel
 from ..views import TableView
 

@@ -1,4 +1,4 @@
-from ..models_o1x import PieceModel, TurnModel
+from ..models.layer_o1o0 import PieceModel, TurnModel
 
 
 class TableView():
