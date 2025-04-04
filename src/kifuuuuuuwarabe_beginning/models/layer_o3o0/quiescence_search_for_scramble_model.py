@@ -160,9 +160,11 @@ class QuiescenceSearchForScrambleModel():
         # 合法手を全部調べる。
         legal_move_list = list(self.search_model.gymnasium.table.legal_moves)
 
-        remaining_moves = MoveListLogics.when_replacing_pieces_start_with_the_cheaper_ones(
-                move_list   = legal_move_list,
-                gymnasium   = self._search_model.gymnasium)
+        remaining_moves = legal_move_list
+        # TODO 安い駒から交換したい。
+        # remaining_moves = MoveListLogics.when_replacing_pieces_start_with_the_cheaper_ones(
+        #         move_list   = legal_move_list,
+        #         gymnasium   = self._search_model.gymnasium)
 
         for my_move in remaining_moves:
 

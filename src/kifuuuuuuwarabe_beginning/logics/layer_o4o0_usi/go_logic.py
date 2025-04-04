@@ -116,7 +116,7 @@ class _Go2nd():
         (
             remaining_moves,
             number_of_visited_nodes
-        ) = _quiescence_search(
+        ) = _quiescence_search_at_first(
                 remaining_moves = all_regal_moves,
                 gymnasium       = self._gymnasium)
         length_of_quiescence_search_by_kifuwarabe   = len(remaining_moves)
@@ -197,7 +197,7 @@ HEALTH CHECK
                 number_of_visited_nodes     = number_of_visited_nodes)
 
 
-def _quiescence_search(remaining_moves, gymnasium):
+def _quiescence_search_at_first(remaining_moves, gymnasium):
     """静止探索。
     
     Returns

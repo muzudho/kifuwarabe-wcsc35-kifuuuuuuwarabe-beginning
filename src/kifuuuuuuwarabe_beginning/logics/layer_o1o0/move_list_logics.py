@@ -1,7 +1,7 @@
 import cshogi
 
 from ...models.layer_o1o_9o0 import PieceValuesModel
-from ...models.layer_o1o0 import SquareModel
+from ...models.layer_o1o0 import PieceTypeModel, SquareModel
 
 
 class MoveListLogics():
@@ -24,7 +24,7 @@ class MoveListLogics():
         for i in range(0, len(move_eat_list_1)):
             move_eat = move_eat_list_1[i]
             cap_pt = cap_list_1[i]
-            cur_value = PieceValuesModel.by_piece_type(pt=cap_pt)
+            #cur_value = PieceValuesModel.by_piece_type(pt=cap_pt)
             src_sq_obj  = SquareModel(cshogi.move_from(move_eat))   # ［移動元マス］
             src_pc = gymnasium.table.piece(src_sq_obj.sq)           # ［移動元の駒］
             src_pt = cshogi.piece_to_piece_type(src_pc)
@@ -33,7 +33,7 @@ class MoveListLogics():
             gymnasium.health_check.append(
                     move    = move_eat,
                     name    = 'SQ_eater',
-                    value   = f"SQ_eater{src_value}")
+                    value   = f"SQ_eater{PieceTypeModel.kanji(src_pt)}{src_value}")
 
         # 相手の駒Ａを、自分の駒Ｂ１、Ｂ２、…のいずれの駒でも取れる場合、
         # Ｂ１、Ｂ２、…の駒について、１番駒得の価値が低い駒を全て選び、それ以外の駒は除外します。
@@ -49,12 +49,16 @@ class MoveListLogics():
         for i in range(0, len(move_eat_list_2)):
             move_eat = move_eat_list_2[i]
             cap_pt = cap_list_2[i]
-            cur_value = PieceValuesModel.by_piece_type(pt=cap_pt)
+            #cur_value = PieceValuesModel.by_piece_type(pt=cap_pt)
+            src_sq_obj  = SquareModel(cshogi.move_from(move_eat))   # ［移動元マス］
+            src_pc = gymnasium.table.piece(src_sq_obj.sq)           # ［移動元の駒］
+            src_pt = cshogi.piece_to_piece_type(src_pc)
+            src_value = PieceValuesModel.by_piece_type(pt=src_pt)   # ［取った駒の価値］
 
             gymnasium.health_check.append(
                     move    = move_eat,
                     name    = 'cheapest',
-                    value   = f"cheapest{cur_value}")
+                    value   = f"cheapest{PieceTypeModel.kanji(src_pt)}{src_value}")
 
         move_list = move_not_eat_list
         move_list.extend(move_eat_list_2)
