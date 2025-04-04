@@ -66,6 +66,7 @@ class SelectCheapEatersLogic():
                 cheapest_eat_move_list.append(move)
 
         select_cheap_eaters_model = SelectCheapEatersModel(
-                cheapest_eat_move_list = cheapest_eat_move_list)
+                move_group_by_dst_sq    = move_group_by_dst_sq,
+                cheapest_eat_move_list  = cheapest_eat_move_list)
 
         return select_cheap_eaters_model

@@ -1,5 +1,6 @@
 import cshogi
 
+from ...logics.layer_o1o0 import Helper
 from ...logics.layer_o1o1o0_move_list import SelectCheapEatersLogic, SplitEatingBeforeMoveLogic
 from ...models.layer_o1o_9o0 import PieceValuesModel
 from ...models.layer_o1o0 import PieceTypeModel, SquareModel
@@ -7,6 +8,15 @@ from ...models.layer_o1o1o0_move_list import SplitEatingBeforeMoveModel
 
 
 class MoveListLogics():
+
+
+    @staticmethod
+    def move_list_map_usi_list(move_list):
+        usi_list = []
+        for move in move_list:
+            usi_list.append(cshogi.move_to_usi(move))
+
+        return usi_list
 
 
     def when_replacing_pieces_start_with_the_cheaper_ones(move_list, gymnasium):
@@ -49,8 +59,12 @@ class MoveListLogics():
         #select_cheap_eaters_model = select_cheap_eaters_model(move_eat_list = split_eating_before_move_model.move_eat_list)
 
         # ロガー
+        for dst_sq, move_list in select_cheap_eaters_model.move_group_by_dst_sq.items():
+            gymnasium.thinking_logger_module.append(f"D-3a: {Helper.sq_to_masu(dst_sq)=} {MoveListLogics.move_list_map_usi_list(move_list)=}")
+
+        # ロガー
         for cheapest_eat_move in select_cheap_eaters_model.cheapest_eat_move_list:
-            gymnasium.thinking_logger_module.append(f"D-3: {cshogi.move_to_usi(cheapest_eat_move)=}")
+            gymnasium.thinking_logger_module.append(f"D-3b: {cshogi.move_to_usi(cheapest_eat_move)=}")
 
         # ヘルスチェック
         for i in range(0, len(select_cheap_eaters_model.cheapest_eat_move_list)):
