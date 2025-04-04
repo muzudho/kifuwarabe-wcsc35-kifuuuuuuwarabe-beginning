@@ -149,9 +149,10 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
 
         # 最善手は探さなくていい。全部返すから。
 
-        remaining_moves = MoveListLogics.when_replacing_pieces_start_with_the_cheaper_ones(
-                move_list   = remaining_moves,
-                gymnasium   = self._search_model.gymnasium)
+        # # TODO 安い駒から交換する
+        # remaining_moves = MoveListLogics.when_replacing_pieces_start_with_the_cheaper_ones(
+        #         move_list   = remaining_moves,
+        #         gymnasium   = self._search_model.gymnasium)
 
         # 指し手を全部調べる。
         for my_move in remaining_moves:
