@@ -1,6 +1,6 @@
 import cshogi
 
-from .piece_and_piece_type_model import PieceModel
+from .piece_model import PieceModel
 
 
 class TurnModel:

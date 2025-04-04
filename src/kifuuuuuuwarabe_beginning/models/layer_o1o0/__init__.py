@@ -2,8 +2,9 @@ from .absolute_opponent import AbsoluteOpponent
 from .constants_model import constants, DeclarationModel
 from .masu_model import MasuModel
 from .move_on_scramble_model import MoveOnScrambleModel
-from .piece_and_piece_type_model import PieceModel, PieceTypeModel
+from .piece_model import PieceModel
 from .piece_moved_model import PieceMovedModel
+from .piece_type_model import PieceTypeModel
 from .ptolemaic_theory_model import PtolemaicTheoryModel
 from .result_of_go_model import ResultOfGoModel
 from .search_result_state_model import SearchResultStateModel
