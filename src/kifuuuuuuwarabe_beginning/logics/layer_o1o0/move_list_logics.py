@@ -30,6 +30,17 @@ class MoveListLogics():
                 cap_list        = cap_list,
                 gymnasium       = gymnasium)
 
+        # ヘルスチェック
+        for i in range(0, len(move_eat_list_2)):
+            move_eat = move_eat_list_2[i]
+            cap_pt = cap_list_2[i]
+            cur_value = PieceValuesModel.by_piece_type(pt=cap_pt)
+
+            gymnasium.health_check.append(
+                    move    = move_eat,
+                    name    = 'cheapest',
+                    value   = f"cheapest{cur_value}")
+
         move_list = move_not_eat_list
         move_list.extend(move_eat_list_2)
 

@@ -552,3 +552,12 @@ k3r4/4l4/4l4/4p4/4g4/4P4/3+PL+P3/2+P+PL+P+P2/1+P+P+PR+P+P+PK b 2b3g4s4n4p 1
 
 6+p+pk/6+p+p+p/6+p+p+p/9/9/9/2+r3+P+P+P/1R4+P+P+P/2B1S1+P+PK b b4g3s4n4l2p 1
 ```
+
+
+## 安い駒から交換
+
+```plaintext
+先手：きふわらべ。後手：人。
+
+3+pk+p3/3+p+p+p3/4ss3/3ssg3/3ggg3/3P5/2+PNRL1B+P/2+P1LR1+P1/4K4 b b3n2l8p 1
+```
