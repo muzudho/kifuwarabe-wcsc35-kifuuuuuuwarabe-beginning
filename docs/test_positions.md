@@ -560,4 +560,8 @@ k3r4/4l4/4l4/4p4/4g4/4P4/3+PL+P3/2+P+PL+P+P2/1+P+P+PR+P+P+PK b 2b3g4s4n4p 1
 先手：きふわらべ。後手：人。
 
 3+pk+p3/3+p+p+p3/4ss3/3ssg3/3ggg3/3P5/2+PNRL1B+P/2+P1LR1+P1/4K4 b b3n2l8p 1
+
+3+pk+p3/2+p+p+p+p3/2+pnssn2/3ssg3/3ggg3/3P5/2+PNRLNB+P/B1+PLLR1+P1/3LK4 b 6p 1
+
+4k4/+p+p+p+p+p+p+p+p+p/9/9/1g1g1g1g1/9/1spsp1ps1/3P5/B1NLKLNRB b rs2n2l5p 1
 ```
