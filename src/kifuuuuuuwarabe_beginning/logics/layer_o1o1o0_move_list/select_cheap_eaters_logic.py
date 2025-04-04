@@ -49,7 +49,7 @@ class SelectCheapEatersLogic():
                     move_group_by_dst_sq[dst_sq_obj.sq] = [move]
 
         check_value = None
-        move_eat_list_2 = []
+        cheapest_eat_move_list = []
         for same_list in move_group_by_dst_sq.values():
             for move in same_list:
                 # チェック
@@ -63,9 +63,9 @@ class SelectCheapEatersLogic():
                 else:
                     check_value = src_value
 
-                move_eat_list_2.append(move)
+                cheapest_eat_move_list.append(move)
 
         select_cheap_eaters_model = SelectCheapEatersModel(
-                cheapest_eat_move_list = move_eat_list)
+                cheapest_eat_move_list = cheapest_eat_move_list)
 
         return select_cheap_eaters_model
