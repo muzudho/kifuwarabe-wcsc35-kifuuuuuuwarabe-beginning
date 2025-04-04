@@ -99,8 +99,7 @@ class MoveListLogics():
             cap_pt = cap_list[i]
             src_sq_obj  = SquareModel(cshogi.move_from(move))       # ［移動元マス］
             dst_sq_obj  = SquareModel(cshogi.move_to(move))         # ［移動先マス］
-            # 動かした駒の価値
-            cap_value = PieceValuesModel.by_piece_type(pt=cap_pt)   # ［取った駒の価値］
+            #cap_value = PieceValuesModel.by_piece_type(pt=cap_pt)   # ［取った駒の価値］
 
             is_drop = cshogi.move_is_drop(move) # ［打］
             if is_drop:
@@ -108,7 +107,7 @@ class MoveListLogics():
 
             src_pc = gymnasium.table.piece(src_sq_obj.sq)           # ［移動元の駒］
             src_pt = cshogi.piece_to_piece_type(src_pc)
-            src_value = PieceValuesModel.by_piece_type(pt=src_pt)   # ［取った駒の価値］
+            src_value = PieceValuesModel.by_piece_type(pt=src_pt)   # ［動かした駒の価値］
 
             best_cheap_value = PieceValuesModel.get_big_value()
 
@@ -128,10 +127,22 @@ class MoveListLogics():
                 else:
                     move_group_by_dst_sq[dst_sq_obj.sq] = [(move, cap_pt)]
 
+        check_value = None
         move_eat_list_2 = []
         cap_list_2 = []
         for same_list in move_group_by_dst_sq.values():
             for entry in same_list:
+                # チェック
+                src_sq_obj  = SquareModel(cshogi.move_from(move))       # ［移動元マス］
+                src_pc = gymnasium.table.piece(src_sq_obj.sq)           # ［移動元の駒］
+                src_pt = cshogi.piece_to_piece_type(src_pc)
+                src_value = PieceValuesModel.by_piece_type(pt=src_pt)   # ［動かした駒の価値］
+                if check_value is not None:
+                    if check_value != src_value:
+                        raise ValueError(f"D-142: {check_value=} {src_value=}")
+                else:
+                    check_value = src_value
+
                 move_eat_list_2.append(entry[0])
                 cap_list_2.append(entry[1])
 
