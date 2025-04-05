@@ -1,11 +1,17 @@
 import cshogi
 import datetime
+import exshell as xs
 import sys
 
+from pathlib import Path
 from .logics.layer_o1o0 import MovesReductionFilterLogics
 from .logics.layer_o4o0_usi import GoLogic
 from .models.layer_o1o0 import SearchResultStateModel
+from .modules.exshell_mod.views import XsBoardView
 from .views import HistoryView, TableView
+
+PATH_TO_EXSHELL_CONFIG = './exshell_config.toml'
+PATH_TO_EXSHELL_WORKSHEET = './temp/exshell_work.xlsx'
 
 
 class ShogiEngineCompatibleWithUSIProtocol():
@@ -75,6 +81,11 @@ class ShogiEngineCompatibleWithUSIProtocol():
             elif cmd[0] == 'board':
                 self.board(cmd)
 
+            # 盤表示
+            #       code: xs_board
+            elif cmd[0] == 'xs_board':
+                self.xs_board(cmd)
+
             # 棋譜表示
             #       code: history
             elif cmd[0] == 'history':
@@ -90,6 +101,11 @@ class ShogiEngineCompatibleWithUSIProtocol():
             #       code: undo
             elif cmd[0] == 'undo':
                 self.undo()
+
+            # エクシェル
+            #       code: use_exshell
+            elif cmd[0] == 'use_exshell':
+                self.use_exshell()
 
             # テスト
             #       code: march
@@ -226,6 +242,11 @@ class ShogiEngineCompatibleWithUSIProtocol():
         print(board_view.stringify())
 
 
+    def xs_board(self, cmd):
+        XsBoardView.render(
+                gymnasium=self._gymnasium)
+
+
     def do(self, cmd):
         """一手指す
         example: ７六歩
@@ -248,6 +269,25 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 {history_view.stringify()}
 """)
+
+
+    def use_exshell(self):
+        # ［エクシェル・ビルダー］生成
+        exshell_builder = xs.ExshellBuilder(
+                abs_path_to_workbook=Path(PATH_TO_EXSHELL_WORKSHEET).resolve())
+
+        # ［エクシェル設定ファイル］読込
+        exshell_builder.load_config(
+                abs_path=Path(PATH_TO_EXSHELL_CONFIG).resolve(),
+                create_if_not_exists=True)
+
+        # エクシェル設定ファイルが不完全ならチュートリアル開始
+        if not exshell_builder.config_is_ok():
+            exshell_builder.start_tutorial()
+
+        # ［エクシェル］生成
+        self._gymnasium.exshell = exshell_builder.build()
+        exshell_builder = None
 
 
     def test_will(self):

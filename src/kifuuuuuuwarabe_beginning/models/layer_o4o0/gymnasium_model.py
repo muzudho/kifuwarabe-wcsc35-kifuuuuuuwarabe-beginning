@@ -28,6 +28,9 @@ class GymnasiumModel():
         # 盤
         self._table = TableModel.create_table()
 
+        # エクシェル
+        self._exshell = None
+
         # この将棋エンジンの手番
         self._engine_turn = None
 
@@ -55,6 +58,20 @@ class GymnasiumModel():
         """［盤］
         """
         return self._table
+
+
+    @property
+    def exshell(self):
+        """［エクシェル］
+        """
+        return self._exshell
+
+
+    @exshell.setter
+    def exshell(self, value):
+        """［エクシェル］
+        """
+        self._exshell = value
 
 
     @property
