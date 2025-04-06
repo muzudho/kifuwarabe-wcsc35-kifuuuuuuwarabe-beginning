@@ -1,55 +1,9 @@
 import openpyxl as xl
+import pyxlart as xa
 import re
-import xlart as xa
 
 from openpyxl.styles import PatternFill, Font
 from openpyxl.styles.borders import Border, Side
-
-
-class CellAddress():
-    """セル・アドレス。
-    """
-
-
-    _code_pattern = re.compile(r'(\w+)(\d+)')
-
-
-    @classmethod
-    def from_code(clazz, code):
-        result = clazz._code_pattern.match(code)
-
-        if not result:
-            raise ValueError(f"コード読取失敗。 {code=}")
-
-        column_th   = xl.utils.column_index_from_string(result.group(1))
-        row_th      = int(result.group(2))
-
-        return CellAddress(
-                column_th   = column_th,
-                row_th      = row_th)
-
-
-    def __init__(self, column_th, row_th):
-        self._column_th = column_th
-        self._row_th = row_th
-
-
-    @property
-    def column_th(self):
-        return self._column_th
-
-
-    @property
-    def row_th(self):
-        return self._row_th
-
-
-    def to_code(self):
-        return f"{xl.utils.get_column_letter(self._column_th)}{self._row_th}"
-
-
-    def dump_string(self):
-        return f"{{column_th={self._column_th}, row_th={self._row_th}}}"
 
 
 class XsBoardView():
@@ -123,11 +77,24 @@ class XsBoardView():
         board_fill = PatternFill(patternType='solid', fgColor=BOARD_COLOR)
 
         # 枠の辺を塗り潰し
-        # H4 ～ AA4、H5～H22、AA5～AA22、H23～AA23
-        cell_address = CellAddress.from_code('H4')
-        print(f"D-124:{cell_address.dump_string()=}")
-        # def fill_line(start_cell):
-        ws[cell_address.to_code()].fill = board_fill
+        for column_letter in xa.ColumnLetterIterator(start='H', end='AB'):
+            #print(f"D-117: {column_letter=}")
+            # H4 ～ AA4
+            cell_address = xa.CellAddressModel.from_code(f"{column_letter}4")
+            ws[cell_address.to_code()].fill = board_fill
+
+            # H23～AA23
+            cell_address = xa.CellAddressModel.from_code(f"{column_letter}23")
+            ws[cell_address.to_code()].fill = board_fill
+
+        for row_th in range(5, 23):
+            # H5～H22
+            cell_address = xa.CellAddressModel.from_code(f"H{row_th}")
+            ws[cell_address.to_code()].fill = board_fill
+
+            # AA5～AA22
+            cell_address = xa.CellAddressModel.from_code(f"AA{row_th}")
+            ws[cell_address.to_code()].fill = board_fill
 
         # 盤の各マス
         for y in range(0, 9):
