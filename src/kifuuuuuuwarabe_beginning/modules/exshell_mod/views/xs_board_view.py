@@ -1,5 +1,7 @@
 import openpyxl as xl
 import xlart as xa
+
+from openpyxl.styles import PatternFill, Font
 from openpyxl.styles.borders import Border, Side
 
 
@@ -25,38 +27,38 @@ class XsBoardView():
                 height  = 100,
                 ws      = ws)
 
-        ws[f'A1'].value = 'next'
-        ws[f'C1'].value = "'xxx"
-        ws[f'E1'].value = 'move(s)'
-        ws[f'G1'].value = 'black'
-        ws[f'I1'].value = 'repetition'
-        ws[f'M1'].value = "'-"
+        # ws[f'A1'].value = 'next'
+        # ws[f'C1'].value = "'xxx"
+        # ws[f'E1'].value = 'move(s)'
+        # ws[f'G1'].value = 'black'
+        # ws[f'I1'].value = 'repetition'
+        # ws[f'M1'].value = "'-"
 
-        ws[f'A3'].value = '飛'
-        ws[f'B3'].value = '角'
-        ws[f'C3'].value = '金'
-        ws[f'D3'].value = '銀'
-        ws[f'E3'].value = '桂'
-        ws[f'F3'].value = '香'
-        ws[f'G3'].value = '歩'
+        # ws[f'A3'].value = '飛'
+        # ws[f'B3'].value = '角'
+        # ws[f'C3'].value = '金'
+        # ws[f'D3'].value = '銀'
+        # ws[f'E3'].value = '桂'
+        # ws[f'F3'].value = '香'
+        # ws[f'G3'].value = '歩'
 
-        ws[f'A4'].value = '0'
-        ws[f'B4'].value = '0'
-        ws[f'C4'].value = '0'
-        ws[f'D4'].value = '0'
-        ws[f'E4'].value = '0'
-        ws[f'F4'].value = '0'
-        ws[f'G4'].value = '0'
+        # ws[f'A4'].value = '0'
+        # ws[f'B4'].value = '0'
+        # ws[f'C4'].value = '0'
+        # ws[f'D4'].value = '0'
+        # ws[f'E4'].value = '0'
+        # ws[f'F4'].value = '0'
+        # ws[f'G4'].value = '0'
 
-        ws[f'A6'].value = '9'
-        ws[f'B6'].value = '8'
-        ws[f'C6'].value = '7'
-        ws[f'D6'].value = '6'
-        ws[f'E6'].value = '5'
-        ws[f'F6'].value = '4'
-        ws[f'G6'].value = '3'
-        ws[f'H6'].value = '2'
-        ws[f'I6'].value = '1'
+        # ws[f'A6'].value = '9'
+        # ws[f'B6'].value = '8'
+        # ws[f'C6'].value = '7'
+        # ws[f'D6'].value = '6'
+        # ws[f'E6'].value = '5'
+        # ws[f'F6'].value = '4'
+        # ws[f'G6'].value = '3'
+        # ws[f'H6'].value = '2'
+        # ws[f'I6'].value = '1'
 
         # 盤のマスのセル結合一覧
         columns_of_start    = ['I', 'K', 'M', 'O', 'Q', 'S', 'U', 'W', 'Y']
@@ -64,84 +66,101 @@ class XsBoardView():
         rows_of_start       = [5, 7, 9, 11, 13, 15, 17, 19, 21]
         rows_of_end         = [6, 8, 10, 12, 14, 16, 18, 20, 22]
 
-        # セル結合
+        BLACK = '000000'
+        thin_black_side = Side(style='thin', color=BLACK)
+        thick_black_side = Side(style='thick', color=BLACK)
+        #board_top_boarder = Border(top=thick_black_side)
+        board_cell_boarder = Border(left=thin_black_side, right=thin_black_side, top=thin_black_side, bottom=thin_black_side)
+
+        BOARD_COLOR = 'DAEEF3'
+        board_fill = PatternFill(patternType='solid', fgColor=BOARD_COLOR)
+
+        # 盤の各マス
         for y in range(0, 9):
             for x in range(0, 9):
                 column_of_start = columns_of_start[x]
                 column_of_end = columns_of_end[x]
                 row_of_start = rows_of_start[y]
                 row_of_end = rows_of_end[y]
+
+                # セル設定
+                cell = ws[f"{column_of_start}{row_of_start}"]
+                cell.border = board_cell_boarder
+                cell.fill = board_fill
+
+                # セル結合
                 ws.merge_cells(f"{column_of_start}{row_of_start}:{column_of_end}{row_of_end}")
 
-        BLACK = '000000'
-        thick_black_side = Side(style='thick', color=BLACK)
+        # a7 = ws[f'A7']
+        # a7.value = 'v香'
+        # a7.border = board_top_boarder
+        # a7.fill = board_fill
 
-        a7 = ws[f'A7']
-        a7.value = 'v香'
-        a7.border = Border(top=thick_black_side)
+        # b7 = ws[f'B7']
+        # b7.value = 'v桂'
+        # b7.border = board_top_boarder
+        # a7.fill = board_fill
 
-        b7 = ws[f'B7']
-        b7.value = 'v桂'
-        b7.border = Border(top=thick_black_side)
+        # c7 = ws[f'C7']
+        # c7.value = 'v銀'
+        # c7.border = board_top_boarder
+        # a7.fill = board_fill
 
-        c7 = ws[f'C7']
-        c7.value = 'v銀'
-        c7.border = Border(top=thick_black_side)
+        # d7 = ws[f'D7']
+        # d7.value = 'v金'
+        # d7.border = board_top_boarder
+        # a7.fill = board_fill
 
-        d7 = ws[f'D7']
-        d7.value = 'v金'
-        d7.border = Border(top=thick_black_side)
+        # e7 = ws[f'E7']
+        # e7.value = 'v玉'
 
-        e7 = ws[f'E7']
-        e7.value = 'v玉'
+        # f7 = ws[f'F7']
+        # f7.value = 'v金'
 
-        f7 = ws[f'F7']
-        f7.value = 'v金'
+        # g7 = ws[f'G7']
+        # g7.value = 'v銀'
 
-        g7 = ws[f'G7']
-        g7.value = 'v銀'
+        # h7 = ws[f'H7']
+        # h7.value = 'v桂'
 
-        h7 = ws[f'H7']
-        h7.value = 'v桂'
+        # i7 = ws[f'I7']
+        # i7.value = 'v香'
 
-        i7 = ws[f'I7']
-        i7.value = 'v香'
+        # ws[f'B8'].value = 'v飛'
+        # ws[f'H8'].value = 'v角'
 
-        ws[f'B8'].value = 'v飛'
-        ws[f'H8'].value = 'v角'
+        # ws[f'A9'].value = 'v歩'
+        # ws[f'B9'].value = 'v歩'
+        # ws[f'C9'].value = 'v歩'
+        # ws[f'D9'].value = 'v歩'
+        # ws[f'E9'].value = 'v歩'
+        # ws[f'F9'].value = 'v歩'
+        # ws[f'G9'].value = 'v歩'
+        # ws[f'H9'].value = 'v歩'
+        # ws[f'I9'].value = 'v歩'
 
-        ws[f'A9'].value = 'v歩'
-        ws[f'B9'].value = 'v歩'
-        ws[f'C9'].value = 'v歩'
-        ws[f'D9'].value = 'v歩'
-        ws[f'E9'].value = 'v歩'
-        ws[f'F9'].value = 'v歩'
-        ws[f'G9'].value = 'v歩'
-        ws[f'H9'].value = 'v歩'
-        ws[f'I9'].value = 'v歩'
+        # ws[f'A13'].value = '歩'
+        # ws[f'B13'].value = '歩'
+        # ws[f'C13'].value = '歩'
+        # ws[f'D13'].value = '歩'
+        # ws[f'E13'].value = '歩'
+        # ws[f'F13'].value = '歩'
+        # ws[f'G13'].value = '歩'
+        # ws[f'H13'].value = '歩'
+        # ws[f'I13'].value = '歩'
 
-        ws[f'A13'].value = '歩'
-        ws[f'B13'].value = '歩'
-        ws[f'C13'].value = '歩'
-        ws[f'D13'].value = '歩'
-        ws[f'E13'].value = '歩'
-        ws[f'F13'].value = '歩'
-        ws[f'G13'].value = '歩'
-        ws[f'H13'].value = '歩'
-        ws[f'I13'].value = '歩'
+        # ws[f'B14'].value = '飛'
+        # ws[f'H14'].value = '角'
 
-        ws[f'B14'].value = '飛'
-        ws[f'H14'].value = '角'
-
-        ws[f'A15'].value = '香'
-        ws[f'B15'].value = '桂'
-        ws[f'C15'].value = '銀'
-        ws[f'D15'].value = '金'
-        ws[f'E15'].value = '玉'
-        ws[f'F15'].value = '金'
-        ws[f'G15'].value = '銀'
-        ws[f'H15'].value = '桂'
-        ws[f'I15'].value = '香'
+        # ws[f'A15'].value = '香'
+        # ws[f'B15'].value = '桂'
+        # ws[f'C15'].value = '銀'
+        # ws[f'D15'].value = '金'
+        # ws[f'E15'].value = '玉'
+        # ws[f'F15'].value = '金'
+        # ws[f'G15'].value = '銀'
+        # ws[f'H15'].value = '桂'
+        # ws[f'I15'].value = '香'
 
         # ワークブック保存
         gymnasium.exshell.save_workbook(wb=wb)
