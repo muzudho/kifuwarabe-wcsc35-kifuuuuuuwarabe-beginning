@@ -31,7 +31,7 @@ class XsBoardView():
         HEADER_2_COLOR = 'FDE9D9'
 
         # フォント
-        AXIS_FONT = Font(size=20.0)
+        LARGE_FONT = Font(size=20.0)
 
         # 罫線
         thin_black_side = Side(style='thin', color=BLACK)
@@ -106,9 +106,11 @@ class XsBoardView():
                 cell = ws[f"{column_letter}{row_th}"]
                 cell.fill = board_fill
 
-        for row_th in range(9, 22, 2):
-            # セル結合
+        for row_th in range(9, 22, 2):  # セル結合
             ws.merge_cells(f"AG{row_th}:AH{row_th+1}")
+            cell = ws[f"AG{row_th}"]
+            cell.font = LARGE_FONT
+            cell.alignment = center_center_alignment
 
         # 後手
         for row_th in range(4, 20):
@@ -117,9 +119,11 @@ class XsBoardView():
                 cell = ws[f"{column_letter}{row_th}"]
                 cell.fill = board_fill
 
-        for row_th in range(5, 18, 2):
-            # セル結合
+        for row_th in range(5, 18, 2):  # セル結合
             ws.merge_cells(f"E{row_th}:F{row_th+1}")
+            cell = ws[f"E{row_th}"]
+            cell.font = LARGE_FONT
+            cell.alignment = center_center_alignment
 
         # 先手の持ち駒の数
         ws['AG9'].value     = 1     # 飛
@@ -131,13 +135,13 @@ class XsBoardView():
         ws['AG21'].value    = 10    # 歩
 
         # 後手の持ち駒の数
-        ws['EG9'].value     = 10    # 歩
-        ws['EG11'].value    = 3     # 香
-        ws['EG13'].value    = 2     # 桂
-        ws['EG15'].value    = 4     # 銀
-        ws['EG17'].value    = 1     # 金
-        ws['EG19'].value    = 1     # 角
-        ws['EG21'].value    = 1     # 飛
+        ws['E5'].value  = 10    # 歩
+        ws['E7'].value  = 3     # 香
+        ws['E9'].value  = 2     # 桂
+        ws['E11'].value = 4     # 銀
+        ws['E13'].value = 1     # 金
+        ws['E15'].value = 1     # 角
+        ws['E17'].value = 1     # 飛
 
         # 枠の辺を塗り潰し
         # 上辺
@@ -170,7 +174,7 @@ class XsBoardView():
             ws.merge_cells(f"{column_letter}5:{next_column_letter}6")
             cell = ws[f"{column_letter}5"]
             cell.value = f"'{zenkaku_suji_list[9-index]}"
-            cell.font = AXIS_FONT
+            cell.font = LARGE_FONT
             cell.alignment = center_center_alignment
 
         # 段の番号
@@ -178,7 +182,7 @@ class XsBoardView():
             ws.merge_cells(f"AA{row_th}:AB{row_th+1}")
             cell = ws[f"AA{row_th}"]
             cell.value = f"{kan_suji_list[index+1]}"
-            cell.font = AXIS_FONT
+            cell.font = LARGE_FONT
             cell.alignment = center_center_alignment
 
         # 盤の各マス
