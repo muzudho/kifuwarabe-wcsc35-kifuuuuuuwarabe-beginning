@@ -162,15 +162,9 @@ class XsBoardView():
             for column_letter in xa.ColumnLetterRange(start='AA', end='AD'):
                 ws[f"{column_letter}{row_th}"].fill = board_fill
 
-
-        # TODO pyxlart パッケージへ移動
-        def _column_letter_add(column_letter, addition):
-            return xl.utils.get_column_letter(xl.utils.column_index_from_string(column_letter) + addition)
-
-
         # 筋の番号
         for index, column_letter in enumerate(xa.ColumnLetterRange(start='I', end='Z', step=2)):
-            next_column_letter = _column_letter_add(column_letter, 1)
+            next_column_letter = xa.ColumnLetterLogic.add(column_letter, 1)
             ws.merge_cells(f"{column_letter}5:{next_column_letter}6")
             cell = ws[f"{column_letter}5"]
             cell.value = f"'{zenkaku_suji_list[9-index]}"
@@ -193,7 +187,7 @@ class XsBoardView():
                 cell.border = board_cell_border
                 cell.fill = board_fill
 
-                next_column_letter = _column_letter_add(column_letter, 1)
+                next_column_letter = xa.ColumnLetterLogic.add(column_letter, 1)
 
                 # セル結合
                 ws.merge_cells(f"{column_letter}{row_th}:{next_column_letter}{row_th+1}")
