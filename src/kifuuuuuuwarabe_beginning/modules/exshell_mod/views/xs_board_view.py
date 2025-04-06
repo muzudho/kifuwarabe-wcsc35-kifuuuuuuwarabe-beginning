@@ -6,6 +6,8 @@ from openpyxl.styles import PatternFill, Font
 from openpyxl.styles.borders import Border, Side
 from openpyxl.styles.alignment import Alignment
 
+from ....models.layer_o1o0 import TurnModel
+
 
 class XsBoardView():
 
@@ -18,17 +20,11 @@ class XsBoardView():
         zenkaku_suji_list = ['０', '１', '２', '３', '４', '５', '６', '７', '８', '９']
         kan_suji_list = ['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九']
 
-        # 盤のマスのセル結合一覧
-        columns_of_start    = ['I', 'K', 'M', 'O', 'Q', 'S', 'U', 'W', 'Y']
-        columns_of_end      = ['J', 'L', 'N', 'P', 'R', 'T', 'V', 'X', 'Z']
-        rows_of_start       = [5, 7, 9, 11, 13, 15, 17, 19, 21]
-        rows_of_end         = [6, 8, 10, 12, 14, 16, 18, 20, 22]
-
         # 色
         BLACK = '000000'
         BOARD_COLOR = 'DAEEF3'
-        HEADER_1_COLOR = 'FCD5B4'
-        HEADER_2_COLOR = 'FDE9D9'
+        HEADER_1_COLOR = 'FDE9D9'
+        HEADER_2_COLOR = 'FCD5B4'
 
         # フォント
         LARGE_FONT = Font(size=20.0)
@@ -49,8 +45,8 @@ class XsBoardView():
 
         # フィル
         board_fill = PatternFill(patternType='solid', fgColor=BOARD_COLOR)
-        header_1_fill = PatternFill(patternType='solid', fgColor=HEADER_1_COLOR)
-        header_2_fill = PatternFill(patternType='solid', fgColor=HEADER_2_COLOR)
+        header_1_fill = PatternFill(patternType='solid', fgColor=HEADER_2_COLOR)
+        header_2_fill = PatternFill(patternType='solid', fgColor=HEADER_1_COLOR)
 
         # 寄せ
         #   horizontal は 'distributed', 'fill', 'general', 'center', 'centerContinuous', 'justify', 'right', 'left' のいずれかから選ぶ
@@ -75,9 +71,9 @@ class XsBoardView():
 
         # 手数等部
         ws['C2'].value = 'next'
-        ws['E2'].value = "'xxx"
+        ws['E2'].value = gymnasium.table.move_number
         ws['G2'].value = 'move(s)'
-        ws['K2'].value = 'blACK'
+        ws['K2'].value = TurnModel.code(gymnasium.table.turn)
         ws['M2'].value = 'repetition'
         ws['Q2'].value = "'-"
         ws['C2'].fill = header_2_fill
@@ -125,23 +121,27 @@ class XsBoardView():
             cell.font = LARGE_FONT
             cell.alignment = center_center_alignment
 
+        # 先手、後手の持ち駒の数のリスト
+        b_hand = gymnasium.table.pieces_in_hand[0]
+        w_hand = gymnasium.table.pieces_in_hand[1]
+
         # 先手の持ち駒の数
-        ws['AG9'].value     = 1     # 飛
-        ws['AG11'].value    = 1     # 角
-        ws['AG13'].value    = 1     # 金
-        ws['AG15'].value    = 4     # 銀
-        ws['AG17'].value    = 2     # 桂
-        ws['AG19'].value    = 3     # 香
-        ws['AG21'].value    = 10    # 歩
+        ws['AG9'].value     = b_hand[6]     # 飛
+        ws['AG11'].value    = b_hand[5]     # 角
+        ws['AG13'].value    = b_hand[4]     # 金
+        ws['AG15'].value    = b_hand[3]     # 銀
+        ws['AG17'].value    = b_hand[2]     # 桂
+        ws['AG19'].value    = b_hand[1]     # 香
+        ws['AG21'].value    = b_hand[0]     # 歩
 
         # 後手の持ち駒の数
-        ws['E5'].value  = 10    # 歩
-        ws['E7'].value  = 3     # 香
-        ws['E9'].value  = 2     # 桂
-        ws['E11'].value = 4     # 銀
-        ws['E13'].value = 1     # 金
-        ws['E15'].value = 1     # 角
-        ws['E17'].value = 1     # 飛
+        ws['E5'].value      = w_hand[6]     # 歩
+        ws['E7'].value      = w_hand[5]     # 香
+        ws['E9'].value      = w_hand[4]     # 桂
+        ws['E11'].value     = w_hand[3]     # 銀
+        ws['E13'].value     = w_hand[2]     # 金
+        ws['E15'].value     = w_hand[1]     # 角
+        ws['E17'].value     = w_hand[0]     # 飛
 
         # 枠の辺を塗り潰し
         # 上辺
