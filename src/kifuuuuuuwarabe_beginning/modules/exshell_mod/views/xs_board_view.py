@@ -70,8 +70,16 @@ class XsBoardView():
         BLACK = '000000'
         thin_black_side = Side(style='thin', color=BLACK)
         thick_black_side = Side(style='thick', color=BLACK)
-        #board_top_boarder = Border(top=thick_black_side)
-        board_cell_boarder = Border(left=thin_black_side, right=thin_black_side, top=thin_black_side, bottom=thin_black_side)
+        #board_top_border = Border(top=thick_black_side)
+        board_cell_border = Border(left=thin_black_side, right=thin_black_side, top=thin_black_side, bottom=thin_black_side)
+        board_top_left_border = Border(left=thick_black_side, top=thick_black_side)
+        board_top_border = Border(top=thick_black_side)
+        board_top_right_border = Border(right=thick_black_side, top=thick_black_side)
+        board_left_border = Border(left=thick_black_side)
+        board_right_border = Border(right=thick_black_side)
+        board_bottom_left_border = Border(left=thick_black_side, bottom=thick_black_side)
+        board_bottom_border = Border(bottom=thick_black_side)
+        board_bottom_right_border = Border(right=thick_black_side, bottom=thick_black_side)
 
         BOARD_COLOR = 'DAEEF3'
         board_fill = PatternFill(patternType='solid', fgColor=BOARD_COLOR)
@@ -106,11 +114,29 @@ class XsBoardView():
 
                 # セル設定
                 cell = ws[f"{column_of_start}{row_of_start}"]
-                cell.border = board_cell_boarder
+                cell.border = board_cell_border
                 cell.fill = board_fill
 
                 # セル結合
                 ws.merge_cells(f"{column_of_start}{row_of_start}:{column_of_end}{row_of_end}")
+
+        # 盤の枠を太線にします。セル結合を考えず描きます。
+        # TODO 既存の罫線を消してしまう。どうにかならないか？
+        ws['I5'].border = board_top_left_border
+        ws['Z5'].border = board_top_right_border
+        ws['I22'].border = board_bottom_left_border
+        ws['Z22'].border = board_bottom_right_border
+        for column_letter in xa.ColumnLetterIterator(start='J', end='Z'):
+            cell_address = xa.CellAddressModel.from_code(f"{column_letter}5")
+            ws[cell_address.to_code()].border = board_top_border
+
+            cell_address = xa.CellAddressModel.from_code(f"{column_letter}22")
+            ws[cell_address.to_code()].border = board_bottom_border
+
+        for row_th in range(6, 22):
+            ws[f"I{row_th}"].border = board_left_border
+            ws[f"Z{row_th}"].border = board_right_border
+        
 
         # a7 = ws[f'A7']
         # a7.value = 'v香'
