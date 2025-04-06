@@ -1,4 +1,5 @@
 import openpyxl as xl
+import xlart as xa
 
 
 class XsBoardView():
@@ -9,10 +10,6 @@ class XsBoardView():
         """描画。
         """
 
-        # 設定
-        canvas_width = 100
-        canvas_height = 100
-
         # ワークブックを新規生成
         wb = xl.Workbook()
 
@@ -20,14 +17,12 @@ class XsBoardView():
         ws = wb['Sheet']
 
         # 方眼紙を作成します。
-        # 行の横幅
-        for column_th in range(1, canvas_width+1):
-            column_letter = xl.utils.get_column_letter(column_th)
-            ws.column_dimensions[column_letter].width = 2.7    # 2.7 characters = about 30 pixels
-
-        # 列の高さ
-        for row_th in range(1, canvas_height+1):
-            ws.row_dimensions[row_th].height = 15    # 15 points = about 30 pixels
+        xa.GraphPaperRenderer.render(
+                left_th = 1,
+                top_th  = 1,
+                width   = 100,
+                height  = 100,
+                ws      = ws)
 
         ws[f'A1'].value = 'next'
         ws[f'C1'].value = "'xxx"

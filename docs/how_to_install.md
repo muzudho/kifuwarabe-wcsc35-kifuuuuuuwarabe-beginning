@@ -5,10 +5,7 @@
 pip -V
 
 # Python モジュールをインストール
-pip install cshogi
-pip install exshell
-pip install openpyxl
-pip install tomlkit
+pip install cshogi, exshell, openpyxl, pyxlart, tomlkit
 
 # 実行
 python main.py
