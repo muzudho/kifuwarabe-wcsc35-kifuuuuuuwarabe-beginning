@@ -4,6 +4,7 @@ import re
 
 from openpyxl.styles import PatternFill, Font
 from openpyxl.styles.borders import Border, Side
+from openpyxl.styles.alignment import Alignment
 
 
 class XsBoardView():
@@ -13,6 +14,43 @@ class XsBoardView():
     def render(gymnasium):
         """描画。
         """
+
+        # 盤のマスのセル結合一覧
+        columns_of_start    = ['I', 'K', 'M', 'O', 'Q', 'S', 'U', 'W', 'Y']
+        columns_of_end      = ['J', 'L', 'N', 'P', 'R', 'T', 'V', 'X', 'Z']
+        rows_of_start       = [5, 7, 9, 11, 13, 15, 17, 19, 21]
+        rows_of_end         = [6, 8, 10, 12, 14, 16, 18, 20, 22]
+
+        # 色
+        BLACK = '000000'
+        BOARD_COLOR = 'DAEEF3'
+        HEADER_1_COLOR = 'FCD5B4'
+        HEADER_2_COLOR = 'FDE9D9'
+
+        thin_black_side = Side(style='thin', color=BLACK)
+        thick_black_side = Side(style='thick', color=BLACK)
+        #board_top_border = Border(top=thick_black_side)
+        board_cell_border = Border(left=thin_black_side, right=thin_black_side, top=thin_black_side, bottom=thin_black_side)
+        board_top_left_border = Border(left=thick_black_side, top=thick_black_side)
+        board_top_border = Border(top=thick_black_side)
+        board_top_right_border = Border(right=thick_black_side, top=thick_black_side)
+        board_left_border = Border(left=thick_black_side)
+        board_right_border = Border(right=thick_black_side)
+        board_bottom_left_border = Border(left=thick_black_side, bottom=thick_black_side)
+        board_bottom_border = Border(bottom=thick_black_side)
+        board_bottom_right_border = Border(right=thick_black_side, bottom=thick_black_side)
+
+        # フィル
+        board_fill = PatternFill(patternType='solid', fgColor=BOARD_COLOR)
+        header_1_fill = PatternFill(patternType='solid', fgColor=HEADER_1_COLOR)
+        header_2_fill = PatternFill(patternType='solid', fgColor=HEADER_2_COLOR)
+
+        # 寄せ
+        #   horizontal は 'distributed', 'fill', 'general', 'center', 'centerContinuous', 'justify', 'right', 'left' のいずれかから選ぶ
+        #   vertical は 'center', 'top', 'bottom', 'justify', 'distributed' のいずれかから選ぶ
+        left_center_alignment = Alignment(horizontal='left', vertical='center')
+        center_center_alignment = Alignment(horizontal='center', vertical='center')
+        right_center_alignment = Alignment(horizontal='right', vertical='center')
 
         # ワークブックを新規生成
         wb = xl.Workbook()
@@ -28,12 +66,30 @@ class XsBoardView():
                 height  = 100,
                 ws      = ws)
 
-        # ws[f'A1'].value = 'next'
-        # ws[f'C1'].value = "'xxx"
-        # ws[f'E1'].value = 'move(s)'
-        # ws[f'G1'].value = 'black'
-        # ws[f'I1'].value = 'repetition'
-        # ws[f'M1'].value = "'-"
+        # 手数等部
+        ws['C2'].value = 'next'
+        ws['E2'].value = "'xxx"
+        ws['G2'].value = 'move(s)'
+        ws['K2'].value = 'blACK'
+        ws['M2'].value = 'repetition'
+        ws['Q2'].value = "'-"
+        ws['C2'].fill = header_2_fill
+        ws['E2'].fill = header_1_fill
+        ws['G2'].fill = header_2_fill
+        ws['K2'].fill = header_1_fill
+        ws['M2'].fill = header_2_fill
+        ws['Q2'].fill = header_1_fill
+        ws.merge_cells('C2:D2')
+        ws.merge_cells('E2:F2')
+        ws.merge_cells('G2:J2')
+        ws.merge_cells('K2:L2')
+        ws.merge_cells('M2:P2')
+        ws['C2'].alignment = right_center_alignment
+        ws['E2'].alignment = center_center_alignment
+        ws['G2'].alignment = left_center_alignment
+        ws['K2'].alignment = center_center_alignment
+        ws['M2'].alignment = right_center_alignment
+        ws['Q2'].alignment = left_center_alignment
 
         # ws[f'A3'].value = '飛'
         # ws[f'B3'].value = '角'
@@ -60,29 +116,6 @@ class XsBoardView():
         # ws[f'G6'].value = '3'
         # ws[f'H6'].value = '2'
         # ws[f'I6'].value = '1'
-
-        # 盤のマスのセル結合一覧
-        columns_of_start    = ['I', 'K', 'M', 'O', 'Q', 'S', 'U', 'W', 'Y']
-        columns_of_end      = ['J', 'L', 'N', 'P', 'R', 'T', 'V', 'X', 'Z']
-        rows_of_start       = [5, 7, 9, 11, 13, 15, 17, 19, 21]
-        rows_of_end         = [6, 8, 10, 12, 14, 16, 18, 20, 22]
-
-        BLACK = '000000'
-        thin_black_side = Side(style='thin', color=BLACK)
-        thick_black_side = Side(style='thick', color=BLACK)
-        #board_top_border = Border(top=thick_black_side)
-        board_cell_border = Border(left=thin_black_side, right=thin_black_side, top=thin_black_side, bottom=thin_black_side)
-        board_top_left_border = Border(left=thick_black_side, top=thick_black_side)
-        board_top_border = Border(top=thick_black_side)
-        board_top_right_border = Border(right=thick_black_side, top=thick_black_side)
-        board_left_border = Border(left=thick_black_side)
-        board_right_border = Border(right=thick_black_side)
-        board_bottom_left_border = Border(left=thick_black_side, bottom=thick_black_side)
-        board_bottom_border = Border(bottom=thick_black_side)
-        board_bottom_right_border = Border(right=thick_black_side, bottom=thick_black_side)
-
-        BOARD_COLOR = 'DAEEF3'
-        board_fill = PatternFill(patternType='solid', fgColor=BOARD_COLOR)
 
         # 枠の辺を塗り潰し
         for column_letter in xa.ColumnLetterIterator(start='H', end='AB'):
