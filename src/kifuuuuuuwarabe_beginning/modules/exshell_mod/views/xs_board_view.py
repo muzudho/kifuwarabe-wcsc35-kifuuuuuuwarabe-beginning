@@ -1,5 +1,6 @@
 import openpyxl as xl
 import xlart as xa
+from openpyxl.styles.borders import Border, Side
 
 
 class XsBoardView():
@@ -57,15 +58,54 @@ class XsBoardView():
         ws[f'H6'].value = '2'
         ws[f'I6'].value = '1'
 
-        ws[f'A7'].value = 'v香'
-        ws[f'B7'].value = 'v桂'
-        ws[f'C7'].value = 'v銀'
-        ws[f'D7'].value = 'v金'
-        ws[f'E7'].value = 'v玉'
-        ws[f'F7'].value = 'v金'
-        ws[f'G7'].value = 'v銀'
-        ws[f'H7'].value = 'v桂'
-        ws[f'I7'].value = 'v香'
+        # 盤のマスのセル結合一覧
+        columns_of_start    = ['I', 'K', 'M', 'O', 'Q', 'S', 'U', 'W', 'Y']
+        columns_of_end      = ['J', 'L', 'N', 'P', 'R', 'T', 'V', 'X', 'Z']
+        rows_of_start       = [5, 7, 9, 11, 13, 15, 17, 19, 21]
+        rows_of_end         = [6, 8, 10, 12, 14, 16, 18, 20, 22]
+
+        # セル結合
+        for y in range(0, 9):
+            for x in range(0, 9):
+                column_of_start = columns_of_start[x]
+                column_of_end = columns_of_end[x]
+                row_of_start = rows_of_start[y]
+                row_of_end = rows_of_end[y]
+                ws.merge_cells(f"{column_of_start}{row_of_start}:{column_of_end}{row_of_end}")
+
+        BLACK = '000000'
+        thick_black_side = Side(style='thick', color=BLACK)
+
+        a7 = ws[f'A7']
+        a7.value = 'v香'
+        a7.border = Border(top=thick_black_side)
+
+        b7 = ws[f'B7']
+        b7.value = 'v桂'
+        b7.border = Border(top=thick_black_side)
+
+        c7 = ws[f'C7']
+        c7.value = 'v銀'
+        c7.border = Border(top=thick_black_side)
+
+        d7 = ws[f'D7']
+        d7.value = 'v金'
+        d7.border = Border(top=thick_black_side)
+
+        e7 = ws[f'E7']
+        e7.value = 'v玉'
+
+        f7 = ws[f'F7']
+        f7.value = 'v金'
+
+        g7 = ws[f'G7']
+        g7.value = 'v銀'
+
+        h7 = ws[f'H7']
+        h7.value = 'v桂'
+
+        i7 = ws[f'I7']
+        i7.value = 'v香'
 
         ws[f'B8'].value = 'v飛'
         ws[f'H8'].value = 'v角'

@@ -6,7 +6,4 @@ pip -V
 
 # Python モジュールをインストール
 pip install cshogi, exshell, openpyxl, pyxlart, tomlkit
-
-# 実行
-python main.py
 ```
