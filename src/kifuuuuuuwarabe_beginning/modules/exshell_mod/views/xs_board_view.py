@@ -121,21 +121,31 @@ class XsBoardView():
                 ws.merge_cells(f"{column_of_start}{row_of_start}:{column_of_end}{row_of_end}")
 
         # 盤の枠を太線にします。セル結合を考えず描きます。
-        # TODO 既存の罫線を消してしまう。どうにかならないか？
         ws['I5'].border = board_top_left_border
         ws['Z5'].border = board_top_right_border
         ws['I22'].border = board_bottom_left_border
         ws['Z22'].border = board_bottom_right_border
         for column_letter in xa.ColumnLetterIterator(start='J', end='Z'):
-            cell_address = xa.CellAddressModel.from_code(f"{column_letter}5")
-            ws[cell_address.to_code()].border = board_top_border
+            cell = ws[xa.CellAddressModel.from_code(f"{column_letter}5").to_code()]
+            cell.border = xa.BorderLogic.add(
+                    base        = cell.border,
+                    addition    = board_top_border)
 
-            cell_address = xa.CellAddressModel.from_code(f"{column_letter}22")
-            ws[cell_address.to_code()].border = board_bottom_border
+            cell = ws[xa.CellAddressModel.from_code(f"{column_letter}22").to_code()]
+            cell.border = xa.BorderLogic.add(
+                    base        = cell.border,
+                    addition    = board_bottom_border)
 
         for row_th in range(6, 22):
-            ws[f"I{row_th}"].border = board_left_border
-            ws[f"Z{row_th}"].border = board_right_border
+            cell = ws[f"I{row_th}"]
+            cell.border = xa.BorderLogic.add(
+                    base        = cell.border,
+                    addition    = board_left_border)
+
+            cell = ws[f"Z{row_th}"]
+            cell.border = xa.BorderLogic.add(
+                    base        = cell.border,
+                    addition    = board_right_border)
         
 
         # a7 = ws[f'A7']
