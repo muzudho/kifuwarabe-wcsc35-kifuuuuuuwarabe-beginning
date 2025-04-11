@@ -209,6 +209,7 @@ class GymnasiumModel():
         return f"""\
 {self._table.dump()}
 {self._np_value=}
-{len(self._gourei_collection_model.list_of_idle)=}
-{len(self._gourei_collection_model.list_of_active)=}
+{len(self._gourei_collection_model.positive_rule_list_of_active)=}
+{len(self._gourei_collection_model.negative_rule_list_of_idle)=}
+{len(self._gourei_collection_model.negative_rule_list_of_active)=}
 """

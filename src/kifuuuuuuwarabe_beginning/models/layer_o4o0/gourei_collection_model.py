@@ -5,6 +5,8 @@ from ..layer_o3o1o0_negative_rules import \
     DoNotUpToRank6Model, \
     DoNotMoveUntilRookMovesModel, DoNotMoveLeftLanceModel, DoNotMoveRightLanceModel, DoNotMoveRookModel, \
     WillForThreeGoldAndSilverCoinsToGatherToTheRightModel, WillNotToMove37PawnModel, WillSwingingRookModel
+from ..layer_o3o2o0_positive_rules import \
+    DoProtectBishopHeadModel
 
 
 class GoureiCollectionModel():
@@ -13,12 +15,17 @@ class GoureiCollectionModel():
 
 
     def __init__(self, basketball_court_model):
+
+        self._positive_rule_list_of_active = [
+            DoProtectBishopHeadModel(basketball_court_model=basketball_court_model),    # 訓令［ゾウの頭を守れ］
+        ]
+
         # 初期状態では、有効でない号令です。
-        self._list_of_idle = [
+        self._negative_rule_list_of_idle = [
             DoNotMoveRookModel(basketball_court_model=basketball_court_model),        # 行進［キリンは動くな］  NOTE 飛車を振るまで有効になりません
         ]
 
-        self._list_of_active = [
+        self._negative_rule_list_of_active = [
             DoNotBackModel                                           (basketball_court_model=basketball_court_model),    # 行進［戻るな］
             DoNotBreakFamousFenceModel                               (basketball_court_model=basketball_court_model),    # 行進［名の有る囲いを崩すな］
             DoNotBuildRightWallModel                                 (basketball_court_model=basketball_court_model),    # 行進［右壁を作るな］
@@ -35,33 +42,46 @@ class GoureiCollectionModel():
 
 
     @property
-    def list_of_idle(self):
-        """初期状態では、有効でない号令です。
-        """
-        return self._list_of_idle
+    def positive_rule_list_of_active(self):
+        return self._positive_rule_list_of_active
 
 
     @property
-    def list_of_active(self):
-        return self._list_of_active
+    def negative_rule_list_of_idle(self):
+        """初期状態では、有効でない号令です。
+        """
+        return self._negative_rule_list_of_idle
+
+
+    @property
+    def negative_rule_list_of_active(self):
+        return self._negative_rule_list_of_active
 
 
     def stringify(self):
-        labels_of_idle_rule = []
-        labels_of_active_rule = []
+        labels_of_active_positive_rule = []
+        labels_of_idle_negative_rule = []
+        labels_of_active_negative_rule = []
 
-        for rule in self.list_of_idle:
-            labels_of_idle_rule.append(rule.label)
+        for rule in self.positive_rule_list_of_active:
+            labels_of_active_positive_rule.append(rule.label)
 
-        for rule in self.list_of_active:
-            labels_of_active_rule.append(rule.label)
+        for rule in self.negative_rule_list_of_idle:
+            labels_of_idle_negative_rule.append(rule.label)
+
+        for rule in self.negative_rule_list_of_active:
+            labels_of_active_negative_rule.append(rule.label)
 
         return f"""\
-IDLE RULES ({len(self.list_of_idle)})
-----------
-{'\n'.join(labels_of_idle_rule)}
+ACTIVE POSITIVE RULES ({len(self.positive_rule_list_of_active)})
+---------------------
+{'\n'.join(labels_of_active_positive_rule)}
 
-ACTIVE RULES ({len(self.list_of_active)})
-------------
-{'\n'.join(labels_of_active_rule)}
+IDLE NEGATIVE RULES ({len(self.negative_rule_list_of_idle)})
+-------------------
+{'\n'.join(labels_of_idle_negative_rule)}
+
+ACTIVE NEGATIVE RULES ({len(self.negative_rule_list_of_active)})
+---------------------
+{'\n'.join(labels_of_active_negative_rule)}
 """

@@ -28,7 +28,7 @@ class MovesReductionFilterLogics():
         negative_rules_to_remove = []
 
         # 行進リスト
-        for negative_rule in gymnasium.gourei_collection_model.list_of_active:
+        for negative_rule in gymnasium.gourei_collection_model.negative_rule_list_of_active:
             # １手も指さず、目の前にある盤に対して。
             remaining_moves = negative_rule.before_move_o1o1x(
                     remaining_moves = remaining_moves,
@@ -39,7 +39,7 @@ class MovesReductionFilterLogics():
                 negative_rules_to_remove.append(negative_rule)
 
         for negative_rule in negative_rules_to_remove:
-            gymnasium.gourei_collection_model.list_of_active.remove(negative_rule)
+            gymnasium.gourei_collection_model.negative_rule_list_of_active.remove(negative_rule)
             gymnasium.thinking_logger_module.append(f"[moves_reduction_filter_logics.py > before_move_o1x] delete negative rule. {negative_rule.label}")
         # 指し手が全部消えてしまった場合、何でも指すようにします
         if len(remaining_moves) < 1:
@@ -66,7 +66,7 @@ class MovesReductionFilterLogics():
             negative_rules_to_remove = []
 
             # 行進リスト
-            for negative_rule in gymnasium.gourei_collection_model.list_of_idle:
+            for negative_rule in gymnasium.gourei_collection_model.negative_rule_list_of_idle:
                 negative_rule.after_best_moving_in_idling(
                         move        = move,
                         table       = gymnasium.table)
@@ -79,12 +79,12 @@ class MovesReductionFilterLogics():
                     negative_rules_to_remove.append(negative_rule)
 
             for negative_rule in negative_rules_to_activate:
-                gymnasium.gourei_collection_model.list_of_idle.remove(negative_rule)
-                gymnasium.gourei_collection_model.list_of_active.append(negative_rule)
+                gymnasium.gourei_collection_model.negative_rule_list_of_idle.remove(negative_rule)
+                gymnasium.gourei_collection_model.negative_rule_list_of_active.append(negative_rule)
                 gymnasium.thinking_logger_module.append(f"[moves_reduction_filter_logics.py > after_best_moving] activate negative rule. {negative_rule.label}")
 
             for negative_rule in negative_rules_to_remove:
-                gymnasium.gourei_collection_model.list_of_active.remove(negative_rule)
+                gymnasium.gourei_collection_model.negative_rule_list_of_active.remove(negative_rule)
                 gymnasium.thinking_logger_module.append(f"[moves_reduction_filter_logics.py > after_best_moving] delete negative rule. {negative_rule.label}")
 
 
@@ -95,7 +95,7 @@ class MovesReductionFilterLogics():
         negative_rules_to_remove = []
 
         # 行進リスト
-        for negative_rule in gymnasium.gourei_collection_model.list_of_active:
+        for negative_rule in gymnasium.gourei_collection_model.negative_rule_list_of_active:
             negative_rule.after_best_moving(
                     move        = move,
                     table       = gymnasium.table)
@@ -105,5 +105,5 @@ class MovesReductionFilterLogics():
                 negative_rules_to_remove.append(negative_rule)
 
         for negative_rule in negative_rules_to_remove:
-            gymnasium.gourei_collection_model.list_of_active.remove(negative_rule)
+            gymnasium.gourei_collection_model.negative_rule_list_of_active.remove(negative_rule)
             gymnasium.thinking_logger_module.append(f"[moves_reduction_filter_logics.py > after_best_moving] delete negative rule. {negative_rule.label}")
