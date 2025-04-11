@@ -25,6 +25,9 @@
 # 号令
 [gourei_commands]
 
+    # 訓令［ゾウの頭を守れ］
+    do_protect_bishop_head = true
+
     # 行進［戻るな］
     do_not_back = true
 
