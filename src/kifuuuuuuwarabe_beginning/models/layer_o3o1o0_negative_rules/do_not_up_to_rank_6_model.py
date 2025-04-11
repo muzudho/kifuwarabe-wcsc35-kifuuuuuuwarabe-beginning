@@ -50,19 +50,18 @@ class DoNotUpToRank6Model(NegativeRuleModel):
         src_sq_obj = SquareModel(cshogi.move_from(move))
         dst_sq_obj = SquareModel(cshogi.move_to(move))
 
-        # # 自キリンが２八にいる
-        # if table.piece(np.masu(28)) != np.ji_pc(cshogi.ROOK):
-        #     # そうでなければ対象外
-        #     return constants.mind.NOT_IN_THIS_CASE
-
         # 移動先は６段目ではない。
         if dst_sq_obj.rank != np.dan(6):
             # そうでなければ意志を残している
             return constants.mind.WILL
 
-        # 動いた先は７六で、動いた駒は歩だ。
-        if dst_sq_obj.sq == np.masu(76) and cshogi.piece_to_piece_type(table.piece(src_sq_obj.sq)) == cshogi.PAWN:
-            # ７六に歩を突くのはＯｋ。
+        # （角道を止める手）７六歩はポジティブ・ルールの方でやるから、ここではやらない。
+        if (
+                dst_sq_obj.sq == np.masu(66)    # 動いた先は６六で。
+            and cshogi.piece_to_piece_type(table.piece(src_sq_obj.sq)) == cshogi.PAWN   # 動いた駒は歩だ。
+            and (table.piece(np.masu(77)) == np.ji_pc(cshogi.BISHOP) or table.piece(np.masu(88)) == np.ji_pc(cshogi.BISHOP))    # 自ゾウが７七または８八にいる。
+            ):
+            # ６六に歩を突くのはＯｋ。
             return constants.mind.WILL
 
         # 意志なし
