@@ -5,7 +5,7 @@ import sys
 from ...models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateModel
 from ...models.layer_o3o0 import QuiescenceSearchForAllLegalMovesAtFirstModel
 from ...views import TableView
-from ..layer_o1o0 import MovesReductionFilterLogics
+from ..layer_o3o0 import MovesReductionFilterLogics
 
 
 class GoLogic():

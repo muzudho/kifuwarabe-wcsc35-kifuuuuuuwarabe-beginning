@@ -4,7 +4,7 @@ import exshell as xs
 import sys
 
 from pathlib import Path
-from .logics.layer_o1o0 import MovesReductionFilterLogics
+from .logics.layer_o3o0 import MovesReductionFilterLogics
 from .logics.layer_o4o0_usi import GoLogic
 from .models.layer_o1o0 import SearchResultStateModel
 from .modules.exshell_mod.views import XsBoardView
