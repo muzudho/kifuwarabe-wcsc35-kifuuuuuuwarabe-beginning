@@ -7,7 +7,7 @@ from ..layer_o1o0 import TableModel, TurnModel
 from ..layer_o1o0.table_access_object import PieceValueTAO
 from ..layer_o2o0 import BasketballCourtModel
 from .health_check_model import HealthCheckModel
-from .negative_rule_collection_model import NegativeRuleCollectionModel
+from .gourei_collection_model import GoureiCollectionModel
 
 
 class GymnasiumModel():
@@ -41,7 +41,7 @@ class GymnasiumModel():
         self._np_value = 0
 
         self._basketball_court_model = None
-        self._negative_rule_collection_model = None
+        self._gourei_collection_model = None
 
         self._health_check = None   # 健康診断
 
@@ -125,8 +125,8 @@ class GymnasiumModel():
 
 
     @property
-    def negative_rule_collection_model(self):
-        return self._negative_rule_collection_model
+    def gourei_collection_model(self):
+        return self._gourei_collection_model
 
 
     @property
@@ -146,7 +146,7 @@ class GymnasiumModel():
 
         self._basketball_court_model = BasketballCourtModel(
                 config_doc = self._config_doc)
-        self._negative_rule_collection_model = NegativeRuleCollectionModel(
+        self._gourei_collection_model = GoureiCollectionModel(
                 basketball_court_model  = self._basketball_court_model)
 
 
@@ -209,6 +209,6 @@ class GymnasiumModel():
         return f"""\
 {self._table.dump()}
 {self._np_value=}
-{len(self._negative_rule_collection_model.list_of_idle)=}
-{len(self._negative_rule_collection_model.list_of_active)=}
+{len(self._gourei_collection_model.list_of_idle)=}
+{len(self._gourei_collection_model.list_of_active)=}
 """

@@ -7,7 +7,9 @@ from ..layer_o3o1o0_negative_rules import \
     WillForThreeGoldAndSilverCoinsToGatherToTheRightModel, WillNotToMove37PawnModel, WillSwingingRookModel
 
 
-class NegativeRuleCollectionModel():
+class GoureiCollectionModel():
+    """号令コレクション・モデル。
+    """
 
 
     def __init__(self, basketball_court_model):
