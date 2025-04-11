@@ -6,7 +6,7 @@ from .negative_rule_model import NegativeRuleModel
 
 
 class DoNotBreakFamousFenceModel(NegativeRuleModel):
-    """行進［名の有る囲いを崩すな］
+    """訓令［名の有る囲いを崩すな］
     ［名の有る囲いを保つ］意志
     """
 
