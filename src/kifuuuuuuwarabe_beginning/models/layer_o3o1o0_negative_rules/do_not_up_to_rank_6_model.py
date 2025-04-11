@@ -19,7 +19,7 @@ class DoNotUpToRank6Model(NegativeRuleModel):
                 basketball_court_model  = basketball_court_model)
 
 
-    def before_move_o1o1x(self, remaining_moves, table):
+    def before_branches_o1o1x(self, remaining_moves, table):
         if self.is_enabled:
 
             np = NineRankSidePerspectiveModel(table)

@@ -5,7 +5,7 @@ import sys
 from ...models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateModel
 from ...models.layer_o3o0 import QuiescenceSearchForAllLegalMovesAtFirstModel
 from ...views import TableView
-from ..layer_o3o0 import MovesReductionFilterLogics
+from ..layer_o3o0 import MovesPickupFilterLogics, MovesReductionFilterLogics
 
 
 class GoLogic():
@@ -134,36 +134,46 @@ class _Go2nd():
 
         old_remaining_moves = remaining_moves.copy()
 
-        # 合法手から、１手を選び出します。
-        # （必ず、投了ではない手が存在します）
-        #
-        # ［指前］
-        #       制約：
-        #           指し手は必ず１つ以上残っています。
-        remaining_moves = MovesReductionFilterLogics.before_move_o1x(
+        # 枝の前でポジティブ・ルール
+        moves_to_pickup = MovesPickupFilterLogics.before_branches_o1x(
                 remaining_moves = remaining_moves,
                 gymnasium       = self._gymnasium)
-        length_by_kifuwarabe = len(remaining_moves)
-        self._gymnasium.thinking_logger_module.append(f"{length_by_kifuwarabe=}")
+        
+        if 0 < len(moves_to_pickup):
+            # ピックアップされた手の中から選びます。
+            remaining_moves = moves_to_pickup
 
-        for move in remaining_moves:
-            self._gymnasium.health_check.append(
-                    move    = move,
-                    name    = 'NR_select',
-                    value   =  True)
-
-        if len(remaining_moves) == 0:
-            remaining_moves = old_remaining_moves
-            self._gymnasium.thinking_logger_module.append(f"Restore after MovesReductionFilterLogics. len={len(remaining_moves)}.")
+        else:
+            # 合法手から、１手を選び出します。
+            # （必ず、投了ではない手が存在します）
+            #
+            # ［指前］
+            #       制約：
+            #           指し手は必ず１つ以上残っています。
+            remaining_moves = MovesReductionFilterLogics.before_branches_o1x(
+                    remaining_moves = remaining_moves,
+                    gymnasium       = self._gymnasium)
+            length_by_kifuwarabe = len(remaining_moves)
+            self._gymnasium.thinking_logger_module.append(f"{length_by_kifuwarabe=}")
 
             for move in remaining_moves:
                 self._gymnasium.health_check.append(
                         move    = move,
-                        name    = 'NR_reselect',
+                        name    = 'NR_select',
                         value   =  True)
 
-        # ログ
-        message = f"""\
+            if len(remaining_moves) == 0:
+                remaining_moves = old_remaining_moves
+                self._gymnasium.thinking_logger_module.append(f"Restore after MovesReductionFilterLogics. len={len(remaining_moves)}.")
+
+                for move in remaining_moves:
+                    self._gymnasium.health_check.append(
+                            move    = move,
+                            name    = 'NR_reselect',
+                            value   =  True)
+
+            # ログ
+            message = f"""\
 {TableView(self._gymnasium.table).stringify()}
 HEALTH CHECK
 ------------
@@ -171,9 +181,9 @@ HEALTH CHECK
 
 {self._gymnasium.gourei_collection_model.stringify()}
 """
-        # TODO ネガティブ・ルールの一覧も表示したい。
-        self._gymnasium.thinking_logger_module.append(message)
-        # NOTE これを書くと、将棋ホームでフリーズ： print(message, file=sys.stderr)
+            # TODO ネガティブ・ルールの一覧も表示したい。
+            self._gymnasium.thinking_logger_module.append(message)
+            # NOTE これを書くと、将棋ホームでフリーズ： print(message, file=sys.stderr)
 
         # １手に絞り込む
         if self._gymnasium.config_doc['search']['there_is_randomness']:

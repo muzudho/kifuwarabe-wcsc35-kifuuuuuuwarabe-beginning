@@ -19,50 +19,51 @@ class DoProtectBishopHeadModel(NegativeRuleModel):
                 basketball_court_model  = basketball_court_model)
 
 
-    def before_move_o1o1x(self, remaining_moves, table):
-        if self.is_enabled:
+    def before_branches_o1o1x(self, remaining_moves, table):
+        """どの手も指す前に。
 
+        Returns
+        -------
+        moves_to_pickup : list<int>
+            ピックアップした指し手。
+        """
+
+        moves_to_pickup = []
+
+        if self.is_enabled:
             np = NineRankSidePerspectiveModel(table)
 
-            # 自ゾウが７七にいる
+            # ［自ゾウが７七にいる］ならこのルールを消す。
             if table.piece(np.masu(77)) == np.ji_pc(cshogi.BISHOP):
                 # このオブジェクトを除外
                 self._is_removed = True
 
                 # 対象外
-                return remaining_moves
+                return []
 
             for i in range(len(remaining_moves))[::-1]:     # `[::-1]` - 逆順
                 m = remaining_moves[i]
-                mind = self.before_move(m, table)
-                if mind == constants.mind.WILL_NOT:
-                    del remaining_moves[i]
+                if self.is_better_move_before_branches(m, table):
+                    moves_to_pickup.append(m)
 
-        return remaining_moves
+        return moves_to_pickup
 
 
-    def before_move(self, move, table):
-        """指す前に。
+    def is_better_move_before_branches(self, move, table):
+        """指す前にこの手に決める。
         """
         np = NineRankSidePerspectiveModel(table)
 
         src_sq_obj = SquareModel(cshogi.move_from(move))
         dst_sq_obj = SquareModel(cshogi.move_to(move))
 
-        # # 自キリンが２八にいる
-        # if table.piece(np.masu(28)) != np.ji_pc(cshogi.ROOK):
-        #     # そうでなければ対象外
-        #     return constants.mind.NOT_IN_THIS_CASE
+        # ［７七角］があれば、それを選ぶ。
+        if table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.BISHOP) and dst_sq_obj.sq == np.masu(77):
+            return True
 
-        # 移動先は６段目ではない。
-        if dst_sq_obj.rank != np.dan(6):
-            # そうでなければ意志を残している
-            return constants.mind.WILL
+        # ［７六歩］があれば、それを選ぶ。
+        if table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.PAWN) and dst_sq_obj.sq == np.masu(76):
+            return True
 
-        # 動いた先は７六で、動いた駒は歩だ。
-        if dst_sq_obj.sq == np.masu(76) and cshogi.piece_to_piece_type(table.piece(src_sq_obj.sq)) == cshogi.PAWN:
-            # ７六に歩を突くのはＯｋ。
-            return constants.mind.WILL
-
-        # 意志なし
-        return constants.mind.WILL_NOT
+        # それ以外は無視
+        return False

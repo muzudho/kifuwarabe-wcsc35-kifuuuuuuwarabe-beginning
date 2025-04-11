@@ -5,9 +5,9 @@ class MovesReductionFilterLogics():
 
 
     @staticmethod
-    def before_move_o1x(remaining_moves, gymnasium):
+    def before_branches_o1x(remaining_moves, gymnasium):
         """［指前］
-        １手指す前です。
+        どの手も指す前です。
 
         Parameters
         ----------
@@ -30,7 +30,7 @@ class MovesReductionFilterLogics():
         # 号令リスト
         for negative_rule in gymnasium.gourei_collection_model.negative_rule_list_of_active:
             # １手も指さず、目の前にある盤に対して。
-            remaining_moves = negative_rule.before_move_o1o1x(
+            remaining_moves = negative_rule.before_branches_o1o1x(
                     remaining_moves = remaining_moves,
                     table           = gymnasium.table)
 
@@ -40,7 +40,7 @@ class MovesReductionFilterLogics():
 
         for negative_rule in negative_rules_to_remove:
             gymnasium.gourei_collection_model.negative_rule_list_of_active.remove(negative_rule)
-            gymnasium.thinking_logger_module.append(f"[moves_reduction_filter_logics.py > before_move_o1x] delete negative rule. {negative_rule.label}")
+            gymnasium.thinking_logger_module.append(f"[moves_reduction_filter_logics.py > before_branches_o1x] delete negative rule. {negative_rule.label}")
         # 指し手が全部消えてしまった場合、何でも指すようにします
         if len(remaining_moves) < 1:
             return old_remaining_moves

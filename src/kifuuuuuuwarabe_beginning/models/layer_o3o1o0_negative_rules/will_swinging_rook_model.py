@@ -17,7 +17,7 @@ class WillSwingingRookModel(NegativeRuleModel):
                 basketball_court_model  = basketball_court_model)
 
 
-    def before_move_o1o1x(self, remaining_moves, table):
+    def before_branches_o1o1x(self, remaining_moves, table):
         # ［振り飛車をする］意志
         if self.is_enabled:
             if constants.mind.WILL == self.will_on_board(table):
