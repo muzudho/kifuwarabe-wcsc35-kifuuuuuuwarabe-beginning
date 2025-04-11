@@ -1,4 +1,4 @@
-from ..layer_o3o1o0_gourei_commands import \
+from ..layer_o3o1o0_negative_rules import \
     DoNotBackModel, DoNotBreakFamousFenceModel, DoNotBuildRightWallModel, \
     DoNotDogAndCatSideBySideModel, \
     DoNotGoLeftModel, \
