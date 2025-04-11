@@ -22,7 +22,7 @@
     there_is_randomness = true
 
 
-# 行進演算
+# 号令
 [march_operations]
 
     # 行進［戻るな］

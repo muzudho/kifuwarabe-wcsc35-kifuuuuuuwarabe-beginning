@@ -58,7 +58,7 @@ class DoNotMoveRookModel(NegativeRuleModel):
 
 
     def after_best_moving_in_idling(self, move, table):
-        """（アイドリング中の行進演算について）指す手の確定時。
+        """（アイドリング中の号令について）指す手の確定時。
         """
 
         if self.is_enabled:
@@ -71,13 +71,13 @@ class DoNotMoveRookModel(NegativeRuleModel):
             if cshogi.move_from_piece_type(move) != cshogi.ROOK:
                 return
 
-            # キリンの移動先が異筋なら、この行進演算を有効化します。
+            # キリンの移動先が異筋なら、この号令を有効化します。
             e1 = np.swap(dst_sq_obj.file, src_sq_obj.file)
             if e1[0] != e1[1]:
                 print(f'★ ｏn_best_move_played: {self.label=} 有効化')
                 self._is_activate = True
 
-            #     # キリンの移動先が異段なら、この行進演算は削除します。
+            #     # キリンの移動先が異段なら、この号令は削除します。
             #     e1 = cmp.swap(dst_sq_obj.rank, src_sq_obj.rank)
             #     if e1[0] != e1[1]:
             #         self._is_removed = True

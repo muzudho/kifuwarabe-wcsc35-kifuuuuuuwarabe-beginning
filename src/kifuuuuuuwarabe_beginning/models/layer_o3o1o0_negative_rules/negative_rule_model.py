@@ -36,7 +36,7 @@ class NegativeRuleModel():
 
     @property
     def is_activate(self):
-        """［アイドリング］状態にある［行進演算］が、
+        """［アイドリング］状態にある［号令］が、
         ［オンゴーイング］状態に遷移するためのフラグです。
         """
         return self._is_activate
@@ -48,7 +48,7 @@ class NegativeRuleModel():
 
 
     def after_best_moving_in_idling(self, move, table):
-        """（アイドリング中の行進演算について）指す手の確定時。
+        """（アイドリング中の号令について）指す手の確定時。
         """
         pass
 

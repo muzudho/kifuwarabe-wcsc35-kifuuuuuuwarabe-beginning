@@ -11,7 +11,7 @@ class NegativeRuleCollectionModel():
 
 
     def __init__(self, basketball_court_model):
-        # 初期状態では、有効でない行進演算です。
+        # 初期状態では、有効でない号令です。
         self._list_of_idle = [
             DoNotMoveRookModel(basketball_court_model=basketball_court_model),        # 行進［キリンは動くな］  NOTE 飛車を振るまで有効になりません
         ]
@@ -34,7 +34,7 @@ class NegativeRuleCollectionModel():
 
     @property
     def list_of_idle(self):
-        """初期状態では、有効でない行進演算です。
+        """初期状態では、有効でない号令です。
         """
         return self._list_of_idle
 

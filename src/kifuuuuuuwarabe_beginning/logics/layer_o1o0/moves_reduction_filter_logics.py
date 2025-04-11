@@ -34,7 +34,7 @@ class MovesReductionFilterLogics():
                     remaining_moves = remaining_moves,
                     table           = gymnasium.table)
 
-            # 行進演算を、必要がなくなったら、リストから除外する操作
+            # 号令を、必要がなくなったら、リストから除外する操作
             if negative_rule.is_removed:
                 negative_rules_to_remove.append(negative_rule)
 
@@ -59,7 +59,7 @@ class MovesReductionFilterLogics():
         def _for_idle_negative_rules(move, gymnasium):
             """［指後、待機者用］
             １手指した後に呼び出されます。
-            （アイドリング中の行進演算について）指す手の確定時。
+            （アイドリング中の号令について）指す手の確定時。
             """
 
             negative_rules_to_activate = []
@@ -74,7 +74,7 @@ class MovesReductionFilterLogics():
                 if negative_rule.is_activate:
                     negative_rules_to_activate.append(negative_rule)
 
-                # 行進演算を、必要がなくなったら、リストから除外する操作
+                # 号令を、必要がなくなったら、リストから除外する操作
                 if negative_rule.is_removed:
                     negative_rules_to_remove.append(negative_rule)
 
@@ -100,7 +100,7 @@ class MovesReductionFilterLogics():
                     move        = move,
                     table       = gymnasium.table)
 
-            # 行進演算を、必要がなくなったら、リストから除外する操作
+            # 号令を、必要がなくなったら、リストから除外する操作
             if negative_rule.is_removed:
                 negative_rules_to_remove.append(negative_rule)
 
