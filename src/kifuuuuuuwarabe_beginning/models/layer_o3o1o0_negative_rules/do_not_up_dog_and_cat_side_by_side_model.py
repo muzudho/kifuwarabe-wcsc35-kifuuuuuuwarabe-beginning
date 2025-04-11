@@ -6,7 +6,7 @@ from .negative_rule_model import NegativeRuleModel
 
 
 class DoNotDogAndCatSideBySideModel(NegativeRuleModel):
-    """行進［イヌとネコを横並びに上げるな］
+    """号令［イヌとネコを横並びに上げるな］
     ［イヌを９段目に留めておく］意志を含む
     """
 

@@ -1,6 +1,6 @@
-class MovesReductionFilterLogics():
-    """［合法手削減濾］
-    合法手を減らすフィルターです。
+class MovesPickupFilterLogics():
+    """［合法手ピックアップ］
+    合法手のリストから１つを選ぶフィルターです。
     """
 
 

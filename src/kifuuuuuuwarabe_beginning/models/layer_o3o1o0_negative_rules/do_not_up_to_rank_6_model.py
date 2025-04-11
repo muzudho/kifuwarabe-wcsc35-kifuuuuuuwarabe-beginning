@@ -6,7 +6,7 @@ from .negative_rule_model import NegativeRuleModel
 
 
 class DoNotUpToRank6Model(NegativeRuleModel):
-    """行進［６段目に上がるな］
+    """号令［６段目に上がるな］
     ［玉が２八に行くまで歩を突かない］意志。
     ただし、７六に歩を突くのはＯｋ。
     """

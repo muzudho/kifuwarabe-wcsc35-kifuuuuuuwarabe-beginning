@@ -6,7 +6,7 @@ from .negative_rule_model import NegativeRuleModel
 
 
 class DoNotMoveRookModel(NegativeRuleModel):
-    """行進［キリンは動くな］
+    """号令［キリンは動くな］
     ［きりんは止まる］意志
 
     NOTE 初期状態は［アイドリング］で始まり、飛車を振った後に有効化します

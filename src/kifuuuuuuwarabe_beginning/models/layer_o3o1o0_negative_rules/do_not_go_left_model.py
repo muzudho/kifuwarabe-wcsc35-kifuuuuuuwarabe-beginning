@@ -6,7 +6,7 @@ from .negative_rule_model import NegativeRuleModel
 
 
 class DoNotGoLeftModel(NegativeRuleModel):
-    """行進［左へ行くな］
+    """号令［左へ行くな］
     ［右へ行く］意志
     """
 

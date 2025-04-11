@@ -7,7 +7,7 @@ from .negative_rule_model import NegativeRuleModel
 
 
 class DoNotBuildRightWallModel(NegativeRuleModel):
-    """行進［右壁を作るな］
+    """号令［右壁を作るな］
     ［右壁を作らない］意志
 
     NOTE 飛車も玉も、［右壁］の構成物になるので注意。

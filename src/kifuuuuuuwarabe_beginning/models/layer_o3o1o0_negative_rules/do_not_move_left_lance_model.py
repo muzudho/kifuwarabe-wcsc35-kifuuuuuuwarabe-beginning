@@ -6,7 +6,7 @@ from .negative_rule_model import NegativeRuleModel
 
 
 class DoNotMoveLeftLanceModel(NegativeRuleModel):
-    """行進［左のイノシシは動くな］
+    """号令［左のイノシシは動くな］
     ［左のイノシシは止まる］意志
     """
 

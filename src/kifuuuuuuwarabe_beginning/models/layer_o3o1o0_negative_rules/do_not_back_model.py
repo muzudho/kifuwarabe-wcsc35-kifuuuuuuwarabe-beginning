@@ -5,7 +5,7 @@ from .negative_rule_model import NegativeRuleModel
 
 
 class DoNotBackModel(NegativeRuleModel):
-    """行進［戻るな］
+    """号令［戻るな］
     ［常に進む］意志
     """
 

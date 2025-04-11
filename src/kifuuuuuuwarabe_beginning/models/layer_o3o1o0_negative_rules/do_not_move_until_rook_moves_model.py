@@ -6,7 +6,7 @@ from .negative_rule_model import NegativeRuleModel
 
 
 class DoNotMoveUntilRookMovesModel(NegativeRuleModel):
-    """行進［キリンが動くまで動くな］
+    """号令［キリンが動くまで動くな］
     ［飛車道を開ける］意志
     """
 

@@ -28,34 +28,34 @@
     # 訓令［ゾウの頭を守れ］
     do_protect_bishop_head = true
 
-    # 行進［戻るな］
+    # 号令［戻るな］
     do_not_back = true
 
-    # 行進［名の有る囲いを崩すな］
+    # 訓令［名の有る囲いを崩すな］
     do_not_break_famous_fence = true
 
-    # 行進［右壁を作るな］
+    # 号令［右壁を作るな］
     do_not_build_right_wall = true
 
-    # 行進［イヌとネコを横並びに上げるな］
+    # 号令［イヌとネコを横並びに上げるな］
     do_not_up_dog_and_cat_side_by_side = true
 
-    # 行進［６段目に上がるな］
+    # 号令［６段目に上がるな］
     do_not_up_to_rank_6 = true
 
-    # 行進［キリンが動くまで動くな］
+    # 号令［キリンが動くまで動くな］
     do_not_move_until_rook_moves = true
 
-    # 行進［左へ行くな］
+    # 号令［左へ行くな］
     do_not_go_left = true
 
-    # 行進［左のイノシシは動くな］
+    # 号令［左のイノシシは動くな］
     do_not_move_left_lance = true
 
-    # 行進［右のイノシシは動くな］
+    # 号令［右のイノシシは動くな］
     do_not_move_right_lance = true
 
-    # 行進［キリンは動くな］
+    # 号令［キリンは動くな］
     do_not_move_rook = true
 
     # ［金銀３枚が右に集まる］意志
