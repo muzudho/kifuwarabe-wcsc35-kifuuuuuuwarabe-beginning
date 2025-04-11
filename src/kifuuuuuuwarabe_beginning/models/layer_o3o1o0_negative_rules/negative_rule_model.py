@@ -31,7 +31,7 @@ class NegativeRuleModel():
 
     @property
     def is_enabled(self):
-        return self._basketball_court_model.config_doc['march_operations'][self._id]
+        return self._basketball_court_model.config_doc['gourei_commands'][self._id]
 
 
     @property

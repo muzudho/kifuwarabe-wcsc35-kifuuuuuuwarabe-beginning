@@ -23,7 +23,7 @@
 
 
 # 号令
-[march_operations]
+[gourei_commands]
 
     # 行進［戻るな］
     do_not_back = true
