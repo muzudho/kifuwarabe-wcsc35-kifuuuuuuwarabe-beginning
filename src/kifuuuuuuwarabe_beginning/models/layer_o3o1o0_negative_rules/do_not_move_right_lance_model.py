@@ -30,14 +30,14 @@ class DoNotMoveRightLanceModel(NegativeRuleModel):
             else:
                 for i in range(len(remaining_moves))[::-1]:     # `[::-1]` - 逆順
                     m = remaining_moves[i]
-                    mind = self.before_move(m, table)
+                    mind = self._before_move_nrm(m, table)
                     if mind == constants.mind.WILL_NOT:
                         del remaining_moves[i]
 
         return remaining_moves
 
 
-    def before_move(self, move, table):
+    def _before_move_nrm(self, move, table):
         """指す前に。
         """
 
@@ -50,7 +50,7 @@ class DoNotMoveRightLanceModel(NegativeRuleModel):
             return constants.mind.NOT_IN_THIS_CASE
 
         # １筋の駒が動いたら意志無し
-        #print(f'★ ＤoNotMoveRightLance.before_move(): {src_sq_obj.file=} {np.suji(1)=}')
+        #print(f'★ ＤoNotMoveRightLance._before_move_nrm(): {src_sq_obj.file=} {np.suji(1)=}')
         if src_sq_obj.file == np.suji(1):
             return constants.mind.WILL_NOT
 

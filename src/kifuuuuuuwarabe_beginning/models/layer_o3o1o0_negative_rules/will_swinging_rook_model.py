@@ -27,7 +27,7 @@ class WillSwingingRookModel(NegativeRuleModel):
                     m = remaining_moves[i]
 
                     # ［振り飛車をする］意志
-                    mind = self.before_move(m, table)
+                    mind = self._before_move_nrm(m, table)
                     if mind == constants.mind.WILL_NOT:
                         del remaining_moves[i]
             
@@ -38,7 +38,7 @@ class WillSwingingRookModel(NegativeRuleModel):
         return remaining_moves
 
 
-    def before_move(self, move, table):
+    def _before_move_nrm(self, move, table):
         """指し手は［振り飛車をする］意志を残しているか？
         """
         np = NineRankSidePerspectiveModel(table)

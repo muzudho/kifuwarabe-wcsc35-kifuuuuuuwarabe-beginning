@@ -17,7 +17,7 @@ class WillNotToMove37PawnModel(NegativeRuleModel):
                 basketball_court_model  = basketball_court_model)
 
 
-    def before_move(self, move, table):
+    def _before_move_nrm(self, move, table):
         """指し手は［３七の歩を突かない］意志を残しているか？
         """
         np = NineRankSidePerspectiveModel(table)

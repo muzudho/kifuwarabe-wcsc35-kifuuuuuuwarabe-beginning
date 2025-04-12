@@ -22,7 +22,7 @@ class DoNotBackModel(NegativeRuleModel):
         self._back_board = [None] * constants.BOARD_AREA
 
 
-    def before_move(self, move, table):
+    def _before_move_nrm(self, move, table):
         """指す前に。
         """
 

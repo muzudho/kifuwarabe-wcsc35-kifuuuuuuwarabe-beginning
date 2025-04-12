@@ -21,7 +21,7 @@ class DoNotBuildRightWallModel(NegativeRuleModel):
                 basketball_court_model  = basketball_court_model)
 
 
-    def before_move(self, move, table):
+    def _before_move_nrm(self, move, table):
         """指す前に。
 
         定義：　移動前の玉の以右の全ての筋について、８段目、９段目の両方に駒がある状態を［右壁］とする。

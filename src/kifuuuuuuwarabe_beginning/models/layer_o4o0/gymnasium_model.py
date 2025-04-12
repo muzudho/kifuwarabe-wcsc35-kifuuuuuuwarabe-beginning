@@ -177,7 +177,7 @@ class GymnasiumModel():
         """一手指す。
         """
 
-        exchange_value = self.piece_value_tao.before_move(
+        exchange_value = self.piece_value_tao._before_move_nrm(
                 move = move)
 
         if self.engine_turn == cshogi.WHITE:

@@ -23,14 +23,14 @@ class DoNotBreakFamousFenceModel(NegativeRuleModel):
 
             for i in range(len(remaining_moves))[::-1]:     # `[::-1]` - 逆順
                 m = remaining_moves[i]
-                mind = self.before_move(m, table)
+                mind = self._before_move_nrm(m, table)
                 if mind == constants.mind.WILL_NOT:
                     del remaining_moves[i]
 
         return remaining_moves
 
 
-    def before_move(self, move, table):
+    def _before_move_nrm(self, move, table):
         """指す前に。
         """
         np = NineRankSidePerspectiveModel(table)

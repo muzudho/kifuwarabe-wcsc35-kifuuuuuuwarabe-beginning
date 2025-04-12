@@ -18,7 +18,7 @@ class DoNotMoveLeftLanceModel(NegativeRuleModel):
                 basketball_court_model  = basketball_court_model)
 
 
-    def before_move(self, move, table):
+    def _before_move_nrm(self, move, table):
         """指す前に。
         """
 
@@ -31,7 +31,7 @@ class DoNotMoveLeftLanceModel(NegativeRuleModel):
             return constants.mind.NOT_IN_THIS_CASE
 
         # ９筋の駒が動いたら意志無し
-        #print(f'★ ＤoNotMoveLeftLance.before_move(): {src_sq_obj.file=} {np.suji(9)=}')
+        #print(f'★ ＤoNotMoveLeftLance._before_move_nrm(): {src_sq_obj.file=} {np.suji(9)=}')
         if src_sq_obj.file == np.suji(9):
             return constants.mind.WILL_NOT
 
