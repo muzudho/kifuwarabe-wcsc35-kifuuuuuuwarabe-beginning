@@ -58,6 +58,10 @@ class NegativeRuleModel():
     # FIXME オーバーライドされてカスタムされるケースがある。一般化したい。
     def before_branches_o1o1x(self, remaining_moves, table):
         if self.is_enabled:
+
+            # TODO （事前リムーブ分岐）条件が合致したら、このルールをリストから除外する処理。
+            # TODO （事前スキップ判定）条件に一致したら、スキップする処理。
+
             for i in range(len(remaining_moves))[::-1]:     # `[::-1]` - 逆順
                 m = remaining_moves[i]
                 mind = self._before_move_nrm(m, table)

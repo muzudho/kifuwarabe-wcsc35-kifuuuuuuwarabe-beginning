@@ -33,7 +33,7 @@ class DoProtectBishopHeadModel(NegativeRuleModel):
         if self.is_enabled:
             np = NineRankSidePerspectiveModel(table)
 
-            # ［自ゾウが７七にいる］ならこのルールを消す。
+            # 事前ケース分岐）［自ゾウが７七にいる］ならこのルールを消す。
             if table.piece(np.masu(77)) == np.ji_pc(cshogi.BISHOP):
                 # このオブジェクトを除外
                 self._is_removed = True

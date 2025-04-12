@@ -20,6 +20,8 @@ class WillSwingingRookModel(NegativeRuleModel):
     def before_branches_o1o1x(self, remaining_moves, table):
         # ［振り飛車をする］意志
         if self.is_enabled:
+
+            # （事前スキップ判定）
             if constants.mind.WILL == self.will_on_board(table):
                 #print('★ go: 盤は［振り飛車をする］意志を残しています', file=sys.stderr)
 

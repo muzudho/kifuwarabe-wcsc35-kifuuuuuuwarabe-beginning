@@ -25,7 +25,7 @@ class DoNotMoveRookModel(NegativeRuleModel):
 
             np = NineRankSidePerspectiveModel(table)
 
-            # 自ライオンが２八にいる
+            # （事前リムーブ分岐）自ライオンが２八にいる
             if table.piece(np.masu(28)) == np.ji_pc(cshogi.KING):
                 # （処理を行わず）このオブジェクトを除外
                 self._is_removed = True
