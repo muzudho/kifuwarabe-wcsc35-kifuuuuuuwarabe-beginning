@@ -45,7 +45,7 @@ class PieceValueTAO():
         return np_value
 
 
-    def _before_move_nrm(self, move):
+    def before_move_pvt(self, move):
         """相手の手番でしか呼び出されないので、１つ前の手が自分の手になる。
 
         Parameters
@@ -62,7 +62,7 @@ class PieceValueTAO():
         # 移動先にある駒を見る。
         dst_sq = cshogi.move_to(move)
         dst_pc = self._table.piece(dst_sq)
-        #print(f'_before_move_nrm: {dst_pc=}')
+        #print(f'before_move_pvt: {dst_pc=}')
         return 2 * PieceValuesModel.by_piece_type(cshogi.piece_to_piece_type(dst_pc))    # 交換値なので２倍します。
 
 

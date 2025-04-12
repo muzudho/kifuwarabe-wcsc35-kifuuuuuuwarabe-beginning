@@ -53,12 +53,6 @@ class NegativeRuleModel():
         pass
 
 
-    def after_best_moving(self, move, table):
-        """指す手の確定時。
-        """
-        pass
-
-
     def before_branches_o1o1x(self, remaining_moves, table):
         if self.is_enabled:
             for i in range(len(remaining_moves))[::-1]:     # `[::-1]` - 逆順
@@ -72,5 +66,19 @@ class NegativeRuleModel():
 
     def _before_move_nrm(self, move, table):
         """指す前に。
+        """
+        pass
+
+
+    def after_best_moving_o1o1o0(self, move, table):
+        """指す手の確定時。
+        """
+        self._after_best_moving_nrm(
+                move    = move,
+                table   = table)
+
+
+    def _after_best_moving_nrm(self, move, table):
+        """指す手の確定時。
         """
         pass

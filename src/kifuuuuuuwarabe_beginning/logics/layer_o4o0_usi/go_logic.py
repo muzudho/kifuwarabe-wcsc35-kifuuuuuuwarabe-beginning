@@ -193,7 +193,7 @@ HEALTH CHECK
         self._gymnasium.thinking_logger_module.append(f"Best move={cshogi.move_to_usi(best_move)}")
 
         # ［指後］
-        MovesReductionFilterLogics.after_best_moving(
+        MovesReductionFilterLogics.after_best_moving_o1o0(
                 move        = best_move,
                 gymnasium   = self._gymnasium)
 

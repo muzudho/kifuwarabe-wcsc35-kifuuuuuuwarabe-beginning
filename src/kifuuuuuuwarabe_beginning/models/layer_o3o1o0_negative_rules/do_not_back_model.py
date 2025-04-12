@@ -57,7 +57,7 @@ class DoNotBackModel(NegativeRuleModel):
         return constants.mind.WILL
 
 
-    def after_best_moving(self, move, table):
+    def _after_best_moving_nrm(self, move, table):
         """指す手の確定時。
         """
 
