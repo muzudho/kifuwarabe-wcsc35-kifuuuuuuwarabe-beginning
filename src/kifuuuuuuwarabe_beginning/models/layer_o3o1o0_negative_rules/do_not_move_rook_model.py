@@ -40,24 +40,7 @@ class DoNotMoveRookModel(NegativeRuleModel):
         return remaining_moves
 
 
-    def _before_move(self, move, table):
-        """指す前に。
-        """
-
-        # キリン以外なら対象外
-        if cshogi.move_from_piece_type(move) not in [cshogi.ROOK]:
-            return constants.mind.NOT_IN_THIS_CASE
-
-        # # 移動先が異段なら意志あり
-        # e1 = cmp.swap(dst_sq_obj.rank, src_sq_obj.rank)
-        # if e1[0] != e1[1]:
-        #     return constants.mind.WILL
-
-        # それ以外は意志なし
-        return constants.mind.WILL_NOT
-
-
-    def after_best_moving_in_idling(self, move, table):
+    def _after_best_moving_in_idling_nrm(self, move, table):
         """（アイドリング中の号令について）指す手の確定時。
         """
 
@@ -81,3 +64,25 @@ class DoNotMoveRookModel(NegativeRuleModel):
             #     e1 = cmp.swap(dst_sq_obj.rank, src_sq_obj.rank)
             #     if e1[0] != e1[1]:
             #         self._is_removed = True
+
+
+    ####################
+    # MARK: サブルーチン
+    ####################
+
+
+    def _before_move(self, move, table):
+        """指す前に。
+        """
+
+        # キリン以外なら対象外
+        if cshogi.move_from_piece_type(move) not in [cshogi.ROOK]:
+            return constants.mind.NOT_IN_THIS_CASE
+
+        # # 移動先が異段なら意志あり
+        # e1 = cmp.swap(dst_sq_obj.rank, src_sq_obj.rank)
+        # if e1[0] != e1[1]:
+        #     return constants.mind.WILL
+
+        # それ以外は意志なし
+        return constants.mind.WILL_NOT

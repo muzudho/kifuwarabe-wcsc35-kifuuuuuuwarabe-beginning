@@ -50,7 +50,9 @@ class NegativeRuleModel():
     def after_best_moving_in_idling(self, move, table):
         """（アイドリング中の号令について）指す手の確定時。
         """
-        pass
+        self._after_best_moving_in_idling_nrm(
+                move    = move,
+                table   = table)
 
 
     def before_branches_o1o1x(self, remaining_moves, table):
@@ -64,18 +66,29 @@ class NegativeRuleModel():
         return remaining_moves
 
 
-    def _before_move_nrm(self, move, table):
-        """指す前に。
-        """
-        pass
-
-
     def after_best_moving_o1o1o0(self, move, table):
         """指す手の確定時。
         """
         self._after_best_moving_nrm(
                 move    = move,
                 table   = table)
+
+
+    ####################
+    # MARK: サブルーチン
+    ####################
+
+
+    def _before_move_nrm(self, move, table):
+        """指す前に。
+        """
+        pass
+
+
+    def _after_best_moving_in_idling_nrm(self, move, table):
+        """（アイドリング中の号令について）指す手の確定時。
+        """
+        pass
 
 
     def _after_best_moving_nrm(self, move, table):
