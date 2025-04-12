@@ -18,23 +18,14 @@ class DoNotMoveRightLanceModel(NegativeRuleModel):
                 basketball_court_model  = basketball_court_model)
 
 
-    def before_branches_o1o1x(self, remaining_moves, table):
-        if self.is_enabled:
-            np = NineRankSidePerspectiveModel(table)
+    def _remove_rule_before_branches_nrm(self, remaining_moves, table):
+        """枝前削除条件。
+        真なら、このルールをリストから除外します。
+        """
+        np = NineRankSidePerspectiveModel(table)
 
-            # （事前リムーブ分岐）自ライオンが２八にいる
-            if table.piece(np.masu(28)) == np.ji_pc(cshogi.KING):
-                # （処理を行わず）このオブジェクトを除外
-                self._is_removed = True
-            
-            else:
-                for i in range(len(remaining_moves))[::-1]:     # `[::-1]` - 逆順
-                    m = remaining_moves[i]
-                    mind = self._before_move_nrm(m, table)
-                    if mind == constants.mind.WILL_NOT:
-                        del remaining_moves[i]
-
-        return remaining_moves
+        # （事前リムーブ分岐）自ライオンが２八にいる
+        return table.piece(np.masu(28)) == np.ji_pc(cshogi.KING)
 
 
     def _before_move_nrm(self, move, table):

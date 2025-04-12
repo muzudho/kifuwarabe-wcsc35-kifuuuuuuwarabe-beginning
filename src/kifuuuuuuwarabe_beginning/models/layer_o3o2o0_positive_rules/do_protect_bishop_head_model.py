@@ -2,10 +2,10 @@ import cshogi
 
 from ..layer_o1o0 import constants, SquareModel
 from ..layer_o2o0.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
-from ..layer_o3o1o0_negative_rules.negative_rule_model import NegativeRuleModel
+from .positive_rule_model import PositiveRuleModel
 
 
-class DoProtectBishopHeadModel(NegativeRuleModel):
+class DoProtectBishopHeadModel(PositiveRuleModel):
     """TODO 訓令［ゾウの頭を守れ］
 
     ７六歩、７七角の２手を入れること。
@@ -19,7 +19,7 @@ class DoProtectBishopHeadModel(NegativeRuleModel):
                 basketball_court_model  = basketball_court_model)
 
 
-    def before_branches_o1o1x(self, remaining_moves, table):
+    def _before_branches_prm(self, remaining_moves, table):
         """どの手も指す前に。
 
         Returns
@@ -67,3 +67,18 @@ class DoProtectBishopHeadModel(NegativeRuleModel):
 
         # それ以外は無視
         return False
+
+
+    ##############################
+    # MARK: オーバーライドメソッド
+    ##############################
+
+    def _remove_rule_before_branches_prm(self, remaining_moves, table):
+        """枝前削除条件。
+        真なら、このルールをリストから除外します。
+        """
+
+        np = NineRankSidePerspectiveModel(table)
+
+        # 事前ケース分岐）［自ゾウが７七にいる］ならこのルールを消す。
+        return table.piece(np.masu(77)) == np.ji_pc(cshogi.BISHOP)

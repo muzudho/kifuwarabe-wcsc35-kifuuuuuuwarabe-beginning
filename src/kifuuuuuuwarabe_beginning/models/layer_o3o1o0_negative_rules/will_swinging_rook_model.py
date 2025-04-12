@@ -17,27 +17,11 @@ class WillSwingingRookModel(NegativeRuleModel):
                 basketball_court_model  = basketball_court_model)
 
 
-    def before_branches_o1o1x(self, remaining_moves, table):
-        # ［振り飛車をする］意志
-        if self.is_enabled:
-
-            # （事前スキップ判定）
-            if constants.mind.WILL == self.will_on_board(table):
-                #print('★ go: 盤は［振り飛車をする］意志を残しています', file=sys.stderr)
-
-                for i in range(len(remaining_moves))[::-1]:     # `[::-1]` - 逆順
-                    m = remaining_moves[i]
-
-                    # ［振り飛車をする］意志
-                    mind = self._before_move_nrm(m, table)
-                    if mind == constants.mind.WILL_NOT:
-                        del remaining_moves[i]
-            
-            # else:
-            #     print('★ go: 盤は［振り飛車をする］意志はありません', file=sys.stderr)
-            #     pass
-
-        return remaining_moves
+    def _skip_step_before_branches_nrm(self, remaining_moves, table):
+        """枝前スキップ条件。
+        真なら、枝前ステップではこのルールをスキップします。
+        """
+        return constants.mind.WILL != self.will_on_board(table)
 
 
     def _before_move_nrm(self, move, table):
