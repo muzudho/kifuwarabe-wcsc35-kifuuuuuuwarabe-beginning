@@ -18,18 +18,6 @@ class DoNotDogAndCatSideBySideModel(NegativeRuleModel):
                 basketball_court_model  = basketball_court_model)
 
 
-    def before_branches_o1o1x(self, remaining_moves, table):
-        if self.is_enabled:
-
-            for i in range(len(remaining_moves))[::-1]:     # `[::-1]` - 逆順
-                m = remaining_moves[i]
-                mind = self._before_move_nrm(m, table)
-                if mind == constants.mind.WILL_NOT:
-                    del remaining_moves[i]
-
-        return remaining_moves
-
-
     def _before_move_nrm(self, move, table):
         """指す前に。
         """
