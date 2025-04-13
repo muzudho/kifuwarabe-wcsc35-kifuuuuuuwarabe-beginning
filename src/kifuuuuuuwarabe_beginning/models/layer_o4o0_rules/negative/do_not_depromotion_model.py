@@ -6,5 +6,15 @@ class DoNotDepromotionModel:
     TODO ［成らない手］なら除外する。
     """
 
-    def __init__(self):
+
+    def __init__(self, basketball_court_model):
+        super().__init__(
+                id          = 'do_not_depromotion_model',
+                label       = '成らないということをするな',
+                basketball_court_model  = basketball_court_model)
+
+
+    def _before_branches_nrm(self, table):
+        """枝前に。
+        """
         pass

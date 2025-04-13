@@ -46,11 +46,13 @@ class PositiveRuleModel(RuleModel):
                 table           = table):
              return []
 
+        self._before_branches_prm(table)
+
         moves_to_pickup = []
 
         for i in range(len(remaining_moves))[::-1]:     # `[::-1]` - 逆順
             m = remaining_moves[i]
-            if self.is_better_move_before_branches(m, table):
+            if self._before_move_prm(m, table):
                 moves_to_pickup.append(m)
 
         return moves_to_pickup
@@ -82,8 +84,23 @@ class PositiveRuleModel(RuleModel):
         return False
 
 
+    def _before_branches_prm(self, table):
+        """枝前に。
+
+        Returns
+        -------
+        is_better_move : bool
+            指させたい手なら真。
+        """
+
+
     def _before_move_prm(self, move, table):
-        """指す前に。
+        """指す前にこの手に決める。
+
+        Returns
+        -------
+        is_better_move : bool
+            指させたい手なら真。
         """
         pass
 

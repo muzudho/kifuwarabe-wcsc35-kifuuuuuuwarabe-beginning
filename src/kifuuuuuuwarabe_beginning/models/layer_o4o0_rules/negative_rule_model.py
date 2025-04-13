@@ -40,6 +40,8 @@ class NegativeRuleModel(RuleModel):
                 table           = table):
              return remaining_moves
 
+        self._before_branches_nrm(table)
+
         for i in range(len(remaining_moves))[::-1]:     # `[::-1]` - 逆順
             m = remaining_moves[i]
             mind = self._before_move_nrm(m, table)
@@ -74,6 +76,12 @@ class NegativeRuleModel(RuleModel):
         真なら、枝前ステップではこのルールをスキップします。
         """
         return False
+
+
+    def _before_branches_nrm(self, table):
+        """枝前に。
+        """
+        pass
 
 
     def _before_move_nrm(self, move, table):
