@@ -6,46 +6,10 @@ class NegativeRuleModel(RuleModel):
 
 
     def __init__(self, id, label, basketball_court_model):
-        self._id = id
-        self._label = label
-        self._basketball_court_model = basketball_court_model
-
-        self._is_activate = False
-        self._is_removed = False
-
-
-    @property
-    def id(self):
-        """識別子。
-        設定ファイルなどで利用する名前。
-        """
-        return self._label
-
-
-    @property
-    def label(self):
-        """名前。
-        人に読めるテキスト。
-        """
-        return self._label
-
-
-    @property
-    def is_enabled(self):
-        return self._basketball_court_model.config_doc['gourei_commands'][self._id]
-
-
-    @property
-    def is_activate(self):
-        """［アイドリング］状態にある［号令］が、
-        ［オンゴーイング］状態に遷移するためのフラグです。
-        """
-        return self._is_activate
-
-
-    @property
-    def is_removed(self):
-        return self._is_removed
+        super().__init__(
+                id                      = id,
+                label                   = label,
+                basketball_court_model  = basketball_court_model)
 
 
     def after_best_moving_in_idling(self, move, table):
@@ -57,6 +21,8 @@ class NegativeRuleModel(RuleModel):
 
 
     def before_branches_o1o1x(self, remaining_moves, table):
+        """枝前処理。
+        """
         if not self.is_enabled:
             return remaining_moves
         
