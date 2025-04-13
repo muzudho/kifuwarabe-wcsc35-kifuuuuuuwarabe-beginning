@@ -5,7 +5,7 @@ import traceback
 
 from tomlkit import parse as toml_parse
 
-from src.kifuuuuuuwarabe_beginning.models.layer_o5o0 import GymnasiumModel
+from src.kifuuuuuuwarabe_beginning.models.layer_o6o0 import GymnasiumModel
 from src.kifuuuuuuwarabe_beginning.shogi_engine_with_usi import ShogiEngineCompatibleWithUSIProtocol
 
 
