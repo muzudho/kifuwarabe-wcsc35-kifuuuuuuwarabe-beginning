@@ -1,6 +1,7 @@
 import cshogi
 
 from ...layer_o1o0 import constants, SquareModel
+from ...layer_o2o0.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
 from ..negative_rule_model import NegativeRuleModel
 
 
@@ -56,10 +57,23 @@ class DoNotDepromotionModel(NegativeRuleModel):
         if is_promotion:
             return constants.mind.WILL
 
-        # TODO （成る手があるのに）［成らない手］なら意志無し。
+        # ネコは対象外（成らない手も良い手）
+        if cshogi.move_from_piece_type(move) == cshogi.SILVER:
+            return constants.mind.NOT_IN_THIS_CASE
 
-        src_sq_obj = SquareModel(cshogi.move_from(move))
+        np = NineRankSidePerspectiveModel(table)
         dst_sq_obj = SquareModel(cshogi.move_to(move))
+
+        # ウサギは３段目なら対象外（成らない手も良い手）
+        if cshogi.move_from_piece_type(move) == cshogi.KNIGHT and dst_sq_obj.rank == np.dan(3):
+            return constants.mind.NOT_IN_THIS_CASE
+
+        # イノシシは３段目なら対象外（成らない手も良い手）
+        if cshogi.move_from_piece_type(move) == cshogi.LANCE and dst_sq_obj.rank == np.dan(3):
+            return constants.mind.NOT_IN_THIS_CASE
+
+        # （成る手があるのに）［成らない手］なら意志無し。
+        src_sq_obj = SquareModel(cshogi.move_from(move))
         if src_sq_obj.sq in self._promotion_doc:
             if dst_sq_obj.sq in self._promotion_doc[src_sq_obj.sq]:
                 return constants.mind.WILL_NOT

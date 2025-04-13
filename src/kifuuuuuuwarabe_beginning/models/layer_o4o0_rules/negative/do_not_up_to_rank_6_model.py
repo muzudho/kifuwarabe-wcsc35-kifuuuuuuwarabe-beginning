@@ -43,7 +43,8 @@ class DoNotUpToRank6Model(NegativeRuleModel):
             # そうでなければ意志を残している
             return constants.mind.WILL
 
-        # （角道を止める手）７六歩はポジティブ・ルールの方でやるから、ここではやらない。
+        # （角道を止める手）
+        #       ７六歩はポジティブ・ルールの方でやるから、ここではやらない。
         if (
                 dst_sq_obj.sq == np.masu(66)    # 動いた先は６六で。
             and cshogi.piece_to_piece_type(table.piece(src_sq_obj.sq)) == cshogi.PAWN   # 動いた駒は歩だ。
