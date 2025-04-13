@@ -1,7 +1,7 @@
 import cshogi
 
-from ..layer_o1o0 import constants, SquareModel
-from .negative_rule_model import NegativeRuleModel
+from ...layer_o1o0 import constants, SquareModel
+from ..negative_rule_model import NegativeRuleModel
 
 
 class DoNotBackModel(NegativeRuleModel):

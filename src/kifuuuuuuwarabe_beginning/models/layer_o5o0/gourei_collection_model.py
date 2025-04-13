@@ -1,11 +1,11 @@
-from ..layer_o3o1o0_negative_rules import \
+from ..layer_o4o0_rules.negative import \
     DoNotBackModel, DoNotBreakFamousFenceModel, DoNotBuildRightWallModel, \
     DoNotDogAndCatSideBySideModel, \
     DoNotGoLeftModel, \
     DoNotUpToRank6Model, \
     DoNotMoveUntilRookMovesModel, DoNotMoveLeftLanceModel, DoNotMoveRightLanceModel, DoNotMoveRookModel, \
     WillForThreeGoldAndSilverCoinsToGatherToTheRightModel, WillNotToMove37PawnModel, WillSwingingRookModel
-from ..layer_o3o2o0_positive_rules import \
+from ..layer_o4o0_rules.positive import \
     DoProtectBishopHeadModel
 
 
