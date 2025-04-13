@@ -40,16 +40,16 @@ class DoNotBuildRightWallModel(NegativeRuleModel):
         k_sq_obj = SquareModel(table.king_square(table.turn))     # 移動前の自玉の位置
         #print(f'★ {k_sq_obj.file=} {np.suji(1)=}')
 
-        # 玉が１筋にいるなら対象外
+        # ライオンが１筋にいるなら対象外
         if k_sq_obj.file == np.suji(1):
-            #print(f'★ 玉が１筋にいるなら対象外')
+            #print(f'★ ライオンが１筋にいるなら対象外')
             return constants.mind.NOT_IN_THIS_CASE
 
-        # 玉より左に移動する手なら対象外
+        # ライオンより左に移動する手なら対象外
         e1 = np.swap(k_sq_obj.file, dst_sq_obj.file)
         #print(f'★ {k_sq_obj.file=} {dst_sq_obj.file=} {e1[0]=} {e1[1]}')
         if e1[0] < e1[1]:
-            #print(f'★ 玉より左に移動する手なら対象外')
+            #print(f'★ ライオンより左に移動する手なら対象外')
             return constants.mind.NOT_IN_THIS_CASE
 
         # ８段目、９段目以外に移動する手なら対象外

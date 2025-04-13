@@ -38,9 +38,9 @@ class DoNotUpToRank6Model(NegativeRuleModel):
         src_sq_obj = SquareModel(cshogi.move_from(move))
         dst_sq_obj = SquareModel(cshogi.move_to(move))
 
-        # 移動先は６段目ではない。
-        if dst_sq_obj.rank != np.dan(6):
-            # そうでなければ意志を残している
+        # 移動先は６段目より下だ。
+        if np.dan(6) < dst_sq_obj.rank:
+            # 意志を残している
             return constants.mind.WILL
 
         # （角道を止める手）
