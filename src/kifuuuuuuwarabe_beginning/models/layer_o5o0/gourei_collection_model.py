@@ -1,6 +1,6 @@
 from ..layer_o4o0_rules.negative import \
     DoNotBackModel, DoNotBreakFamousFenceModel, DoNotBuildRightWallModel, \
-    DoNotDepromotionModel, DoNotDogAndCatSideBySideModel, \
+    DoNotDepromotionModel, DoNotUpDogAndCatSideBySideModel, \
     DoNotGoLeftModel, \
     DoNotUpToRank6Model, \
     DoNotMoveUntilRookMovesModel, DoNotMoveLeftLanceModel, DoNotMoveRightLanceModel, DoNotMoveRookModel, \
@@ -33,7 +33,7 @@ class GoureiCollectionModel():
             DoNotMoveLeftLanceModel                                 (basketball_court_model=basketball_court_model),    # 号令［左のイノシシは動くな］
             DoNotMoveRightLanceModel                                (basketball_court_model=basketball_court_model),    # 号令［右のイノシシは動くな］
             DoNotGoLeftModel                                        (basketball_court_model=basketball_court_model),    # 号令［左へ行くな］
-            DoNotDogAndCatSideBySideModel                           (basketball_court_model=basketball_court_model),    # 号令［イヌとネコを横並びに上げるな］
+            DoNotUpDogAndCatSideBySideModel                           (basketball_court_model=basketball_court_model),    # 号令［イヌとネコを横並びに上げるな］
             DoNotUpToRank6Model                                     (basketball_court_model=basketball_court_model),    # 号令［６段目に上がるな］
             DoNotMoveUntilRookMovesModel                            (basketball_court_model=basketball_court_model),    # 号令［キリンが動くまで動くな］
             WillForThreeGoldAndSilverCoinsToGatherToTheRightModel   (basketball_court_model=basketball_court_model),    # ［金銀３枚が右に集まる］意志

@@ -5,7 +5,7 @@ from ...layer_o2o0.nine_rank_side_perspective_model import NineRankSidePerspecti
 from ..negative_rule_model import NegativeRuleModel
 
 
-class DoNotDogAndCatSideBySideModel(NegativeRuleModel):
+class DoNotUpDogAndCatSideBySideModel(NegativeRuleModel):
     """号令［イヌとネコを横並びに上げるな］
     ［イヌを９段目に留めておく］意志を含む
     """
