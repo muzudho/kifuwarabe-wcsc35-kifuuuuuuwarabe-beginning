@@ -194,13 +194,18 @@ class BackwardsPlotModel():
         #             return -value
         #         return value
 
+
         # TODO ［宣言］でも、疑似的な［交換値］を付けていいのでは？ _declaration_to_value_on_earth() を使う？
         if len(self._piece_exchange_value_list_on_earth) < 1:
-            #return constants.value.ZERO     # TODO ［指したい手がない］というのを何点と見るか？
-            raise ValueError(f"取った駒の交換値のリストが０件です。 {self.stringify_debug_1()} {DeclarationModel.japanese(self._declaration)=} {self._is_mars_at_end_position=} {self._is_mate_in_1_move=} {self._cutoff_reason=} {CutoffReason.japanese(self._cutoff_reason)=}")
-            # previous_on_earth = BackwardsPlotModel._declaration_to_value_on_earth(
-            #         declaration             = self.declaration,
-            #         is_mars    = not is_mars) # １つ前の値だから手番は反転
+            # ［指し手］が無ければ、［宣言］の点数を返します。［宣言］を行っていない場合は、点数を付けれません。
+            return self._declaration_to_value_on_earth(
+                    declaration = self._declaration,
+                    is_mars     = self.is_mars_at_peek)
+            # #return constants.value.ZERO     # TODO ［指したい手がない］というのを何点と見るか？
+            # raise ValueError(f"取った駒の交換値のリストが０件です。 {self.stringify_debug_1()} {DeclarationModel.japanese(self._declaration)=} {self._is_mars_at_end_position=} {self._is_mate_in_1_move=} {self._cutoff_reason=} {CutoffReason.japanese(self._cutoff_reason)=}")
+            # # previous_on_earth = BackwardsPlotModel._declaration_to_value_on_earth(
+            # #         declaration             = self.declaration,
+            # #         is_mars    = not is_mars) # １つ前の値だから手番は反転
 
         return self._piece_exchange_value_list_on_earth[-1]
 
