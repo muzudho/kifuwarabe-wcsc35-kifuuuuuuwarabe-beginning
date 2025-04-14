@@ -64,7 +64,7 @@ cutoff_reason = CutoffReason()
 
 class BackwardsPlotModel():
     """読み筋モデル。
-    末端局面から開始局面に向かって、後ろ向きに格納します。
+    末端局面から開始局面に向かって後ろ向きに進み、格納します。（スタック構造）
 
     NOTE ［指す手］を Move、指さずにする［宣言］を Declaration と呼び分けるものとします。［指す手］と［宣言］を合わせて Play ［遊び］と呼ぶことにします。
     ［宣言］には、［投了］、［入玉宣言勝ち］の２つがあります。［宣言］をした後に［指す手］が続くことはありません。
@@ -72,7 +72,7 @@ class BackwardsPlotModel():
 
 
     @staticmethod
-    def _declaration_to_value(declaration, is_absolute_opponent):
+    def _declaration_to_value_on_earth(declaration, is_mars):
         if declaration == constants.declaration.RESIGN:
             previous = constants.value.GAME_OVER
         elif declaration == constants.declaration.NYUGYOKU_WIN:
@@ -87,18 +87,18 @@ class BackwardsPlotModel():
             raise ValueError(f"想定外の［宣言］。{declaration=}")
 
         # 対戦相手なら正負を逆転。
-        if is_absolute_opponent:
+        if is_mars:
             previous *= -1
 
         return previous
 
 
-    def __init__(self, is_absolute_opponent_at_end_position, declaration, is_mate_in_1_move, cutoff_reason, hint):
+    def __init__(self, is_mars_at_end_position, declaration, is_mate_in_1_move, cutoff_reason, hint):
         """初期化。
 
         Parameters
         ----------
-        is_absolute_opponent_at_end_position : bool
+        is_mars_at_end_position : bool
             末端局面で対戦相手か。
         declaration : int
             ［宣言］
@@ -109,10 +109,10 @@ class BackwardsPlotModel():
         hint : str
             デバッグ用文字列
         """
-        self._is_absolute_opponent_at_end_position = is_absolute_opponent_at_end_position
+        self._is_mars_at_end_position = is_mars_at_end_position
         self._declaration = declaration
         self._is_mate_in_1_move = is_mate_in_1_move
-        self._absolute_opponent_list = []
+        self._mars_list = []
         self._move_list = []
         self._cap_list = []
         self._piece_exchange_value_list_on_earth = []
@@ -121,10 +121,14 @@ class BackwardsPlotModel():
 
 
     @property
-    def is_absolute_opponent_at_end_position(self):
+    def is_mars_at_end_position(self):
         """末端局面で対戦相手か。
         """
-        return self._is_absolute_opponent_at_end_position
+        return self._is_mars_at_end_position
+
+    # TODO Rename absolute_oppnent to mars.
+    # TODO def is_mars_at_peek(self):
+    #
 
 
     @property
@@ -142,8 +146,8 @@ class BackwardsPlotModel():
 
 
     @property
-    def absolute_opponent_list(self):
-        return self._absolute_opponent_list
+    def mars_list(self):
+        return self._mars_list
 
 
     @property
@@ -157,7 +161,7 @@ class BackwardsPlotModel():
 
 
     @property
-    def last_move(self):
+    def peek_move(self):
         if len(self._move_list) < 1:
             raise ValueError('指し手のリストが０件です。')
         return self._move_list[-1]
@@ -171,25 +175,29 @@ class BackwardsPlotModel():
 
 
     @property
-    def last_piece_exchange_value_on_earth(self):
+    def peek_piece_exchange_value_on_earth(self):   # TODO is_mars
         """
         """
         # if self.is_declaration():
         #     if self._declaration == constants.declaration.RESIGN:
         #         value = constants.value.GAME_OVER
-        #         if self._is_absolute_opponent_at_end_position:
+        #         if self._is_mars_at_end_position:
         #             return -value
         #         return value
 
         #     if self._declaration == constants.declaration.NYUGYOKU_WIN:
         #         value = constants.value.NYUGYOKU_WIN
-        #         if self._is_absolute_opponent_at_end_position:
+        #         if self._is_mars_at_end_position:
         #             return -value
         #         return value
 
+        # TODO ［宣言］でも、疑似的な［交換値］を付けていいのでは？ _declaration_to_value_on_earth() を使う？
         if len(self._piece_exchange_value_list_on_earth) < 1:
             #return constants.value.ZERO     # TODO ［指したい手がない］というのを何点と見るか？
-            raise ValueError(f"取った駒の交換値のリストが０件です。 {self.stringify_debug_1()} {DeclarationModel.japanese(self._declaration)=} {self._is_absolute_opponent_at_end_position=} {self._is_mate_in_1_move=} {self._cutoff_reason=} {CutoffReason.japanese(self._cutoff_reason)=}")
+            raise ValueError(f"取った駒の交換値のリストが０件です。 {self.stringify_debug_1()} {DeclarationModel.japanese(self._declaration)=} {self._is_mars_at_end_position=} {self._is_mate_in_1_move=} {self._cutoff_reason=} {CutoffReason.japanese(self._cutoff_reason)=}")
+            # previous_on_earth = BackwardsPlotModel._declaration_to_value_on_earth(
+            #         declaration             = self.declaration,
+            #         is_mars    = not is_mars) # １つ前の値だから手番は反転
 
         return self._piece_exchange_value_list_on_earth[-1]
 
@@ -214,21 +222,21 @@ class BackwardsPlotModel():
 
     def is_empty_moves(self):
         # ASSERT
-        len_absolute_opponent_list = len(self._absolute_opponent_list)
+        len_mars_list = len(self._mars_list)
         len_move_list = len(self._move_list)
         len_cap_list = len(self._cap_list)
         len_pev_list = len(self._piece_exchange_value_list_on_earth)
-        if not (len_absolute_opponent_list == len_move_list and len_move_list == len_cap_list and len_cap_list == len_pev_list):
+        if not (len_mars_list == len_move_list and len_move_list == len_cap_list and len_cap_list == len_pev_list):
             raise ValueError(f"配列の長さの整合性が取れていません。 {len_move_list=} {len_cap_list=} {len_pev_list=}")
         
         return len(self._move_list) < 1
 
 
-    def append_move(self, is_absolute_opponent, move, capture_piece_type, hint):
+    def append_move(self, is_mars, move, capture_piece_type, hint):
         """
         Parameters
         ----------
-        is_absolute_opponent : bool
+        is_mars : bool
             対戦相手か。
         hint : str
             デバッグ用文字列。
@@ -239,9 +247,9 @@ class BackwardsPlotModel():
         
         # ひとつ前の値
         if len(self._piece_exchange_value_list_on_earth) == 0:
-            previous_on_earth = BackwardsPlotModel._declaration_to_value(
+            previous_on_earth = BackwardsPlotModel._declaration_to_value_on_earth(
                     declaration             = self.declaration,
-                    is_absolute_opponent    = not is_absolute_opponent) # １つ前の値だから手番は反転
+                    is_mars    = not is_mars) # １つ前の値だから手番は反転
 
         else:
             previous_on_earth = self._piece_exchange_value_list_on_earth[-1]
@@ -249,7 +257,7 @@ class BackwardsPlotModel():
         ##########
         # １手追加
         ##########
-        self._absolute_opponent_list.append(is_absolute_opponent)
+        self._mars_list.append(is_mars)
         self._move_list.append(move)
         self._cap_list.append(capture_piece_type)
         self._hint_list.append(hint)
@@ -261,7 +269,7 @@ class BackwardsPlotModel():
             piece_exchange_value_on_earth += constants.value.CHECKMATE
 
         # 対戦相手なら正負を逆転。
-        if is_absolute_opponent:
+        if is_mars:
             piece_exchange_value_on_earth *= -1
 
         # 累計していく。
@@ -273,8 +281,8 @@ class BackwardsPlotModel():
         """
 
 
-        def _planet(is_absolute_opponent):
-            if is_absolute_opponent:
+        def _planet(is_mars):
+            if is_mars:
                 return '火'     # Mars
             return '地'         # Earth
 
@@ -291,10 +299,10 @@ class BackwardsPlotModel():
                 raise ValueError(f"move は int 型である必要があります。 {layer=} {type(move)=} {move=} {self._move_list=}")
 
             move_as_usi                     = cshogi.move_to_usi(move)
-            is_absolute_opponent            = self._absolute_opponent_list[layer]
+            is_mars            = self._mars_list[layer]
             cap                             = self._cap_list[layer]
             piece_exchange_value_on_earth   = self._piece_exchange_value_list_on_earth[layer]
-            tokens.append(f"{layer+1}.{_planet(is_absolute_opponent)}{move_as_usi}{_cap(cap)}({piece_exchange_value_on_earth})")
+            tokens.append(f"{layer+1}.{_planet(is_mars)}{move_as_usi}{_cap(cap)}({piece_exchange_value_on_earth})")
 
         if self._declaration != constants.declaration.NONE:
             tokens.append(DeclarationModel.japanese(self.declaration))
@@ -314,11 +322,11 @@ class BackwardsPlotModel():
                 return 'cap'
             return ''
 
-        return f"{self.last_piece_exchange_value_on_earth:4} {_cap_str():3}"
+        return f"{self.peek_piece_exchange_value_on_earth:4} {_cap_str():3}"
 
 
     def stringify_dump(self):
-        return f"{self._is_absolute_opponent_at_end_position=} {self._declaration=} {self._is_mate_in_1_move=} {self._move_list=} {self._cap_list=} {self._piece_exchange_value_list_on_earth=} {self._cutoff_reason=} {' '.join(self._hint_list)=}"
+        return f"{self._is_mars_at_end_position=} {self._declaration=} {self._is_mate_in_1_move=} {self._move_list=} {self._cap_list=} {self._piece_exchange_value_list_on_earth=} {self._cutoff_reason=} {' '.join(self._hint_list)=}"
 
 
     def stringify_debug_1(self):

@@ -231,7 +231,7 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
     all_backwards_plot_models_at_first = qs_at_first.search_at_first(
             #best_plot_model_in_older_sibling    = None,
             depth                               = max_depth,
-            is_absolute_opponent                = False,
+            is_mars                             = False,
             #beta_cutoff_value                   = constants.value.BETA_CUTOFF_VALUE,    # すごい高い点数。
             remaining_moves                     = remaining_moves)
 
@@ -257,8 +257,8 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
         # まず、最高点を調べます。
         best_exchange_value = constants.value.NOTHING_CAPTURE_MOVE
         for backwards_plot_model in all_backwards_plot_models_at_first:
-            if best_exchange_value < backwards_plot_model.last_piece_exchange_value_on_earth:
-                best_exchange_value = backwards_plot_model.last_piece_exchange_value_on_earth
+            if best_exchange_value < backwards_plot_model.peek_piece_exchange_value_on_earth:
+                best_exchange_value = backwards_plot_model.peek_piece_exchange_value_on_earth
 
         # 最高点が 0 点のケース。 FIXME 千日手とかを何点に設定しているか？
         if best_exchange_value == 0:
@@ -269,39 +269,39 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
         for backwards_plot_model in all_backwards_plot_models_at_first:
 
             gymnasium.health_check.append(
-                    move    = backwards_plot_model.last_move,
+                    move    = backwards_plot_model.peek_move,
                     name    = 'QS_backwards_plot_model',
                     value   = backwards_plot_model)
 
             # （１）駒を取らない手で非正の手（最高点のケースを除く）。
-            if not backwards_plot_model.is_capture_at_last and backwards_plot_model.last_piece_exchange_value_on_earth < 1 and backwards_plot_model.last_piece_exchange_value_on_earth != best_exchange_value:
-                if backwards_plot_model.last_piece_exchange_value_on_earth == 0:
+            if not backwards_plot_model.is_capture_at_last and backwards_plot_model.peek_piece_exchange_value_on_earth < 1 and backwards_plot_model.peek_piece_exchange_value_on_earth != best_exchange_value:
+                if backwards_plot_model.peek_piece_exchange_value_on_earth == 0:
                     exists_zero_value_move = True
                 
                 gymnasium.health_check.append(
-                        move    = backwards_plot_model.last_move,
+                        move    = backwards_plot_model.peek_move,
                         name    = 'eliminate171',
                         value   = f"{backwards_plot_model.stringify_2():10} not_cap_not_posite")
 
             # （２）最高点でない手。
-            elif backwards_plot_model.last_piece_exchange_value_on_earth < best_exchange_value:
+            elif backwards_plot_model.peek_piece_exchange_value_on_earth < best_exchange_value:
                 gymnasium.health_check.append(
-                        move    = backwards_plot_model.last_move,
+                        move    = backwards_plot_model.peek_move,
                         name    = 'eliminate171',
                         value   = f"{backwards_plot_model.stringify_2():10} not_best")
 
             # （３）リスクヘッジにならない手
-            elif exists_zero_value_move and backwards_plot_model.last_piece_exchange_value_on_earth < 0:
+            elif exists_zero_value_move and backwards_plot_model.peek_piece_exchange_value_on_earth < 0:
                 gymnasium.health_check.append(
-                        move    = backwards_plot_model.last_move,
+                        move    = backwards_plot_model.peek_move,
                         name    = 'eliminate171',
                         value   = f"{backwards_plot_model.stringify_2():10} not_risk_hedge")
 
             # それ以外の手は選択します。
             else:
-                alice_s_move_list.append(backwards_plot_model.last_move)
+                alice_s_move_list.append(backwards_plot_model.peek_move)
                 gymnasium.health_check.append(
-                        move    = backwards_plot_model.last_move,
+                        move    = backwards_plot_model.peek_move,
                         name    = 'eliminate171',
                         value   = f"{backwards_plot_model.stringify_2():10} ok")
 

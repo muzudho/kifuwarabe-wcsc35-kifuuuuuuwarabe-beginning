@@ -1,4 +1,4 @@
-class AbsoluteOpponent():
+class Mars():
 
 
     @staticmethod

@@ -49,7 +49,7 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
             self,
             #best_plot_model_in_older_sibling,
             depth,
-            is_absolute_opponent,
+            is_mars,
             remaining_moves):
         """
         Parameters
@@ -58,7 +58,7 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
         #     兄たちの中で最善の読み筋、またはナン。ベータカットに使う。
         depth : int
             あと何手深く読むか。
-        is_absolute_opponent : bool
+        is_mars : bool
             対戦相手か？
         remaining_moves : list<int>
             指し手のリスト。
@@ -84,11 +84,11 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
             """手番の投了局面時。
             """
             best_plot_model = BackwardsPlotModel(
-                    is_absolute_opponent_at_end_position    = is_absolute_opponent,
-                    declaration                             = constants.declaration.RESIGN,
-                    is_mate_in_1_move                       = False,
-                    cutoff_reason                           = cutoff_reason.GAME_OVER,
-                    hint                                    = '手番の投了局面時１')
+                    is_mars_at_end_position     = is_mars,
+                    declaration                 = constants.declaration.RESIGN,
+                    is_mate_in_1_move           = False,
+                    cutoff_reason               = cutoff_reason.GAME_OVER,
+                    hint                        = '手番の投了局面時１')
             all_backwards_plot_models_at_first.append(best_plot_model)
             return all_backwards_plot_models_at_first
 
@@ -102,18 +102,18 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
                 cap_pt = self._search_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
 
                 best_plot_model = BackwardsPlotModel(
-                        is_absolute_opponent_at_end_position    = is_absolute_opponent,
-                        declaration                             = constants.declaration.NONE,
-                        is_mate_in_1_move                       = True,
-                        cutoff_reason                           = cutoff_reason.MATE_MOVE_IN_1_PLY,
-                        hint                                    = '一手詰め１')
+                        is_mars_at_end_position     = is_mars,
+                        declaration                 = constants.declaration.NONE,
+                        is_mate_in_1_move           = True,
+                        cutoff_reason               = cutoff_reason.MATE_MOVE_IN_1_PLY,
+                        hint                        = '一手詰め１')
             
                 # 今回の手を付け加える。
                 best_plot_model.append_move(
-                        is_absolute_opponent    = is_absolute_opponent,
-                        move                    = mate_move,
-                        capture_piece_type      = cap_pt,
-                        hint                    = f"一手詰め１_{is_absolute_opponent=}")
+                        is_mars             = is_mars,
+                        move                = mate_move,
+                        capture_piece_type  = cap_pt,
+                        hint                = f"一手詰め１_{is_mars=}")
 
                 all_backwards_plot_models_at_first.append(best_plot_model)
                 return all_backwards_plot_models_at_first
@@ -122,7 +122,7 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
             """手番の入玉宣言局面時。
             """
             best_plot_model = BackwardsPlotModel(
-                    is_absolute_opponent_at_end_position    = is_absolute_opponent,
+                    is_mars_at_end_position    = is_mars,
                     declaration                             = constants.declaration.NYUGYOKU_WIN,
                     is_mate_in_1_move                       = False,
                     cutoff_reason                           = cutoff_reason.NYUGYOKU_WIN,
@@ -133,11 +133,11 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
         # これ以上深く読まない場合。
         if depth < 1:
             best_plot_model = BackwardsPlotModel(
-                    is_absolute_opponent_at_end_position    = is_absolute_opponent,
-                    declaration                             = constants.declaration.NONE,
-                    is_mate_in_1_move                       = False,
-                    cutoff_reason                           = cutoff_reason.MAX_DEPTH,
-                    hint                                    = 'これ以上深く読まない場合１')
+                    is_mars_at_end_position     = is_mars,
+                    declaration                 = constants.declaration.NONE,
+                    is_mate_in_1_move           = False,
+                    cutoff_reason               = cutoff_reason.MAX_DEPTH,
+                    hint                        = 'これ以上深く読まない場合１')
             all_backwards_plot_models_at_first.append(best_plot_model)
             return all_backwards_plot_models_at_first
 
@@ -180,7 +180,7 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
             self._search_model.move_list_for_debug.append_move(my_move)      # デバッグ用に手を記憶
             self._search_model.number_of_visited_nodes  += 1
             depth                                       -= 1                            # 深さを１下げる。
-            is_absolute_opponent                        = not is_absolute_opponent      # 手番が逆になる。
+            is_mars                                     = not is_mars      # 手番が逆になる。
 
             ####################
             # MARK: 相手番の処理
@@ -190,8 +190,8 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
             quiescenec_search_for_scramble_model = QuiescenceSearchForScrambleModel(
                     search_model    = self._search_model)
             future_plot_model = quiescenec_search_for_scramble_model.search_alice(      # 再帰呼出
-                    depth                               = depth,
-                    is_absolute_opponent                = is_absolute_opponent)
+                    depth       = depth,
+                    is_mars     = is_mars)
 
             ################
             # MARK: 一手戻す
@@ -204,8 +204,8 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
             ####################
 
             self._search_model.move_list_for_debug.pop_move()                         # デバッグ用に手を記憶
-            depth                   += 1                            # 深さを１上げる。
-            is_absolute_opponent    = not is_absolute_opponent      # 手番が逆になる。
+            depth       += 1                # 深さを１上げる。
+            is_mars     = not is_mars       # 手番が逆になる。
 
             ##################
             # MARK: 手番の処理
@@ -213,10 +213,10 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
 
             # １階の手は、全ての手の読み筋を記憶します。最善手は選びません。
             future_plot_model.append_move(
-                    is_absolute_opponent    = is_absolute_opponent,
-                    move                    = my_move,
-                    capture_piece_type      = cap_pt,
-                    hint                    = f"１階の手はなんでも記憶_{is_absolute_opponent=}")
+                    is_mars             = is_mars,
+                    move                = my_move,
+                    capture_piece_type  = cap_pt,
+                    hint                = f"１階の手はなんでも記憶_{is_mars=}")
             all_backwards_plot_models_at_first.append(future_plot_model)
 
             # NOTE この辺りは［０階］。
@@ -230,11 +230,11 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
         # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
         if len(all_backwards_plot_models_at_first) < 1:
             future_plot_model = BackwardsPlotModel(
-                    is_absolute_opponent_at_end_position    = is_absolute_opponent,
-                    declaration                             = constants.declaration.NO_CANDIDATES, # 有力な候補手無し。
-                    is_mate_in_1_move                       = False,
-                    cutoff_reason                           = cutoff_reason.NO_MOVES,
-                    hint                                    = f"指したい１階の手無し_{depth=}/{self._search_model.max_depth=}_{is_absolute_opponent}_{len(all_backwards_plot_models_at_first)=}/{len(remaining_moves)=}")
+                    is_mars_at_end_position     = is_mars,
+                    declaration                 = constants.declaration.NO_CANDIDATES, # 有力な候補手無し。
+                    is_mate_in_1_move           = False,
+                    cutoff_reason               = cutoff_reason.NO_MOVES,
+                    hint                        = f"指したい１階の手無し_{depth=}/{self._search_model.max_depth=}_{is_mars}_{len(all_backwards_plot_models_at_first)=}/{len(remaining_moves)=}")
             all_backwards_plot_models_at_first.append(future_plot_model)
 
         self._search_model.end_time = time.time()    # 計測終了時間

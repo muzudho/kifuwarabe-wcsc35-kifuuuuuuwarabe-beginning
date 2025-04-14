@@ -4,18 +4,18 @@ class PtolemaicTheoryModel():
     """
 
 
-    def __init__(self, is_absolute_opponent):
-        self._is_absolute_opponent = is_absolute_opponent
+    def __init__(self, is_mars):
+        self._is_mars = is_mars
 
 
     @property
-    def is_absolute_opponent(self):
-        return self._is_absolute_opponent
+    def is_mars(self):
+        return self._is_mars
 
 
     @property
     def is_earth(self):
-        return not self._is_absolute_opponent
+        return not self._is_mars
 
 
     ##############
@@ -25,7 +25,7 @@ class PtolemaicTheoryModel():
     def swap(self, a, b):
         """［比較］
         """
-        if self.is_absolute_opponent:   # 対戦相手ならひっくり返す。
+        if self.is_mars:   # 対戦相手ならひっくり返す。
             return b, a
         
         return a, b

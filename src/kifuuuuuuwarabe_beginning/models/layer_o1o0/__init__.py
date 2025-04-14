@@ -1,5 +1,5 @@
-from .absolute_opponent import AbsoluteOpponent
 from .constants_model import constants, DeclarationModel
+from .mars import Mars
 from .masu_model import MasuModel
 from .move_on_scramble_model import MoveOnScrambleModel
 from .piece_model import PieceModel

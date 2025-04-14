@@ -3,7 +3,7 @@ import time
 
 from ...logics.layer_o1o0 import MoveListLogics
 from ..layer_o1o_9o0 import PieceValuesModel
-from ..layer_o1o0 import AbsoluteOpponent, constants, PtolemaicTheoryModel, SquareModel
+from ..layer_o1o0 import Mars, constants, PtolemaicTheoryModel, SquareModel
 from ..layer_o2o0 import BackwardsPlotModel, cutoff_reason
 
 
@@ -32,7 +32,7 @@ class QuiescenceSearchForScrambleModel():
             self,
             #best_plot_model_in_older_sibling,
             depth,
-            is_absolute_opponent):
+            is_mars):
         """
         Parameters
         ----------
@@ -40,7 +40,7 @@ class QuiescenceSearchForScrambleModel():
         #     兄たちの中で最善の読み筋、またはナン。ベータカットに使う。
         depth : int
             あと何手深く読むか。
-        is_absolute_opponent : bool
+        is_mars : bool
             対戦相手か？
 
         Returns
@@ -66,11 +66,11 @@ class QuiescenceSearchForScrambleModel():
             """手番の投了局面時。
             """
             best_plot_model = BackwardsPlotModel(
-                    is_absolute_opponent_at_end_position    = is_absolute_opponent,
-                    declaration                             = constants.declaration.RESIGN,
-                    is_mate_in_1_move                       = False,
-                    cutoff_reason                           = cutoff_reason.GAME_OVER,
-                    hint                                    = '手番の投了局面時２')
+                    is_mars_at_end_position     = is_mars,
+                    declaration                 = constants.declaration.RESIGN,
+                    is_mate_in_1_move           = False,
+                    cutoff_reason               = cutoff_reason.GAME_OVER,
+                    hint                        = '手番の投了局面時２')
 
             return best_plot_model
 
@@ -84,18 +84,18 @@ class QuiescenceSearchForScrambleModel():
                 cap_pt = self.search_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
 
                 best_plot_model = BackwardsPlotModel(
-                        is_absolute_opponent_at_end_position    = is_absolute_opponent,
-                        declaration                             = constants.declaration.NONE,
-                        is_mate_in_1_move                       = True,
-                        cutoff_reason                           = cutoff_reason.MATE_MOVE_IN_1_PLY,
-                        hint                                    = '一手詰め時２')
+                        is_mars_at_end_position     = is_mars,
+                        declaration                 = constants.declaration.NONE,
+                        is_mate_in_1_move           = True,
+                        cutoff_reason               = cutoff_reason.MATE_MOVE_IN_1_PLY,
+                        hint                        = '一手詰め時２')
             
                 # 今回の手を付け加える。
                 best_plot_model.append_move(
-                        is_absolute_opponent    = is_absolute_opponent,
-                        move                    = mate_move,
-                        capture_piece_type      = cap_pt,
-                        hint                    = f"一手詰め時２_{is_absolute_opponent=}")
+                        is_mars             = is_mars,
+                        move                = mate_move,
+                        capture_piece_type  = cap_pt,
+                        hint                = f"一手詰め時２_{is_mars=}")
 
                 return best_plot_model
 
@@ -103,11 +103,11 @@ class QuiescenceSearchForScrambleModel():
             """手番の入玉宣言局面時。
             """
             best_plot_model = BackwardsPlotModel(
-                    is_absolute_opponent_at_end_position    = is_absolute_opponent,
-                    declaration                             = constants.declaration.NYUGYOKU_WIN,
-                    is_mate_in_1_move                       = False,
-                    cutoff_reason                           = cutoff_reason.NYUGYOKU_WIN,
-                    hint                                    = '手番の入玉宣言局面時２')
+                    is_mars_at_end_position     = is_mars,
+                    declaration                 = constants.declaration.NYUGYOKU_WIN,
+                    is_mate_in_1_move           = False,
+                    cutoff_reason               = cutoff_reason.NYUGYOKU_WIN,
+                    hint                        = '手番の入玉宣言局面時２')
 
             return best_plot_model
 
@@ -115,11 +115,11 @@ class QuiescenceSearchForScrambleModel():
         if depth < 1:
             # 末端局面。
             return BackwardsPlotModel(
-                    is_absolute_opponent_at_end_position    = is_absolute_opponent,
-                    declaration                             = constants.declaration.MAX_DEPTH_BY_THINK, # 読みの最大深さ。
-                    is_mate_in_1_move                       = False,                        # ［一手詰め］ではない。
-                    cutoff_reason                           = cutoff_reason.MAX_DEPTH,      # ［最大探索深さ］が打切り理由。
-                    hint                                    = f"{self._search_model.max_depth - depth}階でこれ以上深く読まない場合_{depth=}/{self._search_model.max_depth=}_{is_absolute_opponent=}")
+                    is_mars_at_end_position     = is_mars,
+                    declaration                 = constants.declaration.MAX_DEPTH_BY_THINK, # 読みの最大深さ。
+                    is_mate_in_1_move           = False,                        # ［一手詰め］ではない。
+                    cutoff_reason               = cutoff_reason.MAX_DEPTH,      # ［最大探索深さ］が打切り理由。
+                    hint                        = f"{self._search_model.max_depth - depth}階でこれ以上深く読まない場合_{depth=}/{self._search_model.max_depth=}_{is_mars=}")
 
         # まだ深く読む場合。
 
@@ -127,20 +127,20 @@ class QuiescenceSearchForScrambleModel():
         # MARK: 合法手スキャン
         ######################
 
-        best_plot_model_in_children = None
-        best_move = None
-        best_move_cap_pt = None
+        best_old_sibling_plot_model_in_children = None
+        best_move           = None
+        best_move_cap_pt    = None
 
 
-        # def _get_beta_cutoff_value(is_absolute_opponent, best_plot_model_in_older_sibling):
+        # def _get_beta_cutoff_value(is_mars, best_plot_model_in_older_sibling):
         #     # 最善手が未定なら、天井（底）を最大にします。
         #     if best_plot_model_in_older_sibling is None:
-        #         if is_absolute_opponent:
+        #         if is_mars:
         #             return constants.value.BETA_CUTOFF_VALUE        # 天井
         #         return - constants.value.BETA_CUTOFF_VALUE  # 底
 
         #     # 最善手が既存なら、その交換値を返すだけ。
-        #     return best_plot_model_in_older_sibling.last_piece_exchange_value_on_earth
+        #     return best_plot_model_in_older_sibling.peek_piece_exchange_value_on_earth
 
         case_1 = 0
         case_2 = 0
@@ -193,18 +193,18 @@ class QuiescenceSearchForScrambleModel():
             ####################
 
             self._search_model.move_list_for_debug.append_move(my_move)           # デバッグ用に手を記憶
-            depth                   = depth - 1                 # 深さを１下げる。
-            is_absolute_opponent    = not is_absolute_opponent  # 手番が逆になる。
+            depth       = depth - 1                 # 深さを１下げる。
+            is_mars     = not is_mars  # 手番が逆になる。
 
             ####################
             # MARK: 相手番の処理
             ####################
 
             # NOTE ネガ・マックスではないので、評価値の正負を反転させなくていい。
-            future_plot_model = self.search_alice(      # 再帰呼出
+            child_plot_model = self.search_alice(      # 再帰呼出
                     #best_plot_model_in_older_sibling    = best_plot_model_in_children,
-                    depth                               = depth,
-                    is_absolute_opponent                = is_absolute_opponent)
+                    depth       = depth,
+                    is_mars     = is_mars)
 
             ################
             # MARK: 一手戻す
@@ -217,10 +217,10 @@ class QuiescenceSearchForScrambleModel():
             ####################
 
             self._search_model.move_list_for_debug.pop_move()                     # デバッグ用に手を記憶
-            depth                   = depth + 1                 # 深さを１上げる。
-            is_absolute_opponent    = not is_absolute_opponent  # 手番が逆になる。
+            depth       = depth + 1                 # 深さを１上げる。
+            is_mars     = not is_mars  # 手番が逆になる。
             ptolemaic_theory_model  = PtolemaicTheoryModel(
-                    is_absolute_opponent=is_absolute_opponent)
+                    is_mars=is_mars)
 
             ##################
             # MARK: 手番の処理
@@ -230,28 +230,28 @@ class QuiescenceSearchForScrambleModel():
 
             # NOTE `earth` - 自分。 `mars` - 対戦相手。
             piece_exchange_value_on_earth = PieceValuesModel.get_piece_exchange_value_on_earth(      # 交換値に変換。正の数とする。
-                    pt                      = cap_pt,
-                    is_absolute_opponent    = is_absolute_opponent)
+                    pt          = cap_pt,
+                    is_mars     = is_mars)
 
             # 最大深さで戻ってきたなら、最善手ではありません。無視します。
             #print(f"D-368: {future_plot_model.cutoff_reason=} {cutoff_reason.MAX_DEPTH=} {future_plot_model.move_list_length()=} {future_plot_model.is_empty_moves()=}")
-            if future_plot_model.is_empty_moves():  # ［宣言］などには［指し手］は含まれません。［指し手のリスト］は空なので、アクセスを避けるようにします。
+            if child_plot_model.is_empty_moves():  # ［宣言］などには［指し手］は含まれません。［指し手のリスト］は空なので、アクセスを避けるようにします。
 
                 # 兄枝のベスト評価値
                 old_sibling_value = constants.value.ZERO    # NOTE （スクランブル・サーチでは）ベストがナンということもある。つまり、指さない方がマシな局面がある（のが投了との違い）。
-                if best_plot_model_in_children is not None and not best_plot_model_in_children.is_empty_moves():
-                    old_sibling_value = best_plot_model_in_children.last_piece_exchange_value_on_earth     # とりあえず最善の読み筋の点数。
+                if best_old_sibling_plot_model_in_children is not None and not best_old_sibling_plot_model_in_children.is_empty_moves():
+                    old_sibling_value = best_old_sibling_plot_model_in_children.peek_piece_exchange_value_on_earth     # とりあえず最善の読み筋の点数。
 
                 if (
-                        future_plot_model.cutoff_reason == cutoff_reason.MAX_DEPTH      # 探索打切り理由は、［最大探索深さ］。
-                    or  future_plot_model.cutoff_reason == cutoff_reason.NO_MOVES       # 探索打切り理由は、［指したい手なし］（駒を取り返す手がないなど）。
+                        child_plot_model.cutoff_reason == cutoff_reason.MAX_DEPTH      # 探索打切り理由は、［最大探索深さ］。
+                    or  child_plot_model.cutoff_reason == cutoff_reason.NO_MOVES       # 探索打切り理由は、［指したい手なし］（駒を取り返す手がないなど）。
                 ):
                     #print(f"D-370: ベストではない")
                     # 相手が指し返してこなかったということは、自分が指した手が末端局面。
                     # 取った駒の交換値が、そのまま評価値になる。
-                    this_branch_value = piece_exchange_value_on_earth
+                    this_branch_value_on_earth = piece_exchange_value_on_earth
 
-                    e1 = ptolemaic_theory_model.swap(old_sibling_value, this_branch_value)
+                    e1 = ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
 
                     # # TODO ただし、既存の最善手より良い手を見つけてしまったら、ベータカットします。
                     # if beta_cutoff_value < this_branch_value:
@@ -263,28 +263,28 @@ class QuiescenceSearchForScrambleModel():
                     case_2 += 1
 
                 # 相手が投了なら、自分には最善手。
-                elif future_plot_model.declaration == constants.declaration.RESIGN:
+                elif child_plot_model.declaration == constants.declaration.RESIGN:
                     its_update_best = True
                     case_4 += 1
 
                 # 相手が入玉宣言勝ちなら、自分には最悪手。
-                elif future_plot_model.declaration == constants.declaration.NYUGYOKU_WIN:
+                elif child_plot_model.declaration == constants.declaration.NYUGYOKU_WIN:
                     case_5 += 1
                     # TODO 最悪手というフラグを立てれないか？
 
                 else:
                     # FIXME 指したい手なし
-                    # ValueError: 想定外の読み筋 self._is_absolute_opponent_at_end_position=False self._declaration=0 self._is_mate_in_1_move=False self._move_list=[] self._cap_list=[] self._piece_exchange_value_list_on_earth=[] self._cutoff_reason=4
-                    raise ValueError(f"想定外の読み筋A {future_plot_model.stringify_dump()}")
+                    # ValueError: 想定外の読み筋 self._is_mars_at_end_position=False self._declaration=0 self._is_mate_in_1_move=False self._move_list=[] self._cap_list=[] self._piece_exchange_value_list_on_earth=[] self._cutoff_reason=4
+                    raise ValueError(f"想定外の読み筋A {child_plot_model.stringify_dump()}")
             
             # 指し手がある。
             else:
-                this_branch_value = future_plot_model.last_piece_exchange_value_on_earth + piece_exchange_value_on_earth
+                this_branch_value_on_earth = child_plot_model.peek_piece_exchange_value_on_earth + piece_exchange_value_on_earth
 
-                # 兄手がまだ無いなら。
-                if best_plot_model_in_children is None:
+                # この枝が長兄（兄枝がまだ無い）なら。
+                if best_old_sibling_plot_model_in_children is None:
 
-                    e1 = ptolemaic_theory_model.swap(0, this_branch_value)
+                    e1 = ptolemaic_theory_model.swap(0, this_branch_value_on_earth)
                     # この枝が０点以上なら最善手（［Not Bad］）として回答。この最善手が最終的に即採用されるというわけではない。
                     its_update_best = (e1[0] <= e1[1])
 
@@ -294,39 +294,62 @@ class QuiescenceSearchForScrambleModel():
                         case_8af += 1
                     #case_8_hint_list.append(f"{old_sibling_value=} < {this_branch_value=}")
                 
-                # 兄枝は有るが、［手］が無い場合。（［宣言］の直前とか、最大深さとか）
-                elif best_plot_model_in_children.is_empty_moves():
-                    if best_plot_model_in_children.declaration == constants.declaration.RESIGN: # 相手が投了なら、最善手だ。
+                # 兄枝は有るが、兄枝に［手］が無い場合。（［宣言］の直前とか、最大深さとか）
+                elif best_old_sibling_plot_model_in_children.is_empty_moves():
+                    # TODO 敵味方のケース分け。相手が投了なら最善手、自分が投了なら最悪手。
+                    if ptolemaic_theory_model.is_earth:
+                        # TODO 自分が投了なら最悪手だ。子は［－ライオン駒点］。
+                        # TODO 自分が入玉宣言勝ちなら最善手だ。子の駒得は［＋ライオン駒点］。
+                        # TODO 自分の読みの最大深さなら子は［０駒点］。
+                        # TODO 自分に有力な候補手無しなら［０駒点］。
+                        pass
+                    else:
+                        # TODO 相手が投了なら最善手だ。子は［＋ライオン駒点］。
+                        # TODO 相手が入玉宣言勝ちなら最悪手だ。子の駒得は［－ライオン駒点］。
+                        # TODO 相手の読みの最大深さなら子は［０駒点］。
+                        # TODO 相手に有力な候補手無しなら［０駒点］。
+                        pass
+
+                    # TODO 敵味方のケース分け。
+                    # 兄の［駒点］と比較する。兄は宣言。
+                    if ptolemaic_theory_model.is_earth:
+                        # TODO 自分の［駒点］が、兄の［駒点］を上回れば更新。
+                        pass
+                    else:
+                        # TODO 相手の［駒点］が、兄の［駒点］を下回れば更新。
+                        pass
+
+                    if best_old_sibling_plot_model_in_children.declaration == constants.declaration.RESIGN: # 相手（自分かも？）が投了なら、最善手だ。
                         case_8b += 1
                         its_update_best = True
 
-                    elif best_plot_model_in_children.declaration == constants.declaration.NYUGYOKU_WIN: # 相手が入玉宣言勝ちなら、最悪手だ。
+                    elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.NYUGYOKU_WIN: # 相手が入玉宣言勝ちなら、最悪手だ。
                         case_8c += 1
 
-                    elif best_plot_model_in_children.declaration == constants.declaration.MAX_DEPTH_BY_THINK: # 読みの最大深さ。
+                    elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.MAX_DEPTH_BY_THINK: # 読みの最大深さ。
                         case_8d += 1
 
-                    elif best_plot_model_in_children.declaration == constants.declaration.NO_CANDIDATES: # 有力な候補手無し。
+                    elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.NO_CANDIDATES: # 有力な候補手無し。
                         case_8e += 1
 
-                    elif best_plot_model_in_children.declaration == constants.declaration.NONE:  # ［宣言］ではない。
-                        raise ValueError(f"宣言ではなかったB。 best={best_plot_model_in_children.stringify_dump()} future={future_plot_model.stringify_dump()}")
+                    elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.NONE:  # ［宣言］ではない。
+                        raise ValueError(f"宣言ではなかったB。 best={best_old_sibling_plot_model_in_children.stringify_dump()} future={child_plot_model.stringify_dump()}")
 
                     else:
-                        raise ValueError(f"想定外の読み筋B best={best_plot_model_in_children.stringify_dump()} future={future_plot_model.stringify_dump()}")
+                        raise ValueError(f"想定外の読み筋B best={best_old_sibling_plot_model_in_children.stringify_dump()} future={child_plot_model.stringify_dump()}")
 
-                # 兄枝が有り、［手］も有るなら比較対象。
+                # 兄枝が有り、子に［手］も有るなら比較対象。
                 else:
                     # 兄枝のベスト評価値
-                    old_sibling_value = best_plot_model_in_children.last_piece_exchange_value_on_earth     # とりあえず最善の読み筋の点数。
+                    old_sibling_value = best_old_sibling_plot_model_in_children.peek_piece_exchange_value_on_earth     # とりあえず最善の読み筋の点数。
 
 
                     def _log_1(case_1):
-                        return f"[search] {case_1} {depth=}/{self._search_model.max_depth=} {AbsoluteOpponent.japanese(is_absolute_opponent)} {self.stringify()},{cshogi.move_to_usi(my_move)}(私{this_branch_value}) {old_sibling_value=} < {future_plot_model.stringify()=}"
+                        return f"[search] {case_1} {depth=}/{self._search_model.max_depth=} {Mars.japanese(is_mars)} {self.stringify()},{cshogi.move_to_usi(my_move)}(私{this_branch_value_on_earth}) {old_sibling_value=} < {child_plot_model.stringify()=}"
 
 
                     # この枝の点（将来の点＋取った駒の点）
-                    this_branch_value = future_plot_model.last_piece_exchange_value_on_earth + piece_exchange_value_on_earth
+                    this_branch_value_on_earth = child_plot_model.peek_piece_exchange_value_on_earth + piece_exchange_value_on_earth
 
                     # # TODO 既存の最善手より良い手を見つけてしまったら、ベータカットします。
                     # if beta_cutoff_value < this_branch_value:
@@ -335,13 +358,13 @@ class QuiescenceSearchForScrambleModel():
 
                     # 最善より良い手があれば、そっちを選びます。
                         #       NOTE １件に絞り込んでいいのか？ 後ろ向き探索なら１件に絞り込んでいいのか？
-                    e2 = ptolemaic_theory_model.swap(old_sibling_value, this_branch_value)
+                    e2 = ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
                     its_update_best = (e2[0] < e2[1])
 
 
                     if its_update_best:
                         case_6t += 1
-                        case_6t_hint_list.append(f"{old_sibling_value=} < {this_branch_value=}")
+                        case_6t_hint_list.append(f"{old_sibling_value=} < {this_branch_value_on_earth=}")
 
                         #self.search_model.gymnasium.thinking_logger_module.append(f"[search] 6t {self._search_model.move_list_for_debug=}")
                         # if self._search_model.move_list_for_debug.equals_move_usi_list(['3a4b']):   # FIXME デバッグ絞込み
@@ -349,7 +372,7 @@ class QuiescenceSearchForScrambleModel():
 
                     else:
                         case_6f += 1
-                        case_6f_hint_list.append(f"{old_sibling_value=} < {this_branch_value=}")
+                        case_6f_hint_list.append(f"{old_sibling_value=} < {this_branch_value_on_earth=}")
 
                         #self.search_model.gymnasium.thinking_logger_module.append(f"[search] 6f {self._search_model.move_list_for_debug=}")
                         # if self._search_model.move_list_for_debug.equals_move_usi_list(['3a4b']):   # FIXME デバッグ絞込み
@@ -357,7 +380,7 @@ class QuiescenceSearchForScrambleModel():
                         
             # 最善手の更新
             if its_update_best:
-                best_plot_model_in_children = future_plot_model
+                best_old_sibling_plot_model_in_children = child_plot_model
                 best_move = my_move
                 best_move_cap_pt = cap_pt
 
@@ -370,19 +393,19 @@ class QuiescenceSearchForScrambleModel():
         ########################
 
         # 指したい手がなかったなら、静止探索の末端局面を返す。
-        if best_plot_model_in_children is None:
+        if best_old_sibling_plot_model_in_children is None:
             return BackwardsPlotModel(
-                    is_absolute_opponent_at_end_position    = is_absolute_opponent,
+                    is_mars_at_end_position    = is_mars,
                     declaration                             = constants.declaration.NO_CANDIDATES,  # 有力な候補手無し。
                     is_mate_in_1_move                       = False,
                     cutoff_reason                           = cutoff_reason.NO_MOVES,
-                    hint                                    = f"指したい{self._search_model.max_depth - depth + 1}階の手無し,敵={is_absolute_opponent},move数={len(legal_move_list)},{case_1=},{case_2=},{case_4=},{case_5=},{case_6t=},({'_'.join(case_6t_hint_list)}),{case_6f=},({'_'.join(case_6f_hint_list)}),{case_8at=},{case_8af=},{case_8b=},{case_8c=},{case_8d=},{case_8e=}")
+                    hint                                    = f"指したい{self._search_model.max_depth - depth + 1}階の手無し,敵={is_mars},move数={len(legal_move_list)},{case_1=},{case_2=},{case_4=},{case_5=},{case_6t=},({'_'.join(case_6t_hint_list)}),{case_6f=},({'_'.join(case_6f_hint_list)}),{case_8at=},{case_8af=},{case_8b=},{case_8c=},{case_8d=},{case_8e=}")
 
         # 今回の手を付け加える。
-        best_plot_model_in_children.append_move(
-                is_absolute_opponent    = is_absolute_opponent,
-                move                    = best_move,
-                capture_piece_type      = best_move_cap_pt,
-                hint                    = f"{self._search_model.max_depth - depth + 1}階の手記憶_{is_absolute_opponent=}")
+        best_old_sibling_plot_model_in_children.append_move(
+                is_mars             = is_mars,
+                move                = best_move,
+                capture_piece_type  = best_move_cap_pt,
+                hint                = f"{self._search_model.max_depth - depth + 1}階の手記憶_{is_mars=}")
 
-        return best_plot_model_in_children
+        return best_old_sibling_plot_model_in_children
