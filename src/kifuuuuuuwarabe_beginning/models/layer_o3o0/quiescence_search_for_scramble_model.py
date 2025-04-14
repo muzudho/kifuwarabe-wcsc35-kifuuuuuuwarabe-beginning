@@ -233,52 +233,6 @@ class QuiescenceSearchForScrambleModel():
                     pt          = cap_pt,
                     is_mars     = is_mars)
 
-            # 最大深さで戻ってきたなら、最善手ではありません。無視します。
-            #print(f"D-368: {future_plot_model.cutoff_reason=} {cutoff_reason.MAX_DEPTH=} {future_plot_model.move_list_length()=} {future_plot_model.is_empty_moves()=}")
-            # if child_plot_model.is_empty_moves():  # ［宣言］などには［指し手］は含まれません。［指し手のリスト］は空なので、アクセスを避けるようにします。
-
-            #     # 兄枝のベスト評価値
-            #     old_sibling_value = constants.value.ZERO    # NOTE （スクランブル・サーチでは）ベストがナンということもある。つまり、指さない方がマシな局面がある（のが投了との違い）。
-            #     if best_old_sibling_plot_model_in_children is not None and not best_old_sibling_plot_model_in_children.is_empty_moves():
-            #         old_sibling_value = best_old_sibling_plot_model_in_children.peek_piece_exchange_value_on_earth     # とりあえず最善の読み筋の点数。
-
-            #     if (
-            #             child_plot_model.cutoff_reason == cutoff_reason.MAX_DEPTH      # 探索打切り理由は、［最大探索深さ］。
-            #         or  child_plot_model.cutoff_reason == cutoff_reason.NO_MOVES       # 探索打切り理由は、［指したい手なし］（駒を取り返す手がないなど）。
-            #     ):
-            #         #print(f"D-370: ベストではない")
-            #         # 相手が指し返してこなかったということは、自分が指した手が末端局面。
-            #         # 取った駒の交換値が、そのまま評価値になる。
-            #         this_branch_value_on_earth = piece_exchange_value_on_earth
-
-            #         e1 = ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
-
-            #         # # TODO ただし、既存の最善手より良い手を見つけてしまったら、ベータカットします。
-            #         # if beta_cutoff_value < this_branch_value:
-            #         #     #will_beta_cutoff = True   # TODO ベータカット
-            #         #     pass
-
-            #         # （初期値の０または）最善より良い手なら、これを選びます。
-            #         its_update_best = (e1[0] < e1[1])
-            #         case_2 += 1
-
-            #     # 相手が投了なら、自分には最善手。
-            #     elif child_plot_model.declaration == constants.declaration.RESIGN:
-            #         its_update_best = True
-            #         case_4 += 1
-
-            #     # 相手が入玉宣言勝ちなら、自分には最悪手。
-            #     elif child_plot_model.declaration == constants.declaration.NYUGYOKU_WIN:
-            #         case_5 += 1
-            #         # TODO 最悪手というフラグを立てれないか？
-
-            #     else:
-            #         # FIXME 指したい手なし
-            #         # ValueError: 想定外の読み筋 self._is_mars_at_end_position=False self._declaration=0 self._is_mate_in_1_move=False self._move_list=[] self._cap_list=[] self._piece_exchange_value_list_on_earth=[] self._cutoff_reason=4
-            #         raise ValueError(f"想定外の読み筋A {child_plot_model.stringify_dump()}")
-            
-            # # 指し手がある。
-            # else:
             this_branch_value_on_earth = child_plot_model.peek_piece_exchange_value_on_earth + piece_exchange_value_on_earth
 
             # この枝が長兄（兄枝がまだ無い）なら。
