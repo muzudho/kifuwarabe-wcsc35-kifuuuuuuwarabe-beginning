@@ -126,9 +126,12 @@ class BackwardsPlotModel():
         """
         return self._is_mars_at_end_position
 
-    # TODO Rename absolute_oppnent to mars.
-    # TODO def is_mars_at_peek(self):
-    #
+
+    @property
+    def is_mars_at_peek(self):
+        if self._move_list % 2 == 0:
+            return self._is_mars_at_end_position
+        return not self._is_mars_at_end_position
 
 
     @property

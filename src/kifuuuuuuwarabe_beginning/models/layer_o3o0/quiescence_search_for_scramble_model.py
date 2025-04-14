@@ -298,45 +298,53 @@ class QuiescenceSearchForScrambleModel():
                 elif best_old_sibling_plot_model_in_children.is_empty_moves():
                     # TODO 敵味方のケース分け。相手が投了なら最善手、自分が投了なら最悪手。
                     if ptolemaic_theory_model.is_earth:
-                        # TODO 自分が投了なら最悪手だ。子は［－ライオン駒点］。
-                        # TODO 自分が入玉宣言勝ちなら最善手だ。子の駒得は［＋ライオン駒点］。
-                        # TODO 自分の読みの最大深さなら子は［０駒点］。
-                        # TODO 自分に有力な候補手無しなら［０駒点］。
-                        pass
+                        
+                        if best_old_sibling_plot_model_in_children.declaration == constants.declaration.RESIGN: # TODO 自分が投了なら最悪手だ。子は［－ライオン駒点］。
+                            pass
+                        
+                        elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.NYUGYOKU_WIN: # TODO 自分が入玉宣言勝ちなら最善手だ。子の駒得は［＋ライオン駒点］。
+                            case_8c += 1
+
+                        elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.MAX_DEPTH_BY_THINK: # TODO 相手の読みの最大深さなら子は［０駒点］。
+                            pass
+
+                        elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.NO_CANDIDATES: # TODO 自分に有力な候補手無しなら［０駒点］。
+                            pass
+
+                        elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.NONE:  # ［宣言］ではない。
+                            raise ValueError(f"宣言ではなかったB。 best={best_old_sibling_plot_model_in_children.stringify_dump()} future={child_plot_model.stringify_dump()}")
+
+                        else:
+                            raise ValueError(f"想定外の読み筋B best={best_old_sibling_plot_model_in_children.stringify_dump()} future={child_plot_model.stringify_dump()}")
+                    
                     else:
-                        # TODO 相手が投了なら最善手だ。子は［＋ライオン駒点］。
-                        # TODO 相手が入玉宣言勝ちなら最悪手だ。子の駒得は［－ライオン駒点］。
-                        # TODO 相手の読みの最大深さなら子は［０駒点］。
-                        # TODO 相手に有力な候補手無しなら［０駒点］。
-                        pass
+                        if best_old_sibling_plot_model_in_children.declaration == constants.declaration.RESIGN: # TODO 相手が投了なら最善手だ。子は［＋ライオン駒点］。
+                            case_8b += 1
+                            its_update_best = True
 
-                    # TODO 敵味方のケース分け。
-                    # 兄の［駒点］と比較する。兄は宣言。
-                    if ptolemaic_theory_model.is_earth:
-                        # TODO 自分の［駒点］が、兄の［駒点］を上回れば更新。
-                        pass
-                    else:
-                        # TODO 相手の［駒点］が、兄の［駒点］を下回れば更新。
-                        pass
+                        elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.NYUGYOKU_WIN: # TODO 相手が入玉宣言勝ちなら最悪手だ。子の駒得は［－ライオン駒点］。
+                            pass
 
-                    if best_old_sibling_plot_model_in_children.declaration == constants.declaration.RESIGN: # 相手（自分かも？）が投了なら、最善手だ。
-                        case_8b += 1
-                        its_update_best = True
+                        elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.MAX_DEPTH_BY_THINK: # TODO 相手の読みの最大深さなら子は［０駒点］。
+                            case_8d += 1
 
-                    elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.NYUGYOKU_WIN: # 相手が入玉宣言勝ちなら、最悪手だ。
-                        case_8c += 1
+                        elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.NO_CANDIDATES: # TODO 相手に有力な候補手無しなら［０駒点］。
+                            case_8e += 1
 
-                    elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.MAX_DEPTH_BY_THINK: # 読みの最大深さ。
-                        case_8d += 1
+                        elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.NONE:  # ［宣言］ではない。
+                            raise ValueError(f"宣言ではなかったB。 best={best_old_sibling_plot_model_in_children.stringify_dump()} future={child_plot_model.stringify_dump()}")
 
-                    elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.NO_CANDIDATES: # 有力な候補手無し。
-                        case_8e += 1
+                        else:
+                            raise ValueError(f"想定外の読み筋B best={best_old_sibling_plot_model_in_children.stringify_dump()} future={child_plot_model.stringify_dump()}")
 
-                    elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.NONE:  # ［宣言］ではない。
-                        raise ValueError(f"宣言ではなかったB。 best={best_old_sibling_plot_model_in_children.stringify_dump()} future={child_plot_model.stringify_dump()}")
-
-                    else:
-                        raise ValueError(f"想定外の読み筋B best={best_old_sibling_plot_model_in_children.stringify_dump()} future={child_plot_model.stringify_dump()}")
+                    # # TODO 敵味方のケース分け。
+                    # # 兄の［駒点］と比較する。兄は宣言。
+                    # if ptolemaic_theory_model.is_earth:
+                    #     # TODO 自分の［駒点］が、兄の［駒点］を上回れば更新。
+                    #     pass
+                    # else:
+                    #     # TODO 相手の［駒点］が、兄の［駒点］を下回れば更新。
+                    #     pass
 
                 # 兄枝が有り、子に［手］も有るなら比較対象。
                 else:
