@@ -208,8 +208,8 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         """
         Parameters
         ----------
-        is_mars : bool
-            対戦相手か。
+        capture_piece_type : int
+            取った駒の種類。
         hint : str
             デバッグ用文字列。
         """
@@ -231,6 +231,10 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
         piece_exchange_value_on_earth = 2 * PieceValuesModel.by_piece_type(pt=capture_piece_type)      # 交換値に変換。正の数とする。
 
+        # 敵なら正負の符号を反転する。
+        if self.is_mars_at_peek:
+            piece_exchange_value_on_earth *= -1
+
         # 累計していく。
         self._piece_exchange_value_list_on_earth.append(previous_on_earth + piece_exchange_value_on_earth)
 
@@ -247,20 +251,23 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
 
         def _cap(cap):
+            if cap == cshogi.NONE:
+                return ''
             return f"x{PieceTypeModel.kanji(cap)}"
         
 
+        len_of_move_list = len(self._move_list)
         tokens = []
-        for layer in reversed(range(0, len(self._move_list))):  # 逆順。
-            move = self._move_list[layer]
+        for layer_no in reversed(range(0, len_of_move_list)):  # 逆順。
+            move = self._move_list[layer_no]
 
             if not isinstance(move, int):   # FIXME バグがあるよう
-                raise ValueError(f"move は int 型である必要があります。 {layer=} {type(move)=} {move=} {self._move_list=}")
+                raise ValueError(f"move は int 型である必要があります。 {layer_no=} {type(move)=} {move=} {self._move_list=}")
 
             move_as_usi                     = cshogi.move_to_usi(move)
-            cap                             = self._cap_list[layer]
-            piece_exchange_value_on_earth   = self._piece_exchange_value_list_on_earth[layer]
-            tokens.append(f"{layer+1}.{move_as_usi}{_cap(cap)}({piece_exchange_value_on_earth})")
+            cap                             = self._cap_list[layer_no]
+            piece_exchange_value_on_earth   = self._piece_exchange_value_list_on_earth[layer_no]
+            tokens.append(f"{len_of_move_list - layer_no}.{move_as_usi}{_cap(cap)}({piece_exchange_value_on_earth})")
 
         if self._declaration != constants.declaration.NONE:
             tokens.append(DeclarationModel.japanese(self.declaration))
