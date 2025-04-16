@@ -235,8 +235,9 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             raise ValueError(f"capture_piece_type をナンにしてはいけません。cshogi.NONE を使ってください。 {capture_piece_type=}")
         
         # （手を追加する前なので、ここでは）［ピーク］＝［１つ前の手］
+        previous_on_earth = self.peek_piece_exchange_value_on_earth
         # １つ前の手は 2/3 で按分します。（完全に読み切るわけではないので）深い手ほど価値を減らします。
-        previous_on_earth = self.peek_piece_exchange_value_on_earth * 2 / 3
+        previous_on_earth *= 2 / 3
 
         ##########
         # １手追加
@@ -250,11 +251,11 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
         # 一手詰めなら、点は最大。
         if len(self._move_list) == 1 and self._is_mate_in_1_move:
-            piece_exchange_value_on_earth += constants.value.CHECKMATE
-
-        # 対戦相手なら正負を逆転。
-        if is_mars:
-            piece_exchange_value_on_earth *= -1
+            # 対戦相手なら正負を逆転。
+            if is_mars:
+                piece_exchange_value_on_earth -= constants.value.CHECKMATE
+            else:
+                piece_exchange_value_on_earth += constants.value.CHECKMATE
 
         # 累計していく。
         self._piece_exchange_value_list_on_earth.append(previous_on_earth + piece_exchange_value_on_earth)

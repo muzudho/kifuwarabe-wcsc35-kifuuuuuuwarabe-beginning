@@ -4,7 +4,7 @@ import time
 from ...logics.layer_o1o0 import MoveListLogics
 from ..layer_o1o0 import constants, SquareModel
 from ..layer_o2o0 import BackwardsPlotModel, cutoff_reason
-#from ..layer_o4o0_rules.negative import DoNotDepromotionModel
+from ..layer_o4o0_rules.negative import DoNotDepromotionModel
 from .quiescence_search_for_scramble_model import QuiescenceSearchForScrambleModel
 from .search_model import SearchModel
 
@@ -156,11 +156,11 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
         #         gymnasium   = self._search_model.gymnasium)
 
         # 指し手を全部調べる。
-        # do_not_depromotion_model = DoNotDepromotionModel(
-        #         basketball_court_model=self._search_model.gymnasium.basketball_court_model)    # TODO 号令［成らないということをするな］
+        do_not_depromotion_model = DoNotDepromotionModel(
+                basketball_court_model=self._search_model.gymnasium.basketball_court_model)    # TODO 号令［成らないということをするな］
 
-        # do_not_depromotion_model._before_branches_nrm(
-        #         table=self._search_model.gymnasium.table)
+        do_not_depromotion_model._before_branches_nrm(
+                table=self._search_model.gymnasium.table)
         
         for my_move in remaining_moves:
 
@@ -168,11 +168,11 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
             # MARK: 一手指す前
             ##################
 
-            # mind = do_not_depromotion_model._before_move_nrm(
-            #         move    = my_move,
-            #         table   = self._search_model.gymnasium.table)
-            # if mind == constants.mind.WILL_NOT:
-            #     continue
+            mind = do_not_depromotion_model._before_move_nrm(
+                    move    = my_move,
+                    table   = self._search_model.gymnasium.table)
+            if mind == constants.mind.WILL_NOT:
+                continue
 
             dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
             # 打の場合、取った駒無し。空マス。

@@ -121,7 +121,7 @@ class GymnasiumModel():
 
     @property
     def basketball_court_model(self):
-        return self.__basketball_court_model
+        return self._basketball_court_model
 
 
     @property
