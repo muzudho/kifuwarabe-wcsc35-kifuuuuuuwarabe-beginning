@@ -235,7 +235,8 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             raise ValueError(f"capture_piece_type をナンにしてはいけません。cshogi.NONE を使ってください。 {capture_piece_type=}")
         
         # （手を追加する前なので、ここでは）［ピーク］＝［１つ前の手］
-        previous_on_earth = self.peek_piece_exchange_value_on_earth
+        # １つ前の手は 2/3 で按分します。（完全に読み切るわけではないので）深い手ほど価値を減らします。
+        previous_on_earth = self.peek_piece_exchange_value_on_earth * 2 / 3
 
         ##########
         # １手追加

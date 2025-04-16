@@ -44,10 +44,6 @@ class DoNotDepromotionModel(NegativeRuleModel):
                 self._promotion_doc[src_sq_obj.sq].append(dst_sq_obj.sq)
 
 
-        # TODO 成る手に対応する［成らない手］の一覧を作る。
-        pass
-
-
     def _before_move_nrm(self, move, table):
         """指す前に。
         """
