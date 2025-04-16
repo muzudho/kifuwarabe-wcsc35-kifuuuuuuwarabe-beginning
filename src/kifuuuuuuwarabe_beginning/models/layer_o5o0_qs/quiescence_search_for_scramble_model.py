@@ -91,10 +91,9 @@ class QuiescenceSearchForScrambleModel():
             
                 # 今回の手を付け加える。
                 best_plot_model.append_move(
-                        is_mars             = is_mars,
                         move                = mate_move,
                         capture_piece_type  = cap_pt,
-                        hint                = f"一手詰め時２_{is_mars=}")
+                        hint                = f"{Mars.japanese(is_mars)}の一手詰め時")
 
                 return best_plot_model
 
@@ -116,7 +115,7 @@ class QuiescenceSearchForScrambleModel():
                     is_mars_at_end_position     = is_mars,
                     declaration                 = constants.declaration.MAX_DEPTH_BY_THINK, # 読みの最大深さ。
                     cutoff_reason               = cutoff_reason.MAX_DEPTH,      # ［最大探索深さ］が打切り理由。
-                    hint                        = f"{self._search_model.max_depth - depth}階でこれ以上深く読まない場合_{depth=}/{self._search_model.max_depth=}_{is_mars=}")
+                    hint                        = f"{self._search_model.max_depth - depth}階の{Mars.japanese(is_mars)}でこれ以上深く読まない場合_{depth=}/{self._search_model.max_depth=}")
 
         # まだ深く読む場合。
 
@@ -174,6 +173,7 @@ class QuiescenceSearchForScrambleModel():
             # MARK: 一手指す前
             ##################
 
+            # ［成れるのに成らない手］は除外
             mind = do_not_depromotion_model._before_move_nrm(
                     move    = my_move,
                     table   = self._search_model.gymnasium.table)
@@ -245,61 +245,10 @@ class QuiescenceSearchForScrambleModel():
 
             # この枝が長兄なら採用。
             if best_old_sibling_plot_model_in_children is None:
+                its_update_best = True
                 case_8a += 1
             
-            # 兄枝は有るが、兄枝に［手］が無い場合。（［宣言］の直前とか、最大深さとか）
-            elif best_old_sibling_plot_model_in_children.is_empty_moves():
-                # TODO 敵味方のケース分け。相手が投了なら最善手、自分が投了なら最悪手。
-                if ptolemaic_theory_model.is_earth:
-                    
-                    if best_old_sibling_plot_model_in_children.declaration == constants.declaration.RESIGN: # TODO 自分が投了なら最悪手だ。子は［－ライオン駒点］。
-                        pass
-                    
-                    elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.NYUGYOKU_WIN: # TODO 自分が入玉宣言勝ちなら最善手だ。子の駒得は［＋ライオン駒点］。
-                        case_8c += 1
-
-                    elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.MAX_DEPTH_BY_THINK: # TODO 相手の読みの最大深さなら子は［０駒点］。
-                        pass
-
-                    elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.NO_CANDIDATES: # TODO 自分に有力な候補手無しなら［０駒点］。
-                        pass
-
-                    elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.NONE:  # ［宣言］ではない。
-                        raise ValueError(f"宣言ではなかったB。 best={best_old_sibling_plot_model_in_children.stringify_dump()} future={child_plot_model.stringify_dump()}")
-
-                    else:
-                        raise ValueError(f"想定外の読み筋B best={best_old_sibling_plot_model_in_children.stringify_dump()} future={child_plot_model.stringify_dump()}")
-                
-                else:
-                    if best_old_sibling_plot_model_in_children.declaration == constants.declaration.RESIGN: # TODO 相手が投了なら最善手だ。子は［＋ライオン駒点］。
-                        case_8b += 1
-                        its_update_best = True
-
-                    elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.NYUGYOKU_WIN: # TODO 相手が入玉宣言勝ちなら最悪手だ。子の駒得は［－ライオン駒点］。
-                        pass
-
-                    elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.MAX_DEPTH_BY_THINK: # TODO 相手の読みの最大深さなら子は［０駒点］。
-                        case_8d += 1
-
-                    elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.NO_CANDIDATES: # TODO 相手に有力な候補手無しなら［０駒点］。
-                        case_8e += 1
-
-                    elif best_old_sibling_plot_model_in_children.declaration == constants.declaration.NONE:  # ［宣言］ではない。
-                        raise ValueError(f"宣言ではなかったB。 best={best_old_sibling_plot_model_in_children.stringify_dump()} future={child_plot_model.stringify_dump()}")
-
-                    else:
-                        raise ValueError(f"想定外の読み筋B best={best_old_sibling_plot_model_in_children.stringify_dump()} future={child_plot_model.stringify_dump()}")
-
-                # # TODO 敵味方のケース分け。
-                # # 兄の［駒点］と比較する。兄は宣言。
-                # if ptolemaic_theory_model.is_earth:
-                #     # TODO 自分の［駒点］が、兄の［駒点］を上回れば更新。
-                #     pass
-                # else:
-                #     # TODO 相手の［駒点］が、兄の［駒点］を下回れば更新。
-                #     pass
-
-            # 兄枝が有り、子に［手］も有るなら比較対象。
+            # 兄枝が有るなら。
             else:
                 # 兄枝のベスト評価値
                 old_sibling_value = best_old_sibling_plot_model_in_children.peek_piece_exchange_value_on_earth     # とりあえず最善の読み筋の点数。
@@ -321,7 +270,6 @@ class QuiescenceSearchForScrambleModel():
                     #       NOTE １件に絞り込んでいいのか？ 後ろ向き探索なら１件に絞り込んでいいのか？
                 e2 = ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
                 its_update_best = (e2[0] < e2[1])
-
 
                 if its_update_best:
                     case_6t += 1
@@ -359,11 +307,10 @@ class QuiescenceSearchForScrambleModel():
                     is_mars_at_end_position    = is_mars,
                     declaration                = constants.declaration.NO_CANDIDATES,  # 有力な候補手無し。
                     cutoff_reason              = cutoff_reason.NO_MOVES,
-                    hint                       = f"指したい{self._search_model.max_depth - depth + 1}階の手無し,{Mars.japanese(is_mars)},move数={len(legal_move_list)},{case_1=},{case_2=},{case_4=},{case_5=},{case_6t=},({'_'.join(case_6t_hint_list)}),{case_6f=},({'_'.join(case_6f_hint_list)}),{case_8a=},{case_8a=},{case_8b=},{case_8c=},{case_8d=},{case_8e=}")
+                    hint                       = f"{self._search_model.max_depth - depth + 1}階の{Mars.japanese(is_mars)}は指したい手無し,move数={len(legal_move_list)},{case_1=},{case_2=},{case_4=},{case_5=},{case_6t=},({'_'.join(case_6t_hint_list)}),{case_6f=},({'_'.join(case_6f_hint_list)}),{case_8a=},{case_8a=},{case_8b=},{case_8c=},{case_8d=},{case_8e=}")
 
         # 今回の手を付け加える。
         best_old_sibling_plot_model_in_children.append_move(
-                is_mars             = is_mars,
                 move                = best_move,
                 capture_piece_type  = best_move_cap_pt,
                 hint                = f"{self._search_model.max_depth - depth + 1}階の手記憶_{Mars.japanese(is_mars)}")

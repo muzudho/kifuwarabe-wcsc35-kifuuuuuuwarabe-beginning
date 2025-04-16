@@ -109,7 +109,6 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
             
                 # 今回の手を付け加える。
                 best_plot_model.append_move(
-                        is_mars             = is_mars,
                         move                = mate_move,
                         capture_piece_type  = cap_pt,
                         hint                = f"一手詰め１_{Mars.japanese(is_mars)}")
@@ -222,10 +221,9 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
 
             # １階の手は、全ての手の読み筋を記憶します。最善手は選びません。
             future_plot_model.append_move(
-                    is_mars             = is_mars,
                     move                = my_move,
                     capture_piece_type  = cap_pt,
-                    hint                = f"１階の手はなんでも記憶_{is_mars=}")
+                    hint                = f"１階の{Mars.japanese(is_mars)}の手はなんでも記憶")
             all_backwards_plot_models_at_first.append(future_plot_model)
 
             # NOTE この辺りは［０階］。
@@ -242,7 +240,7 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
                     is_mars_at_end_position     = is_mars,
                     declaration                 = constants.declaration.NO_CANDIDATES, # 有力な候補手無し。
                     cutoff_reason               = cutoff_reason.NO_MOVES,
-                    hint                        = f"指したい１階の手無し_{depth=}/{self._search_model.max_depth=}_{Mars.japanese(is_mars)}_{len(all_backwards_plot_models_at_first)=}/{len(remaining_moves)=}")
+                    hint                        = f"１階の{Mars.japanese(is_mars)}は指したい手無し_{depth=}/{self._search_model.max_depth=}_{len(all_backwards_plot_models_at_first)=}/{len(remaining_moves)=}")
             all_backwards_plot_models_at_first.append(future_plot_model)
 
         self._search_model.end_time = time.time()    # 計測終了時間
