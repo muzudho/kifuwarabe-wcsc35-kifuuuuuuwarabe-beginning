@@ -93,7 +93,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         return previous
 
 
-    def __init__(self, is_mars_at_end_position, declaration, is_mate_in_1_move, cutoff_reason, hint):
+    def __init__(self, is_mars_at_end_position, declaration, cutoff_reason, hint):
         """初期化。
 
         Parameters
@@ -102,8 +102,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             ［葉局面］＝［宣言］手番は対戦相手か。
         declaration : int
             ［宣言］
-        is_mate_in_1_move : bool
-            ［末端局面で１手詰めか？］
         cutoff_reason : int
             カットオフの理由
         hint : str
@@ -111,8 +109,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         """
         self._is_mars_at_end_position = is_mars_at_end_position
         self._declaration = declaration
-        self._is_mate_in_1_move = is_mate_in_1_move
-        self._mars_list = []
         self._move_list = []
         self._cap_list = []
         self._piece_exchange_value_list_on_earth = []
@@ -139,18 +135,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         """［宣言］
         """
         return self._declaration
-
-
-    @property
-    def is_mate_in_1_move(self):
-        """［末端局面で１手詰めか？］
-        """
-        return self._is_mate_in_1_move
-
-
-    @property
-    def mars_list(self):
-        return self._mars_list
 
 
     @property
@@ -211,11 +195,10 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
     def is_empty_moves(self):
         # ASSERT
-        len_mars_list = len(self._mars_list)
         len_move_list = len(self._move_list)
         len_cap_list = len(self._cap_list)
         len_pev_list = len(self._piece_exchange_value_list_on_earth)
-        if not (len_mars_list == len_move_list and len_move_list == len_cap_list and len_cap_list == len_pev_list):
+        if not (len_move_list == len_cap_list and len_cap_list == len_pev_list):
             raise ValueError(f"配列の長さの整合性が取れていません。 {len_move_list=} {len_cap_list=} {len_pev_list=}")
         
         return len(self._move_list) < 1
@@ -242,20 +225,11 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         ##########
         # １手追加
         ##########
-        self._mars_list.append(is_mars)
         self._move_list.append(move)
         self._cap_list.append(capture_piece_type)
         self._hint_list.append(hint)
 
         piece_exchange_value_on_earth = 2 * PieceValuesModel.by_piece_type(pt=capture_piece_type)      # 交換値に変換。正の数とする。
-
-        # 一手詰めなら、点は最大。
-        if len(self._move_list) == 1 and self._is_mate_in_1_move:
-            # 対戦相手なら正負を逆転。
-            if is_mars:
-                piece_exchange_value_on_earth -= constants.value.CHECKMATE
-            else:
-                piece_exchange_value_on_earth += constants.value.CHECKMATE
 
         # 累計していく。
         self._piece_exchange_value_list_on_earth.append(previous_on_earth + piece_exchange_value_on_earth)
@@ -284,10 +258,9 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
                 raise ValueError(f"move は int 型である必要があります。 {layer=} {type(move)=} {move=} {self._move_list=}")
 
             move_as_usi                     = cshogi.move_to_usi(move)
-            is_mars            = self._mars_list[layer]
             cap                             = self._cap_list[layer]
             piece_exchange_value_on_earth   = self._piece_exchange_value_list_on_earth[layer]
-            tokens.append(f"{layer+1}.{_planet(is_mars)}{move_as_usi}{_cap(cap)}({piece_exchange_value_on_earth})")
+            tokens.append(f"{layer+1}.{move_as_usi}{_cap(cap)}({piece_exchange_value_on_earth})")
 
         if self._declaration != constants.declaration.NONE:
             tokens.append(DeclarationModel.japanese(self.declaration))
@@ -311,7 +284,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
 
     def stringify_dump(self):
-        return f"{self._is_mars_at_end_position=} {self._declaration=} {self._is_mate_in_1_move=} {self._move_list=} {self._cap_list=} {self._piece_exchange_value_list_on_earth=} {self._cutoff_reason=} {' '.join(self._hint_list)=}"
+        return f"{self._is_mars_at_end_position=} {self._declaration=} {self._move_list=} {self._cap_list=} {self._piece_exchange_value_list_on_earth=} {self._cutoff_reason=} {' '.join(self._hint_list)=}"
 
 
     def stringify_debug_1(self):
