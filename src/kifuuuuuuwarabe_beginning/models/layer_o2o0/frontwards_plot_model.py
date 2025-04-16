@@ -1,7 +1,7 @@
 import cshogi
 
 
-class FrontwardsPlotModel():
+class FrontwardsPlotModel(): # TODO Rename PathFromRoot
 
 
     def __init__(self):

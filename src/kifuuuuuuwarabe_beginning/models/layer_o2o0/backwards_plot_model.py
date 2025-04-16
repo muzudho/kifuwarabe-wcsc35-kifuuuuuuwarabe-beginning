@@ -62,7 +62,7 @@ class CutoffReason():
 cutoff_reason = CutoffReason()
 
 
-class BackwardsPlotModel():
+class BackwardsPlotModel(): # TODO Rename PathFromLeaf
     """読み筋モデル。
     末端局面から開始局面に向かって後ろ向きに進み、格納します。（スタック構造）
 
@@ -99,7 +99,7 @@ class BackwardsPlotModel():
         Parameters
         ----------
         is_mars_at_end_position : bool
-            末端局面で対戦相手か。
+            ［葉局面］＝［宣言］手番は対戦相手か。
         declaration : int
             ［宣言］
         is_mate_in_1_move : bool
@@ -178,15 +178,15 @@ class BackwardsPlotModel():
 
 
     @property
-    def peek_piece_exchange_value_on_earth(self):
-        """
+    def peek_piece_exchange_value_on_earth(self):   # TODO Rename exchange_value_on_earth
+        """駒得の交換値。
         """
 
         if len(self._piece_exchange_value_list_on_earth) < 1:
             # ［指し手］が無ければ、［宣言］の点数を返します。［宣言］を行っていない場合は、点数を付けれません。
             return self._declaration_to_value_on_earth(
                     declaration = self._declaration,
-                    is_mars     = self.is_mars_at_peek)
+                    is_mars     = self._is_mars_at_end_position)
 
         return self._piece_exchange_value_list_on_earth[-1]
 
@@ -234,14 +234,8 @@ class BackwardsPlotModel():
         if capture_piece_type is None:
             raise ValueError(f"capture_piece_type をナンにしてはいけません。cshogi.NONE を使ってください。 {capture_piece_type=}")
         
-        # ひとつ前の値
-        if len(self._piece_exchange_value_list_on_earth) == 0:
-            previous_on_earth = BackwardsPlotModel._declaration_to_value_on_earth(
-                    declaration             = self.declaration,
-                    is_mars    = not is_mars) # １つ前の値だから手番は反転
-
-        else:
-            previous_on_earth = self._piece_exchange_value_list_on_earth[-1]
+        # （手を追加する前なので、ここでは）［ピーク］＝［１つ前の手］
+        previous_on_earth = self.peek_piece_exchange_value_on_earth
 
         ##########
         # １手追加
