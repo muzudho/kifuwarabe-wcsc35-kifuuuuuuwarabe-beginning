@@ -49,6 +49,7 @@ class MoveListLogics():
             gymnasium.health_check.append(
                     move    = move_eat,
                     name    = 'SQ_eater',
+                    # TODO 先手か後手か？
                     value   = f"SQ_eater{PieceTypeModel.kanji(src_pt)}{src_value}")
 
         # TODO 相手の駒Ａを、自分の駒Ｂ１、Ｂ２、…のいずれの駒でも取れる場合、

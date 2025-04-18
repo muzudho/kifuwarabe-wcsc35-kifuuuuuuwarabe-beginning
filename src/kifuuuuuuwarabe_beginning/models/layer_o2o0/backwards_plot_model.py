@@ -219,8 +219,8 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         
         # （手を追加する前なので、ここでは）［ピーク］＝［１つ前の手］
         previous_on_earth = self.peek_piece_exchange_value_on_earth
-        # １つ前の手は 2/3 で按分します。（完全に読み切るわけではないので）深い手ほど価値を減らします。
-        previous_on_earth *= 2 / 3
+        # （完全に読み切るわけではないので）深くの手ほど価値を減らします。ただしあまり深くの駒を弱く調整すると、浅い銀と深い角が同じ価値になるなど不具合が生じます。
+        previous_on_earth *= 9 / 10
 
         ##########
         # １手追加
