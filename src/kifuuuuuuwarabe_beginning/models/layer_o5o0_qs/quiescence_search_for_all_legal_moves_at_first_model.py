@@ -184,12 +184,11 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
 
             # １階呼出時は、どの手も無視しません。
 
-            # ＜📚原則１＞により、駒を取らない手は、探索を１手延長します。
             is_capture  = (cap_pt != cshogi.NONE)
 
             # ２階以降の呼出時は、駒を取る手でなければ無視。 FIXME 王手が絡んでいるとき、取れないこともあるから、王手が絡むときは場合分けしたい。
             if not is_capture:
-                depth_extend = 1
+                depth_extend = 1    # ＜📚原則１＞により、駒を取らない手は、探索を１手延長します。
             else:
                 depth_extend = 0
 
