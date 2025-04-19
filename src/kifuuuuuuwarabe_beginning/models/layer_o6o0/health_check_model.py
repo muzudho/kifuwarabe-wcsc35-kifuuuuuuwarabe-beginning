@@ -66,13 +66,13 @@ class HealthCheckModel():
 
         def _nr_select(move_prop):
             if 'NR_select' in move_prop:
-                return 'NR_select'
+                return move_prop['NR_select']
             return ''
 
 
-        def _nr_reselect(move_prop):
-            if 'NR_reselect' in move_prop:
-                return 'NR_reselect'
+        def _bm_bestmove(move_prop):
+            if 'BM_bestmove' in move_prop:
+                return 'BM_bestmove'
             return ''
 
 
@@ -92,6 +92,6 @@ class HealthCheckModel():
             # （３）静止探索で選ばれた手をエリミネートした手
             # （４）ネガティブ・ルールで選別した手
             # （５）ロールバックした手
-            lines.append(f"{cshogi.move_to_usi(move):5} {_legal(move_prop):6} | {_eater(move_prop):12} | {_cheapest(move_prop):12} | {_qs_eliminate171(move_prop):30} | {_qs_select(move_prop):10} | {_nr_select(move_prop):10} | {_nr_reselect(move_prop):12} | {_qs_plot(move_prop)}")
+            lines.append(f"{cshogi.move_to_usi(move):5} {_legal(move_prop):6} | {_eater(move_prop):12} | {_cheapest(move_prop):12} | {_qs_eliminate171(move_prop):30} | {_qs_select(move_prop):10} | {_nr_select(move_prop):10} | {_bm_bestmove(move_prop):11} | {_qs_plot(move_prop)}")
 
         return '\n'.join(lines)

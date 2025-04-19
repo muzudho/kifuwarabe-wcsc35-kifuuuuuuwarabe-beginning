@@ -114,34 +114,34 @@ class _Go2nd():
         old_all_legal_moves = all_regal_moves.copy()
 
         (
-            remaining_moves,
+            remaining_moves_qs,
             number_of_visited_nodes
         ) = _quiescence_search_at_first(
                 remaining_moves = all_regal_moves,
                 gymnasium       = self._gymnasium)
-        length_of_quiescence_search_by_kifuwarabe   = len(remaining_moves)
+        length_of_quiescence_search_by_kifuwarabe   = len(remaining_moves_qs)
         self._gymnasium.thinking_logger_module.append(f"QS_select_length={length_of_quiescence_search_by_kifuwarabe}")
 
-        for move in remaining_moves:
+        for move in remaining_moves_qs:
             self._gymnasium.health_check.append(
                     move    = move,
                     name    = 'QS_select',
                     value   =  True)
 
-        if len(remaining_moves) == 0:
-            remaining_moves = old_all_legal_moves
-            self._gymnasium.thinking_logger_module.append(f"Restore after quiescence_search. len={len(remaining_moves)}.")
+        if len(remaining_moves_qs) == 0:
+            remaining_moves_qs = old_all_legal_moves
+            self._gymnasium.thinking_logger_module.append(f"QS is 0. Rollback to old_all_legal_moves. len={len(remaining_moves_qs)}.")
 
-        old_remaining_moves = remaining_moves.copy()
+        old_remaining_moves_qs = remaining_moves_qs.copy()
 
         # 枝の前でポジティブ・ルール
-        moves_to_pickup = MovesPickupFilterLogics.before_branches_o1x(
-                remaining_moves = remaining_moves,
+        remaining_moves_pr = MovesPickupFilterLogics.before_branches_o1x(
+                remaining_moves = remaining_moves_qs,
                 gymnasium       = self._gymnasium)
         
-        if 0 < len(moves_to_pickup):
+        if 0 < len(remaining_moves_pr):
             # ピックアップされた手の中から選びます。
-            remaining_moves = moves_to_pickup
+            remaining_moves_r = remaining_moves_pr
 
         else:
             # 合法手から、１手を選び出します。
@@ -150,27 +150,29 @@ class _Go2nd():
             # ［指前］
             #       制約：
             #           指し手は必ず１つ以上残っています。
-            remaining_moves = MovesReductionFilterLogics.before_branches_o1x(
-                    remaining_moves = remaining_moves,
+            remaining_moves_nr = MovesReductionFilterLogics.before_branches_o1x(
+                    remaining_moves = remaining_moves_qs,
                     gymnasium       = self._gymnasium)
-            length_by_kifuwarabe = len(remaining_moves)
+            length_by_kifuwarabe = len(remaining_moves_nr)
             self._gymnasium.thinking_logger_module.append(f"{length_by_kifuwarabe=}")
 
-            for move in remaining_moves:
-                self._gymnasium.health_check.append(
-                        move    = move,
-                        name    = 'NR_select',
-                        value   =  True)
+            if len(remaining_moves_nr) == 0:
+                remaining_moves_nr = old_remaining_moves_qs
+                self._gymnasium.thinking_logger_module.append(f"NR is 0. Rollback to QS. len={len(remaining_moves_nr)}.")
 
-            if len(remaining_moves) == 0:
-                remaining_moves = old_remaining_moves
-                self._gymnasium.thinking_logger_module.append(f"Restore after MovesReductionFilterLogics. len={len(remaining_moves)}.")
-
-                for move in remaining_moves:
+                for move in remaining_moves_nr:
                     self._gymnasium.health_check.append(
                             move    = move,
-                            name    = 'NR_reselect',
-                            value   =  True)
+                            name    = 'NR_select',
+                            value   = 'NR_cancel')
+            else:
+                for move in remaining_moves_nr:
+                    self._gymnasium.health_check.append(
+                            move    = move,
+                            name    = 'NR_select',
+                            value   = 'NR_select')
+
+            remaining_moves_r = remaining_moves_nr
 
             # ログ
             message = f"""\
@@ -187,9 +189,14 @@ HEALTH CHECK
 
         # １手に絞り込む
         if self._gymnasium.config_doc['search']['there_is_randomness']:
-            best_move = random.choice(remaining_moves)
+            best_move = random.choice(remaining_moves_r)
         else:
-            best_move = remaining_moves[0]
+            best_move = remaining_moves_r[0]
+        
+        self._gymnasium.health_check.append(
+                move    = best_move,
+                name    = 'BM_bestmove',
+                value   =  True)
         self._gymnasium.thinking_logger_module.append(f"Best move={cshogi.move_to_usi(best_move)}")
 
         # ［指後］

@@ -66,13 +66,8 @@ class DoNotMoveRookModel(NegativeRuleModel):
         """
 
         # キリン以外なら対象外
-        if cshogi.move_from_piece_type(move) not in [cshogi.ROOK]:
+        if cshogi.move_from_piece_type(move) != cshogi.ROOK:
             return constants.mind.NOT_IN_THIS_CASE
-
-        # # 移動先が異段なら意志あり
-        # e1 = cmp.swap(dst_sq_obj.rank, src_sq_obj.rank)
-        # if e1[0] != e1[1]:
-        #     return constants.mind.WILL
 
         # それ以外は意志なし
         return constants.mind.WILL_NOT
