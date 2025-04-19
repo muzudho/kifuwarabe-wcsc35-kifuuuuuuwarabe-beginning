@@ -3,6 +3,7 @@ import time
 
 from ...logics.layer_o1o0 import MoveListLogics
 from ..layer_o1o0 import constants, Mars, SquareModel
+from ..layer_o1o0o_9o0_table_helper import TableHelper
 from ..layer_o2o0 import BackwardsPlotModel, cutoff_reason
 from ..layer_o4o0_rules.negative import DoNotDepromotionModel
 from .quiescence_search_for_scramble_model import QuiescenceSearchForScrambleModel
@@ -86,6 +87,7 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
             """
             best_plot_model = BackwardsPlotModel(
                     is_mars_at_declaration  = is_mars,
+                    is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
                     declaration             = constants.declaration.RESIGN,
                     cutoff_reason           = cutoff_reason.GAME_OVER,
                     hint                    = '手番の投了局面時１')
@@ -103,13 +105,17 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
 
                 best_plot_model = BackwardsPlotModel(
                         is_mars_at_declaration  = not is_mars,  # ［詰む］のは、もう１手先だから。
+                        is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
                         declaration             = constants.declaration.RESIGN,
                         cutoff_reason           = cutoff_reason.MATE_MOVE_IN_1_PLY,
                         hint                    = '一手詰めA')
             
+                moving_pt = TableHelper.get_moving_pt_from_move(move=mate_move)
+
                 # 今回の手を付け加える。
                 best_plot_model.append_move(
                         move                = mate_move,
+                        moving_pt           = moving_pt,
                         capture_piece_type  = cap_pt,
                         hint                = f"一手詰め１_{Mars.japanese(is_mars)}")
 
@@ -121,6 +127,7 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
             """
             best_plot_model = BackwardsPlotModel(
                     is_mars_at_declaration  = is_mars,
+                    is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
                     declaration             = constants.declaration.NYUGYOKU_WIN,
                     cutoff_reason           = cutoff_reason.NYUGYOKU_WIN,
                     hint                    = '手番の入玉宣言局面時１')
@@ -131,6 +138,7 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
         if depth < 1:
             best_plot_model = BackwardsPlotModel(
                     is_mars_at_declaration  = is_mars,
+                    is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
                     declaration             = constants.declaration.MAX_DEPTH_BY_THINK, # 読みの最大深さ。
                     cutoff_reason           = cutoff_reason.MAX_DEPTH,
                     hint                    = 'これ以上深く読まない場合１')
@@ -229,9 +237,12 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
             # MARK: 手番の処理
             ##################
 
+            moving_pt = TableHelper.get_moving_pt_from_move(move=my_move)     # TODO
+
             # １階の手は、全ての手の読み筋を記憶します。最善手は選びません。
             future_plot_model.append_move(
                     move                = my_move,
+                    moving_pt           = moving_pt,
                     capture_piece_type  = cap_pt,
                     hint                = f"１階の{Mars.japanese(is_mars)}の手はなんでも記憶")
             all_backwards_plot_models_at_first.append(future_plot_model)
@@ -248,6 +259,7 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
         if len(all_backwards_plot_models_at_first) < 1:
             future_plot_model = BackwardsPlotModel(
                     is_mars_at_declaration  = is_mars,
+                    is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
                     declaration             = constants.declaration.NO_CANDIDATES, # 有力な候補手無し。
                     cutoff_reason           = cutoff_reason.NO_MOVES,
                     hint                    = f"１階の{Mars.japanese(is_mars)}は指したい手無し_{depth=}/{self._search_model.max_depth=}_{len(all_backwards_plot_models_at_first)=}/{len(remaining_moves)=}")

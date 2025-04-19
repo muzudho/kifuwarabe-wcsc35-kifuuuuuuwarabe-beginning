@@ -2,8 +2,8 @@ import cshogi
 
 from ...logics.layer_o1o0 import Helper
 from ...logics.layer_o1o1o0_move_list import SelectCheapEatersLogic, SplitEatingBeforeMoveLogic
-from ...models.layer_o1o_9o0 import PieceValuesModel
-from ...models.layer_o1o0 import PieceTypeModel, PlanetPieceModel, SquareModel
+from ...models.layer_o1o_9o0 import PieceValuesModel, PlanetPieceModel
+from ...models.layer_o1o0 import PieceTypeModel, SquareModel
 from ...models.layer_o1o1o0_move_list import SplitEatingBeforeMoveModel
 
 

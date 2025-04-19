@@ -1,3 +1,6 @@
+import cshogi
+
+
 class PieceModel():
     """先後付きの駒
 
@@ -37,7 +40,7 @@ class PieceModel():
         'v圭',  # 27
         'v全',  # 28
         'v馬',  # 29
-        'v竜',  # 16 + 14
+        'v竜',  # 16 + 14   #30
     ]
 
 

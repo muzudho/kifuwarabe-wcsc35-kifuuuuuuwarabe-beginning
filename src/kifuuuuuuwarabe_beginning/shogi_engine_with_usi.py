@@ -372,45 +372,9 @@ class ShogiEngineCompatibleWithUSIProtocol():
     def test(self):
         """TODO 使い終わったら消す
         """
-        from .logics_o1x.helper import Helper
-        from .layer_o2o0.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
-
-
-        np = NineRankSidePerspectiveModel(self._gymnasium.table)
-
-        # for suji in range(1, 10):
-        #     for dan in range(1, 10):
-        #         masu = Helper.suji_dan_to_masu(suji, dan)
-        #         print(f'{masu=:2} {np.masu(masu)=:2}')
-
-        # if np.ji_pc(cshogi.BISHOP) != cshogi.BBISHOP:
-        #     raise ValueError('先手の角')
-
-        # self._gymnasium.table.do_move_o1o1x(self._gymnasium.table.move_from_usi('7g7f'))
-
-        # if np.ji_pc(cshogi.BISHOP) != cshogi.WBISHOP:
-        #     raise ValueError('後手の角')
-
-        # if self._gymnasium.table.piece(np.masu(88)) == np.ji_pc(cshogi.BISHOP):
-        #     print('８八は自角だ')
-        # else:
-        #     print(f'８八は自角でない {self._gymnasium.table.piece(np.masu(88))} {np.ji_pc(cshogi.BISHOP)=}')
-
-        # if self._gymnasium.table.piece(np.masu(79)) == np.ji_pc(cshogi.SILVER):
-        #     print('７九は自銀だ')
-        # else:
-        #     print(f'７九は自銀でない')
-
-        print(f"{self._gymnasium.table.sfen()=}")
-
-        # 盤を複製
-        copied_table = self._gymnasium.table.copy_table_with_0_moves()
-        table_view = TableView(table=copied_table)
-        print(table_view.stringify())   # 平手初期局面に戻ってる
-
-        # 指定局面（現局面）の SFEN を取得（棋譜は付いていない）
-        designated_sfen = copied_table.sfen()
-        print(f"コピー盤 {designated_sfen=}")
-
-        piece_moved_list = copied_table.copy_piece_moved_list()
-        print(f"{piece_moved_list=}")
+        board = cshogi.Board()
+        board.push_usi('7g7f')
+        board.push_usi('3c3d')
+        board.push_usi('8h2b')
+        board.push_usi('3a2b')
+        board.push_usi('B*8h')  # 打

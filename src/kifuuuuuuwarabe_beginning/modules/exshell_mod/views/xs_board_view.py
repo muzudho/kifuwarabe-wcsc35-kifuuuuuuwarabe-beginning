@@ -6,6 +6,7 @@ from openpyxl.styles import PatternFill, Font
 from openpyxl.styles.borders import Border, Side
 from openpyxl.styles.alignment import Alignment
 
+from ....models.layer_o1o_8o0_str import StringResourcesModel
 from ....models.layer_o1o0 import TurnModel
 
 
@@ -16,9 +17,6 @@ class XsBoardView():
     def render(gymnasium):
         """描画。
         """
-
-        zenkaku_suji_list = ['０', '１', '２', '３', '４', '５', '６', '７', '８', '９']
-        kan_suji_list = ['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九']
 
         # 色
         BLACK = '000000'
@@ -167,7 +165,7 @@ class XsBoardView():
             next_column_letter = xa.ColumnLetterLogic.add(column_letter, 1)
             ws.merge_cells(f"{column_letter}5:{next_column_letter}6")
             cell = ws[f"{column_letter}5"]
-            cell.value = f"'{zenkaku_suji_list[9-index]}"
+            cell.value = f"'{StringResourcesModel.zenkaku_suji_list[9-index]}"
             cell.font = LARGE_FONT
             cell.alignment = center_center_alignment
 
@@ -175,7 +173,7 @@ class XsBoardView():
         for index, row_th in enumerate(range(7, 24, 2)):
             ws.merge_cells(f"AA{row_th}:AB{row_th+1}")
             cell = ws[f"AA{row_th}"]
-            cell.value = f"{kan_suji_list[index+1]}"
+            cell.value = f"{StringResourcesModel.kan_suji_list[index+1]}"
             cell.font = LARGE_FONT
             cell.alignment = center_center_alignment
 

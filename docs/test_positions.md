@@ -565,3 +565,12 @@ k3r4/4l4/4l4/4p4/4g4/4P4/3+PL+P3/2+P+PL+P+P2/1+P+P+PR+P+P+PK b 2b3g4s4n4p 1
 
 4k4/+p+p+p+p+p+p+p+p+p/9/9/1g1g1g1g1/9/1spsp1ps1/3P5/B1NLKLNRB b rs2n2l5p 1
 ```
+
+
+## 持ち駒の番号を調べるテスト
+
+```plaintext
+# 先手　歩打
+lnsgkgsnl/1r5b1/ppppppppp/9/9/9/1+p7/9/K1+p6 b Prb2g2s2n2l6p 1
+
+```

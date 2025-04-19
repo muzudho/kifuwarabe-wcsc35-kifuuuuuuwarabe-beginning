@@ -1,5 +1,7 @@
 class PlanetPieceModel():
     """地球側と、火星側で分けた駒表記。
+
+    TODO あまり使わない？
     """
 
     _kanji_list = [
@@ -37,12 +39,35 @@ class PlanetPieceModel():
         '全',   # [28]  全
         '馬',   # [29]  馬
         '竜',   # [30]  竜      16 + 14
+
+        # # FIXME 駒台。以下の並びは勘
+        # '',     # [31]          16 + 15
+        # 'ひ',   # [31]  歩
+        # '猪',   # [32]  香
+        # '兎',   # [33]  桂
+        # '猫',   # [34]  銀
+        # '犬',   # [37]  金
+        # '象',   # [35]  角
+        # '麒',   # [36]  飛
     ]
 
 
     @classmethod
     def kanji(clazz, piece, is_gote):
-        token = clazz._kanji_list[piece]
+        """
+        Parameters
+        ----------
+        piece : int
+            先後付きの駒種類。
+            打を指定しないように注意してください。
+        """
+
+        try:
+            token = clazz._kanji_list[piece]
+        except IndexError as ex:
+            # 36 が入っていることがある。何で？ 持ち駒か？
+            print(f"E-48: {piece=} {is_gote=} {ex=}")
+            raise
 
         # 後手なら左側に `v` を付けます。
         if is_gote:

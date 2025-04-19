@@ -1,7 +1,8 @@
 import cshogi
 
 from ..layer_o1o_9o0 import PieceValuesModel
-from ..layer_o1o0 import constants, DeclarationModel, Mars, PieceTypeModel, PlanetPieceTypeModel
+from ..layer_o1o0 import constants, DeclarationModel, Mars, PieceTypeModel, PlanetPieceTypeModel, SquareModel
+from ..layer_o1o0o1o0_human import HumanPresentableMoveModel
 
 
 class CutoffReason():
@@ -91,13 +92,15 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         return previous
 
 
-    def __init__(self, is_mars_at_declaration, declaration, cutoff_reason, hint):
+    def __init__(self, is_mars_at_declaration, is_gote_at_declaration, declaration, cutoff_reason, hint):
         """初期化。
 
         Parameters
         ----------
         is_mars_at_declaration : bool
             ［葉局面］＝［宣言］手番は対戦相手か。
+        is_gote_at_declaration : bool
+            ［葉局面］＝［宣言］手番は後手か。
         declaration : int
             ［宣言］
         cutoff_reason : int
@@ -106,8 +109,10 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             デバッグ用文字列
         """
         self._is_mars_at_declaration = is_mars_at_declaration
+        self._is_gote_at_declaration = is_gote_at_declaration
         self._declaration = declaration
         self._move_list = []
+        self._moving_pt_list = []
         self._cap_list = []
         self._piece_exchange_value_list_on_earth = []
         self._cutoff_reason = cutoff_reason
@@ -122,10 +127,24 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
 
     @property
+    def is_gote_at_declaration(self):
+        """木構造の葉ノード（末端局面の次の局面、宣言）で後手か。
+        """
+        return self._is_gote_at_declaration
+
+
+    @property
     def is_mars_at_peek(self):
         if len(self._move_list) % 2 == 0:
             return self._is_mars_at_declaration
         return not self._is_mars_at_declaration
+
+
+    @property
+    def is_gote_at_peek(self):
+        if len(self._move_list) % 2 == 0:
+            return self._is_gote_at_declaration
+        return not self._is_gote_at_declaration
 
 
     @property
@@ -138,6 +157,11 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
     @property
     def move_list(self):
         return self._move_list
+
+
+    @property
+    def moving_pt_list(self):
+        return self._moving_pt_list
 
 
     @property
@@ -190,18 +214,21 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
     def is_empty_moves(self):
         # ASSERT
         len_move_list = len(self._move_list)
+        len_moving_pt_list = len(self._moving_pt_list)
         len_cap_list = len(self._cap_list)
         len_pev_list = len(self._piece_exchange_value_list_on_earth)
-        if not (len_move_list == len_cap_list and len_cap_list == len_pev_list):
-            raise ValueError(f"配列の長さの整合性が取れていません。 {len_move_list=} {len_cap_list=} {len_pev_list=}")
+        if not (len_move_list == len_cap_list and len_move_list == len_moving_pt_list and len_cap_list == len_pev_list):
+            raise ValueError(f"配列の長さの整合性が取れていません。 {len_move_list=} {len_moving_pt_list=} {len_cap_list=} {len_pev_list=}")
         
         return len(self._move_list) < 1
 
 
-    def append_move(self, move, capture_piece_type, hint):
+    def append_move(self, move, moving_pt, capture_piece_type, hint):
         """
         Parameters
         ----------
+        moving_pt : int
+            動かした駒の種類。盤上の移動元の駒か、打った駒。
         capture_piece_type : int
             取った駒の種類。
         hint : str
@@ -220,6 +247,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         # １手追加
         ##########
         self._move_list.append(move)
+        self._moving_pt_list.append(moving_pt)
         self._cap_list.append(capture_piece_type)
         self._hint_list.append(hint)
 
@@ -253,22 +281,28 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             return f"+{PlanetPieceTypeModel.mars_kanji(piece_type=cap)}"     # 地球側が取ったのは火星側の駒
         
         tokens = []
-        is_mars = self.is_mars_at_peek   # FIXME 逆順であることに注意。
+        is_mars = self.is_mars_at_peek   # 逆順なので、ピークから。
+        is_gote = self.is_gote_at_peek   # 逆順なので、ピークから。
 
         len_of_move_list = len(self._move_list)
         for layer_no in reversed(range(0, len_of_move_list)):  # 逆順。
             move = self._move_list[layer_no]
+            moving_pt = self._moving_pt_list[layer_no]
 
             if not isinstance(move, int):   # FIXME バグがあるよう
                 raise ValueError(f"move は int 型である必要があります。 {layer_no=} {type(move)=} {move=} {self._move_list=}")
 
-            move_as_usi                     = cshogi.move_to_usi(move)
+            # TODO USIの指し手は読みにくいので変えたい。
+            #move_str = cshogi.move_to_usi(move)
+            move_str = HumanPresentableMoveModel.from_move(move=move, moving_pt=moving_pt, is_mars=is_mars, is_gote=is_gote).stringify()
+
             cap                             = self._cap_list[layer_no]
             piece_exchange_value_on_earth   = self._piece_exchange_value_list_on_earth[layer_no]
-            tokens.append(f"{len_of_move_list - layer_no}.{move_as_usi}({_cap(cap=cap, is_mars=is_mars)}{piece_exchange_value_on_earth})")
+            tokens.append(f"{len_of_move_list - layer_no}.{move_str}({_cap(cap=cap, is_mars=is_mars)}{piece_exchange_value_on_earth})")
 
             # 手番交代
             is_mars = not is_mars
+            is_gote = not is_gote
 
         tokens.append(f"{Mars.japanese(is_mars)}の{DeclarationModel.japanese(self.declaration)}")   # 宣言
 
