@@ -93,12 +93,12 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         return previous
 
 
-    def __init__(self, is_mars_at_end_position, declaration, cutoff_reason, hint):
+    def __init__(self, is_mars_at_declaration, declaration, cutoff_reason, hint):
         """初期化。
 
         Parameters
         ----------
-        is_mars_at_end_position : bool
+        is_mars_at_declaration : bool
             ［葉局面］＝［宣言］手番は対戦相手か。
         declaration : int
             ［宣言］
@@ -107,7 +107,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         hint : str
             デバッグ用文字列
         """
-        self._is_mars_at_end_position = is_mars_at_end_position
+        self._is_mars_at_declaration = is_mars_at_declaration
         self._declaration = declaration
         self._move_list = []
         self._cap_list = []
@@ -117,17 +117,17 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
 
     @property
-    def is_mars_at_end_position(self):
+    def is_mars_at_declaration(self):
         """木構造の葉ノード（末端局面の次の局面、宣言）で対戦相手か。
         """
-        return self._is_mars_at_end_position
+        return self._is_mars_at_declaration
 
 
     @property
     def is_mars_at_peek(self):
         if len(self._move_list) % 2 == 0:
-            return self._is_mars_at_end_position
-        return not self._is_mars_at_end_position
+            return self._is_mars_at_declaration
+        return not self._is_mars_at_declaration
 
 
     @property
@@ -170,7 +170,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             # ［指し手］が無ければ、［宣言］の点数を返します。［宣言］を行っていない場合は、点数を付けれません。
             return self._declaration_to_value_on_earth(
                     declaration = self._declaration,
-                    is_mars     = self._is_mars_at_end_position)
+                    is_mars     = self._is_mars_at_declaration)
 
         return self._piece_exchange_value_list_on_earth[-1]
 
@@ -250,23 +250,21 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             return '地'         # Earth
 
 
-        def _cap(cap):
+        def _cap(cap, is_mars):
             if cap == cshogi.NONE:
                 return ''
-            # TODO if is_mars:
-            #   # 火
-            #   return PieceTypeModel.mars_kanji(piece_type=cap)
-            # # 地
-            # return PieceTypeModel.earth_kanji(piece_type=cap)
-            return f"x{PieceTypeModel.kanji(cap)}"
+            
+            if is_mars:
+              return f"x{PlanetPieceTypeModel.mars_kanji(piece_type=cap)}"    # 火星
+            return f"x{PlanetPieceTypeModel.earth_kanji(piece_type=cap)}"     # 地球
         
+        is_mars = self.is_mars_at_declaration
 
         len_of_move_list = len(self._move_list)
         tokens = []
         for layer_no in reversed(range(0, len_of_move_list)):  # 逆順。
+            is_mars = not is_mars
             move = self._move_list[layer_no]
-
-            # TODO is_mars
 
             if not isinstance(move, int):   # FIXME バグがあるよう
                 raise ValueError(f"move は int 型である必要があります。 {layer_no=} {type(move)=} {move=} {self._move_list=}")
@@ -274,7 +272,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             move_as_usi                     = cshogi.move_to_usi(move)
             cap                             = self._cap_list[layer_no]
             piece_exchange_value_on_earth   = self._piece_exchange_value_list_on_earth[layer_no]
-            tokens.append(f"{len_of_move_list - layer_no}.{move_as_usi}{_cap(cap)}({piece_exchange_value_on_earth})")
+            tokens.append(f"{len_of_move_list - layer_no}.{move_as_usi}{_cap(cap=cap, is_mars=is_mars)}({piece_exchange_value_on_earth})")
 
         if self._declaration != constants.declaration.NONE:
             tokens.append(DeclarationModel.japanese(self.declaration))
@@ -298,7 +296,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
 
     def stringify_dump(self):
-        return f"{self._is_mars_at_end_position=} {self._declaration=} {self._move_list=} {self._cap_list=} {self._piece_exchange_value_list_on_earth=} {self._cutoff_reason=} {' '.join(self._hint_list)=}"
+        return f"{self._is_mars_at_declaration=} {self._declaration=} {self._move_list=} {self._cap_list=} {self._piece_exchange_value_list_on_earth=} {self._cutoff_reason=} {' '.join(self._hint_list)=}"
 
 
     def stringify_debug_1(self):

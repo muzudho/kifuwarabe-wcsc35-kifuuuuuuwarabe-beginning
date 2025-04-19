@@ -85,10 +85,10 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
             """手番の投了局面時。
             """
             best_plot_model = BackwardsPlotModel(
-                    is_mars_at_end_position     = is_mars,
-                    declaration                 = constants.declaration.RESIGN,
-                    cutoff_reason               = cutoff_reason.GAME_OVER,
-                    hint                        = '手番の投了局面時１')
+                    is_mars_at_declaration  = is_mars,
+                    declaration             = constants.declaration.RESIGN,
+                    cutoff_reason           = cutoff_reason.GAME_OVER,
+                    hint                    = '手番の投了局面時１')
             all_backwards_plot_models_at_first.append(best_plot_model)
             return all_backwards_plot_models_at_first
 
@@ -102,10 +102,10 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
                 cap_pt = self._search_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
 
                 best_plot_model = BackwardsPlotModel(
-                        is_mars_at_end_position     = not is_mars,  # ［詰む］のは、もう１手先だから。
-                        declaration                 = constants.declaration.RESIGN,
-                        cutoff_reason               = cutoff_reason.MATE_MOVE_IN_1_PLY,
-                        hint                        = '一手詰めA')
+                        is_mars_at_declaration  = not is_mars,  # ［詰む］のは、もう１手先だから。
+                        declaration             = constants.declaration.RESIGN,
+                        cutoff_reason           = cutoff_reason.MATE_MOVE_IN_1_PLY,
+                        hint                    = '一手詰めA')
             
                 # 今回の手を付け加える。
                 best_plot_model.append_move(
@@ -120,20 +120,20 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
             """手番の入玉宣言局面時。
             """
             best_plot_model = BackwardsPlotModel(
-                    is_mars_at_end_position    = is_mars,
-                    declaration                = constants.declaration.NYUGYOKU_WIN,
-                    cutoff_reason              = cutoff_reason.NYUGYOKU_WIN,
-                    hint                       = '手番の入玉宣言局面時１')
+                    is_mars_at_declaration  = is_mars,
+                    declaration             = constants.declaration.NYUGYOKU_WIN,
+                    cutoff_reason           = cutoff_reason.NYUGYOKU_WIN,
+                    hint                    = '手番の入玉宣言局面時１')
             all_backwards_plot_models_at_first.append(best_plot_model)
             return all_backwards_plot_models_at_first
 
         # これ以上深く読まない場合。
         if depth < 1:
             best_plot_model = BackwardsPlotModel(
-                    is_mars_at_end_position     = is_mars,
-                    declaration                 = constants.declaration.NONE,
-                    cutoff_reason               = cutoff_reason.MAX_DEPTH,
-                    hint                        = 'これ以上深く読まない場合１')
+                    is_mars_at_declaration  = is_mars,
+                    declaration             = constants.declaration.NONE,
+                    cutoff_reason           = cutoff_reason.MAX_DEPTH,
+                    hint                    = 'これ以上深く読まない場合１')
             all_backwards_plot_models_at_first.append(best_plot_model)
             return all_backwards_plot_models_at_first
 
@@ -237,10 +237,10 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
         # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
         if len(all_backwards_plot_models_at_first) < 1:
             future_plot_model = BackwardsPlotModel(
-                    is_mars_at_end_position     = is_mars,
-                    declaration                 = constants.declaration.NO_CANDIDATES, # 有力な候補手無し。
-                    cutoff_reason               = cutoff_reason.NO_MOVES,
-                    hint                        = f"１階の{Mars.japanese(is_mars)}は指したい手無し_{depth=}/{self._search_model.max_depth=}_{len(all_backwards_plot_models_at_first)=}/{len(remaining_moves)=}")
+                    is_mars_at_declaration  = is_mars,
+                    declaration             = constants.declaration.NO_CANDIDATES, # 有力な候補手無し。
+                    cutoff_reason           = cutoff_reason.NO_MOVES,
+                    hint                    = f"１階の{Mars.japanese(is_mars)}は指したい手無し_{depth=}/{self._search_model.max_depth=}_{len(all_backwards_plot_models_at_first)=}/{len(remaining_moves)=}")
             all_backwards_plot_models_at_first.append(future_plot_model)
 
         self._search_model.end_time = time.time()    # 計測終了時間

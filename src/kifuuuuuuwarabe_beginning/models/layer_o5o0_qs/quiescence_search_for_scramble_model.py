@@ -67,10 +67,10 @@ class QuiescenceSearchForScrambleModel():
             """手番の投了局面時。
             """
             best_plot_model = BackwardsPlotModel(
-                    is_mars_at_end_position     = is_mars,
-                    declaration                 = constants.declaration.RESIGN,
-                    cutoff_reason               = cutoff_reason.GAME_OVER,
-                    hint                        = '手番の投了局面時２')
+                    is_mars_at_declaration  = is_mars,
+                    declaration             = constants.declaration.RESIGN,
+                    cutoff_reason           = cutoff_reason.GAME_OVER,
+                    hint                    = '手番の投了局面時２')
 
             return best_plot_model
 
@@ -84,10 +84,10 @@ class QuiescenceSearchForScrambleModel():
                 cap_pt = self.search_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
 
                 best_plot_model = BackwardsPlotModel(
-                        is_mars_at_end_position     = not is_mars,  # ［詰む］のは、もう１手先だから。
-                        declaration                 = constants.declaration.RESIGN,
-                        cutoff_reason               = cutoff_reason.MATE_MOVE_IN_1_PLY,
-                        hint                        = '一手詰め時B')
+                        is_mars_at_declaration  = not is_mars,  # ［詰む］のは、もう１手先だから。
+                        declaration             = constants.declaration.RESIGN,
+                        cutoff_reason           = cutoff_reason.MATE_MOVE_IN_1_PLY,
+                        hint                    = '一手詰め時B')
             
                 # 今回の手を付け加える。
                 best_plot_model.append_move(
@@ -101,10 +101,10 @@ class QuiescenceSearchForScrambleModel():
             """手番の入玉宣言局面時。
             """
             best_plot_model = BackwardsPlotModel(
-                    is_mars_at_end_position     = is_mars,
-                    declaration                 = constants.declaration.NYUGYOKU_WIN,
-                    cutoff_reason               = cutoff_reason.NYUGYOKU_WIN,
-                    hint                        = '手番の入玉宣言局面時２')
+                    is_mars_at_declaration  = is_mars,
+                    declaration             = constants.declaration.NYUGYOKU_WIN,
+                    cutoff_reason           = cutoff_reason.NYUGYOKU_WIN,
+                    hint                    = '手番の入玉宣言局面時２')
 
             return best_plot_model
 
@@ -112,10 +112,10 @@ class QuiescenceSearchForScrambleModel():
         if depth < 1:
             # 末端局面。
             return BackwardsPlotModel(
-                    is_mars_at_end_position     = is_mars,
-                    declaration                 = constants.declaration.MAX_DEPTH_BY_THINK, # 読みの最大深さ。
-                    cutoff_reason               = cutoff_reason.MAX_DEPTH,      # ［最大探索深さ］が打切り理由。
-                    hint                        = f"{self._search_model.max_depth - depth}階の{Mars.japanese(is_mars)}でこれ以上深く読まない場合_{depth=}/{self._search_model.max_depth=}")
+                    is_mars_at_declaration  = is_mars,
+                    declaration             = constants.declaration.MAX_DEPTH_BY_THINK, # 読みの最大深さ。
+                    cutoff_reason           = cutoff_reason.MAX_DEPTH,      # ［最大探索深さ］が打切り理由。
+                    hint                    = f"{self._search_model.max_depth - depth}階の{Mars.japanese(is_mars)}でこれ以上深く読まない場合_{depth=}/{self._search_model.max_depth=}")
 
         # まだ深く読む場合。
 
@@ -304,10 +304,10 @@ class QuiescenceSearchForScrambleModel():
         # 指したい手がなかったなら、静止探索の末端局面を返す。
         if best_old_sibling_plot_model_in_children is None:
             return BackwardsPlotModel(
-                    is_mars_at_end_position    = is_mars,
-                    declaration                = constants.declaration.NO_CANDIDATES,  # 有力な候補手無し。
-                    cutoff_reason              = cutoff_reason.NO_MOVES,
-                    hint                       = f"{self._search_model.max_depth - depth + 1}階の{Mars.japanese(is_mars)}は指したい手無し,move数={len(legal_move_list)},{case_1=},{case_2=},{case_4=},{case_5=},{case_6t=},({'_'.join(case_6t_hint_list)}),{case_6f=},({'_'.join(case_6f_hint_list)}),{case_8a=},{case_8a=},{case_8b=},{case_8c=},{case_8d=},{case_8e=}")
+                    is_mars_at_declaration  = is_mars,
+                    declaration             = constants.declaration.NO_CANDIDATES,  # 有力な候補手無し。
+                    cutoff_reason           = cutoff_reason.NO_MOVES,
+                    hint                    = f"{self._search_model.max_depth - depth + 1}階の{Mars.japanese(is_mars)}は指したい手無し,move数={len(legal_move_list)},{case_1=},{case_2=},{case_4=},{case_5=},{case_6t=},({'_'.join(case_6t_hint_list)}),{case_6f=},({'_'.join(case_6f_hint_list)}),{case_8a=},{case_8a=},{case_8b=},{case_8c=},{case_8d=},{case_8e=}")
 
         # 今回の手を付け加える。
         best_old_sibling_plot_model_in_children.append_move(
