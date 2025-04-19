@@ -292,13 +292,12 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             if not isinstance(move, int):   # FIXME バグがあるよう
                 raise ValueError(f"move は int 型である必要があります。 {layer_no=} {type(move)=} {move=} {self._move_list=}")
 
-            # TODO USIの指し手は読みにくいので変えたい。
-            #move_str = cshogi.move_to_usi(move)
+            # USIの指し手の表記を変更。
             move_str = HumanPresentableMoveModel.from_move(move=move, moving_pt=moving_pt, is_mars=is_mars, is_gote=is_gote).stringify()
 
             cap                             = self._cap_list[layer_no]
             piece_exchange_value_on_earth   = self._piece_exchange_value_list_on_earth[layer_no]
-            tokens.append(f"{len_of_move_list - layer_no}.{move_str}({_cap(cap=cap, is_mars=is_mars)}{piece_exchange_value_on_earth})")
+            tokens.append(f"({len_of_move_list - layer_no}){move_str}({_cap(cap=cap, is_mars=is_mars)}{piece_exchange_value_on_earth})")
 
             # 手番交代
             is_mars = not is_mars
