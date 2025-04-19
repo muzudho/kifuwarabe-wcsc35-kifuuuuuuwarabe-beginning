@@ -257,7 +257,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
         len_of_move_list = len(self._move_list)
         for layer_no in reversed(range(0, len_of_move_list)):  # 逆順。
-            is_mars = not is_mars
             move = self._move_list[layer_no]
 
             if not isinstance(move, int):   # FIXME バグがあるよう
@@ -267,6 +266,9 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             cap                             = self._cap_list[layer_no]
             piece_exchange_value_on_earth   = self._piece_exchange_value_list_on_earth[layer_no]
             tokens.append(f"{len_of_move_list - layer_no}.{move_as_usi}({_cap(cap=cap, is_mars=is_mars)}{piece_exchange_value_on_earth})")
+
+            # 手番交代
+            is_mars = not is_mars
 
         tokens.append(f"{Mars.japanese(is_mars)}の{DeclarationModel.japanese(self.declaration)}")   # 宣言
 
