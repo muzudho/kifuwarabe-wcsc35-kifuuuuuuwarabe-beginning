@@ -1,5 +1,7 @@
 class PieceModel():
     """先後付きの駒
+
+    TODO PlanetPieceModel に移行したい。
     """
 
 

@@ -5,6 +5,7 @@ from .move_on_scramble_model import MoveOnScrambleModel
 from .piece_model import PieceModel
 from .piece_moved_model import PieceMovedModel
 from .piece_type_model import PieceTypeModel
+from .planet_piece_model import PlanetPieceModel
 from .ptolemaic_theory_model import PtolemaicTheoryModel
 from .result_of_go_model import ResultOfGoModel
 from .search_result_state_model import SearchResultStateModel

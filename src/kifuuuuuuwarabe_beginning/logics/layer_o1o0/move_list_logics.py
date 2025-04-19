@@ -3,7 +3,7 @@ import cshogi
 from ...logics.layer_o1o0 import Helper
 from ...logics.layer_o1o1o0_move_list import SelectCheapEatersLogic, SplitEatingBeforeMoveLogic
 from ...models.layer_o1o_9o0 import PieceValuesModel
-from ...models.layer_o1o0 import PieceTypeModel, SquareModel
+from ...models.layer_o1o0 import PieceTypeModel, PlanetPieceModel, SquareModel
 from ...models.layer_o1o1o0_move_list import SplitEatingBeforeMoveModel
 
 
@@ -49,8 +49,9 @@ class MoveListLogics():
             gymnasium.health_check.append(
                     move    = move_eat,
                     name    = 'SQ_eater',
-                    # TODO 先手か後手か？
-                    value   = f"SQ_eater{PieceTypeModel.kanji(src_pt)}{src_value}")
+                    # TODO 先手か後手か？ gymnasium.table.is_gote # PlanetPieceModel
+                    value   = f"SQ_eater{PlanetPieceModel.kanji(piece=src_pt, is_gote=gymnasium.table.is_gote)}{src_value}")
+                    #value   = f"SQ_eater{PieceTypeModel.kanji(src_pt)}{src_value}")
 
         # TODO 相手の駒Ａを、自分の駒Ｂ１、Ｂ２、…のいずれの駒でも取れる場合、
         # Ｂ１、Ｂ２、…の駒について、１番駒得の価値が低い駒を全て選び、それ以外の駒は除外します。
