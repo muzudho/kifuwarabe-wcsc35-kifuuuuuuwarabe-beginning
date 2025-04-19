@@ -262,12 +262,15 @@ class QuiescenceSearchForScrambleModel():
                 old_sibling_value = best_old_sibling_plot_model_in_children.peek_piece_exchange_value_on_earth     # とりあえず最善の読み筋の点数。
 
 
-                def _log_1(case_1):
-                    return f"[search] {case_1} {depth=}/{self._search_model.max_depth=} {Mars.japanese(is_mars)} {self.stringify()},{cshogi.move_to_usi(my_move)}(私{this_branch_value_on_earth}) {old_sibling_value=} < {child_plot_model.stringify()=}"
+                # def _log_1(case_1):
+                #     return f"[search] {case_1} {depth=}/{self._search_model.max_depth=} {Mars.japanese(is_mars)} {self.stringify()},{cshogi.move_to_usi(my_move)}(私{this_branch_value_on_earth}) {old_sibling_value=} < {child_plot_model.stringify()=}"
 
 
-                # この枝の点（将来の点＋取った駒の点）
-                this_branch_value_on_earth = child_plot_model.peek_piece_exchange_value_on_earth + piece_exchange_value_on_earth
+                # この枝の点（将来の点±取った駒の点）
+                if is_mars:
+                    this_branch_value_on_earth = child_plot_model.peek_piece_exchange_value_on_earth - piece_exchange_value_on_earth
+                else:
+                    this_branch_value_on_earth = child_plot_model.peek_piece_exchange_value_on_earth + piece_exchange_value_on_earth
 
                 # # TODO 既存の最善手より良い手を見つけてしまったら、ベータカットします。
                 # if beta_cutoff_value < this_branch_value:
