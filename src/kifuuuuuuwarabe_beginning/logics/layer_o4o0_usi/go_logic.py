@@ -122,15 +122,21 @@ class _Go2nd():
         length_of_quiescence_search_by_kifuwarabe   = len(remaining_moves_qs)
         self._gymnasium.thinking_logger_module.append(f"QS_select_length={length_of_quiescence_search_by_kifuwarabe}")
 
-        for move in remaining_moves_qs:
-            self._gymnasium.health_check.append(
-                    move    = move,
-                    name    = 'QS_select',
-                    value   =  True)
-
         if len(remaining_moves_qs) == 0:
             remaining_moves_qs = old_all_legal_moves
             self._gymnasium.thinking_logger_module.append(f"QS is 0. Rollback to old_all_legal_moves. len={len(remaining_moves_qs)}.")
+            for move in remaining_moves_qs:
+                self._gymnasium.health_check.append(
+                        move    = move,
+                        name    = 'QS_select',
+                        value   = 'QS_cancel')
+
+        else:
+            for move in remaining_moves_qs:
+                self._gymnasium.health_check.append(
+                        move    = move,
+                        name    = 'QS_select',
+                        value   = 'QS_select')
 
         old_remaining_moves_qs = remaining_moves_qs.copy()
 
@@ -174,19 +180,6 @@ class _Go2nd():
 
             remaining_moves_r = remaining_moves_nr
 
-            # ログ
-            message = f"""\
-{TableView(self._gymnasium.table).stringify()}
-HEALTH CHECK
-------------
-{self._gymnasium.health_check.stringify()}
-
-{self._gymnasium.gourei_collection_model.stringify()}
-"""
-            # TODO ネガティブ・ルールの一覧も表示したい。
-            self._gymnasium.thinking_logger_module.append(message)
-            # NOTE これを書くと、将棋ホームでフリーズ： print(message, file=sys.stderr)
-
         # １手に絞り込む
         if self._gymnasium.config_doc['search']['there_is_randomness']:
             best_move = random.choice(remaining_moves_r)
@@ -198,6 +191,19 @@ HEALTH CHECK
                 name    = 'BM_bestmove',
                 value   =  True)
         self._gymnasium.thinking_logger_module.append(f"Best move={cshogi.move_to_usi(best_move)}")
+
+        # ログ
+        message = f"""\
+{TableView(self._gymnasium.table).stringify()}
+HEALTH CHECK
+------------
+{self._gymnasium.health_check.stringify()}
+
+{self._gymnasium.gourei_collection_model.stringify()}
+"""
+        # TODO ネガティブ・ルールの一覧も表示したい。
+        self._gymnasium.thinking_logger_module.append(message)
+        # NOTE これを書くと、将棋ホームでフリーズ： print(message, file=sys.stderr)
 
         # ［指後］
         MovesReductionFilterLogics.after_best_moving_o1o0(

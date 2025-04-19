@@ -60,7 +60,7 @@ class HealthCheckModel():
 
         def _qs_select(move_prop):
             if 'QS_select' in move_prop:
-                return 'QS_select'
+                return move_prop['QS_select']
             return ''
 
 
@@ -92,6 +92,6 @@ class HealthCheckModel():
             # （３）静止探索で選ばれた手をエリミネートした手
             # （４）ネガティブ・ルールで選別した手
             # （５）ロールバックした手
-            lines.append(f"{cshogi.move_to_usi(move):5} {_legal(move_prop):6} | {_eater(move_prop):12} | {_cheapest(move_prop):12} | {_qs_eliminate171(move_prop):30} | {_qs_select(move_prop):10} | {_nr_select(move_prop):10} | {_bm_bestmove(move_prop):11} | {_qs_plot(move_prop)}")
+            lines.append(f"{cshogi.move_to_usi(move):5} {_legal(move_prop):6} | {_eater(move_prop):12} | {_cheapest(move_prop):12} | {_qs_eliminate171(move_prop):30} | {_qs_select(move_prop):9} | {_nr_select(move_prop):10} | {_bm_bestmove(move_prop):11} | {_qs_plot(move_prop)}")
 
         return '\n'.join(lines)
