@@ -26,25 +26,32 @@ class DoNotMoveUntilRookMovesModel(NegativeRuleModel):
         dst_sq_obj = SquareModel(cshogi.move_to(move))
         moved_pt = cshogi.move_from_piece_type(move)
 
-        # キリンが２八にいる
+        # キリンが２八にいないなら。
         if table.piece(np.masu(28)) != np.ji_pc(cshogi.ROOK):
-            # そうでなければ対象外
+            # 対象外。
             return constants.mind.NOT_IN_THIS_CASE
 
-        # 移動先は８段目だ
+        # 移動先は８段目ではないなら。
         if dst_sq_obj.rank != np.dan(8):
-            # そうでなければ対象外
+            # 対象外。
             return constants.mind.NOT_IN_THIS_CASE
 
-        # 動かした駒はキリン以外だ
+        # 動かした駒がキリンなら。
         if moved_pt == cshogi.ROOK:
-            # そうでなければ対象外
+            # 対象外。
             return constants.mind.NOT_IN_THIS_CASE
 
         # 動かした駒がライオン、イヌ、ネコのいずれかなら
         if moved_pt in [cshogi.KING, cshogi.GOLD, cshogi.SILVER]:
             # 意志無し
             return constants.mind.WILL_NOT
+
+        # 象が７７象、６８象と移動して飛車道を塞ぐのも困る。
+        if moved_pt == cshogi.BISHOP:
+            e1 = np.swap(np.suji(6), dst_sq_obj.file)
+            if e1[0] <= e1[1]:
+                # 意志無し
+                return constants.mind.WILL_NOT
 
         # # 動かした駒が金なら
         # if moved_pt == cshogi.GOLD:

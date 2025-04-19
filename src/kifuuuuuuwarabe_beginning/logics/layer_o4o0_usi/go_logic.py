@@ -169,14 +169,14 @@ class _Go2nd():
                 for move in remaining_moves_nr:
                     self._gymnasium.health_check.append(
                             move    = move,
-                            name    = 'NR_select',
+                            name    = 'NR_remaining',
                             value   = 'NR_cancel')
             else:
                 for move in remaining_moves_nr:
                     self._gymnasium.health_check.append(
                             move    = move,
-                            name    = 'NR_select',
-                            value   = 'NR_select')
+                            name    = 'NR_remaining',
+                            value   = 'NR_remaining')
 
             remaining_moves_r = remaining_moves_nr
 
