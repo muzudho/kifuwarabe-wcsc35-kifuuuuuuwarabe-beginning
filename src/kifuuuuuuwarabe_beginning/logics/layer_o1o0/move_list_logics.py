@@ -49,9 +49,7 @@ class MoveListLogics():
             gymnasium.health_check.append(
                     move    = move_eat,
                     name    = 'SQ_eater',
-                    # TODO 先手か後手か？ gymnasium.table.is_gote # PlanetPieceModel
-                    value   = f"SQ_eater{PlanetPieceModel.kanji(piece=src_pt, is_gote=gymnasium.table.is_gote)}{src_value}")
-                    #value   = f"SQ_eater{PieceTypeModel.kanji(src_pt)}{src_value}")
+                    value   = f"SQ_eater{PlanetPieceModel.kanji(piece=src_pc, is_gote=gymnasium.table.is_gote)}{src_value}")
 
         # TODO 相手の駒Ａを、自分の駒Ｂ１、Ｂ２、…のいずれの駒でも取れる場合、
         # Ｂ１、Ｂ２、…の駒について、１番駒得の価値が低い駒を全て選び、それ以外の駒は除外します。
@@ -81,7 +79,7 @@ class MoveListLogics():
             gymnasium.health_check.append(
                     move    = move_eat,
                     name    = 'cheapest',
-                    value   = f"cheapest{PieceTypeModel.kanji(src_pt)}{src_value}")
+                    value   = f"cheapest{PlanetPieceModel.kanji(piece=src_pc, is_gote=gymnasium.table.is_gote)}{src_value}")
 
         move_list = split_eating_before_move_model.move_not_eat_list
         move_list.extend(select_cheap_eaters_model.cheapest_eat_move_list)

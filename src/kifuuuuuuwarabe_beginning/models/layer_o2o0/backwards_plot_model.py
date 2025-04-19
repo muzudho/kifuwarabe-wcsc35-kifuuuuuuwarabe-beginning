@@ -1,7 +1,7 @@
 import cshogi
 
 from ..layer_o1o_9o0 import PieceValuesModel
-from ..layer_o1o0 import constants, DeclarationModel, PieceTypeModel
+from ..layer_o1o0 import constants, DeclarationModel, PieceTypeModel, PlanetPieceTypeModel
 
 
 class CutoffReason():
@@ -118,7 +118,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
     @property
     def is_mars_at_end_position(self):
-        """末端局面で対戦相手か。
+        """木構造の葉ノード（末端局面の次の局面、宣言）で対戦相手か。
         """
         return self._is_mars_at_end_position
 
@@ -253,6 +253,11 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         def _cap(cap):
             if cap == cshogi.NONE:
                 return ''
+            # TODO if is_mars:
+            #   # 火
+            #   return PieceTypeModel.mars_kanji(piece_type=cap)
+            # # 地
+            # return PieceTypeModel.earth_kanji(piece_type=cap)
             return f"x{PieceTypeModel.kanji(cap)}"
         
 
@@ -260,6 +265,8 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         tokens = []
         for layer_no in reversed(range(0, len_of_move_list)):  # 逆順。
             move = self._move_list[layer_no]
+
+            # TODO is_mars
 
             if not isinstance(move, int):   # FIXME バグがあるよう
                 raise ValueError(f"move は int 型である必要があります。 {layer_no=} {type(move)=} {move=} {self._move_list=}")
