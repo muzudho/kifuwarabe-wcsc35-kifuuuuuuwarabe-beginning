@@ -23,12 +23,12 @@ class MovesReductionFilterLogics():
                 FIXME これで合ってるか要確認。
         """
 
-        old_remaining_moves = remaining_moves.copy()
-
         negative_rules_to_remove = []
 
         # 号令リスト
         for negative_rule in gymnasium.gourei_collection_model.negative_rule_list_of_active:
+            old_remaining_moves = remaining_moves.copy()    # バックアップ
+
             # １手も指さず、目の前にある盤に対して。
             remaining_moves = negative_rule.before_branches_o1o1x(
                     remaining_moves = remaining_moves,
@@ -38,12 +38,13 @@ class MovesReductionFilterLogics():
             if negative_rule.is_removed:
                 negative_rules_to_remove.append(negative_rule)
 
+            # 指し手が全部消えてしまった場合、この操作をアンドゥします。
+            if len(remaining_moves) < 1:
+                remaining_moves = old_remaining_moves
+
         for negative_rule in negative_rules_to_remove:
             gymnasium.gourei_collection_model.negative_rule_list_of_active.remove(negative_rule)
             gymnasium.thinking_logger_module.append(f"[moves_reduction_filter_logics.py > before_branches_o1x] delete negative rule. {negative_rule.label}")
-        # 指し手が全部消えてしまった場合、何でも指すようにします
-        if len(remaining_moves) < 1:
-            return old_remaining_moves
 
         return remaining_moves
 
