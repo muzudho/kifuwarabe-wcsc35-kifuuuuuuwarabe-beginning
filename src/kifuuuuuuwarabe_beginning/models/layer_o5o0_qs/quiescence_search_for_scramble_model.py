@@ -249,54 +249,52 @@ class QuiescenceSearchForScrambleModel():
                     pt          = cap_pt,
                     is_mars     = is_mars)
 
+            # この枝の点（将来の点＋取った駒の点）
             this_branch_value_on_earth = child_plot_model.peek_piece_exchange_value_on_earth + piece_exchange_value_on_earth
 
-            # この枝が長兄なら採用。
+            # # TODO 既存の最善手より良い手を見つけてしまったら、ベータカットします。
+            # if beta_cutoff_value < this_branch_value:
+            #     #will_beta_cutoff = True   # TODO ベータカット
+            #     pass
+
+            # この枝が長兄なら。
             if best_old_sibling_plot_model_in_children is None:
-                its_update_best = True
-                case_8a += 1
-            
-            # 兄枝が有るなら。
+                old_sibling_value = 0
             else:
                 # 兄枝のベスト評価値
                 old_sibling_value = best_old_sibling_plot_model_in_children.peek_piece_exchange_value_on_earth     # とりあえず最善の読み筋の点数。
 
 
-                # def _log_1(case_1):
-                #     return f"[search] {case_1} {depth=}/{self._search_model.max_depth=} {Mars.japanese(is_mars)} {self.stringify()},{cshogi.move_to_usi(my_move)}(私{this_branch_value_on_earth}) {old_sibling_value=} < {child_plot_model.stringify()=}"
+            e2 = ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
+            its_update_best = (e2[0] < e2[1])
+
+            # # この枝が長兄なら。
+            # if best_old_sibling_plot_model_in_children is None:
+
+            #     if its_update_best:
+            #         case_8a += 1
+            
+            # # 兄枝が有るなら。
+            # else:
+            #     # def _log_1(case_1):
+            #     #     return f"[search] {case_1} {depth=}/{self._search_model.max_depth=} {Mars.japanese(is_mars)} {self.stringify()},{cshogi.move_to_usi(my_move)}(私{this_branch_value_on_earth}) {old_sibling_value=} < {child_plot_model.stringify()=}"
 
 
-                # この枝の点（将来の点±取った駒の点）
-                if is_mars:
-                    this_branch_value_on_earth = child_plot_model.peek_piece_exchange_value_on_earth - piece_exchange_value_on_earth
-                else:
-                    this_branch_value_on_earth = child_plot_model.peek_piece_exchange_value_on_earth + piece_exchange_value_on_earth
+            #     if its_update_best:
+            #         case_6t += 1
+            #         case_6t_hint_list.append(f"{old_sibling_value=} < {this_branch_value_on_earth=}")
 
-                # # TODO 既存の最善手より良い手を見つけてしまったら、ベータカットします。
-                # if beta_cutoff_value < this_branch_value:
-                #     #will_beta_cutoff = True   # TODO ベータカット
-                #     pass
+            #         #self.search_model.gymnasium.thinking_logger_module.append(f"[search] 6t {self._search_model.move_list_for_debug=}")
+            #         # if self._search_model.move_list_for_debug.equals_move_usi_list(['3a4b']):   # FIXME デバッグ絞込み
+            #         #     self.search_model.gymnasium.thinking_logger_module.append(_log_1('6t'))
 
-                # 最善より良い手があれば、そっちを選びます。
-                    #       NOTE １件に絞り込んでいいのか？ 後ろ向き探索なら１件に絞り込んでいいのか？
-                e2 = ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
-                its_update_best = (e2[0] < e2[1])
+            #     else:
+            #         case_6f += 1
+            #         case_6f_hint_list.append(f"{old_sibling_value=} < {this_branch_value_on_earth=}")
 
-                if its_update_best:
-                    case_6t += 1
-                    case_6t_hint_list.append(f"{old_sibling_value=} < {this_branch_value_on_earth=}")
-
-                    #self.search_model.gymnasium.thinking_logger_module.append(f"[search] 6t {self._search_model.move_list_for_debug=}")
-                    # if self._search_model.move_list_for_debug.equals_move_usi_list(['3a4b']):   # FIXME デバッグ絞込み
-                    #     self.search_model.gymnasium.thinking_logger_module.append(_log_1('6t'))
-
-                else:
-                    case_6f += 1
-                    case_6f_hint_list.append(f"{old_sibling_value=} < {this_branch_value_on_earth=}")
-
-                    #self.search_model.gymnasium.thinking_logger_module.append(f"[search] 6f {self._search_model.move_list_for_debug=}")
-                    # if self._search_model.move_list_for_debug.equals_move_usi_list(['3a4b']):   # FIXME デバッグ絞込み
-                    #     self.search_model.gymnasium.thinking_logger_module.append(_log_1('6f'))
+            #         #self.search_model.gymnasium.thinking_logger_module.append(f"[search] 6f {self._search_model.move_list_for_debug=}")
+            #         # if self._search_model.move_list_for_debug.equals_move_usi_list(['3a4b']):   # FIXME デバッグ絞込み
+            #         #     self.search_model.gymnasium.thinking_logger_module.append(_log_1('6f'))
                         
             # 最善手の更新
             if its_update_best:

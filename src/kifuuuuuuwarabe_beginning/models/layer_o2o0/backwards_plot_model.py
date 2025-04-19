@@ -241,9 +241,9 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         # （手を追加する前なので、ここでは）［ピーク］＝［１つ前の手］
         previous_on_earth = self.peek_piece_exchange_value_on_earth
         # （完全に読み切るわけではないので）深くの手ほど価値を減らします。ただしあまり深くの駒を弱く調整すると、浅い銀と深い角が同じ価値になるなど不具合が生じます。
-        # if not self.is_mars_at_peek:    # ＜📚原則１＞ 次に火星の手を追加するタイミングに当たる。ここで評価値を逓減しておく。
-        #     previous_on_earth *= 9 / 10
-        previous_on_earth *= 9 / 10     # シンプルにする
+        if not self.is_mars_at_peek:    # ＜📚原則１＞ 次に火星の手を追加するタイミングに当たる。ここで評価値を逓減しておく。
+            previous_on_earth *= 17 / 20 # 9 / 10
+        #previous_on_earth *= 4 / 5     # シンプルにする
 
         ##########
         # １手追加
