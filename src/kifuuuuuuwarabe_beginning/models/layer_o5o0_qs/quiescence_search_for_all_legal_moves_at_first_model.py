@@ -131,7 +131,7 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
         if depth < 1:
             best_plot_model = BackwardsPlotModel(
                     is_mars_at_declaration  = is_mars,
-                    declaration             = constants.declaration.NONE,
+                    declaration             = constants.declaration.MAX_DEPTH_BY_THINK, # 読みの最大深さ。
                     cutoff_reason           = cutoff_reason.MAX_DEPTH,
                     hint                    = 'これ以上深く読まない場合１')
             all_backwards_plot_models_at_first.append(best_plot_model)

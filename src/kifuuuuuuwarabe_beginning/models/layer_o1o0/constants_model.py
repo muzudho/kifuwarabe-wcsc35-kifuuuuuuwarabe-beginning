@@ -136,14 +136,7 @@ class DeclarationModel():
     def japanese(clazz, number):
         if number in clazz._japanese_dict:
             return clazz._japanese_dict[number]
-        return ''
-
-
-    @property
-    def NONE(self):
-        """宣言ではありません。
-        """
-        return 0
+        return '＜未定義の宣言＞'
 
 
     @property

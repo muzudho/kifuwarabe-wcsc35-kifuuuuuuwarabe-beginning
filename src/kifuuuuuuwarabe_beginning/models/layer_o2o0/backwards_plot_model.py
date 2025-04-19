@@ -1,7 +1,7 @@
 import cshogi
 
 from ..layer_o1o_9o0 import PieceValuesModel
-from ..layer_o1o0 import constants, DeclarationModel, PieceTypeModel, PlanetPieceTypeModel
+from ..layer_o1o0 import constants, DeclarationModel, Mars, PieceTypeModel, PlanetPieceTypeModel
 
 
 class CutoffReason():
@@ -80,8 +80,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         elif declaration == constants.declaration.MAX_DEPTH_BY_THINK:
             previous = constants.value.ZERO
         elif declaration == constants.declaration.NO_CANDIDATES:
-            previous = constants.value.ZERO
-        elif declaration == constants.declaration.NONE:    # 末端の手。
             previous = constants.value.ZERO
         else:
             raise ValueError(f"想定外の［宣言］。{declaration=}")
@@ -185,10 +183,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         return self._hint_list
 
 
-    def is_declaration(self):
-        return self._declaration != constants.declaration.NONE
-
-
     def move_list_length(self):
         return len(self._move_list)
 
@@ -255,13 +249,13 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
                 return ''
             
             if is_mars:
-              return f"x{PlanetPieceTypeModel.mars_kanji(piece_type=cap)}"    # 火星
-            return f"x{PlanetPieceTypeModel.earth_kanji(piece_type=cap)}"     # 地球
+              return f"-{PlanetPieceTypeModel.earth_kanji(piece_type=cap)}"    # 火星側が取ったのは地球側の駒
+            return f"+{PlanetPieceTypeModel.mars_kanji(piece_type=cap)}"     # 地球側が取ったのは火星側の駒
         
-        is_mars = self.is_mars_at_declaration
+        tokens = []
+        is_mars = self.is_mars_at_peek   # FIXME 逆順であることに注意。
 
         len_of_move_list = len(self._move_list)
-        tokens = []
         for layer_no in reversed(range(0, len_of_move_list)):  # 逆順。
             is_mars = not is_mars
             move = self._move_list[layer_no]
@@ -272,10 +266,9 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             move_as_usi                     = cshogi.move_to_usi(move)
             cap                             = self._cap_list[layer_no]
             piece_exchange_value_on_earth   = self._piece_exchange_value_list_on_earth[layer_no]
-            tokens.append(f"{len_of_move_list - layer_no}.{move_as_usi}{_cap(cap=cap, is_mars=is_mars)}({piece_exchange_value_on_earth})")
+            tokens.append(f"{len_of_move_list - layer_no}.{move_as_usi}({_cap(cap=cap, is_mars=is_mars)}{piece_exchange_value_on_earth})")
 
-        if self._declaration != constants.declaration.NONE:
-            tokens.append(DeclarationModel.japanese(self.declaration))
+        tokens.append(f"{Mars.japanese(is_mars)}の{DeclarationModel.japanese(self.declaration)}")   # 宣言
 
         # カットオフ理由
         tokens.append(CutoffReason.japanese(self._cutoff_reason))
