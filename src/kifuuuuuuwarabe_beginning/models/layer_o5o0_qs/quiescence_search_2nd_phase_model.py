@@ -53,9 +53,9 @@ class QuiescenceSearch2ndPhaseModel():
         # MARK: 指す前にやること
         ########################
 
-        cur_time = time.time()                              # 現在の時間
-        erapsed_seconds = cur_time - self._search_model.restart_time     # 経過秒
-        if 4 <= erapsed_seconds:                            # 4秒以上経過してたら、情報出力
+        cur_time = time.time()                                          # 現在の時間
+        erapsed_seconds = cur_time - self._search_model.restart_time    # 経過秒
+        if 4 <= erapsed_seconds:                                        # 4秒以上経過してたら、情報出力
             print(f"info depth {self._search_model.max_depth - depth} seldepth 0 time 1 nodes {self.search_model.number_of_visited_nodes} score cp 0 string thinking")
             self.search_model.restart_time = cur_time                   # 前回の計測時間を更新
 
@@ -70,7 +70,7 @@ class QuiescenceSearch2ndPhaseModel():
                     declaration             = constants.declaration.RESIGN,
                     cutoff_reason           = cutoff_reason.GAME_OVER,
                     hint                    = '手番の投了局面時２')
-
+            self._search_model.gymnasium.health_check_qs_model.append_node('＜GameOver＞')
             return best_plot_model
 
         # 一手詰めを詰める
@@ -94,7 +94,8 @@ class QuiescenceSearch2ndPhaseModel():
                         move                = mate_move,
                         capture_piece_type  = cap_pt,
                         hint                = f"{Mars.japanese(self._search_model.gymnasium.is_mars)}の一手詰め時")
-
+                self._search_model.gymnasium.health_check_qs_model.append_node(f"＜一手詰め＞{cshogi.move_to_usi(mate_move)}")
+                self._search_model.gymnasium.health_check_qs_model.append_node('＜GameOver＞')
                 return best_plot_model
 
         if self.search_model.gymnasium.table.is_nyugyoku():
@@ -106,12 +107,13 @@ class QuiescenceSearch2ndPhaseModel():
                     declaration             = constants.declaration.NYUGYOKU_WIN,
                     cutoff_reason           = cutoff_reason.NYUGYOKU_WIN,
                     hint                    = '手番の入玉宣言局面時２')
-
+            self._search_model.gymnasium.health_check_qs_model.append_node('＜入玉宣言勝ち＞')
             return best_plot_model
 
         # これ以上深く読まない場合。
         if depth < 1:
             # 末端局面。
+            self._search_model.gymnasium.health_check_qs_model.append_node('＜読みの最大深さ＞')
             return BackwardsPlotModel(
                     is_mars_at_declaration  = self._search_model.gymnasium.is_mars,
                     is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
@@ -209,10 +211,11 @@ class QuiescenceSearch2ndPhaseModel():
             # MARK: 一手指した後
             ####################
 
+            depth       = depth - 1     # 深さを１下げる。
             self._search_model.frontwards_plot_model.append_move(
                     move    = my_move,
                     cap_pt  = cap_pt)
-            depth       = depth - 1     # 深さを１下げる。
+            self._search_model.gymnasium.health_check_qs_model.append_node(cshogi.move_to_usi(my_move))
 
             ####################
             # MARK: 相手番の処理
@@ -233,10 +236,11 @@ class QuiescenceSearch2ndPhaseModel():
             # MARK: 一手戻した後
             ####################
 
-            self._search_model.frontwards_plot_model.pop_move()
             depth       = depth + 1                 # 深さを１上げる。
             ptolemaic_theory_model  = PtolemaicTheoryModel(
                     is_mars=self._search_model.gymnasium.is_mars)
+            self._search_model.frontwards_plot_model.pop_move()
+            self._search_model.gymnasium.health_check_qs_model.pop_node()
 
             ##################
             # MARK: 手番の処理
@@ -312,6 +316,7 @@ class QuiescenceSearch2ndPhaseModel():
 
         # 指したい手がなかったなら、静止探索の末端局面を返す。
         if best_old_sibling_plot_model_in_children is None:
+            self._search_model.gymnasium.health_check_qs_model.append_node('＜指したい手無し＞')
             return BackwardsPlotModel(
                     is_mars_at_declaration  = self._search_model.gymnasium.is_mars,
                     is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
