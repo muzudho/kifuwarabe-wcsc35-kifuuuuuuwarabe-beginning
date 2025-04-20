@@ -64,6 +64,9 @@
     # 号令［自陣に飛車打つな］
     do_not_drop_rook_in_own_camp_model = true
 
+    # 号令［９筋に壁を作るな］
+    do_not_build_wall_on_file_9 = true
+
     # 以下、古い実装
     # --------------
 

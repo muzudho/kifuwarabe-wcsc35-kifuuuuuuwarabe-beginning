@@ -92,6 +92,7 @@ class PieceModel():
 
     @staticmethod
     def turn(piece):
+        # FIXME cshogi.NONE をエラーとしたい。
         if piece <= 16:
             return cshogi.BLACK
         

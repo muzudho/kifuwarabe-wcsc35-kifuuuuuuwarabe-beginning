@@ -28,7 +28,6 @@ class DoNotBuildRightWallModel(NegativeRuleModel):
         定義：　移動前の玉の以右の全ての筋について、８段目、９段目の両方に駒がある状態を［右壁］とする。
         """
         np = NineRankSidePerspectiveModel(table)
-
         src_sq_obj = SquareModel(cshogi.move_from(move))
         dst_sq_obj = SquareModel(cshogi.move_to(move))
         #print(f'D: {cshogi.move_to_usi(move)=} {Helper.sq_to_masu(src_sq_obj.sq)=} {Helper.sq_to_masu(dst_sq_obj.sq)=}')
@@ -71,11 +70,11 @@ class DoNotBuildRightWallModel(NegativeRuleModel):
             #print(f'D: {rank=} {sq=}')
             right_side_of_k.append(sq)
 
-            # 道を塞ぐ動きなら
-            if dst_sq_obj.sq in right_side_of_k:
-                # 道を消す
-                #print(f'D: 道を消す')
-                right_side_of_k.remove(dst_sq_obj.sq)
+        # 道を塞ぐ動きなら
+        if dst_sq_obj.sq in right_side_of_k:
+            # 道を消す
+            #print(f'D: 道を消す')
+            right_side_of_k.remove(dst_sq_obj.sq)
 
         # 道が空いているか？
         is_empty = False
