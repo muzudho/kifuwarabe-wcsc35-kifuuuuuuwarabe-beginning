@@ -113,7 +113,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         self._is_gote_at_declaration = is_gote_at_declaration
         self._declaration = declaration
         self._move_list = []
-        self._moving_pt_list = []
         self._cap_list = []
         self._piece_exchange_value_list_on_earth = []
         self._cutoff_reason = cutoff_reason
@@ -158,11 +157,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
     @property
     def move_list(self):
         return self._move_list
-
-
-    @property
-    def moving_pt_list(self):
-        return self._moving_pt_list
 
 
     @property
@@ -215,11 +209,10 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
     def is_empty_moves(self):
         # ASSERT
         len_move_list = len(self._move_list)
-        len_moving_pt_list = len(self._moving_pt_list)
         len_cap_list = len(self._cap_list)
         len_pev_list = len(self._piece_exchange_value_list_on_earth)
-        if not (len_move_list == len_cap_list and len_move_list == len_moving_pt_list and len_cap_list == len_pev_list):
-            raise ValueError(f"配列の長さの整合性が取れていません。 {len_move_list=} {len_moving_pt_list=} {len_cap_list=} {len_pev_list=}")
+        if not (len_move_list == len_cap_list and len_cap_list == len_pev_list):
+            raise ValueError(f"配列の長さの整合性が取れていません。 {len_move_list=} {len_cap_list=} {len_pev_list=}")
         
         return len(self._move_list) < 1
 
@@ -248,10 +241,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         # １手追加
         ##########
         self._move_list.append(move)
-
-        moving_pt = TableHelper.get_moving_pt_from_move(move=move)  # 動かした駒の種類。盤上の移動元の駒か、打った駒。
-        self._moving_pt_list.append(moving_pt)
-
         self._cap_list.append(capture_piece_type)
         self._hint_list.append(hint)
 
@@ -291,7 +280,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         len_of_move_list = len(self._move_list)
         for layer_no in reversed(range(0, len_of_move_list)):  # 逆順。
             move = self._move_list[layer_no]
-            moving_pt = self._moving_pt_list[layer_no]
+            moving_pt = TableHelper.get_moving_pt_from_move(move=move)  # 動かした駒の種類。盤上の移動元の駒か、打った駒。
 
             if not isinstance(move, int):   # FIXME バグがあるよう
                 raise ValueError(f"move は int 型である必要があります。 {layer_no=} {type(move)=} {move=} {self._move_list=}")
