@@ -88,7 +88,18 @@ class HealthCheckModel():
         lines.append('')
         lines.append('HEALTH CHECK WORKSHEET')
         lines.append('----------------------')
-        lines.append(f"{'move':5}, {'legal':5}, {'eater':12}, {'cheapest':12}, {'qs_eliminate171':30}, {'qs_select':9}, {'nr_remaining':12}, {'bm_bestmove':11}, qs_plot")
+
+        header_list = []
+        header_list.append(f"{'move':5}")
+        header_list.append(f"{'legal':5}")
+        header_list.append(f"{'eater':12}")
+        header_list.append(f"{'cheapest':12}")
+        header_list.append(f"{'qs_eliminate171':30}")
+        header_list.append(f"{'qs_select':9}")
+        header_list.append(f"{'nr_remaining':12}")
+        header_list.append(f"{'bm_bestmove':11}")
+        header_list.append('qs_plot')
+        lines.append(', '.join(header_list))
 
         for move, move_prop in ordered_document:
             # （１）リーガル・ムーブ
@@ -96,6 +107,16 @@ class HealthCheckModel():
             # （３）静止探索で選ばれた手をエリミネートした手
             # （４）ネガティブ・ルールで選別した手
             # （５）ロールバックした手
-            lines.append(f"{cshogi.move_to_usi(move):5}, {_legal(move_prop):5}, {_eater(move_prop):12}, {_cheapest(move_prop):12}, {_qs_eliminate171(move_prop):30}, {_qs_select(move_prop):9}, {_nr_remaining(move_prop):12}, {_bm_bestmove(move_prop):11}, {_qs_plot(move_prop)}")
+            body_list = []
+            body_list.append(f"{cshogi.move_to_usi(move):5}")
+            body_list.append(f"{_legal(move_prop):5}")
+            body_list.append(f"{_eater(move_prop):12}")
+            body_list.append(f"{_cheapest(move_prop):12}")
+            body_list.append(f"{_qs_eliminate171(move_prop):30}")
+            body_list.append(f"{_qs_select(move_prop):9}")
+            body_list.append(f"{_nr_remaining(move_prop):12}")
+            body_list.append(f"{_bm_bestmove(move_prop):11}")
+            body_list.append(f"{_qs_plot(move_prop)}")
+            lines.append(', '.join(body_list))
 
         return '\n'.join(lines)
