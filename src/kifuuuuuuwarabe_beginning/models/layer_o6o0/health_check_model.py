@@ -101,6 +101,43 @@ class HealthCheckModel():
         header_list.append('qs_plot')
         lines.append(', '.join(header_list))
 
+
+        def fn_move(move):
+            return f"{cshogi.move_to_usi(move):5}"
+        
+
+        def fn_legal(move_prop):
+            return f"{_legal(move_prop):5}"
+
+
+        def fn_eater(move_prop):
+            return f"{_eater(move_prop):12}"
+
+
+        def fn_cheapest(move_prop):
+            return f"{_cheapest(move_prop):12}"
+
+
+        def fn_qs_eliminate171(move_prop):
+            return f"{_qs_eliminate171(move_prop):30}"
+
+
+        def fn_qs_select(move_prop):
+            return f"{_qs_select(move_prop):9}"
+
+
+        def fn_nr_remaining(move_prop):
+            return f"{_nr_remaining(move_prop):12}"
+        
+
+        def fn_bm_bestmove(move_prop):
+            return f"{_bm_bestmove(move_prop):11}"
+
+
+        def fn_qs_plot(move_prop):
+            return f"{_qs_plot(move_prop)}"
+        
+
         for move, move_prop in ordered_document:
             # （１）リーガル・ムーブ
             # （２）静止探索で選ばれた手
@@ -108,15 +145,15 @@ class HealthCheckModel():
             # （４）ネガティブ・ルールで選別した手
             # （５）ロールバックした手
             body_list = []
-            body_list.append(f"{cshogi.move_to_usi(move):5}")
-            body_list.append(f"{_legal(move_prop):5}")
-            body_list.append(f"{_eater(move_prop):12}")
-            body_list.append(f"{_cheapest(move_prop):12}")
-            body_list.append(f"{_qs_eliminate171(move_prop):30}")
-            body_list.append(f"{_qs_select(move_prop):9}")
-            body_list.append(f"{_nr_remaining(move_prop):12}")
-            body_list.append(f"{_bm_bestmove(move_prop):11}")
-            body_list.append(f"{_qs_plot(move_prop)}")
+            body_list.append(fn_move(move))
+            body_list.append(fn_legal(move_prop))
+            body_list.append(fn_eater(move_prop))
+            body_list.append(fn_cheapest(move_prop))
+            body_list.append(fn_qs_eliminate171(move_prop))
+            body_list.append(fn_qs_select(move_prop))
+            body_list.append(fn_nr_remaining(move_prop))
+            body_list.append(fn_bm_bestmove(move_prop))
+            body_list.append(fn_qs_plot(move_prop))
             lines.append(', '.join(body_list))
 
         return '\n'.join(lines)
