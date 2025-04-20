@@ -195,10 +195,11 @@ class _Go2nd():
         # ログ
         message = f"""\
 {TableView(gymnasium=self._gymnasium).stringify()}
-HEALTH CHECK
-------------
+
 {self._gymnasium.health_check.stringify()}
 
+GOREI COLLECTION
+----------------
 {self._gymnasium.gourei_collection_model.stringify()}
 """
         # TODO ネガティブ・ルールの一覧も表示したい。
