@@ -6,11 +6,11 @@ from ..layer_o1o0 import constants, Mars, SquareModel
 from ..layer_o1o0o_9o0_table_helper import TableHelper
 from ..layer_o2o0 import BackwardsPlotModel, cutoff_reason
 from ..layer_o4o0_rules.negative import DoNotDepromotionModel
-from .quiescence_search_for_scramble_model import QuiescenceSearchForScrambleModel
+from .quiescence_search_2nd_phase_model import QuiescenceSearch2ndPhaseModel
 from .search_model import SearchModel
 
 
-class QuiescenceSearchForAllLegalMovesAtFirstModel():
+class QuiescenceSearch1stPhaseModel():
     """１階の全てのリーガル・ムーブについて静止探索。
     """
 
@@ -34,28 +34,18 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
         return self._search_model
 
 
-    # TODO 指し手の分析。駒を取る手と、そうでない手を分ける。
-    # TODO 駒を取る手も、価値の高い駒から取る手を考える。（相手が手抜く勝手読みをすると、大きな駒を取れてしまうことがあるから）。
-    # FIXME 将来的に相手の駒をポロリと取れるなら、手前の手は全部緩手になることがある。どう解消するか？
-    """
-    TODO 静止探索はせず、［スクランブル・サーチ］というのを考える。静止探索は王手が絡むと複雑だ。
-    リーガル・ムーブのうち、
-        手番の１手目なら：
-            ［取られそうになっている駒を逃げる手］∪［駒を取る手］∪［利きに飛び込む手］に絞り込む。（１度調べた手は２度目は調べない）
-            ［放置したとき］も調べる。
-        相手番の１手目なら：
-            ［動いた駒を取る手］に絞り込む。（１番安い駒から動かす）
-        手番の２手目なら：
-            ［動いた駒を取る手］に絞り込む。（１番安い駒から動かす）
-        最後の評価値が、１手目の評価値。
-    """
     def search_at_first(
             self,
             #best_plot_model_in_older_sibling,
             depth,
             is_mars,
             remaining_moves):
-        """
+        """静止探索の開始。
+
+        大まかにいって、１手目は全ての合法手を探索し、
+        ２手目以降は、駒を取る手を中心に探索します。
+        TODO できれば２手目も全ての合法手を探索したい。指した後取られる手があるから。
+
         Parameters
         ----------
         # best_plot_model_in_older_sibling : BackwardsPlotModel
@@ -213,7 +203,7 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
             ####################
 
             # NOTE この辺りは［１階］。max_depth - depth。
-            quiescenec_search_for_scramble_model = QuiescenceSearchForScrambleModel(
+            quiescenec_search_for_scramble_model = QuiescenceSearch2ndPhaseModel(
                     search_model    = self._search_model)
             future_plot_model = quiescenec_search_for_scramble_model.search_alice(      # 再帰呼出
                     depth       = depth + depth_extend,

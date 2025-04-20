@@ -107,6 +107,11 @@ class ShogiEngineCompatibleWithUSIProtocol():
             elif cmd[0] == 'use_exshell':
                 self.use_exshell()
 
+            # 静止探索のテスト
+            #       code: go_qs
+            elif cmd[0] == 'go_qs':
+                self.go_qs(cmd)
+
             # テスト
             #       code: march
             elif cmd[0] == 'march':
@@ -288,6 +293,17 @@ class ShogiEngineCompatibleWithUSIProtocol():
         # ［エクシェル］生成
         self._gymnasium.exshell = exshell_builder.build()
         exshell_builder = None
+
+
+    def go_qs(self, cmd):
+        """静止探索のテスト。
+        example: ７六歩
+            code: go_qs 7g7f
+        """
+        move = self._gymnasium.table.move_from_usi(cmd[1])
+        pass
+        # self._gymnasium.do_move_o1x(
+        #         move = move)
 
 
     def test_will(self):
