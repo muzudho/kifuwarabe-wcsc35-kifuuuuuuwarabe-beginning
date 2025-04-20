@@ -267,11 +267,12 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
         alice_s_move_list = []
         exists_zero_value_move = False
 
-        # まず、最高点を調べます。
+        # まず、水平枝の中の最高点を調べます。
         best_exchange_value = constants.value.NOTHING_CAPTURE_MOVE
         for backwards_plot_model in all_backwards_plot_models_at_first:
-            if best_exchange_value < backwards_plot_model.peek_piece_exchange_value_on_earth:
-                best_exchange_value = backwards_plot_model.peek_piece_exchange_value_on_earth
+            value_on_earth = backwards_plot_model.get_exchange_value_on_earth()
+            if best_exchange_value < value_on_earth:
+                best_exchange_value = value_on_earth
 
         # 最高点が 0 点のケース。 FIXME 千日手とかを何点に設定しているか？
         if best_exchange_value == 0:
@@ -287,8 +288,9 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
                     value   = backwards_plot_model)
 
             # （１）駒を取らない手で非正の手（最高点のケースを除く）。
-            if not backwards_plot_model.is_capture_at_last and backwards_plot_model.peek_piece_exchange_value_on_earth < 1 and backwards_plot_model.peek_piece_exchange_value_on_earth != best_exchange_value:
-                if backwards_plot_model.peek_piece_exchange_value_on_earth == 0:
+            value_on_earth = backwards_plot_model.get_exchange_value_on_earth()
+            if not backwards_plot_model.is_capture_at_last and value_on_earth < 1 and value_on_earth != best_exchange_value:
+                if value_on_earth == 0:
                     exists_zero_value_move = True
                 
                 gymnasium.health_check.append(
@@ -297,14 +299,14 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
                         value   = f"{backwards_plot_model.stringify_2():10} not_cap_not_posite")
 
             # （２）最高点でない手。
-            elif backwards_plot_model.peek_piece_exchange_value_on_earth < best_exchange_value:
+            elif value_on_earth < best_exchange_value:
                 gymnasium.health_check.append(
                         move    = backwards_plot_model.peek_move,
                         name    = 'eliminate171',
                         value   = f"{backwards_plot_model.stringify_2():10} not_best")
 
             # （３）リスクヘッジにならない手
-            elif exists_zero_value_move and backwards_plot_model.peek_piece_exchange_value_on_earth < 0:
+            elif exists_zero_value_move and value_on_earth < 0:
                 gymnasium.health_check.append(
                         move    = backwards_plot_model.peek_move,
                         name    = 'eliminate171',

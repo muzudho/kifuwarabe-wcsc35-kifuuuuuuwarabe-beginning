@@ -40,7 +40,6 @@ class MoveListLogics():
         for i in range(0, len(split_eating_before_move_model.move_eat_list)):
             move_eat = split_eating_before_move_model.move_eat_list[i]
             cap_pt = split_eating_before_move_model.cap_list[i]
-            #cur_value = PieceValuesModel.by_piece_type(pt=cap_pt)
             src_sq_obj  = SquareModel(cshogi.move_from(move_eat))   # ［移動元マス］
             src_pc = gymnasium.table.piece(src_sq_obj.sq)           # ［移動元の駒］
             src_pt = cshogi.piece_to_piece_type(src_pc)
@@ -69,8 +68,6 @@ class MoveListLogics():
         # ヘルスチェック
         for i in range(0, len(select_cheap_eaters_model.cheapest_eat_move_list)):
             move_eat = select_cheap_eaters_model.cheapest_eat_move_list[i]
-            #cap_pt = cap_list_2[i]
-            #cur_value = PieceValuesModel.by_piece_type(pt=cap_pt)
             src_sq_obj  = SquareModel(cshogi.move_from(move_eat))   # ［移動元マス］
             src_pc = gymnasium.table.piece(src_sq_obj.sq)           # ［移動元の駒］
             src_pt = cshogi.piece_to_piece_type(src_pc)

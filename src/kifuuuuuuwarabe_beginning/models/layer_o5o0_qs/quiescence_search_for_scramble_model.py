@@ -142,7 +142,7 @@ class QuiescenceSearchForScrambleModel():
         #         return - constants.value.BETA_CUTOFF_VALUE  # 底
 
         #     # 最善手が既存なら、その交換値を返すだけ。
-        #     return best_plot_model_in_older_sibling.peek_piece_exchange_value_on_earth
+        #     return best_plot_model_in_older_sibling.get_exchange_value_on_earth()
 
         case_1 = 0
         case_2 = 0
@@ -256,7 +256,7 @@ class QuiescenceSearchForScrambleModel():
                     is_mars     = is_mars)
 
             # この枝の点（将来の点＋取った駒の点）
-            this_branch_value_on_earth = child_plot_model.peek_piece_exchange_value_on_earth + piece_exchange_value_on_earth
+            this_branch_value_on_earth = child_plot_model.get_exchange_value_on_earth() + piece_exchange_value_on_earth
 
             # # TODO 既存の最善手より良い手を見つけてしまったら、ベータカットします。
             # if beta_cutoff_value < this_branch_value:
@@ -268,7 +268,7 @@ class QuiescenceSearchForScrambleModel():
                 old_sibling_value = 0
             else:
                 # 兄枝のベスト評価値
-                old_sibling_value = best_old_sibling_plot_model_in_children.peek_piece_exchange_value_on_earth     # とりあえず最善の読み筋の点数。
+                old_sibling_value = best_old_sibling_plot_model_in_children.get_exchange_value_on_earth()     # とりあえず最善の読み筋の点数。
 
 
             (a, b) = ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)

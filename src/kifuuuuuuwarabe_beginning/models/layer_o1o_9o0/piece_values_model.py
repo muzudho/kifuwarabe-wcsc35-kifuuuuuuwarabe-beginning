@@ -74,6 +74,7 @@ class PieceValuesModel():
 
     @classmethod
     def by_piece_type(clazz, pt):
+        # TODO 交換値、火星に対応したい。
         return clazz._values_by_pt[pt]
 
 

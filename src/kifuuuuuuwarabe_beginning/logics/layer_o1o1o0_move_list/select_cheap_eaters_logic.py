@@ -26,8 +26,6 @@ class SelectCheapEatersLogic():
 
             src_sq_obj  = SquareModel(cshogi.move_from(move))       # ［移動元マス］
             dst_sq_obj  = SquareModel(cshogi.move_to(move))         # ［移動先マス］
-            #cap_value = PieceValuesModel.by_piece_type(pt=cap_pt)   # ［取った駒の価値］
-
             src_pc = gymnasium.table.piece(src_sq_obj.sq)           # ［移動元の駒］
             src_pt = cshogi.piece_to_piece_type(src_pc)
             src_value = PieceValuesModel.by_piece_type(pt=src_pt)   # ［動かした駒の価値］
