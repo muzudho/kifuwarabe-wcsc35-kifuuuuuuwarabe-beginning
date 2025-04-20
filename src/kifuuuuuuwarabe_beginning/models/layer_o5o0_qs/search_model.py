@@ -20,7 +20,7 @@ class SearchModel():
         self._start_time = None
         self._restart_time = None
         self._end_time = None
-        self._move_list_for_debug = FrontwardsPlotModel()  # デバッグ用に手を記憶。
+        self._frontwards_plot_model = FrontwardsPlotModel()
 
 
     @property
@@ -74,10 +74,10 @@ class SearchModel():
 
 
     @property
-    def move_list_for_debug(self):
-        return self._move_list_for_debug
+    def frontwards_plot_model(self):
+        return self._frontwards_plot_model
     
 
-    @move_list_for_debug.setter
-    def move_list_for_debug(self, value):
-        self._move_list_for_debug = value
+    # @frontwards_plot_model.setter
+    # def frontwards_plot_model(self, value):
+    #     self._frontwards_plot_model = value

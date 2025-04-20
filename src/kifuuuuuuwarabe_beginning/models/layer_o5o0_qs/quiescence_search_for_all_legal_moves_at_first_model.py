@@ -110,12 +110,9 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
                         cutoff_reason           = cutoff_reason.MATE_MOVE_IN_1_PLY,
                         hint                    = '一手詰めA')
             
-                moving_pt = TableHelper.get_moving_pt_from_move(move=mate_move)
-
                 # 今回の手を付け加える。
                 best_plot_model.append_move(
                         move                = mate_move,
-                        moving_pt           = moving_pt,
                         capture_piece_type  = cap_pt,
                         hint                = f"一手詰め１_{Mars.japanese(is_mars)}")
 
@@ -202,7 +199,7 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
             # MARK: 一手指した後
             ####################
 
-            self._search_model.move_list_for_debug.append_move(my_move)      # デバッグ用に手を記憶
+            self._search_model.frontwards_plot_model.append_move(my_move)
             self._search_model.number_of_visited_nodes  += 1
             depth                                       -= 1                            # 深さを１下げる。
             is_mars                                     = not is_mars      # 手番が逆になる。
@@ -228,7 +225,7 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
             # MARK: 一手戻した後
             ####################
 
-            self._search_model.move_list_for_debug.pop_move()                         # デバッグ用に手を記憶
+            self._search_model.frontwards_plot_model.pop_move()
             depth       += 1                # 深さを１上げる。
             is_mars     = not is_mars       # 手番が逆になる。
 
@@ -236,12 +233,9 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
             # MARK: 手番の処理
             ##################
 
-            moving_pt = TableHelper.get_moving_pt_from_move(move=my_move)     # TODO
-
             # １階の手は、全ての手の読み筋を記憶します。最善手は選びません。
             future_plot_model.append_move(
                     move                = my_move,
-                    moving_pt           = moving_pt,
                     capture_piece_type  = cap_pt,
                     hint                = f"１階の{Mars.japanese(is_mars)}の手はなんでも記憶")
             all_backwards_plot_models_at_first.append(future_plot_model)

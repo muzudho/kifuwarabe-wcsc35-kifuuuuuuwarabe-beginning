@@ -92,12 +92,9 @@ class QuiescenceSearchForScrambleModel():
                         cutoff_reason           = cutoff_reason.MATE_MOVE_IN_1_PLY,
                         hint                    = '一手詰め時B')
             
-                moving_pt = TableHelper.get_moving_pt_from_move(move=mate_move)
-
                 # 今回の手を付け加える。
                 best_plot_model.append_move(
                         move                = mate_move,
-                        moving_pt           = moving_pt,
                         capture_piece_type  = cap_pt,
                         hint                = f"{Mars.japanese(is_mars)}の一手詰め時")
 
@@ -215,7 +212,7 @@ class QuiescenceSearchForScrambleModel():
             # MARK: 一手指した後
             ####################
 
-            self._search_model.move_list_for_debug.append_move(my_move)           # デバッグ用に手を記憶
+            self._search_model.frontwards_plot_model.append_move(my_move)
             depth       = depth - 1                 # 深さを１下げる。
             is_mars     = not is_mars  # 手番が逆になる。
 
@@ -239,7 +236,7 @@ class QuiescenceSearchForScrambleModel():
             # MARK: 一手戻した後
             ####################
 
-            self._search_model.move_list_for_debug.pop_move()                     # デバッグ用に手を記憶
+            self._search_model.frontwards_plot_model.pop_move()
             depth       = depth + 1                 # 深さを１上げる。
             is_mars     = not is_mars  # 手番が逆になる。
             ptolemaic_theory_model  = PtolemaicTheoryModel(
@@ -291,16 +288,16 @@ class QuiescenceSearchForScrambleModel():
             #         case_6t += 1
             #         case_6t_hint_list.append(f"{old_sibling_value=} < {this_branch_value_on_earth=}")
 
-            #         #self.search_model.gymnasium.thinking_logger_module.append(f"[search] 6t {self._search_model.move_list_for_debug=}")
-            #         # if self._search_model.move_list_for_debug.equals_move_usi_list(['3a4b']):   # FIXME デバッグ絞込み
+            #         #self.search_model.gymnasium.thinking_logger_module.append(f"[search] 6t {self._search_model.frontwards_plot_model=}")
+            #         # if self._search_model.frontwards_plot_model.equals_move_usi_list(['3a4b']):   # FIXME デバッグ絞込み
             #         #     self.search_model.gymnasium.thinking_logger_module.append(_log_1('6t'))
 
             #     else:
             #         case_6f += 1
             #         case_6f_hint_list.append(f"{old_sibling_value=} < {this_branch_value_on_earth=}")
 
-            #         #self.search_model.gymnasium.thinking_logger_module.append(f"[search] 6f {self._search_model.move_list_for_debug=}")
-            #         # if self._search_model.move_list_for_debug.equals_move_usi_list(['3a4b']):   # FIXME デバッグ絞込み
+            #         #self.search_model.gymnasium.thinking_logger_module.append(f"[search] 6f {self._search_model.frontwards_plot_model=}")
+            #         # if self._search_model.frontwards_plot_model.equals_move_usi_list(['3a4b']):   # FIXME デバッグ絞込み
             #         #     self.search_model.gymnasium.thinking_logger_module.append(_log_1('6f'))
                         
             # 最善手の更新
@@ -326,12 +323,9 @@ class QuiescenceSearchForScrambleModel():
                     cutoff_reason           = cutoff_reason.NO_MOVES,
                     hint                    = f"{self._search_model.max_depth - depth + 1}階の{Mars.japanese(is_mars)}は指したい手無し,move数={len(legal_move_list)},{case_1=},{case_2=},{case_4=},{case_5=},{case_6t=},({'_'.join(case_6t_hint_list)}),{case_6f=},({'_'.join(case_6f_hint_list)}),{case_8a=},{case_8a=},{case_8b=},{case_8c=},{case_8d=},{case_8e=}")
 
-        moving_pt = TableHelper.get_moving_pt_from_move(move=best_move)
-
         # 今回の手を付け加える。
         best_old_sibling_plot_model_in_children.append_move(
                 move                = best_move,
-                moving_pt           = moving_pt,
                 capture_piece_type  = best_move_cap_pt,
                 hint                = f"{self._search_model.max_depth - depth + 1}階の手記憶_{Mars.japanese(is_mars)}")
 

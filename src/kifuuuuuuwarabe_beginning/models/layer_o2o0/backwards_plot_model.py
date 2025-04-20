@@ -1,6 +1,7 @@
 import cshogi
 
 from ..layer_o1o_9o0 import PieceValuesModel
+from ..layer_o1o0o_9o0_table_helper import TableHelper
 from ..layer_o1o0 import constants, DeclarationModel, Mars, PieceTypeModel, PlanetPieceTypeModel, SquareModel
 from ..layer_o1o0o1o0_human import HumanPresentableMoveModel
 
@@ -223,12 +224,10 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         return len(self._move_list) < 1
 
 
-    def append_move(self, move, moving_pt, capture_piece_type, hint):
+    def append_move(self, move, capture_piece_type, hint):
         """
         Parameters
         ----------
-        moving_pt : int
-            動かした駒の種類。盤上の移動元の駒か、打った駒。
         capture_piece_type : int
             取った駒の種類。
         hint : str
@@ -249,7 +248,10 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         # １手追加
         ##########
         self._move_list.append(move)
+
+        moving_pt = TableHelper.get_moving_pt_from_move(move=move)  # 動かした駒の種類。盤上の移動元の駒か、打った駒。
         self._moving_pt_list.append(moving_pt)
+
         self._cap_list.append(capture_piece_type)
         self._hint_list.append(hint)
 
@@ -294,7 +296,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             if not isinstance(move, int):   # FIXME バグがあるよう
                 raise ValueError(f"move は int 型である必要があります。 {layer_no=} {type(move)=} {move=} {self._move_list=}")
 
-            # USIの指し手の表記を変更。
+            # 指し手のUSI表記を独自形式に変更。
             move_str = HumanPresentableMoveModel.from_move(move=move, moving_pt=moving_pt, is_mars=is_mars, is_gote=is_gote).stringify()
 
             cap                             = self._cap_list[layer_no]

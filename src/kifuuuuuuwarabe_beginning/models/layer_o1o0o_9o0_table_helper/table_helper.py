@@ -16,12 +16,13 @@ class TableHelper:
 
     @classmethod
     def get_moving_pt_from_move(clazz, move):
-        #usi = cshogi.move_to_usi(move)
+        """［動かした駒の種類］取得。
+
+        指し手情報（move）から算出できるので、現局面の情報は不要。
+        """
         is_drop = cshogi.move_is_drop(move)
 
         if is_drop:
-            #print(f"get_moving_pc_from_move: {usi=} {cshogi.move_drop_hand_piece(move)=}")
             return clazz._hand_piece_to_piece_type[cshogi.move_drop_hand_piece(move)]
 
-        #print(f"get_moving_pc_from_move: {usi=} {cshogi.move_from_piece_type(move)=}")
         return cshogi.move_from_piece_type(move)
