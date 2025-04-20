@@ -24,7 +24,7 @@ class RuleModel:
         """識別子。
         設定ファイルなどで利用する名前。
         """
-        return self._label
+        return self._id
 
 
     @property

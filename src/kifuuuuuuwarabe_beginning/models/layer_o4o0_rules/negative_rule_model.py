@@ -63,7 +63,6 @@ class NegativeRuleModel(RuleModel):
     # MARK: バーチャルメソッド
     ##########################
 
-
     def _remove_rule_before_branches_nrm(self, remaining_moves, table):
         """枝前削除条件。
         真なら、このルールをリストから除外します。

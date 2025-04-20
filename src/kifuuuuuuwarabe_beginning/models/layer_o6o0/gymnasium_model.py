@@ -159,9 +159,9 @@ class GymnasiumModel():
 
     def on_position(self, command):
         #print(f"★ [gymnasium.py > on_position] start.")
-        self.earth_turn = self._table.turn         # この将棋エンジンの手番を記録。
-        self._health_check = HealthCheckModel(      # 健康診断をクリアー。
-                config_doc = self._config_doc)
+        self.earth_turn = self._table.turn          # この将棋エンジンの手番を記録。
+        self._health_check  = HealthCheckModel(     # 健康診断をクリアー。
+                gymnasium   = self)
 
         if self._thinking_logger_module is None:
             #print(f"★ [gymnasium.py > on_position] initialize thinking_logger_module.")

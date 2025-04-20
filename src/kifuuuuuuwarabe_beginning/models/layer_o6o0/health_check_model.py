@@ -6,10 +6,10 @@ class HealthCheckModel():
     """
 
 
-    def __init__(self, config_doc):
+    def __init__(self, gymnasium):
         """初期化。
         """
-        self._config_doc = config_doc
+        self._gymnasium = gymnasium
         self._document = {}
 
 
@@ -75,6 +75,14 @@ class HealthCheckModel():
             return f"{'':9}"
 
 
+        def fn_negative_rule(i, rule_id):
+            move_prop = health_list[i][1]
+            prop_name = f"NR[{rule_id}]"
+            if prop_name in move_prop:
+                return f"{move_prop[prop_name]}"
+            return ''
+
+
         def fn_nr_remaining(i):
             move_prop = health_list[i][1]
             if 'NR_remaining' in move_prop:
@@ -98,7 +106,7 @@ class HealthCheckModel():
 
         lines = []
 
-        lines.append(f"* {self._config_doc['search']['capture_depth']} 手読み")
+        lines.append(f"* {self._gymnasium.config_doc['search']['capture_depth']} 手読み")
         lines.append('')
         lines.append('HEALTH CHECK WORKSHEET')
         lines.append('----------------------')
@@ -110,6 +118,11 @@ class HealthCheckModel():
         header_list.append(f"{'cheapest':12}")
         header_list.append(f"{'qs_eliminate171':30}")
         header_list.append(f"{'qs_select':9}")
+
+        # 号令リスト
+        for negative_rule in self._gymnasium.gourei_collection_model.negative_rule_list_of_active:
+            header_list.append(f"NR[{negative_rule.label}]")    # 日本語表示
+
         header_list.append(f"{'nr_remaining':12}")
         header_list.append(f"{'bm_bestmove':11}")
         header_list.append('qs_plot')
@@ -124,6 +137,11 @@ class HealthCheckModel():
             body_list.append(fn_cheapest(i))
             body_list.append(fn_qs_eliminate171(i))     # 静止探索で選ばれた手をエリミネートした手
             body_list.append(fn_qs_select(i))           # 静止探索で選ばれた手
+
+            # 号令リスト
+            for negative_rule in self._gymnasium.gourei_collection_model.negative_rule_list_of_active:
+                body_list.append(fn_negative_rule(i, negative_rule.id))
+
             body_list.append(fn_nr_remaining(i))        # ネガティブ・ルールで選別して残った手
             body_list.append(fn_bm_bestmove(i))         # ベストムーブ
             body_list.append(fn_qs_plot(i))             # 静止探索の読み筋の詳細

@@ -42,9 +42,17 @@ class MovesReductionFilterLogics():
             if len(remaining_moves) < 1:
                 remaining_moves = old_remaining_moves
 
+            # ログ
+            for move in remaining_moves:
+                gymnasium.health_check.append(
+                        move    = move,
+                        name    = f"NR[{negative_rule.id}]",
+                        value   = True)
+
         for negative_rule in negative_rules_to_remove:
             gymnasium.gourei_collection_model.negative_rule_list_of_active.remove(negative_rule)
             gymnasium.thinking_logger_module.append(f"[moves_reduction_filter_logics.py > before_branches_o1x] delete negative rule. {negative_rule.label}")
+
 
         return remaining_moves
 
