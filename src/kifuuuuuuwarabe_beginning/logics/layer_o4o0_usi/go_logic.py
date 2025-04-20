@@ -194,7 +194,7 @@ class _Go2nd():
 
         # ログ
         message = f"""\
-{TableView(self._gymnasium.table).stringify()}
+{TableView(gymnasium=self._gymnasium).stringify()}
 HEALTH CHECK
 ------------
 {self._gymnasium.health_check.stringify()}

@@ -1,4 +1,7 @@
-from ..models.layer_o1o0 import PieceModel, TurnModel
+import cshogi
+
+from ..models.layer_o1o0 import PieceModel, PlanetPieceTypeModel, TurnModel
+from ..models.layer_o1o0o_9o0_table_helper import TableHelper
 
 
 class TableView():
@@ -6,15 +9,15 @@ class TableView():
     """
 
 
-    def __init__(self, table):
-        self._table = table
+    def __init__(self, gymnasium):
+        self._gymnasium = gymnasium
 
 
     @property
     def turn(self):
         """現在の手番を `black` か `white` で出力
         """
-        return TurnModel.code(self._table.turn)
+        return TurnModel.code(self._gymnasium.table.turn)
 
 
     def count_repetition(self):
@@ -22,11 +25,11 @@ class TableView():
         """
 
         # 指定局面（現局面）の SFEN を取得（棋譜は付いていない）
-        designated_sfen = self._table.sfen()
+        designated_sfen = self._gymnasium.table.sfen()
         print(f"{designated_sfen=}")
 
         # 盤を複製
-        copied_table = self._table.copy_table_with_0_moves()
+        copied_table = self._gymnasium.table.copy_table_with_0_moves()
 
     #     # 指し手をポップしていく
     #     print(f"{copied_table.move_number=}")
@@ -57,14 +60,14 @@ class TableView():
     def stringify(self):
 
         # 先手、後手の持ち駒の数のリスト
-        b = self._table.pieces_in_hand[0]
-        w = self._table.pieces_in_hand[1]
+        b = self._gymnasium.table.pieces_in_hand[0]
+        w = self._gymnasium.table.pieces_in_hand[1]
 
         repetition = 0      # self.count_repetition()
 
         blocks = []
         blocks.append(f"""\
-[ next {self._table.move_number} move(s) | {self.turn} | repetition - ]
+[ next {self._gymnasium.table.move_number} move(s) | {self.turn} | repetition - ]
 """)
         blocks.append(f"""\
 
@@ -76,7 +79,13 @@ class TableView():
 
         p = [0] * 81
         for sq in range(0,81):
-            p[sq] = PieceModel.on_board(self._table.piece(sq))
+            pc = self._gymnasium.table.piece(sq)
+            pc_turn = PieceModel.turn(piece=pc)
+            #p[sq] = PieceModel.on_board(pc)
+            p[sq] = PlanetPieceTypeModel.kanji_on_board(
+                    piece_type  = cshogi.piece_to_piece_type(pc),
+                    is_mars     = (self._gymnasium.earth_turn != pc_turn),
+                    is_gote     = (pc_turn==cshogi.WHITE))
 
         blocks.append("""\
   9   8   7   6   5   4   3   2   1

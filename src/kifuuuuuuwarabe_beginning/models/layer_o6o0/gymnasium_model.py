@@ -32,7 +32,7 @@ class GymnasiumModel():
         self._exshell = None
 
         # この将棋エンジンの手番
-        self._engine_turn = None
+        self._earth_turn = None
 
         # 盤へアクセスする関連のオブジェクト
         self._piece_value_tao = PieceValueTAO(table = self._table)
@@ -82,15 +82,22 @@ class GymnasiumModel():
 
 
     @property
-    def engine_turn(self):
+    def earth_turn(self):
         """この将棋エンジンの手番。
         """
-        return self._engine_turn
+        return self._earth_turn
 
 
-    @engine_turn.setter
-    def engine_turn(self, value):
-        self._engine_turn = value
+    @earth_turn.setter
+    def earth_turn(self, value):
+        self._earth_turn = value
+
+
+    @property
+    def is_mars(self):
+        """火星か。
+        """
+        return self._earth_turn != self._table.turn
 
 
     @property
@@ -104,7 +111,7 @@ class GymnasiumModel():
     # def engine_value(self):
     #     """この将棋エンジンの評価値。
     #     """
-    #     if self._engine_turn == cshogi.BLACK:
+    #     if self._earth_turn == cshogi.BLACK:
     #         return self.np_value
     #     return -self.np_value
 
@@ -152,7 +159,7 @@ class GymnasiumModel():
 
     def on_position(self, command):
         #print(f"★ [gymnasium.py > on_position] start.")
-        self.engine_turn = self._table.turn         # この将棋エンジンの手番を記録。
+        self.earth_turn = self._table.turn         # この将棋エンジンの手番を記録。
         self._health_check = HealthCheckModel(      # 健康診断をクリアー。
                 config_doc = self._config_doc)
 
@@ -160,8 +167,8 @@ class GymnasiumModel():
             #print(f"★ [gymnasium.py > on_position] initialize thinking_logger_module.")
             now = datetime.now()
             self._thinking_logger_module = ThinkingLoggerModule(
-                    file_name   = f"logs/thinking_[{now.strftime('%Y%m%d_%H%M%S')}]_{TurnModel.code(self.engine_turn)}.log",
-                    engine_turn = self.engine_turn)
+                    file_name   = f"logs/thinking_[{now.strftime('%Y%m%d_%H%M%S')}]_{TurnModel.code(self.earth_turn)}.log",
+                    earth_turn = self.earth_turn)
             
             self._thinking_logger_module.delete_file()  # ログファイル　＞　削除。
 
@@ -180,7 +187,7 @@ class GymnasiumModel():
         exchange_value = self.piece_value_tao.before_move_pvt(
                 move = move)
 
-        if self.engine_turn == cshogi.WHITE:
+        if self.earth_turn == cshogi.WHITE:
             exchange_value *= -1
 
         self.np_value += exchange_value
@@ -197,7 +204,7 @@ class GymnasiumModel():
         exchange_value = self.piece_value_tao.before_undo_move(
                 move = move)
 
-        if self.engine_turn == cshogi.WHITE:
+        if self.earth_turn == cshogi.WHITE:
             exchange_value *= -1
 
         self.np_value -= exchange_value

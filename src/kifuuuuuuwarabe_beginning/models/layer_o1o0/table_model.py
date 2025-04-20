@@ -76,6 +76,7 @@ class TableModel:
         """
         return self._board.is_check()
 
+
     def is_game_over(self):
         """投了図だ。
         """
@@ -86,6 +87,7 @@ class TableModel:
         """入玉宣言勝ちだ。
         """
         return self._board.is_nyugyoku()
+
 
     def mate_move_in_1ply(self):
         """一手詰め局面か。
@@ -186,7 +188,9 @@ class TableModel:
     ##############
     # MARK: ダンプ
     ##############
+
     def dump(self):
+
 
         def _dump_piece_moved_list():
             items = []

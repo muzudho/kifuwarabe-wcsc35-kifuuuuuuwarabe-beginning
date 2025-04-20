@@ -114,7 +114,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         self._declaration = declaration
         self._move_list = []
         self._cap_list = []
-        self._list_of_raw_exchange_value_on_earth = []   # 地球から見た、取った駒の交換値。
+        self._list_of_accumulate_exchange_value_on_earth = []   # 地球から見た、取った駒の交換値。
         self._cutoff_reason = cutoff_reason
         self._hint_list = [hint]
 
@@ -183,12 +183,12 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         """
 
 
-        if len(self._list_of_raw_exchange_value_on_earth) == 0:
+        if len(self._list_of_accumulate_exchange_value_on_earth) == 0:
             return self._declaration_to_value_on_earth(   # ［宣言］の点数。
                     declaration = self._declaration,
                     is_mars     = self._is_mars_at_declaration)
 
-        return self._list_of_raw_exchange_value_on_earth[-1]
+        return self._list_of_accumulate_exchange_value_on_earth[-1]
 
 
     @property
@@ -209,7 +209,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         # ASSERT
         len_move_list = len(self._move_list)
         len_cap_list = len(self._cap_list)
-        len_ev_list = len(self._list_of_raw_exchange_value_on_earth)
+        len_ev_list = len(self._list_of_accumulate_exchange_value_on_earth)
         if not (len_move_list == len_cap_list and len_cap_list == len_ev_list):
             raise ValueError(f"配列の長さの整合性が取れていません。 {len_move_list=} {len_cap_list=} {len_ev_list=}")
         
@@ -240,41 +240,36 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         if capture_piece_type is None:
             raise ValueError(f"capture_piece_type をナンにしてはいけません。cshogi.NONE を使ってください。 {capture_piece_type=}")
 
-        if len(self._list_of_raw_exchange_value_on_earth) == 0:
+        if len(self._list_of_accumulate_exchange_value_on_earth) == 0:
             accumulate_value_on_earth = self._declaration_to_value_on_earth(   # ［宣言］の点数。
                     declaration = self._declaration,
                     is_mars     = self._is_mars_at_declaration)
         else:
-            accumulate_value_on_earth = self._list_of_raw_exchange_value_on_earth[-1]
+            accumulate_value_on_earth = self._list_of_accumulate_exchange_value_on_earth[-1]
 
         piece_exchange_value_on_earth = 2 * PieceValuesModel.by_piece_type(pt=capture_piece_type)      # 交換値に変換。正の数とする。
         if self.is_mars_at_peek:                    # 火星なら。
             piece_exchange_value_on_earth *= -1     # 正負の符号を反転する。
 
-        # ［宣言］が［読みの深さの最大］かつ、火星の［宣言］で終わるとき　＝　地球の［指し手］で読み終わるとき
-        #       ［地球の手］を１回多くカウントしないように、無視します。
-        if self._declaration == constants.declaration.MAX_DEPTH_BY_THINK and len(self._list_of_raw_exchange_value_on_earth) == 0 and self.is_mars_at_peek:
-            piece_exchange_value_on_earth = 0   # 駒得点をノーカウントにする。
+        # かつ、火星の［宣言］で終わるとき　＝　地球の［指し手］で読み終わるとき
+        if (
+                self._declaration == constants.declaration.MAX_DEPTH_BY_THINK   # ［宣言］が［読みの深さの最大］。
+            and len(self._list_of_accumulate_exchange_value_on_earth) == 1      # ［読みの深さの最大］のときの末端の指し手のとき。
+            and not self.is_mars_at_peek                                        # ［地球］の手番。
+            ):
+            piece_exchange_value_on_earth = 0   # 駒得点をノーカウントにする。（［地球の手］を１回多くカウントするのは数えすぎだから）
 
         # ＜📚原則１＞地球と火星のペアが完成したら、駒得点を逓減。
         # （完全に読み切るわけではないので）深くの手ほど価値を減らします。ただしあまり深くの駒を弱く調整すると、浅い銀と深い角が同じ価値になるなど不具合が生じます。
-        piece_exchange_value_on_earth = (piece_exchange_value_on_earth + accumulate_value_on_earth) * 3 / 4     # 9 / 10
+        piece_exchange_value_on_earth = (piece_exchange_value_on_earth + accumulate_value_on_earth)     # * 3 / 4     # * 9 / 10
 
         # 累計します。
-        self._list_of_raw_exchange_value_on_earth.append(piece_exchange_value_on_earth)
+        self._list_of_accumulate_exchange_value_on_earth.append(piece_exchange_value_on_earth)
 
 
     def stringify(self):
         """読み筋を１行で文字列化。
         """
-
-
-        def _planet(is_mars):
-            if is_mars:
-                return '火'     # Mars
-            return '地'         # Earth
-
-
         tokens = []
         is_mars = self.is_mars_at_peek   # 逆順なので、ピークから。
         is_gote = self.is_gote_at_peek   # 逆順なので、ピークから。
@@ -291,7 +286,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             # 指し手のUSI表記を独自形式に変更。
             move_str = HumanPresentableMoveModel.from_move(move=move, moving_pt=moving_pt, cap_pt=cap_pt, is_mars=is_mars, is_gote=is_gote).stringify()
 
-            piece_exchange_value_on_earth   = self._list_of_raw_exchange_value_on_earth[layer_no]
+            piece_exchange_value_on_earth   = self._list_of_accumulate_exchange_value_on_earth[layer_no]
             tokens.append(f"({len_of_move_list - layer_no}){move_str}({piece_exchange_value_on_earth})")
 
             # 手番交代
@@ -319,8 +314,8 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
 
     def stringify_dump(self):
-        return f"{self._is_mars_at_declaration=} {self._declaration=} {self._move_list=} {self._cap_list=} {self._list_of_raw_exchange_value_on_earth=} {self._cutoff_reason=} {' '.join(self._hint_list)=}"
+        return f"{self._is_mars_at_declaration=} {self._declaration=} {self._move_list=} {self._cap_list=} {self._list_of_accumulate_exchange_value_on_earth=} {self._cutoff_reason=} {' '.join(self._hint_list)=}"
 
 
     def stringify_debug_1(self):
-        return f"{len(self._move_list)=} {len(self._cap_list)=} {len(self._list_of_raw_exchange_value_on_earth)=}"
+        return f"{len(self._move_list)=} {len(self._cap_list)=} {len(self._list_of_accumulate_exchange_value_on_earth)=}"

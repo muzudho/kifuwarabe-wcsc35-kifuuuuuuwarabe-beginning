@@ -238,7 +238,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 
     def board(self, cmd):
-        board_view = TableView(self._gymnasium.table)
+        board_view = TableView(gymnasium=self._gymnasium)
         print(board_view.stringify())
 
 

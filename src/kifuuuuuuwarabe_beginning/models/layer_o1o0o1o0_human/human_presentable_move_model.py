@@ -27,15 +27,10 @@ class HumanPresentableMoveModel:
         dst_sq_obj  = SquareModel(cshogi.move_to(move))         # ［移動先マス］
         is_drop     = cshogi.move_is_drop(move)                 # ［打］
 
-        if is_mars:
-            moving_pt_str  = PlanetPieceTypeModel.mars_kanji(piece_type=moving_pt)
-        else:
-            moving_pt_str  = PlanetPieceTypeModel.earth_kanji(piece_type=moving_pt)
-
-        if is_gote:
-            moving_pt_str   = f"v{moving_pt_str}"
-        # else:
-        #     moving_pt_str   = f" {moving_pt_str}"
+        moving_pt_str = PlanetPieceTypeModel.kanji_on_text(
+                piece_type  = moving_pt,
+                is_mars     = is_mars,
+                is_gote     = is_gote)
 
         return HumanPresentableMoveModel(
                 move            = move,

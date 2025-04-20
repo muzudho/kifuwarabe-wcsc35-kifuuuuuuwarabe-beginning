@@ -39,7 +39,7 @@ class KomadokuFilterModel():
         """１手指した後
         """
         (a, b) = self._np_rev.swap(self._np_best_value, self._gymnasium.np_value)
-        #print(f'after move: {cshogi.move_to_usi(move)} エンジン手番:{gymnasium.engine_turn} 手番:{gymnasium.table.turn} {np_best_value=} {gymnasium.np_value=} {a=} {b=} {a < b=}')
+        #print(f'after move: {cshogi.move_to_usi(move)} エンジン手番:{gymnasium.earth_turn} 手番:{gymnasium.table.turn} {np_best_value=} {gymnasium.np_value=} {a=} {b=} {a < b=}')
 
         # 更新。
         if a < b:

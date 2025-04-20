@@ -1,3 +1,6 @@
+import cshogi
+
+
 class PlanetPieceTypeModel():
     """地球側と、火星側で分けた駒種類モデル。
     """
@@ -40,6 +43,33 @@ class PlanetPieceTypeModel():
         '馬',   # [13] 馬
         '竜',   # [14] 竜
     ]
+
+
+    @classmethod
+    def kanji_on_board(clazz, piece_type, is_mars, is_gote):
+        if piece_type == cshogi.NONE:
+            kanji = '　'
+        else:
+            kanji = PlanetPieceTypeModel.kanji(piece_type=piece_type, is_mars=is_mars)
+        
+        if is_gote:
+            return f"v{kanji}"
+        return f" {kanji}"  # 半角空白を頭に付ける
+
+
+    @classmethod
+    def kanji_on_text(clazz, piece_type, is_mars, is_gote):
+        kanji = PlanetPieceTypeModel.kanji(piece_type=piece_type, is_mars=is_mars)
+        if is_gote:
+            return f"v{kanji}"
+        return kanji        # 半角空白を頭に付けない
+
+
+    @classmethod
+    def kanji(clazz, piece_type, is_mars):
+        if is_mars:
+            return PlanetPieceTypeModel.mars_kanji(piece_type=piece_type)
+        return PlanetPieceTypeModel.earth_kanji(piece_type=piece_type)
 
 
     @classmethod
