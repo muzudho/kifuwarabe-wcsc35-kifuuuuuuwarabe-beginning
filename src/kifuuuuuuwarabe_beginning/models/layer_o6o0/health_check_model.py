@@ -35,49 +35,62 @@ class HealthCheckModel():
         health_list = sorted(self._document.items(), key=lambda entry:cshogi.move_to_usi(entry[0]))
 
 
-        def _legal(move_prop):
+        def fn_move(i):
+            move = health_list[i][0]
+            return f"{cshogi.move_to_usi(move):5}"
+
+
+        def fn_legal(i):
+            move_prop = health_list[i][1]
             if 'legal' in move_prop:
-                return 'legal'
-            return ''
+                return f"{'legal':5}"
+            return f"{'':5}"
+        
 
-
-        def _eater(move_prop):
+        def fn_eater(i):
+            move_prop = health_list[i][1]
             if 'SQ_eater' in move_prop:
-                return move_prop['SQ_eater']
-            return ''
+                return f"{move_prop['SQ_eater']:12}"
+            return f"{'':12}"
 
 
-        def _cheapest(move_prop):
+        def fn_cheapest(i):
+            move_prop = health_list[i][1]
             if 'cheapest' in move_prop:
-                return move_prop['cheapest']
-            return ''
+                return f"{move_prop['cheapest']:12}"
+            return f"{'':12}"
 
 
-        def _qs_eliminate171(move_prop):
+        def fn_qs_eliminate171(i):
+            move_prop = health_list[i][1]
             if 'eliminate171' in move_prop:
-                return move_prop['eliminate171']
-            return ''
+                return f"{move_prop['eliminate171']:30}"
+            return f"{'':30}"
 
 
-        def _qs_select(move_prop):
+        def fn_qs_select(i):
+            move_prop = health_list[i][1]
             if 'QS_select' in move_prop:
-                return move_prop['QS_select']
-            return ''
+                return f"{move_prop['QS_select']:9}"
+            return f"{'':9}"
 
 
-        def _nr_remaining(move_prop):
+        def fn_nr_remaining(i):
+            move_prop = health_list[i][1]
             if 'NR_remaining' in move_prop:
-                return move_prop['NR_remaining']
-            return ''
+                return f"{move_prop['NR_remaining']:12}"
+            return f"{'':12}"
+        
 
-
-        def _bm_bestmove(move_prop):
+        def fn_bm_bestmove(i):
+            move_prop = health_list[i][1]
             if 'BM_bestmove' in move_prop:
-                return 'BM_bestmove'
-            return ''
+                return f"{'BM_bestmove':11}"
+            return f"{'':11}"
 
 
-        def _qs_plot(move_prop):
+        def fn_qs_plot(i):
+            move_prop = health_list[i][1]
             if 'QS_backwards_plot_model' in move_prop:
                 return move_prop['QS_backwards_plot_model'].stringify()
             return ''
@@ -101,63 +114,19 @@ class HealthCheckModel():
         header_list.append(f"{'bm_bestmove':11}")
         header_list.append('qs_plot')
         lines.append(', '.join(header_list))
-
-
-        def fn_move(move):
-            return f"{cshogi.move_to_usi(move):5}"
-        
-
-        def fn_legal(move_prop):
-            return f"{_legal(move_prop):5}"
-
-
-        def fn_eater(move_prop):
-            return f"{_eater(move_prop):12}"
-
-
-        def fn_cheapest(move_prop):
-            return f"{_cheapest(move_prop):12}"
-
-
-        def fn_qs_eliminate171(move_prop):
-            return f"{_qs_eliminate171(move_prop):30}"
-
-
-        def fn_qs_select(move_prop):
-            return f"{_qs_select(move_prop):9}"
-
-
-        def fn_nr_remaining(move_prop):
-            return f"{_nr_remaining(move_prop):12}"
-        
-
-        def fn_bm_bestmove(move_prop):
-            return f"{_bm_bestmove(move_prop):11}"
-
-
-        def fn_qs_plot(move_prop):
-            return f"{_qs_plot(move_prop)}"
         
 
         for i in range(0, len(health_list)):
-            move = health_list[i][0]
-            move_prop = health_list[i][1]
-
-            # （１）リーガル・ムーブ
-            # （２）静止探索で選ばれた手
-            # （３）静止探索で選ばれた手をエリミネートした手
-            # （４）ネガティブ・ルールで選別した手
-            # （５）ロールバックした手
             body_list = []
-            body_list.append(fn_move(move))
-            body_list.append(fn_legal(move_prop))
-            body_list.append(fn_eater(move_prop))
-            body_list.append(fn_cheapest(move_prop))
-            body_list.append(fn_qs_eliminate171(move_prop))
-            body_list.append(fn_qs_select(move_prop))
-            body_list.append(fn_nr_remaining(move_prop))
-            body_list.append(fn_bm_bestmove(move_prop))
-            body_list.append(fn_qs_plot(move_prop))
+            body_list.append(fn_move(i))                # USI書式の指し手
+            body_list.append(fn_legal(i))               # リーガル・ムーブ
+            body_list.append(fn_eater(i))
+            body_list.append(fn_cheapest(i))
+            body_list.append(fn_qs_eliminate171(i))     # 静止探索で選ばれた手をエリミネートした手
+            body_list.append(fn_qs_select(i))           # 静止探索で選ばれた手
+            body_list.append(fn_nr_remaining(i))        # ネガティブ・ルールで選別して残った手
+            body_list.append(fn_bm_bestmove(i))         # ベストムーブ
+            body_list.append(fn_qs_plot(i))             # 静止探索の読み筋の詳細
             lines.append(', '.join(body_list))
 
         return '\n'.join(lines)
