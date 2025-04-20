@@ -230,7 +230,7 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
     number_of_visited_nodes : int
         ［訪問ノード数］
     """
-    max_depth                   = gymnasium.config_doc['search']['capture_depth']   # 2
+    max_depth = gymnasium.config_doc['search']['capture_depth']   # 2
 
     # 駒の取り合いのための静止探索
     qs_at_first = QuiescenceSearchForAllLegalMovesAtFirstModel(

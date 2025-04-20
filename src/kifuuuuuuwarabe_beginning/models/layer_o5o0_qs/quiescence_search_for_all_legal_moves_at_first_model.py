@@ -19,12 +19,14 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
         """
         Parameters
         ----------
+        max_depth : int
+            最大深さ。
         gymnasium : GymnasiumModel
             体育館。        
         """
         self._search_model = SearchModel(
-                max_depth   = max_depth,
-                gymnasium   = gymnasium)
+                max_depth           = max_depth,
+                gymnasium           = gymnasium)
     
 
     @property
@@ -199,7 +201,9 @@ class QuiescenceSearchForAllLegalMovesAtFirstModel():
             # MARK: 一手指した後
             ####################
 
-            self._search_model.frontwards_plot_model.append_move(my_move)
+            self._search_model.frontwards_plot_model.append_move(
+                    move    = my_move,
+                    cap_pt  = cap_pt)
             self._search_model.number_of_visited_nodes  += 1
             depth                                       -= 1                            # 深さを１下げる。
             is_mars                                     = not is_mars      # 手番が逆になる。

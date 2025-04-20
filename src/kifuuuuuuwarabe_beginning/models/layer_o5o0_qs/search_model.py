@@ -20,7 +20,8 @@ class SearchModel():
         self._start_time = None
         self._restart_time = None
         self._end_time = None
-        self._frontwards_plot_model = FrontwardsPlotModel()
+        self._frontwards_plot_model = FrontwardsPlotModel(
+                is_gote_at_first=gymnasium.table.is_gote)
 
 
     @property

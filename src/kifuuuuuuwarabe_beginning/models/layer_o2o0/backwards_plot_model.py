@@ -265,13 +265,13 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             return '地'         # Earth
 
 
-        def _cap(cap, is_mars):
-            if cap == cshogi.NONE:
-                return ''
+        # def _cap(cap_pt, is_mars):
+        #     if cap_pt == cshogi.NONE:
+        #         return ''
             
-            if is_mars:
-              return f"-{PlanetPieceTypeModel.earth_kanji(piece_type=cap)}"    # 火星側が取ったのは地球側の駒
-            return f"+{PlanetPieceTypeModel.mars_kanji(piece_type=cap)}"     # 地球側が取ったのは火星側の駒
+        #     if is_mars:
+        #       return f"-{PlanetPieceTypeModel.earth_kanji(piece_type=cap_pt)}"    # 火星側が取ったのは地球側の駒
+        #     return f"+{PlanetPieceTypeModel.mars_kanji(piece_type=cap_pt)}"     # 地球側が取ったのは火星側の駒
         
         tokens = []
         is_mars = self.is_mars_at_peek   # 逆順なので、ピークから。
@@ -279,18 +279,18 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
         len_of_move_list = len(self._move_list)
         for layer_no in reversed(range(0, len_of_move_list)):  # 逆順。
-            move = self._move_list[layer_no]
-            moving_pt = TableHelper.get_moving_pt_from_move(move=move)  # 動かした駒の種類。盤上の移動元の駒か、打った駒。
+            move        = self._move_list[layer_no]
+            moving_pt   = TableHelper.get_moving_pt_from_move(move=move)  # 動かした駒の種類。盤上の移動元の駒か、打った駒。
+            cap_pt      = self._cap_list[layer_no]
 
             if not isinstance(move, int):   # FIXME バグがあるよう
                 raise ValueError(f"move は int 型である必要があります。 {layer_no=} {type(move)=} {move=} {self._move_list=}")
 
             # 指し手のUSI表記を独自形式に変更。
-            move_str = HumanPresentableMoveModel.from_move(move=move, moving_pt=moving_pt, is_mars=is_mars, is_gote=is_gote).stringify()
+            move_str = HumanPresentableMoveModel.from_move(move=move, moving_pt=moving_pt, cap_pt=cap_pt, is_mars=is_mars, is_gote=is_gote).stringify()
 
-            cap                             = self._cap_list[layer_no]
             piece_exchange_value_on_earth   = self._piece_exchange_value_list_on_earth[layer_no]
-            tokens.append(f"({len_of_move_list - layer_no}){move_str}({_cap(cap=cap, is_mars=is_mars)}{piece_exchange_value_on_earth})")
+            tokens.append(f"({len_of_move_list - layer_no}){move_str}({piece_exchange_value_on_earth})")    # {_cap(cap_pt=cap_pt, is_mars=is_mars)}
 
             # 手番交代
             is_mars = not is_mars

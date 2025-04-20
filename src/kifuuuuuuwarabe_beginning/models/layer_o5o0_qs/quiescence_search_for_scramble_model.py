@@ -212,7 +212,9 @@ class QuiescenceSearchForScrambleModel():
             # MARK: 一手指した後
             ####################
 
-            self._search_model.frontwards_plot_model.append_move(my_move)
+            self._search_model.frontwards_plot_model.append_move(
+                    move    = my_move,
+                    cap_pt  = cap_pt)
             depth       = depth - 1                 # 深さを１下げる。
             is_mars     = not is_mars  # 手番が逆になる。
 

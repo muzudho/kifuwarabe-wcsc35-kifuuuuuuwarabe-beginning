@@ -1,8 +1,7 @@
 import cshogi
 
 from ..layer_o1o_8o0_str import StringResourcesModel
-from ..layer_o1o0 import PlanetPieceTypeModel
-from ..layer_o1o0 import SquareModel
+from ..layer_o1o0 import PlanetPieceTypeModel, SquareModel
 
 
 class HumanPresentableMoveModel:
@@ -11,12 +10,14 @@ class HumanPresentableMoveModel:
 
 
     @staticmethod
-    def from_move(move, moving_pt, is_mars, is_gote):
+    def from_move(move, moving_pt, cap_pt, is_mars, is_gote):
         """
         Parameters
         ----------
         moving_pt : int
             駒種類。盤上の移動元の駒か、打った駒。
+        cap_pt : int
+            取った駒種類。
         is_mars : bool
             火星か。
         is_gote : bool
@@ -38,18 +39,22 @@ class HumanPresentableMoveModel:
 
         return HumanPresentableMoveModel(
                 move            = move,
+                cap_pt          = cap_pt,
                 src_sq_obj      = src_sq_obj,
                 dst_sq_obj      = dst_sq_obj,
                 moving_pt_str   = moving_pt_str,
-                is_drop         = is_drop)
+                is_drop         = is_drop,
+                is_mars         = is_mars)
 
 
-    def __init__(self, move, src_sq_obj, dst_sq_obj, moving_pt_str, is_drop):
-        self._move      = move
+    def __init__(self, move, cap_pt, src_sq_obj, dst_sq_obj, moving_pt_str, is_drop, is_mars):
+        self._move          = move
+        self._cap_pt        = cap_pt
         self._src_sq_obj    = src_sq_obj
         self._dst_sq_obj    = dst_sq_obj
         self._moving_pt_str = moving_pt_str
         self._is_drop       = is_drop
+        self._is_mars       = is_mars
 
 
     @property
@@ -101,4 +106,13 @@ class HumanPresentableMoveModel:
             return ''
 
 
-        return f"{src_str}{dst_file_str}{dst_rank_str}{self.moving_pt_str}{drop_kanji()}"
+        def _cap(cap_pt, is_mars):
+            if cap_pt == cshogi.NONE:
+                return ''
+            
+            if is_mars:
+              return f"-{PlanetPieceTypeModel.earth_kanji(piece_type=cap_pt)}"    # 火星側が取ったのは地球側の駒
+            return f"+{PlanetPieceTypeModel.mars_kanji(piece_type=cap_pt)}"     # 地球側が取ったのは火星側の駒
+
+
+        return f"{src_str}{dst_file_str}{dst_rank_str}{self.moving_pt_str}{drop_kanji()}{_cap(cap_pt=self._cap_pt,is_mars=self._is_mars)=}"
