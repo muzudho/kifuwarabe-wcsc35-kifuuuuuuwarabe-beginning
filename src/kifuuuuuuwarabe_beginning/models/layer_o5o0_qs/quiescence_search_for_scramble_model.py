@@ -134,6 +134,7 @@ class QuiescenceSearchForScrambleModel():
         best_old_sibling_plot_model_in_children = None
         best_move           = None
         best_move_cap_pt    = None
+        depth_extend        = 0
 
 
         # def _get_beta_cutoff_value(is_mars, best_plot_model_in_older_sibling):
@@ -192,10 +193,16 @@ class QuiescenceSearchForScrambleModel():
             cap_pt      = self.search_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
             is_capture  = (cap_pt != cshogi.NONE)
 
-            # ２階以降の呼出時は、駒を取る手でなければ無視。 FIXME 王手が絡んでいるとき、取れないこともあるから、王手が絡むときは場合分けしたい。
+            # ２階以降の呼出時は、駒を取る手でなければ無視。
             if not is_capture:
-                case_1 += 1
-                continue
+                # ＜📚原則２＞ 王手は（駒を取らない手であっても）探索を続け、深さを１手延長する。
+                if self.search_model.gymnasium.table.is_check():
+                    #depth_extend += 1  # FIXME 探索が終わらないくなる。
+                    pass
+
+                else:
+                    case_1 += 1
+                    continue
 
             ################
             # MARK: 一手指す
@@ -219,7 +226,7 @@ class QuiescenceSearchForScrambleModel():
             # NOTE ネガ・マックスではないので、評価値の正負を反転させなくていい。
             child_plot_model = self.search_alice(      # 再帰呼出
                     #best_plot_model_in_older_sibling    = best_plot_model_in_children,
-                    depth       = depth,
+                    depth       = depth + depth_extend,
                     is_mars     = is_mars)
 
             ################
