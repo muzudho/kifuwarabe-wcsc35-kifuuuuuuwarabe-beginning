@@ -8,25 +8,37 @@ from ...views import TableView
 from ..layer_o3o0 import MovesPickupFilterLogics, MovesReductionFilterLogics
 
 
-class GoLogic():
+class GoLogic:
 
 
     @staticmethod
-    def start_with_health_check(gymnasium):
+    def start_with_health_check(move_list, gymnasium):
         """盤面が与えられるので、次の１手を返します。
+
+        Parameters
+        ----------
+        move_list : list
+            指し手のリスト。
+        gymnasium : Gymnasium
+            ［体育館］
 
         Returns
         -------
-        best_move : int
-            ［指す手］
+        result_of_go_model : ResultOfGoModel
+            探索の結果。
         """
+        move_list = list(gymnasium.table.legal_moves)
+
         gymnasium.health_check.on_go_started()
 
-        go_2nd = _Go2nd(gymnasium)
+        go_2nd = _Go2nd(
+                gymnasium=gymnasium)
+        result_of_go_model = go_2nd.start_all_phases(
+                move_list=move_list)
 
         gymnasium.health_check.on_go_finished()
 
-        return go_2nd.start_all_phases()
+        return result_of_go_model
 
 
 class _Go2nd():
@@ -36,31 +48,29 @@ class _Go2nd():
         self._gymnasium = gymnasium
 
 
-    def start_all_phases(self):
+    def start_all_phases(self, move_list):
         """盤面が与えられるので、次の１手を返します。
 
         最初の１手だけの処理です。
 
+        Parameters
+        ----------
+        move_list : list
+            指し手のリスト。
+        
         Returns
         -------
-        result_state : int
-            結果の種類。
-        friend_value : int
-            手番から見た駒得評価値。
-        best_move : int
-            ［指す手］
-            該当が無ければナン。
+        result_of_go_model : ResultOfGoModel
+            探索の結果。
         """
 
-        all_regal_moves = list(self._gymnasium.table.legal_moves)
-
-        for move in all_regal_moves:
+        for move in move_list:
             self._gymnasium.health_check.append(
                     move    = move,
                     name    = 'legal',
                     value   =  True)
 
-        length_by_cshogi        = len(all_regal_moves)  # cshogi が示した合法手の数
+        length_by_cshogi        = len(move_list)  # cshogi が示した合法手の数
         length_of_quiescence_search_by_kifuwarabe   = length_by_cshogi  # きふわらべ が静止探索で絞り込んだ指し手の数
         length_by_kifuwarabe    = length_by_cshogi      # きふわらべ が最終的に絞り込んだ指し手の数
         #print(f"D-74: {len(all_regal_moves)=}")
@@ -111,13 +121,13 @@ class _Go2nd():
         # MARK: 静止探索
         ################
 
-        old_all_legal_moves = all_regal_moves.copy()
+        old_all_legal_moves = move_list.copy()
 
         (
             remaining_moves_qs,
             number_of_visited_nodes
         ) = _quiescence_search_at_first(
-                remaining_moves = all_regal_moves,
+                remaining_moves = move_list,
                 gymnasium       = self._gymnasium)
         length_of_quiescence_search_by_kifuwarabe   = len(remaining_moves_qs)
         self._gymnasium.thinking_logger_module.append(f"QS_select_length={length_of_quiescence_search_by_kifuwarabe}")

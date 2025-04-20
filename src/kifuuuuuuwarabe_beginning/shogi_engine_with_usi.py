@@ -189,7 +189,8 @@ class ShogiEngineCompatibleWithUSIProtocol():
         """
 
         result_of_go = GoLogic.start_with_health_check(
-                gymnasium = self._gymnasium)
+                move_list   = list(self._gymnasium.table.legal_moves),
+                gymnasium   = self._gymnasium)
 
         if result_of_go.search_result_state_model == SearchResultStateModel.RESIGN:
             # 投了。
@@ -300,10 +301,15 @@ class ShogiEngineCompatibleWithUSIProtocol():
         example: ７六歩
             code: go_qs 7g7f
         """
-        move = self._gymnasium.table.move_from_usi(cmd[1])
-        pass
-        # self._gymnasium.do_move_o1x(
-        #         move = move)
+        move_list = [
+            self._gymnasium.table.move_from_usi(cmd[1])
+        ]
+
+        result_of_go = GoLogic.start_with_health_check(
+                move_list   = move_list,
+                gymnasium   = self._gymnasium)
+
+        print(f"end go_qs")
 
 
     def test_will(self):
