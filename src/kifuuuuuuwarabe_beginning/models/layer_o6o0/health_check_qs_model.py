@@ -81,7 +81,8 @@ class HealthCheckQsModel:
         lines.append('HEALTH CHECK QS WORKSHEET')
         lines.append('-------------------------')
 
-        for item in self._item_list:
-            lines.append(item.stringify())
+        for i in range(0, len(self._item_list)):
+            item = self._item_list[i]
+            lines.append(f"({i}) {item.stringify()}")
 
         return '\n'.join(lines)
