@@ -27,8 +27,6 @@ class GoLogic:
         result_of_go_model : ResultOfGoModel
             探索の結果。
         """
-        move_list = list(gymnasium.table.legal_moves)
-
         gymnasium.health_check.on_go_started()
 
         go_2nd = _Go2nd(
