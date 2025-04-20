@@ -115,4 +115,4 @@ class HumanPresentableMoveModel:
             return f"+{PlanetPieceTypeModel.mars_kanji(piece_type=cap_pt)}"     # 地球側が取ったのは火星側の駒
 
 
-        return f"{src_str}{dst_file_str}{dst_rank_str}{self.moving_pt_str}{drop_kanji()}{_cap(cap_pt=self._cap_pt,is_mars=self._is_mars)=}"
+        return f"{src_str}{dst_file_str}{dst_rank_str}{self.moving_pt_str}{drop_kanji()}{_cap(cap_pt=self._cap_pt,is_mars=self._is_mars)}"

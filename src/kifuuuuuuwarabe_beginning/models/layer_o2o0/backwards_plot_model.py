@@ -265,14 +265,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             return '地'         # Earth
 
 
-        # def _cap(cap_pt, is_mars):
-        #     if cap_pt == cshogi.NONE:
-        #         return ''
-            
-        #     if is_mars:
-        #       return f"-{PlanetPieceTypeModel.earth_kanji(piece_type=cap_pt)}"    # 火星側が取ったのは地球側の駒
-        #     return f"+{PlanetPieceTypeModel.mars_kanji(piece_type=cap_pt)}"     # 地球側が取ったのは火星側の駒
-        
         tokens = []
         is_mars = self.is_mars_at_peek   # 逆順なので、ピークから。
         is_gote = self.is_gote_at_peek   # 逆順なので、ピークから。
@@ -290,7 +282,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             move_str = HumanPresentableMoveModel.from_move(move=move, moving_pt=moving_pt, cap_pt=cap_pt, is_mars=is_mars, is_gote=is_gote).stringify()
 
             piece_exchange_value_on_earth   = self._piece_exchange_value_list_on_earth[layer_no]
-            tokens.append(f"({len_of_move_list - layer_no}){move_str}({piece_exchange_value_on_earth})")    # {_cap(cap_pt=cap_pt, is_mars=is_mars)}
+            tokens.append(f"({len_of_move_list - layer_no}){move_str}({piece_exchange_value_on_earth})")
 
             # 手番交代
             is_mars = not is_mars
