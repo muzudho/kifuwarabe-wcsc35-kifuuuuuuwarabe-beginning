@@ -245,7 +245,6 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
     all_backwards_plot_models_at_first = qs_at_first.search_at_first(
             #best_plot_model_in_older_sibling    = None,
             depth                               = max_depth,
-            is_mars                             = False,
             #beta_cutoff_value                   = constants.value.BETA_CUTOFF_VALUE,    # すごい高い点数。
             remaining_moves                     = remaining_moves)
 

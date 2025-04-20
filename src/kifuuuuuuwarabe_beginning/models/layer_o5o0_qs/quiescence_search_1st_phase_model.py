@@ -38,7 +38,6 @@ class QuiescenceSearch1stPhaseModel():
             self,
             #best_plot_model_in_older_sibling,
             depth,
-            is_mars,
             remaining_moves):
         """静止探索の開始。
 
@@ -52,8 +51,6 @@ class QuiescenceSearch1stPhaseModel():
         #     兄たちの中で最善の読み筋、またはナン。ベータカットに使う。
         depth : int
             あと何手深く読むか。
-        is_mars : bool
-            対戦相手か？
         remaining_moves : list<int>
             指し手のリスト。
 
@@ -78,7 +75,7 @@ class QuiescenceSearch1stPhaseModel():
             """手番の投了局面時。
             """
             best_plot_model = BackwardsPlotModel(
-                    is_mars_at_declaration  = is_mars,
+                    is_mars_at_declaration  = self._search_model.gymnasium.is_mars,
                     is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
                     declaration             = constants.declaration.RESIGN,
                     cutoff_reason           = cutoff_reason.GAME_OVER,
@@ -96,7 +93,7 @@ class QuiescenceSearch1stPhaseModel():
                 cap_pt = self._search_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
 
                 best_plot_model = BackwardsPlotModel(
-                        is_mars_at_declaration  = not is_mars,  # ［詰む］のは、もう１手先だから。
+                        is_mars_at_declaration  = not self._search_model.gymnasium.is_mars,  # ［詰む］のは、もう１手先だから。
                         is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
                         declaration             = constants.declaration.RESIGN,
                         cutoff_reason           = cutoff_reason.MATE_MOVE_IN_1_PLY,
@@ -106,7 +103,7 @@ class QuiescenceSearch1stPhaseModel():
                 best_plot_model.append_move(
                         move                = mate_move,
                         capture_piece_type  = cap_pt,
-                        hint                = f"一手詰め１_{Mars.japanese(is_mars)}")
+                        hint                = f"一手詰め１_{Mars.japanese(self._search_model.gymnasium.is_mars)}")
 
                 all_backwards_plot_models_at_first.append(best_plot_model)
                 return all_backwards_plot_models_at_first
@@ -115,7 +112,7 @@ class QuiescenceSearch1stPhaseModel():
             """手番の入玉宣言局面時。
             """
             best_plot_model = BackwardsPlotModel(
-                    is_mars_at_declaration  = is_mars,
+                    is_mars_at_declaration  = self._search_model.gymnasium.is_mars,
                     is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
                     declaration             = constants.declaration.NYUGYOKU_WIN,
                     cutoff_reason           = cutoff_reason.NYUGYOKU_WIN,
@@ -126,7 +123,7 @@ class QuiescenceSearch1stPhaseModel():
         # これ以上深く読まない場合。
         if depth < 1:
             best_plot_model = BackwardsPlotModel(
-                    is_mars_at_declaration  = is_mars,
+                    is_mars_at_declaration  = self._search_model.gymnasium.is_mars,
                     is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
                     declaration             = constants.declaration.MAX_DEPTH_BY_THINK, # 読みの最大深さ。
                     cutoff_reason           = cutoff_reason.MAX_DEPTH,
@@ -195,8 +192,7 @@ class QuiescenceSearch1stPhaseModel():
                     move    = my_move,
                     cap_pt  = cap_pt)
             self._search_model.number_of_visited_nodes  += 1
-            depth                                       -= 1                            # 深さを１下げる。
-            is_mars                                     = not is_mars      # 手番が逆になる。
+            depth                                       -= 1    # 深さを１下げる。
 
             ####################
             # MARK: 相手番の処理
@@ -206,8 +202,7 @@ class QuiescenceSearch1stPhaseModel():
             quiescenec_search_for_scramble_model = QuiescenceSearch2ndPhaseModel(
                     search_model    = self._search_model)
             future_plot_model = quiescenec_search_for_scramble_model.search_alice(      # 再帰呼出
-                    depth       = depth + depth_extend,
-                    is_mars     = is_mars)
+                    depth       = depth + depth_extend)
 
             ################
             # MARK: 一手戻す
@@ -220,8 +215,7 @@ class QuiescenceSearch1stPhaseModel():
             ####################
 
             self._search_model.frontwards_plot_model.pop_move()
-            depth       += 1                # 深さを１上げる。
-            is_mars     = not is_mars       # 手番が逆になる。
+            depth       += 1    # 深さを１上げる。
 
             ##################
             # MARK: 手番の処理
@@ -231,7 +225,7 @@ class QuiescenceSearch1stPhaseModel():
             future_plot_model.append_move(
                     move                = my_move,
                     capture_piece_type  = cap_pt,
-                    hint                = f"１階の{Mars.japanese(is_mars)}の手はなんでも記憶")
+                    hint                = f"１階の{Mars.japanese(self._search_model.gymnasium.is_mars)}の手はなんでも記憶")
             all_backwards_plot_models_at_first.append(future_plot_model)
 
             # NOTE この辺りは［０階］。
@@ -245,11 +239,11 @@ class QuiescenceSearch1stPhaseModel():
         # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
         if len(all_backwards_plot_models_at_first) < 1:
             future_plot_model = BackwardsPlotModel(
-                    is_mars_at_declaration  = is_mars,
+                    is_mars_at_declaration  = self._search_model.gymnasium.is_mars,
                     is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
                     declaration             = constants.declaration.NO_CANDIDATES, # 有力な候補手無し。
                     cutoff_reason           = cutoff_reason.NO_MOVES,
-                    hint                    = f"１階の{Mars.japanese(is_mars)}は指したい手無し_{depth=}/{self._search_model.max_depth=}_{len(all_backwards_plot_models_at_first)=}/{len(remaining_moves)=}")
+                    hint                    = f"１階の{Mars.japanese(self._search_model.gymnasium.is_mars)}は指したい手無し_{depth=}/{self._search_model.max_depth=}_{len(all_backwards_plot_models_at_first)=}/{len(remaining_moves)=}")
             all_backwards_plot_models_at_first.append(future_plot_model)
 
         self._search_model.end_time = time.time()    # 計測終了時間

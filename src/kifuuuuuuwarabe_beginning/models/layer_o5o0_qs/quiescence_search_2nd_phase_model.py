@@ -33,8 +33,7 @@ class QuiescenceSearch2ndPhaseModel():
     def search_alice(
             self,
             #best_plot_model_in_older_sibling,
-            depth,
-            is_mars):
+            depth):
         """
         Parameters
         ----------
@@ -42,8 +41,6 @@ class QuiescenceSearch2ndPhaseModel():
         #     兄たちの中で最善の読み筋、またはナン。ベータカットに使う。
         depth : int
             あと何手深く読むか。
-        is_mars : bool
-            対戦相手か？
 
         Returns
         -------
@@ -68,7 +65,7 @@ class QuiescenceSearch2ndPhaseModel():
             """手番の投了局面時。
             """
             best_plot_model = BackwardsPlotModel(
-                    is_mars_at_declaration  = is_mars,
+                    is_mars_at_declaration  = self._search_model.gymnasium.is_mars,
                     is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
                     declaration             = constants.declaration.RESIGN,
                     cutoff_reason           = cutoff_reason.GAME_OVER,
@@ -86,7 +83,7 @@ class QuiescenceSearch2ndPhaseModel():
                 cap_pt = self.search_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
 
                 best_plot_model = BackwardsPlotModel(
-                        is_mars_at_declaration  = not is_mars,  # ［詰む］のは、もう１手先だから。
+                        is_mars_at_declaration  = not self._search_model.gymnasium.is_mars,     # ［詰む］のは、もう１手先だから。
                         is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
                         declaration             = constants.declaration.RESIGN,
                         cutoff_reason           = cutoff_reason.MATE_MOVE_IN_1_PLY,
@@ -96,7 +93,7 @@ class QuiescenceSearch2ndPhaseModel():
                 best_plot_model.append_move(
                         move                = mate_move,
                         capture_piece_type  = cap_pt,
-                        hint                = f"{Mars.japanese(is_mars)}の一手詰め時")
+                        hint                = f"{Mars.japanese(self._search_model.gymnasium.is_mars)}の一手詰め時")
 
                 return best_plot_model
 
@@ -104,7 +101,7 @@ class QuiescenceSearch2ndPhaseModel():
             """手番の入玉宣言局面時。
             """
             best_plot_model = BackwardsPlotModel(
-                    is_mars_at_declaration  = is_mars,
+                    is_mars_at_declaration  = self._search_model.gymnasium.is_mars,
                     is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
                     declaration             = constants.declaration.NYUGYOKU_WIN,
                     cutoff_reason           = cutoff_reason.NYUGYOKU_WIN,
@@ -116,11 +113,11 @@ class QuiescenceSearch2ndPhaseModel():
         if depth < 1:
             # 末端局面。
             return BackwardsPlotModel(
-                    is_mars_at_declaration  = is_mars,
+                    is_mars_at_declaration  = self._search_model.gymnasium.is_mars,
                     is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
                     declaration             = constants.declaration.MAX_DEPTH_BY_THINK, # 読みの最大深さ。
                     cutoff_reason           = cutoff_reason.MAX_DEPTH,      # ［最大探索深さ］が打切り理由。
-                    hint                    = f"{self._search_model.max_depth - depth}階の{Mars.japanese(is_mars)}でこれ以上深く読まない場合_{depth=}/{self._search_model.max_depth=}")
+                    hint                    = f"{self._search_model.max_depth - depth}階の{Mars.japanese(self._search_model.gymnasium.is_mars)}でこれ以上深く読まない場合_{depth=}/{self._search_model.max_depth=}")
 
         # まだ深く読む場合。
 
@@ -134,10 +131,10 @@ class QuiescenceSearch2ndPhaseModel():
         depth_extend        = 0
 
 
-        # def _get_beta_cutoff_value(is_mars, best_plot_model_in_older_sibling):
+        # def _get_beta_cutoff_value(best_plot_model_in_older_sibling):
         #     # 最善手が未定なら、天井（底）を最大にします。
         #     if best_plot_model_in_older_sibling is None:
-        #         if is_mars:
+        #         if self._search_model.gymnasium.is_mars:
         #             return constants.value.BETA_CUTOFF_VALUE        # 天井
         #         return - constants.value.BETA_CUTOFF_VALUE  # 底
 
@@ -215,8 +212,7 @@ class QuiescenceSearch2ndPhaseModel():
             self._search_model.frontwards_plot_model.append_move(
                     move    = my_move,
                     cap_pt  = cap_pt)
-            depth       = depth - 1                 # 深さを１下げる。
-            is_mars     = not is_mars  # 手番が逆になる。
+            depth       = depth - 1     # 深さを１下げる。
 
             ####################
             # MARK: 相手番の処理
@@ -225,8 +221,7 @@ class QuiescenceSearch2ndPhaseModel():
             # NOTE ネガ・マックスではないので、評価値の正負を反転させなくていい。
             child_plot_model = self.search_alice(      # 再帰呼出
                     #best_plot_model_in_older_sibling    = best_plot_model_in_children,
-                    depth       = depth + depth_extend,
-                    is_mars     = is_mars)
+                    depth       = depth + depth_extend)
 
             ################
             # MARK: 一手戻す
@@ -240,9 +235,8 @@ class QuiescenceSearch2ndPhaseModel():
 
             self._search_model.frontwards_plot_model.pop_move()
             depth       = depth + 1                 # 深さを１上げる。
-            is_mars     = not is_mars  # 手番が逆になる。
             ptolemaic_theory_model  = PtolemaicTheoryModel(
-                    is_mars=is_mars)
+                    is_mars=self._search_model.gymnasium.is_mars)
 
             ##################
             # MARK: 手番の処理
@@ -253,7 +247,7 @@ class QuiescenceSearch2ndPhaseModel():
             # NOTE `earth` - 自分。 `mars` - 対戦相手。
             piece_exchange_value_on_earth = PieceValuesModel.get_piece_exchange_value_on_earth(      # 交換値に変換。正の数とする。
                     pt          = cap_pt,
-                    is_mars     = is_mars)
+                    is_mars     = self._search_model.gymnasium.is_mars)
 
             # この枝の点（将来の点＋取った駒の点）
             this_branch_value_on_earth = child_plot_model.get_exchange_value_on_earth() + piece_exchange_value_on_earth
@@ -283,7 +277,7 @@ class QuiescenceSearch2ndPhaseModel():
             # # 兄枝が有るなら。
             # else:
             #     # def _log_1(case_1):
-            #     #     return f"[search] {case_1} {depth=}/{self._search_model.max_depth=} {Mars.japanese(is_mars)} {self.stringify()},{cshogi.move_to_usi(my_move)}(私{this_branch_value_on_earth}) {old_sibling_value=} < {child_plot_model.stringify()=}"
+            #     #     return f"[search] {case_1} {depth=}/{self._search_model.max_depth=} {Mars.japanese(self._search_model.gymnasium.is_mars)} {self.stringify()},{cshogi.move_to_usi(my_move)}(私{this_branch_value_on_earth}) {old_sibling_value=} < {child_plot_model.stringify()=}"
 
 
             #     if its_update_best:
@@ -319,16 +313,16 @@ class QuiescenceSearch2ndPhaseModel():
         # 指したい手がなかったなら、静止探索の末端局面を返す。
         if best_old_sibling_plot_model_in_children is None:
             return BackwardsPlotModel(
-                    is_mars_at_declaration  = is_mars,
+                    is_mars_at_declaration  = self._search_model.gymnasium.is_mars,
                     is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
                     declaration             = constants.declaration.NO_CANDIDATES,  # 有力な候補手無し。
                     cutoff_reason           = cutoff_reason.NO_MOVES,
-                    hint                    = f"{self._search_model.max_depth - depth + 1}階の{Mars.japanese(is_mars)}は指したい手無し,move数={len(legal_move_list)},{case_1=},{case_2=},{case_4=},{case_5=},{case_6t=},({'_'.join(case_6t_hint_list)}),{case_6f=},({'_'.join(case_6f_hint_list)}),{case_8a=},{case_8a=},{case_8b=},{case_8c=},{case_8d=},{case_8e=}")
+                    hint                    = f"{self._search_model.max_depth - depth + 1}階の{Mars.japanese(self._search_model.gymnasium.is_mars)}は指したい手無し,move数={len(legal_move_list)},{case_1=},{case_2=},{case_4=},{case_5=},{case_6t=},({'_'.join(case_6t_hint_list)}),{case_6f=},({'_'.join(case_6f_hint_list)}),{case_8a=},{case_8a=},{case_8b=},{case_8c=},{case_8d=},{case_8e=}")
 
         # 今回の手を付け加える。
         best_old_sibling_plot_model_in_children.append_move(
                 move                = best_move,
                 capture_piece_type  = best_move_cap_pt,
-                hint                = f"{self._search_model.max_depth - depth + 1}階の手記憶_{Mars.japanese(is_mars)}")
+                hint                = f"{self._search_model.max_depth - depth + 1}階の{Mars.japanese(self._search_model.gymnasium.is_mars)}の手記憶")
 
         return best_old_sibling_plot_model_in_children
