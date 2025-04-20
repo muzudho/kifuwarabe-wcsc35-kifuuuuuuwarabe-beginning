@@ -27,14 +27,14 @@ class GoLogic:
         result_of_go_model : ResultOfGoModel
             探索の結果。
         """
-        gymnasium.health_check.on_go_started()
+        gymnasium.health_check_go_model.on_go_started()
 
         go_2nd = _Go2nd(
                 gymnasium=gymnasium)
         result_of_go_model = go_2nd.start_all_phases(
                 move_list=move_list)
 
-        gymnasium.health_check.on_go_finished()
+        gymnasium.health_check_go_model.on_go_finished()
 
         return result_of_go_model
 
@@ -63,7 +63,7 @@ class _Go2nd():
         """
 
         for move in move_list:
-            self._gymnasium.health_check.append(
+            self._gymnasium.health_check_go_model.append(
                     move    = move,
                     name    = 'legal',
                     value   =  True)
@@ -134,14 +134,14 @@ class _Go2nd():
             remaining_moves_qs = old_all_legal_moves
             self._gymnasium.thinking_logger_module.append(f"QS is 0. Rollback to old_all_legal_moves. len={len(remaining_moves_qs)}.")
             for move in remaining_moves_qs:
-                self._gymnasium.health_check.append(
+                self._gymnasium.health_check_go_model.append(
                         move    = move,
                         name    = 'QS_select',
                         value   = 'QS_cancel')
 
         else:
             for move in remaining_moves_qs:
-                self._gymnasium.health_check.append(
+                self._gymnasium.health_check_go_model.append(
                         move    = move,
                         name    = 'QS_select',
                         value   = 'QS_select')
@@ -175,13 +175,13 @@ class _Go2nd():
                 self._gymnasium.thinking_logger_module.append(f"NR is 0. Rollback to QS. len={len(remaining_moves_nr)}.")
 
                 for move in remaining_moves_nr:
-                    self._gymnasium.health_check.append(
+                    self._gymnasium.health_check_go_model.append(
                             move    = move,
                             name    = 'NR_remaining',
                             value   = 'NR_cancel')
             else:
                 for move in remaining_moves_nr:
-                    self._gymnasium.health_check.append(
+                    self._gymnasium.health_check_go_model.append(
                             move    = move,
                             name    = 'NR_remaining',
                             value   = 'NR_remaining')
@@ -194,7 +194,7 @@ class _Go2nd():
         else:
             best_move = remaining_moves_r[0]
         
-        self._gymnasium.health_check.append(
+        self._gymnasium.health_check_go_model.append(
                 move    = best_move,
                 name    = 'BM_bestmove',
                 value   =  True)
@@ -204,12 +204,24 @@ class _Go2nd():
         message = f"""\
 {TableView(gymnasium=self._gymnasium).stringify()}
 
-{self._gymnasium.health_check.stringify()}
+{self._gymnasium.health_check_go_model.stringify()}
+"""
+        
+        if self._gymnasium.health_check_qs_model.enabled:
+            message = f"""\
+{message}
+
+{self._gymnasium.health_check_qs_model.stringify()}
+"""
+
+        message = f"""\
+{message}
 
 GOREI COLLECTION
 ----------------
 {self._gymnasium.gourei_collection_model.stringify()}
 """
+
         # TODO ネガティブ・ルールの一覧も表示したい。
         self._gymnasium.thinking_logger_module.append(message)
         # NOTE これを書くと、将棋ホームでフリーズ： print(message, file=sys.stderr)
@@ -290,7 +302,7 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
 
         for backwards_plot_model in all_backwards_plot_models_at_first:
 
-            gymnasium.health_check.append(
+            gymnasium.health_check_go_model.append(
                     move    = backwards_plot_model.peek_move,
                     name    = 'QS_backwards_plot_model',
                     value   = backwards_plot_model)
@@ -301,21 +313,21 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
                 if value_on_earth == 0:
                     exists_zero_value_move = True
                 
-                gymnasium.health_check.append(
+                gymnasium.health_check_go_model.append(
                         move    = backwards_plot_model.peek_move,
                         name    = 'eliminate171',
                         value   = f"{backwards_plot_model.stringify_2():10} not_cap_not_posite")
 
             # （２）最高点でない手。
             elif value_on_earth < best_exchange_value:
-                gymnasium.health_check.append(
+                gymnasium.health_check_go_model.append(
                         move    = backwards_plot_model.peek_move,
                         name    = 'eliminate171',
                         value   = f"{backwards_plot_model.stringify_2():10} not_best")
 
             # （３）リスクヘッジにならない手
             elif exists_zero_value_move and value_on_earth < 0:
-                gymnasium.health_check.append(
+                gymnasium.health_check_go_model.append(
                         move    = backwards_plot_model.peek_move,
                         name    = 'eliminate171',
                         value   = f"{backwards_plot_model.stringify_2():10} not_risk_hedge")
@@ -323,7 +335,7 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
             # それ以外の手は選択します。
             else:
                 alice_s_move_list.append(backwards_plot_model.peek_move)
-                gymnasium.health_check.append(
+                gymnasium.health_check_go_model.append(
                         move    = backwards_plot_model.peek_move,
                         name    = 'eliminate171',
                         value   = f"{backwards_plot_model.stringify_2():10} ok")

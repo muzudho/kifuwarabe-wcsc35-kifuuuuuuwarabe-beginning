@@ -1,8 +1,8 @@
 import cshogi
 
 
-class HealthCheckModel():
-    """健康診断。
+class HealthCheckGoModel():
+    """go コマンドの健康診断。
     """
 
 
@@ -108,8 +108,8 @@ class HealthCheckModel():
 
         lines.append(f"* {self._gymnasium.config_doc['search']['capture_depth']} 手読み")
         lines.append('')
-        lines.append('HEALTH CHECK WORKSHEET')
-        lines.append('----------------------')
+        lines.append('HEALTH CHECK GO WORKSHEET')
+        lines.append('-------------------------')
 
         header_list = []
         header_list.append(f"{'move':5}")

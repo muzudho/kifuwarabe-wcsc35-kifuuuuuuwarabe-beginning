@@ -305,9 +305,13 @@ class ShogiEngineCompatibleWithUSIProtocol():
             self._gymnasium.table.move_from_usi(cmd[1])
         ]
 
+        self._gymnasium.health_check_qs_model.start_monitor()
+
         result_of_go = GoLogic.start_with_health_check(
                 move_list   = move_list,
                 gymnasium   = self._gymnasium)
+
+        self._gymnasium.health_check_qs_model.end_monitor()
 
         print(f"end go_qs")
 

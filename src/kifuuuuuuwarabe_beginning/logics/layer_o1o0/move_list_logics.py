@@ -45,7 +45,7 @@ class MoveListLogics():
             src_pt = cshogi.piece_to_piece_type(src_pc)
             src_value = PieceValuesModel.by_piece_type(pt=src_pt)   # ［取った駒の価値］
 
-            gymnasium.health_check.append(
+            gymnasium.health_check_go_model.append(
                     move    = move_eat,
                     name    = 'SQ_eater',
                     value   = f"SQ_eater{PlanetPieceModel.kanji(piece=src_pc, is_gote=gymnasium.table.is_gote)}{src_value}")
@@ -73,7 +73,7 @@ class MoveListLogics():
             src_pt = cshogi.piece_to_piece_type(src_pc)
             src_value = PieceValuesModel.by_piece_type(pt=src_pt)   # ［取った駒の価値］
 
-            gymnasium.health_check.append(
+            gymnasium.health_check_go_model.append(
                     move    = move_eat,
                     name    = 'cheapest',
                     value   = f"cheapest{PlanetPieceModel.kanji(piece=src_pc, is_gote=gymnasium.table.is_gote)}{src_value}")

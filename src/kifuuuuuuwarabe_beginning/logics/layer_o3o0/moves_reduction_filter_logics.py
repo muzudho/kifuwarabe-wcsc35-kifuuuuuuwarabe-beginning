@@ -42,9 +42,9 @@ class MovesReductionFilterLogics():
             if len(remaining_moves) < 1:
                 remaining_moves = old_remaining_moves
 
-            # ログ
+            # ログ貯蓄
             for move in remaining_moves:
-                gymnasium.health_check.append(
+                gymnasium.health_check_go_model.append(
                         move    = move,
                         name    = f"NR[{negative_rule.id}]",
                         value   = True)

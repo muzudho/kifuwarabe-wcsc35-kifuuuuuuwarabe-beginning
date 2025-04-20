@@ -6,7 +6,8 @@ from ...modules import ThinkingLoggerModule
 from ..layer_o1o0 import TableModel, TurnModel
 from ..layer_o1o0.table_access_object import PieceValueTAO
 from ..layer_o2o0 import BasketballCourtModel
-from .health_check_model import HealthCheckModel
+from .health_check_go_model import HealthCheckGoModel
+from .health_check_qs_model import HealthCheckQsModel
 from .gourei_collection_model import GoureiCollectionModel
 
 
@@ -43,7 +44,8 @@ class GymnasiumModel():
         self._basketball_court_model = None
         self._gourei_collection_model = None
 
-        self._health_check = None   # 健康診断
+        self._health_check_go_model = None   # 健康診断
+        self._health_check_qs_model = None   # 健康診断
 
 
     @property
@@ -137,8 +139,13 @@ class GymnasiumModel():
 
 
     @property
-    def health_check(self):
-        return self._health_check
+    def health_check_go_model(self):
+        return self._health_check_go_model
+
+
+    @property
+    def health_check_qs_model(self):
+        return self._health_check_qs_model
 
 
     ########################
@@ -160,7 +167,9 @@ class GymnasiumModel():
     def on_position(self, command):
         #print(f"★ [gymnasium.py > on_position] start.")
         self.earth_turn = self._table.turn          # この将棋エンジンの手番を記録。
-        self._health_check  = HealthCheckModel(     # 健康診断をクリアー。
+        self._health_check_go_model  = HealthCheckGoModel(     # 健康診断をクリアー。
+                gymnasium   = self)
+        self._health_check_qs_model  = HealthCheckQsModel(     # 健康診断をクリアー。
                 gymnasium   = self)
 
         if self._thinking_logger_module is None:
