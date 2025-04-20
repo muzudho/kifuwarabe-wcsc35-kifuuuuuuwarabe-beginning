@@ -81,6 +81,7 @@ class QuiescenceSearch1stPhaseModel():
                     cutoff_reason           = cutoff_reason.GAME_OVER,
                     hint                    = '手番の投了局面時１')
             all_backwards_plot_models_at_first.append(best_plot_model)
+            self._search_model.gymnasium.health_check_qs_model.append_node('＜GameOver＞')
             return all_backwards_plot_models_at_first
 
         # 一手詰めを詰める
@@ -106,6 +107,8 @@ class QuiescenceSearch1stPhaseModel():
                         hint                = f"一手詰め１_{Mars.japanese(self._search_model.gymnasium.is_mars)}")
 
                 all_backwards_plot_models_at_first.append(best_plot_model)
+                self._search_model.gymnasium.health_check_qs_model.append_node(f"＜一手詰め＞{cshogi.move_to_usi(mate_move)}")
+                self._search_model.gymnasium.health_check_qs_model.append_node('＜GameOver＞')
                 return all_backwards_plot_models_at_first
 
         if self._search_model.gymnasium.table.is_nyugyoku():
@@ -118,6 +121,7 @@ class QuiescenceSearch1stPhaseModel():
                     cutoff_reason           = cutoff_reason.NYUGYOKU_WIN,
                     hint                    = '手番の入玉宣言局面時１')
             all_backwards_plot_models_at_first.append(best_plot_model)
+            self._search_model.gymnasium.health_check_qs_model.append_node('＜入玉宣言勝ち＞')
             return all_backwards_plot_models_at_first
 
         # これ以上深く読まない場合。
@@ -129,6 +133,7 @@ class QuiescenceSearch1stPhaseModel():
                     cutoff_reason           = cutoff_reason.MAX_DEPTH,
                     hint                    = 'これ以上深く読まない場合１')
             all_backwards_plot_models_at_first.append(best_plot_model)
+            self._search_model.gymnasium.health_check_qs_model.append_node('＜読みの最大深さ＞')
             return all_backwards_plot_models_at_first
 
         # まだ深く読む場合。
@@ -188,11 +193,12 @@ class QuiescenceSearch1stPhaseModel():
             # MARK: 一手指した後
             ####################
 
+            self._search_model.number_of_visited_nodes  += 1
+            depth                                       -= 1    # 深さを１下げる。
             self._search_model.frontwards_plot_model.append_move(
                     move    = my_move,
                     cap_pt  = cap_pt)
-            self._search_model.number_of_visited_nodes  += 1
-            depth                                       -= 1    # 深さを１下げる。
+            self._search_model.gymnasium.health_check_qs_model.append_node(cshogi.move_to_usi(my_move))
 
             ####################
             # MARK: 相手番の処理
@@ -214,8 +220,9 @@ class QuiescenceSearch1stPhaseModel():
             # MARK: 一手戻した後
             ####################
 
-            self._search_model.frontwards_plot_model.pop_move()
             depth       += 1    # 深さを１上げる。
+            self._search_model.frontwards_plot_model.pop_move()
+            self._search_model.gymnasium.health_check_qs_model.pop_node()
 
             ##################
             # MARK: 手番の処理
@@ -245,6 +252,7 @@ class QuiescenceSearch1stPhaseModel():
                     cutoff_reason           = cutoff_reason.NO_MOVES,
                     hint                    = f"１階の{Mars.japanese(self._search_model.gymnasium.is_mars)}は指したい手無し_{depth=}/{self._search_model.max_depth=}_{len(all_backwards_plot_models_at_first)=}/{len(remaining_moves)=}")
             all_backwards_plot_models_at_first.append(future_plot_model)
+            self._search_model.gymnasium.health_check_qs_model.append_node('＜指したい手無し＞')
 
         self._search_model.end_time = time.time()    # 計測終了時間
 
