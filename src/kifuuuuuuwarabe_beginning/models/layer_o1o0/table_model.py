@@ -3,7 +3,7 @@ import cshogi
 from .piece_moved_model import PieceMovedModel
 
 
-class TableModel():
+class TableModel:
     """cshogi の Board に付いていない機能を付加するラッパー
     """
 

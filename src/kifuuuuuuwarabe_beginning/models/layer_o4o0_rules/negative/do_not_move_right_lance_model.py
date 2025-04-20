@@ -1,6 +1,7 @@
 import cshogi
 
 from ...layer_o1o0 import constants, SquareModel
+from ...layer_o1o0o_9o0_table_helper import TableHelper
 from ...layer_o2o0.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
 from ..negative_rule_model import NegativeRuleModel
 
@@ -33,12 +34,11 @@ class DoNotMoveRightLanceModel(NegativeRuleModel):
         """
 
         np = NineRankSidePerspectiveModel(table)
-
+        moving_pt = TableHelper.get_moving_pt_from_move(move)
         src_sq_obj = SquareModel(cshogi.move_from(move))
 
-        # いのしし以外なら対象外
-        if cshogi.move_from_piece_type(move) not in [cshogi.LANCE]:
-            return constants.mind.NOT_IN_THIS_CASE
+        if moving_pt != cshogi.LANCE:               # いのしし以外なら。
+            return constants.mind.NOT_IN_THIS_CASE  # 対象外。
 
         # １筋の駒が動いたら意志無し
         #print(f'★ ＤoNotMoveRightLance._before_move_nrm(): {src_sq_obj.file=} {np.suji(1)=}')

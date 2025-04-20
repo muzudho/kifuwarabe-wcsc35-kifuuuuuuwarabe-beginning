@@ -2,6 +2,7 @@ from .do_not_back_model import DoNotBackModel
 from .do_not_break_famous_fence_model import DoNotBreakFamousFenceModel
 from .do_not_build_right_wall_model import DoNotBuildRightWallModel
 from .do_not_depromotion_model import DoNotDepromotionModel
+from .do_not_drop_rook_in_own_camp_model import DoNotDropRookInOwnCampModel
 from .do_not_move_left_lance_model import DoNotMoveLeftLanceModel
 from .do_not_move_right_lance_model import DoNotMoveRightLanceModel
 from .do_not_move_rook_model import DoNotMoveRookModel

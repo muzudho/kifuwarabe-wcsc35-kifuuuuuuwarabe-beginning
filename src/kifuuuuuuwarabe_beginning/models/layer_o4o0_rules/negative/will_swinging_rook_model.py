@@ -1,6 +1,7 @@
 import cshogi
 
 from ...layer_o1o0 import constants, SquareModel
+from ...layer_o1o0o_9o0_table_helper import TableHelper
 from ...layer_o2o0.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
 from ...layer_o4o0_rules.negative_rule_model import NegativeRuleModel
 
@@ -28,12 +29,12 @@ class WillSwingingRookModel(NegativeRuleModel):
         """指し手は［振り飛車をする］意志を残しているか？
         """
         np = NineRankSidePerspectiveModel(table)
-
+        moving_pt = TableHelper.get_moving_pt_from_move(move)
         src_sq_obj = SquareModel(cshogi.move_from(move))
         dst_sq_obj = SquareModel(cshogi.move_to(move))
 
         # 玉
-        if cshogi.move_from_piece_type(move) == cshogi.KING:
+        if moving_pt == cshogi.KING:
             # 飛車が２八にいるか？
             if table.piece(np.masu(28)) == np.ji_pc(cshogi.ROOK):
                 # この駒は動いてはいけない
@@ -48,7 +49,7 @@ class WillSwingingRookModel(NegativeRuleModel):
             return constants.mind.WILL_NOT
 
         # 飛
-        if cshogi.move_from_piece_type(move) == cshogi.ROOK:
+        if moving_pt == cshogi.ROOK:
             k_sq_obj = SquareModel(table.king_square(table.turn))
             # 飛車は４筋より左に振る。かつ、玉と同じ筋または玉より左の筋に振る
             e1 = np.swap(dst_sq_obj.file, np.suji(4))

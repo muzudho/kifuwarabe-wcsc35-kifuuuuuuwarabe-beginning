@@ -2,6 +2,7 @@ import cshogi
 
 from ....logics.layer_o1o0.helper import Helper
 from ...layer_o1o0 import constants, SquareModel
+from ...layer_o1o0o_9o0_table_helper import TableHelper
 from ...layer_o2o0.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
 from ..negative_rule_model import NegativeRuleModel
 
@@ -33,7 +34,7 @@ class DoNotBuildRightWallModel(NegativeRuleModel):
         #print(f'D: {cshogi.move_to_usi(move)=} {Helper.sq_to_masu(src_sq_obj.sq)=} {Helper.sq_to_masu(dst_sq_obj.sq)=}')
 
         # ライオンの指し手なら対象外
-        if cshogi.move_from_piece_type(move) == cshogi.KING:
+        if TableHelper.get_moving_pt_from_move(move) == cshogi.KING:
             #print(f'★ ライオンの指し手は対象外')
             return constants.mind.NOT_IN_THIS_CASE
 

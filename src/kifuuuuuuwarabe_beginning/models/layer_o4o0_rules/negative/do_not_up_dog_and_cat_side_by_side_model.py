@@ -1,6 +1,7 @@
 import cshogi
 
 from ...layer_o1o0 import constants, SquareModel
+from ...layer_o1o0o_9o0_table_helper import TableHelper
 from ...layer_o2o0.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
 from ..negative_rule_model import NegativeRuleModel
 
@@ -22,7 +23,7 @@ class DoNotUpDogAndCatSideBySideModel(NegativeRuleModel):
         """指す前に。
         """
         np = NineRankSidePerspectiveModel(table)
-
+        moving_pt = TableHelper.get_moving_pt_from_move(move)
         is_drop = cshogi.move_is_drop(move)
         src_sq_obj = SquareModel(cshogi.move_from(move))
         dst_sq_obj = SquareModel(cshogi.move_to(move))
@@ -38,9 +39,9 @@ class DoNotUpDogAndCatSideBySideModel(NegativeRuleModel):
             return table.piece(sq)
 
 
-        def _do_not_alice_and_bob_side_by_side(alice, bob):
+        def _do_not_alice_and_bob_side_by_side(alice, bob, moving_pt):
             # アリスなら。
-            if cshogi.move_from_piece_type(move) == alice:
+            if moving_pt == alice:
                 # 移動方向が上でなければ、［保留］
                 if dst_sq_obj.sq != np.top_of_sq(src_sq_obj.sq):
                     return None
@@ -62,8 +63,9 @@ class DoNotUpDogAndCatSideBySideModel(NegativeRuleModel):
 
         # イヌなら。
         result = _do_not_alice_and_bob_side_by_side(
-                alice   = cshogi.GOLD,
-                bob     = cshogi.SILVER)
+                alice       = cshogi.GOLD,
+                bob         = cshogi.SILVER,
+                moving_pt   = moving_pt)
         #print(f'Debug: DoNotDogAndCatSideBySide: {table.move_number=} Gold {result=}')
 
         if result is not None:
@@ -71,8 +73,9 @@ class DoNotUpDogAndCatSideBySideModel(NegativeRuleModel):
 
         # ネコなら。
         result = _do_not_alice_and_bob_side_by_side(
-                alice   = cshogi.SILVER,
-                bob     = cshogi.GOLD)
+                alice       = cshogi.SILVER,
+                bob         = cshogi.GOLD,
+                moving_pt   = moving_pt)
         #print(f'Debug: DoNotDogAndCatSideBySide: {table.move_number=} Dog {result=}')
 
         if result is not None:

@@ -1,6 +1,7 @@
 import cshogi
 
 from ...layer_o1o0 import constants, SquareModel
+from ...layer_o1o0o_9o0_table_helper import TableHelper
 from ...layer_o2o0.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
 from ..negative_rule_model import NegativeRuleModel
 
@@ -37,14 +38,13 @@ class DoNotMoveRookModel(NegativeRuleModel):
         if not self.is_enabled:
             return
 
-        np = NineRankSidePerspectiveModel(table)
-
+        #np = NineRankSidePerspectiveModel(table)
+        moving_pt = TableHelper.get_moving_pt_from_move(move)
         src_sq_obj = SquareModel(cshogi.move_from(move))
         dst_sq_obj = SquareModel(cshogi.move_to(move))
 
-        # キリン以外なら対象外。
-        if cshogi.move_from_piece_type(move) != cshogi.ROOK:
-            return
+        if moving_pt != cshogi.ROOK:    # キリン以外なら。
+            return                      # 対象外。
 
         # キリンが異筋に移動したあと、この号令を有効化します。
         if src_sq_obj.file != dst_sq_obj.file:
@@ -55,13 +55,14 @@ class DoNotMoveRookModel(NegativeRuleModel):
     # MARK: サブルーチン
     ####################
 
-
     def _before_move_nrm(self, move, table):
         """指す前に。
         """
 
+        moving_pt = TableHelper.get_moving_pt_from_move(move)
+
         # キリン以外なら対象外
-        if cshogi.move_from_piece_type(move) != cshogi.ROOK:
+        if moving_pt != cshogi.ROOK:
             return constants.mind.NOT_IN_THIS_CASE
 
         # それ以外は意志なし

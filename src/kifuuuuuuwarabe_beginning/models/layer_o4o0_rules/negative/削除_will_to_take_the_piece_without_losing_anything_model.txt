@@ -24,7 +24,7 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
         """
 
         # 動かした駒の種類
-        pt = cshogi.move_from_piece_type(move)
+        pt = cshogi.pece_type取得(move)
         #print(f'★ will_to_take_the_piece_without_losing_anything._before_move_nrm: {PieceTypeModel.kanji(pt)=}')
 
         # 動かした駒が角以外なら対象外

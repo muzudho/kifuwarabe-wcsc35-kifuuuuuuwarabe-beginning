@@ -1,6 +1,7 @@
 import cshogi
 
 from ...layer_o1o0 import constants, SquareModel
+from ...layer_o1o0o_9o0_table_helper import TableHelper
 from ..negative_rule_model import NegativeRuleModel
 
 
@@ -61,25 +62,27 @@ class DoNotBackModel(NegativeRuleModel):
         """指す手の確定時。
         """
 
-        if self.is_enabled:
-            src_sq_obj = SquareModel(cshogi.move_from(move))
-            dst_sq_obj = SquareModel(cshogi.move_to(move))
-            is_drop = cshogi.move_is_drop(move)
+        if not self.is_enabled:
+            return
 
-            # 戻れない駒は対象外。
-            if cshogi.move_from_piece_type(move) in [cshogi.KNIGHT, cshogi.LANCE, cshogi.PAWN]:
-                return
+        src_sq_obj = SquareModel(cshogi.move_from(move))
+        dst_sq_obj = SquareModel(cshogi.move_to(move))
+        is_drop = cshogi.move_is_drop(move)
 
-            # 移動元のマス番号
-            if is_drop: # 打のとき。                
-                src_sq = constants.PIECE_STAND_SQ
-            else:
-                src_sq = src_sq_obj.sq
+        # 戻れない駒は対象外。
+        if TableHelper.get_moving_pt_from_move(move) in [cshogi.KNIGHT, cshogi.LANCE, cshogi.PAWN]:
+            return
 
-            # 記憶
-            self._back_board[dst_sq_obj.sq] = src_sq
+        # 移動元のマス番号
+        if is_drop: # 打のとき。                
+            src_sq = constants.PIECE_STAND_SQ
+        else:
+            src_sq = src_sq_obj.sq
 
-            if not is_drop:
-                self._back_board[src_sq] = None
+        # 記憶
+        self._back_board[dst_sq_obj.sq] = src_sq
 
-            #print(f'★ ＤoNotBack: {Helper.sq_to_masu(dst_sq_obj.sq)=} に前位置 {Helper.sq_to_masu(src_sq)=} を記憶。')
+        if not is_drop:
+            self._back_board[src_sq] = None
+
+        #print(f'★ ＤoNotBack: {Helper.sq_to_masu(dst_sq_obj.sq)=} に前位置 {Helper.sq_to_masu(src_sq)=} を記憶。')

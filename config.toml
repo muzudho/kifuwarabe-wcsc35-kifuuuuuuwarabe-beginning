@@ -61,6 +61,12 @@
     # 号令［成らないということをするな］
     do_not_depromotion_model = true
 
+    # 号令［自陣に飛車打つな］
+    do_not_drop_rook_in_own_camp_model = true
+
+    # 以下、古い実装
+    # --------------
+
     # ［金銀３枚が右に集まる］意志
     will_for_three_gold_and_silver_coins_to_gather_to_the_right = false     #true
 

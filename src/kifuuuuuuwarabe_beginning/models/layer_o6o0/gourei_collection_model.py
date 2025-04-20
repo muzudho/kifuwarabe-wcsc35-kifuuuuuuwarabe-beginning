@@ -1,6 +1,6 @@
 from ..layer_o4o0_rules.negative import \
     DoNotBackModel, DoNotBreakFamousFenceModel, DoNotBuildRightWallModel, \
-    DoNotDepromotionModel, DoNotUpDogAndCatSideBySideModel, \
+    DoNotDepromotionModel, DoNotDropRookInOwnCampModel, DoNotUpDogAndCatSideBySideModel, \
     DoNotGoLeftModel, \
     DoNotUpToRank6Model, \
     DoNotMoveUntilRookMovesModel, DoNotMoveLeftLanceModel, DoNotMoveRightLanceModel, DoNotMoveRookModel, \
@@ -37,6 +37,7 @@ class GoureiCollectionModel():
             DoNotUpDogAndCatSideBySideModel                         (basketball_court_model=basketball_court_model),    # 号令［イヌとネコを横並びに上げるな］
             DoNotUpToRank6Model                                     (basketball_court_model=basketball_court_model),    # 号令［６段目に上がるな］
             DoNotBreakFamousFenceModel                              (basketball_court_model=basketball_court_model),    # 訓令［名の有る囲いを崩すな］
+            DoNotDropRookInOwnCampModel                             (basketball_court_model=basketball_court_model),    # 号令［自陣に飛車打つな］
             WillForThreeGoldAndSilverCoinsToGatherToTheRightModel   (basketball_court_model=basketball_court_model),    # ［金銀３枚が右に集まる］意志
             WillNotToMove37PawnModel                                (basketball_court_model=basketball_court_model),    # ［３七の歩を突かない］意志
             WillSwingingRookModel                                   (basketball_court_model=basketball_court_model),    # ［振り飛車をする］意志
