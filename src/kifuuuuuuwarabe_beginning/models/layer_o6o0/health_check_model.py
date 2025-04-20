@@ -30,8 +30,9 @@ class HealthCheckModel():
 
     def stringify(self):
 
+        # インデックス・アクセスしたいので、リストに変換。
         # キーを int 型から str の USI 形式に変換（非破壊的）してから、ソート。
-        ordered_document = sorted(self._document.items(), key=lambda entry:cshogi.move_to_usi(entry[0]))
+        health_list = sorted(self._document.items(), key=lambda entry:cshogi.move_to_usi(entry[0]))
 
 
         def _legal(move_prop):
@@ -138,7 +139,10 @@ class HealthCheckModel():
             return f"{_qs_plot(move_prop)}"
         
 
-        for move, move_prop in ordered_document:
+        for i in range(0, len(health_list)):
+            move = health_list[i][0]
+            move_prop = health_list[i][1]
+
             # （１）リーガル・ムーブ
             # （２）静止探索で選ばれた手
             # （３）静止探索で選ばれた手をエリミネートした手
