@@ -30,8 +30,8 @@ class DoNotGoLeftModel(NegativeRuleModel):
         # ライオンなら、以左には行くな。
         if moving_pt == cshogi.KING:
             # 移動先が右なら意志あり
-            e1 = np.swap(dst_sq_obj.file, src_sq_obj.file)
-            if e1[0] < e1[1]:
+            (a, b) = np.swap(dst_sq_obj.file, src_sq_obj.file)
+            if a < b:
                 return constants.mind.WILL
 
             # それ以外は意志なし
@@ -40,13 +40,13 @@ class DoNotGoLeftModel(NegativeRuleModel):
         # イヌ、ネコなら
         if moving_pt in [cshogi.GOLD, cshogi.SILVER]:
             # ６筋位左にある駒は対象外
-            e1 = np.swap(src_sq_obj.file, np.suji(6))
-            if e1[0] >= e1[1]:
+            (a, b) = np.swap(src_sq_obj.file, np.suji(6))
+            if a >= b:
                 return constants.mind.NOT_IN_THIS_CASE
 
             # 移動先が同筋位右なら意志あり
-            e1 = np.swap(dst_sq_obj.file, src_sq_obj.file)
-            if e1[0] <= e1[1]:
+            (a, b) = np.swap(dst_sq_obj.file, src_sq_obj.file)
+            if a <= b:
                 return constants.mind.WILL
 
             # それ以外は意志なし

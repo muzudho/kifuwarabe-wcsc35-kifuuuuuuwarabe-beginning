@@ -30,8 +30,8 @@ class DoNotDropRookInOwnCampModel(NegativeRuleModel):
         np = NineRankSidePerspectiveModel(table)
         dst_sq_obj = SquareModel(cshogi.move_to(move))
 
-        e1 = np.swap(np.dan(7), dst_sq_obj.rank)    # ７段目より上に打つ手なら。
-        if e1[0] < e1[1]:
+        (a, b) = np.swap(np.dan(7), dst_sq_obj.rank)    # ７段目より上に打つ手なら。
+        if a < b:
             return constants.mind.NOT_IN_THIS_CASE  # 対象外。
 
         # 意志無し。

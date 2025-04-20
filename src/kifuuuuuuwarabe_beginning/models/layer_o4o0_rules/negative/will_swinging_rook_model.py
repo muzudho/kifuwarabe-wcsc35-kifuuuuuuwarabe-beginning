@@ -42,8 +42,8 @@ class WillSwingingRookModel(NegativeRuleModel):
 
             #print(f'★ will_on_move: 玉', file=sys.stderr)            
             # 元位置位右に移動するなら、意志あり
-            e1 = np.swap(dst_sq_obj.file, src_sq_obj.file)
-            if e1[0] <= e1[1]:
+            (a, b) = np.swap(dst_sq_obj.file, src_sq_obj.file)
+            if a <= b:
                 return constants.mind.WILL
             
             return constants.mind.WILL_NOT
@@ -52,10 +52,10 @@ class WillSwingingRookModel(NegativeRuleModel):
         if moving_pt == cshogi.ROOK:
             k_sq_obj = SquareModel(table.king_square(table.turn))
             # 飛車は４筋より左に振る。かつ、玉と同じ筋または玉より左の筋に振る
-            e1 = np.swap(dst_sq_obj.file, np.suji(4))
-            e2 = np.swap(dst_sq_obj.file, k_sq_obj.file)
+            (a1, b1) = np.swap(dst_sq_obj.file, np.suji(4))
+            (a2, b2) = np.swap(dst_sq_obj.file, k_sq_obj.file)
 
-            if e1[0] > e1[1] and e2[0] >= e2[1]:
+            if a1 > b1 and a2 >= b2:
                 return constants.mind.WILL
             
             return constants.mind.WILL_NOT

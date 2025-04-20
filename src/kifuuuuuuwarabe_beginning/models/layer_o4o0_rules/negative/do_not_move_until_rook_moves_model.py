@@ -48,22 +48,22 @@ class DoNotMoveUntilRookMovesModel(NegativeRuleModel):
 
         # 象が７７象、６８象と移動して飛車道を塞ぐのも困る。
         if moving_pt == cshogi.BISHOP:
-            e1 = np.swap(np.suji(6), dst_sq_obj.file)
-            if e1[0] <= e1[1]:
+            (a, b) = np.swap(np.suji(6), dst_sq_obj.file)
+            if a <= b:
                 # 意志無し
                 return constants.mind.WILL_NOT
 
         # # 動かした駒が金なら
         # if moving_pt == cshogi.GOLD:
         #     # ５筋以右にある金なら
-        #     e1 = cmp.swap(src_sq_obj.file, np.suji(5))
-        #     if e1[0] <= e1[1]:
+        #     (a, b) = cmp.swap(src_sq_obj.file, np.suji(5))
+        #     if a <= b:
         #         # 動かしたら意志なし
         #         return constants.mind.WILL_NOT
 
         #     # それ以外の金なら、左の方以外に動かしたら意志なし
-        #     e1 = cmp.swap(src_sq_obj.file, dst_sq_obj.file)
-        #     if e1[0] < e1[1]:
+        #     (a, b) = cmp.swap(src_sq_obj.file, dst_sq_obj.file)
+        #     if a < b:
         #         return constants.mind.WILL_NOT
             
         #     # 左の方に動かしたのなら、まあ、対象外
@@ -72,14 +72,14 @@ class DoNotMoveUntilRookMovesModel(NegativeRuleModel):
         # # 動かした駒が銀なら
         # if moving_pt == cshogi.SILVER:
         #     # ５筋以右にある銀を動かしたなら
-        #     e1 = cmp.swap(src_sq_obj.file, np.suji(5))
-        #     if e1[0] <= e1[1]:
+        #     (a, b) = cmp.swap(src_sq_obj.file, np.suji(5))
+        #     if a <= b:
         #         # 意志なし
         #         return constants.mind.WILL_NOT
 
         #     # それ以外の銀を、元位置より右の方に動かしたら意志なし
-        #     e1 = cmp.swap(src_sq_obj.file, dst_sq_obj.file)
-        #     if e1[0] > e1[1]:
+        #     (a, b) = cmp.swap(src_sq_obj.file, dst_sq_obj.file)
+        #     if a > b:
         #         return constants.mind.WILL_NOT
             
         #     # 位左の方に動かしたのなら、まあ、対象外

@@ -31,13 +31,13 @@ class WillForThreeGoldAndSilverCoinsToGatherToTheRightModel(NegativeRuleModel):
         dst_sq_obj = SquareModel(cshogi.move_to(move))
 
         # ４筋位右にある駒は対象外
-        e1 = np.swap(src_sq_obj.file, np.suji(4))
-        if e1[0] <= e1[1]:
+        (a, b) = np.swap(src_sq_obj.file, np.suji(4))
+        if a <= b:
             return constants.mind.NOT_IN_THIS_CASE
 
         # 移動先が同筋位右なら対象外
-        e1 = np.swap(dst_sq_obj.file, src_sq_obj.file)
-        if e1[0] <= e1[1]:
+        (a, b) = np.swap(dst_sq_obj.file, src_sq_obj.file)
+        if a <= b:
             return constants.mind.NOT_IN_THIS_CASE
 
         # 36マスをスキャンする

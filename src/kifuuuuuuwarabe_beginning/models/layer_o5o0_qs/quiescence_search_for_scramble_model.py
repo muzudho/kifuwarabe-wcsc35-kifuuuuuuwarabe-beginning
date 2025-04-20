@@ -272,8 +272,8 @@ class QuiescenceSearchForScrambleModel():
                 old_sibling_value = best_old_sibling_plot_model_in_children.peek_piece_exchange_value_on_earth     # とりあえず最善の読み筋の点数。
 
 
-            e2 = ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
-            its_update_best = (e2[0] < e2[1])
+            (a, b) = ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
+            its_update_best = (a < b)
 
             # # この枝が長兄なら。
             # if best_old_sibling_plot_model_in_children is None:

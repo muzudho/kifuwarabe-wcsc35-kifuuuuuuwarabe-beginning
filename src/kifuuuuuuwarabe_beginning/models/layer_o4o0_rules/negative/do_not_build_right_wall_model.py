@@ -46,9 +46,9 @@ class DoNotBuildRightWallModel(NegativeRuleModel):
             return constants.mind.NOT_IN_THIS_CASE
 
         # ライオンより左に移動する手なら対象外
-        e1 = np.swap(k_sq_obj.file, dst_sq_obj.file)
-        #print(f'★ {k_sq_obj.file=} {dst_sq_obj.file=} {e1[0]=} {e1[1]}')
-        if e1[0] < e1[1]:
+        (a, b) = np.swap(k_sq_obj.file, dst_sq_obj.file)
+        #print(f'★ {k_sq_obj.file=} {dst_sq_obj.file=} {a=} {b=}')
+        if a < b:
             #print(f'★ ライオンより左に移動する手なら対象外')
             return constants.mind.NOT_IN_THIS_CASE
 
