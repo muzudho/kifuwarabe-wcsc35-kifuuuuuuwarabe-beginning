@@ -172,18 +172,19 @@ class QuiescenceSearch2ndPhaseModel():
         #         move_list   = legal_move_list,
         #         gymnasium   = self._search_model.gymnasium)
 
+        # ［成れるのに成らない手］は除外
+        for my_move in reversed(remaining_moves):
+            mind = do_not_depromotion_model._before_move_nrm(
+                    move    = my_move,
+                    table   = self._search_model.gymnasium.table)
+            if mind == constants.mind.WILL_NOT:
+                remaining_moves.remove(my_move)
+
         for my_move in remaining_moves:
 
             ##################
             # MARK: 一手指す前
             ##################
-
-            # ［成れるのに成らない手］は除外
-            mind = do_not_depromotion_model._before_move_nrm(
-                    move    = my_move,
-                    table   = self._search_model.gymnasium.table)
-            if mind == constants.mind.WILL_NOT:
-                continue
 
             dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
             cap_pt      = self.search_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。

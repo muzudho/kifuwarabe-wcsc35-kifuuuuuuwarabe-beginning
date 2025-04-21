@@ -155,19 +155,20 @@ class QuiescenceSearch1stPhaseModel():
 
         do_not_depromotion_model._before_branches_nrm(
                 table=self._search_model.gymnasium.table)
-        
+
+        # ［成れるのに成らない手］は除外
+        for my_move in reversed(remaining_moves):
+            mind = do_not_depromotion_model._before_move_nrm(
+                    move    = my_move,
+                    table   = self._search_model.gymnasium.table)
+            if mind == constants.mind.WILL_NOT:
+                remaining_moves.remove(my_move)
+
         for my_move in remaining_moves:
 
             ##################
             # MARK: 一手指す前
             ##################
-
-            # ［成れるのに成らない手］は除外
-            mind = do_not_depromotion_model._before_move_nrm(
-                    move    = my_move,
-                    table   = self._search_model.gymnasium.table)
-            if mind == constants.mind.WILL_NOT:
-                continue
 
             dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
             # 打の場合、取った駒無し。空マス。
