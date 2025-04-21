@@ -24,7 +24,7 @@ class DoNotDropRookInOwnCampModel(NegativeRuleModel):
         if not cshogi.move_is_drop(move):           # ［打］でなければ。
             return constants.mind.NOT_IN_THIS_CASE  # 対象外。
 
-        if cshogi.move_drop_hand_piece(move) == cshogi.HROOK:    # キリンでなければ。
+        if cshogi.move_drop_hand_piece(move) != cshogi.HROOK:    # キリンでなければ。
             return constants.mind.NOT_IN_THIS_CASE              # 対象外。
 
         np = NineRankSidePerspectiveModel(table)
