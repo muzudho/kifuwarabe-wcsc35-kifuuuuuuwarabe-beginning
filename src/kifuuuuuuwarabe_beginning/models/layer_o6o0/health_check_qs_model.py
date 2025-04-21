@@ -63,7 +63,17 @@ class HealthCheckQsModel:
             return
         
         self._current_item.append_node(text)
+
+
+    def on_termination(self, text):
+        """探索の［終端］時。
+        """
+        if not self._enabled:
+            return
+
+        self._current_item.append_node(text)
         self._item_list.append(self._current_item.copy())   # 単調増加していく。
+        self._current_item.pop_node()
 
 
     def pop_node(self):
