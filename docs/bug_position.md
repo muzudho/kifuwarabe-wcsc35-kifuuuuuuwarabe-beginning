@@ -2,7 +2,7 @@
 
 ```
 ●長考に沈んだ。
-    type(err)=<class 'ValueError'>  err=ValueError("取った駒の交換値のリストが０件です。 DeclarationModel.japanese(self._declaration)='' self._is_mars_at_declaration=False CutoffReason.japanese(self._cutoff_reason)='探索深さ最大'")
+    type(err)=<class 'ValueError'>  err=ValueError("取った駒の交換値のリストが０件です。 OutOfTerminationModel.japanese(self._out_of_termination)='' self._is_mars_at_out_of_termination=False CutoffReason.japanese(self._cutoff_reason)='探索深さ最大'")
 lnsg3n1/1r2k2bl/p1gppsppp/1pp2p3/8P/9/PPPPPPPP1/3RSGSK1/LNB2G1NL b - 30
 
 [ next 30 move(s) | black | repetition - ]

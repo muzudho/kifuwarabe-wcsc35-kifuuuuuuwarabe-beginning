@@ -75,13 +75,13 @@ class QuiescenceSearch1stPhaseModel():
             """手番の投了局面時。
             """
             best_plot_model = BackwardsPlotModel(
-                    is_mars_at_declaration  = self._search_model.gymnasium.is_mars,
-                    is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
-                    declaration             = constants.declaration.RESIGN,
+                    is_mars_at_out_of_termination  = self._search_model.gymnasium.is_mars,
+                    is_gote_at_out_of_termination  = self._search_model.gymnasium.table.is_gote,
+                    out_of_termination             = constants.out_of_termination.RESIGN,
                     cutoff_reason           = cutoff_reason.GAME_OVER,
                     hint                    = '手番の投了局面時１')
             all_backwards_plot_models_at_first.append(best_plot_model)
-            self._search_model.gymnasium.health_check_qs_model.on_termination('＜GameOver＞')
+            self._search_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
             return all_backwards_plot_models_at_first
 
         # 一手詰めを詰める
@@ -94,9 +94,9 @@ class QuiescenceSearch1stPhaseModel():
                 cap_pt = self._search_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
 
                 best_plot_model = BackwardsPlotModel(
-                        is_mars_at_declaration  = not self._search_model.gymnasium.is_mars,  # ［詰む］のは、もう１手先だから。
-                        is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
-                        declaration             = constants.declaration.RESIGN,
+                        is_mars_at_out_of_termination  = not self._search_model.gymnasium.is_mars,  # ［詰む］のは、もう１手先だから。
+                        is_gote_at_out_of_termination  = self._search_model.gymnasium.table.is_gote,
+                        out_of_termination             = constants.out_of_termination.RESIGN,
                         cutoff_reason           = cutoff_reason.MATE_MOVE_IN_1_PLY,
                         hint                    = '一手詰めA')
             
@@ -108,32 +108,32 @@ class QuiescenceSearch1stPhaseModel():
 
                 all_backwards_plot_models_at_first.append(best_plot_model)
                 self._search_model.gymnasium.health_check_qs_model.append_node(f"＜一手詰め＞{cshogi.move_to_usi(mate_move)}")
-                self._search_model.gymnasium.health_check_qs_model.on_termination('＜GameOver＞')
+                self._search_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
                 return all_backwards_plot_models_at_first
 
         if self._search_model.gymnasium.table.is_nyugyoku():
-            """手番の入玉宣言局面時。
+            """手番の入玉勝ち局面時。
             """
             best_plot_model = BackwardsPlotModel(
-                    is_mars_at_declaration  = self._search_model.gymnasium.is_mars,
-                    is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
-                    declaration             = constants.declaration.NYUGYOKU_WIN,
+                    is_mars_at_out_of_termination  = self._search_model.gymnasium.is_mars,
+                    is_gote_at_out_of_termination  = self._search_model.gymnasium.table.is_gote,
+                    out_of_termination             = constants.out_of_termination.NYUGYOKU_WIN,
                     cutoff_reason           = cutoff_reason.NYUGYOKU_WIN,
-                    hint                    = '手番の入玉宣言局面時１')
+                    hint                    = '手番の入玉宣言勝ち局面時１')
             all_backwards_plot_models_at_first.append(best_plot_model)
-            self._search_model.gymnasium.health_check_qs_model.on_termination('＜入玉宣言勝ち＞')
+            self._search_model.gymnasium.health_check_qs_model.on_out_of_termination('＜入玉宣言勝ち＞')
             return all_backwards_plot_models_at_first
 
         # これ以上深く読まない場合。
         if depth < 1:
             best_plot_model = BackwardsPlotModel(
-                    is_mars_at_declaration  = self._search_model.gymnasium.is_mars,
-                    is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
-                    declaration             = constants.declaration.MAX_DEPTH_BY_THINK, # 読みの最大深さ。
+                    is_mars_at_out_of_termination  = self._search_model.gymnasium.is_mars,
+                    is_gote_at_out_of_termination  = self._search_model.gymnasium.table.is_gote,
+                    out_of_termination             = constants.out_of_termination.MAX_DEPTH_BY_THINK, # 読みの最大深さ。
                     cutoff_reason           = cutoff_reason.MAX_DEPTH,
                     hint                    = 'これ以上深く読まない場合１')
             all_backwards_plot_models_at_first.append(best_plot_model)
-            self._search_model.gymnasium.health_check_qs_model.on_termination('＜読みの最大深さ＞')
+            self._search_model.gymnasium.health_check_qs_model.on_out_of_termination('＜読みの最大深さ＞')
             return all_backwards_plot_models_at_first
 
         # まだ深く読む場合。
@@ -163,6 +163,19 @@ class QuiescenceSearch1stPhaseModel():
                     table   = self._search_model.gymnasium.table)
             if mind == constants.mind.WILL_NOT:
                 remaining_moves.remove(my_move)
+
+        # ［駒を取る手］がないことを、［静止］と呼ぶ。
+        if len(remaining_moves) == 0:
+            future_plot_model = BackwardsPlotModel(
+                    is_mars_at_out_of_termination  = self._search_model.gymnasium.is_mars,
+                    is_gote_at_out_of_termination  = self._search_model.gymnasium.table.is_gote,
+                    out_of_termination             = constants.out_of_termination.QUIESCENCE,
+                    cutoff_reason           = cutoff_reason.NO_MOVES,
+                    hint                    = f"１階の{Mars.japanese(self._search_model.gymnasium.is_mars)}は静止_{depth=}/{self._search_model.max_depth=}_{len(all_backwards_plot_models_at_first)=}/{len(remaining_moves)=}")
+            all_backwards_plot_models_at_first.append(future_plot_model)
+            self._search_model.gymnasium.health_check_qs_model.on_out_of_termination('＜静止＞')
+            self._search_model.end_time = time.time()    # 計測終了時間
+            return all_backwards_plot_models_at_first
 
         for my_move in remaining_moves:
 
@@ -247,13 +260,13 @@ class QuiescenceSearch1stPhaseModel():
         # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
         if len(all_backwards_plot_models_at_first) < 1:
             future_plot_model = BackwardsPlotModel(
-                    is_mars_at_declaration  = self._search_model.gymnasium.is_mars,
-                    is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
-                    declaration             = constants.declaration.NO_CANDIDATES, # 有力な候補手無し。
+                    is_mars_at_out_of_termination  = self._search_model.gymnasium.is_mars,
+                    is_gote_at_out_of_termination  = self._search_model.gymnasium.table.is_gote,
+                    out_of_termination             = constants.out_of_termination.NO_CANDIDATES, # 有力な候補手無し。
                     cutoff_reason           = cutoff_reason.NO_MOVES,
                     hint                    = f"１階の{Mars.japanese(self._search_model.gymnasium.is_mars)}は指したい手無し_{depth=}/{self._search_model.max_depth=}_{len(all_backwards_plot_models_at_first)=}/{len(remaining_moves)=}")
             all_backwards_plot_models_at_first.append(future_plot_model)
-            self._search_model.gymnasium.health_check_qs_model.on_termination('＜指したい手無し＞') # TODO ＜静止＞とは分けたい。
+            self._search_model.gymnasium.health_check_qs_model.on_out_of_termination('＜指したい手無し＞')
 
         self._search_model.end_time = time.time()    # 計測終了時間
 

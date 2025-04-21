@@ -87,7 +87,7 @@ class _Go2nd():
                     number_of_visited_nodes     = 0)
 
         if self._gymnasium.table.is_nyugyoku():
-            """入玉宣言局面時。
+            """入玉宣言勝ち局面時。
             """
             self._gymnasium.thinking_logger_module.append(f"Nyugyoku win.")
             return ResultOfGoModel(

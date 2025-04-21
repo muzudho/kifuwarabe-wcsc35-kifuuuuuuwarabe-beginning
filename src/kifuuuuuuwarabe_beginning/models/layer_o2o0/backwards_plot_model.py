@@ -2,7 +2,7 @@ import cshogi
 
 from ..layer_o1o_9o0 import PieceValuesModel
 from ..layer_o1o0o_9o0_table_helper import TableHelper
-from ..layer_o1o0 import constants, DeclarationModel, Mars, PieceTypeModel, PlanetPieceTypeModel, SquareModel
+from ..layer_o1o0 import constants, OutOfTerminationModel, Mars, PieceTypeModel, PlanetPieceTypeModel, SquareModel
 from ..layer_o1o0o1o0_human import HumanPresentableMoveModel
 
 
@@ -68,23 +68,25 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
     """読み筋モデル。
     末端局面から開始局面に向かって後ろ向きに進み、格納します。（スタック構造）
 
-    NOTE ［指す手］を Move、指さずにする［宣言］を Declaration と呼び分けるものとします。［指す手］と［宣言］を合わせて Play ［遊び］と呼ぶことにします。
-    ［宣言］には、［投了］、［入玉宣言勝ち］の２つがあります。［宣言］をした後に［指す手］が続くことはありません。
+    NOTE ［指す手］を Move、指さずにする［終端外］を OutOfTermination と呼び分けるものとします。［指す手］と［終端外］を合わせて Play ［遊び］と呼ぶことにします。
+    ［終端外］には、［投了］、［入玉宣言勝ち］の２つがあります。［終端外］をした後に［指す手］が続くことはありません。
     """
 
 
     @staticmethod
-    def _declaration_to_value_on_earth(declaration, is_mars):
-        if declaration == constants.declaration.RESIGN:
+    def _out_of_termination_to_value_on_earth(out_of_termination, is_mars):
+        if out_of_termination == constants.out_of_termination.RESIGN:
             previous = constants.value.GAME_OVER
-        elif declaration == constants.declaration.NYUGYOKU_WIN:
+        elif out_of_termination == constants.out_of_termination.NYUGYOKU_WIN:
             previous = constants.value.NYUGYOKU_WIN
-        elif declaration == constants.declaration.MAX_DEPTH_BY_THINK:
+        elif out_of_termination == constants.out_of_termination.MAX_DEPTH_BY_THINK:
             previous = constants.value.ZERO
-        elif declaration == constants.declaration.NO_CANDIDATES:
+        elif out_of_termination == constants.out_of_termination.NO_CANDIDATES:
+            previous = constants.value.ZERO
+        elif out_of_termination == constants.out_of_termination.QUIESCENCE:
             previous = constants.value.ZERO
         else:
-            raise ValueError(f"想定外の［宣言］。{declaration=}")
+            raise ValueError(f"想定外の［終端外］。{out_of_termination=}")
 
         # 対戦相手なら正負を逆転。
         if is_mars:
@@ -93,25 +95,25 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         return previous
 
 
-    def __init__(self, is_mars_at_declaration, is_gote_at_declaration, declaration, cutoff_reason, hint):
+    def __init__(self, is_mars_at_out_of_termination, is_gote_at_out_of_termination, out_of_termination, cutoff_reason, hint):
         """初期化。
 
         Parameters
         ----------
-        is_mars_at_declaration : bool
-            ［葉局面］＝［宣言］手番は対戦相手か。
-        is_gote_at_declaration : bool
-            ［葉局面］＝［宣言］手番は後手か。
-        declaration : int
-            ［宣言］
+        is_mars_at_out_of_termination : bool
+            ［葉局面］＝［終端外］手番は対戦相手か。
+        is_gote_at_out_of_termination : bool
+            ［葉局面］＝［終端外］手番は後手か。
+        out_of_termination : int
+            ［終端外］
         cutoff_reason : int
             カットオフの理由
         hint : str
             デバッグ用文字列
         """
-        self._is_mars_at_declaration = is_mars_at_declaration
-        self._is_gote_at_declaration = is_gote_at_declaration
-        self._declaration = declaration
+        self._is_mars_at_out_of_termination = is_mars_at_out_of_termination
+        self._is_gote_at_out_of_termination = is_gote_at_out_of_termination
+        self._out_of_termination = out_of_termination
         self._move_list = []
         self._cap_list = []
         self._list_of_accumulate_exchange_value_on_earth = []   # 地球から見た、取った駒の交換値。
@@ -120,38 +122,38 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
 
     @property
-    def is_mars_at_declaration(self):
-        """木構造の葉ノード（末端局面の次の局面、宣言）で対戦相手か。
+    def is_mars_at_out_of_termination(self):
+        """木構造の葉ノードの次で対戦相手か。
         """
-        return self._is_mars_at_declaration
+        return self._is_mars_at_out_of_termination
 
 
     @property
-    def is_gote_at_declaration(self):
-        """木構造の葉ノード（末端局面の次の局面、宣言）で後手か。
+    def is_gote_at_out_of_termination(self):
+        """木構造の葉ノードの次で後手か。
         """
-        return self._is_gote_at_declaration
+        return self._is_gote_at_out_of_termination
 
 
     @property
     def is_mars_at_peek(self):
         if len(self._move_list) % 2 == 0:
-            return self._is_mars_at_declaration
-        return not self._is_mars_at_declaration
+            return self._is_mars_at_out_of_termination
+        return not self._is_mars_at_out_of_termination
 
 
     @property
     def is_gote_at_peek(self):
         if len(self._move_list) % 2 == 0:
-            return self._is_gote_at_declaration
-        return not self._is_gote_at_declaration
+            return self._is_gote_at_out_of_termination
+        return not self._is_gote_at_out_of_termination
 
 
     @property
-    def declaration(self):
-        """［宣言］
+    def out_of_termination(self):
+        """［終端外］
         """
-        return self._declaration
+        return self._out_of_termination
 
 
     @property
@@ -184,9 +186,9 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
 
         if len(self._list_of_accumulate_exchange_value_on_earth) == 0:
-            return self._declaration_to_value_on_earth(   # ［宣言］の点数。
-                    declaration = self._declaration,
-                    is_mars     = self._is_mars_at_declaration)
+            return self._out_of_termination_to_value_on_earth(   # ［終端外］の点数。
+                    out_of_termination = self._out_of_termination,
+                    is_mars     = self._is_mars_at_out_of_termination)
 
         return self._list_of_accumulate_exchange_value_on_earth[-1]
 
@@ -241,9 +243,9 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             raise ValueError(f"capture_piece_type をナンにしてはいけません。cshogi.NONE を使ってください。 {capture_piece_type=}")
 
         if len(self._list_of_accumulate_exchange_value_on_earth) == 0:
-            accumulate_value_on_earth = self._declaration_to_value_on_earth(   # ［宣言］の点数。
-                    declaration = self._declaration,
-                    is_mars     = self._is_mars_at_declaration)
+            accumulate_value_on_earth = self._out_of_termination_to_value_on_earth(   # ［終端外］の点数。
+                    out_of_termination = self._out_of_termination,
+                    is_mars     = self._is_mars_at_out_of_termination)
         else:
             accumulate_value_on_earth = self._list_of_accumulate_exchange_value_on_earth[-1]
 
@@ -251,9 +253,9 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         if self.is_mars_at_peek:                    # 火星なら。
             piece_exchange_value_on_earth *= -1     # 正負の符号を反転する。
 
-        # かつ、火星の［宣言］で終わるとき　＝　地球の［指し手］で読み終わるとき
+        # かつ、火星の［終端外］で終わるとき　＝　地球の［指し手］で読み終わるとき
         if (
-                self._declaration == constants.declaration.MAX_DEPTH_BY_THINK   # ［宣言］が［読みの深さの最大］。
+                self._out_of_termination == constants.out_of_termination.MAX_DEPTH_BY_THINK   # ［終端外］が［読みの深さの最大］。
             and len(self._list_of_accumulate_exchange_value_on_earth) == 1      # ［読みの深さの最大］のときの末端の指し手のとき。
             and not self.is_mars_at_peek                                        # ［地球］の手番。
             ):
@@ -293,7 +295,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             is_mars = not is_mars
             is_gote = not is_gote
 
-        tokens.append(f"{Mars.japanese(is_mars)}の{DeclarationModel.japanese(self.declaration)}")   # 宣言
+        tokens.append(f"{Mars.japanese(is_mars)}の{OutOfTerminationModel.japanese(self.out_of_termination)}")   # ［終端外］
 
         # カットオフ理由
         tokens.append(CutoffReason.japanese(self._cutoff_reason))
@@ -314,7 +316,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
 
     def stringify_dump(self):
-        return f"{self._is_mars_at_declaration=} {self._declaration=} {self._move_list=} {self._cap_list=} {self._list_of_accumulate_exchange_value_on_earth=} {self._cutoff_reason=} {' '.join(self._hint_list)=}"
+        return f"{self._is_mars_at_out_of_termination=} {self._out_of_termination=} {self._move_list=} {self._cap_list=} {self._list_of_accumulate_exchange_value_on_earth=} {self._cutoff_reason=} {' '.join(self._hint_list)=}"
 
 
     def stringify_debug_1(self):

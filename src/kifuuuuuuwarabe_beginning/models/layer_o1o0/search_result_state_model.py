@@ -17,7 +17,7 @@ class SearchResultStateModel():
 
     @staticmethod
     def NYUGYOKU_WIN():
-        """入玉宣言局面時。
+        """入玉宣言勝ち局面時。
         """
         return 2
 

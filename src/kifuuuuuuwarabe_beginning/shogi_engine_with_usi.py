@@ -198,7 +198,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
             return
 
         if result_of_go.search_result_state_model == SearchResultStateModel.NYUGYOKU_WIN:
-            # 勝利宣言。
+            # 入玉宣言勝ち。
             print(f'bestmove win', flush=True)
             return
 
@@ -328,9 +328,9 @@ class ShogiEngineCompatibleWithUSIProtocol():
             return
 
         if self._gymnasium.table.is_nyugyoku():
-            """入玉宣言局面時"""
+            """入玉宣言勝ち局面時"""
 
-            # 勝利宣言
+            # 入玉宣言勝ち
             print(f'bestmove win', flush=True)
             return
 

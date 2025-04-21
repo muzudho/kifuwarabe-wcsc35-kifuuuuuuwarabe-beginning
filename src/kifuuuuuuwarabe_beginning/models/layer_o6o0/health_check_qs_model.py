@@ -65,8 +65,8 @@ class HealthCheckQsModel:
         self._current_item.append_node(text)
 
 
-    def on_termination(self, text):
-        """探索の［終端］時。
+    def on_out_of_termination(self, text):
+        """探索の［終端外］時。
         """
         if not self._enabled:
             return

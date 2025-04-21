@@ -4,7 +4,7 @@ class ConstantsModel():
     def __init__(self):
         self._mind = _Mind()
         self._value = _Value()
-        self._declaration = DeclarationModel()
+        self._out_of_termination = OutOfTerminationModel()
 
 
     @property
@@ -22,10 +22,10 @@ class ConstantsModel():
 
 
     @property
-    def declaration(self):
-        """［宣言］です。
+    def out_of_termination(self):
+        """［終端外］です。
         """
-        return self._declaration
+        return self._out_of_termination
 
 
     @property
@@ -119,14 +119,14 @@ class _Value():
         return 50000
 
 
-class DeclarationModel():
-    """［宣言］。
+class OutOfTerminationModel():
+    """［終端外］。
     """
 
 
     _japanese_dict = {
         1 : '投了',
-        2 : '入玉勝利宣言',
+        2 : '入玉宣言勝ち',
         3 : '読みの最大深さ',
         4 : '有力な候補手無し',
     }
@@ -136,7 +136,7 @@ class DeclarationModel():
     def japanese(clazz, number):
         if number in clazz._japanese_dict:
             return clazz._japanese_dict[number]
-        return '＜未定義の宣言＞'
+        return '＜未定義の終端外＞'
 
 
     @property
@@ -148,7 +148,7 @@ class DeclarationModel():
 
     @property
     def NYUGYOKU_WIN(self):
-        """入玉宣言局面時。
+        """入玉宣言勝ち局面時。
         """
         return 2
 
@@ -167,6 +167,14 @@ class DeclarationModel():
 
         """
         return 4
+
+
+    @property
+    def QUIESCENCE(self):
+        """静止。
+        駒の取り合いが起こらない状態。
+        """
+        return 5
 
 
 constants = ConstantsModel()

@@ -65,12 +65,12 @@ class QuiescenceSearch2ndPhaseModel():
             """手番の投了局面時。
             """
             best_plot_model = BackwardsPlotModel(
-                    is_mars_at_declaration  = self._search_model.gymnasium.is_mars,
-                    is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
-                    declaration             = constants.declaration.RESIGN,
+                    is_mars_at_out_of_termination  = self._search_model.gymnasium.is_mars,
+                    is_gote_at_out_of_termination  = self._search_model.gymnasium.table.is_gote,
+                    out_of_termination             = constants.out_of_termination.RESIGN,
                     cutoff_reason           = cutoff_reason.GAME_OVER,
                     hint                    = '手番の投了局面時２')
-            self._search_model.gymnasium.health_check_qs_model.on_termination('＜GameOver＞')
+            self._search_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
             return best_plot_model
 
         # 一手詰めを詰める
@@ -83,9 +83,9 @@ class QuiescenceSearch2ndPhaseModel():
                 cap_pt = self.search_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
 
                 best_plot_model = BackwardsPlotModel(
-                        is_mars_at_declaration  = not self._search_model.gymnasium.is_mars,     # ［詰む］のは、もう１手先だから。
-                        is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
-                        declaration             = constants.declaration.RESIGN,
+                        is_mars_at_out_of_termination  = not self._search_model.gymnasium.is_mars,     # ［詰む］のは、もう１手先だから。
+                        is_gote_at_out_of_termination  = self._search_model.gymnasium.table.is_gote,
+                        out_of_termination             = constants.out_of_termination.RESIGN,
                         cutoff_reason           = cutoff_reason.MATE_MOVE_IN_1_PLY,
                         hint                    = '一手詰め時B')
             
@@ -95,29 +95,29 @@ class QuiescenceSearch2ndPhaseModel():
                         capture_piece_type  = cap_pt,
                         hint                = f"{Mars.japanese(self._search_model.gymnasium.is_mars)}の一手詰め時")
                 self._search_model.gymnasium.health_check_qs_model.append_node(f"＜一手詰め＞{cshogi.move_to_usi(mate_move)}")
-                self._search_model.gymnasium.health_check_qs_model.on_termination('＜GameOver＞')
+                self._search_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
                 return best_plot_model
 
         if self.search_model.gymnasium.table.is_nyugyoku():
-            """手番の入玉宣言局面時。
+            """手番の入玉宣言勝ち局面時。
             """
             best_plot_model = BackwardsPlotModel(
-                    is_mars_at_declaration  = self._search_model.gymnasium.is_mars,
-                    is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
-                    declaration             = constants.declaration.NYUGYOKU_WIN,
+                    is_mars_at_out_of_termination  = self._search_model.gymnasium.is_mars,
+                    is_gote_at_out_of_termination  = self._search_model.gymnasium.table.is_gote,
+                    out_of_termination             = constants.out_of_termination.NYUGYOKU_WIN,
                     cutoff_reason           = cutoff_reason.NYUGYOKU_WIN,
-                    hint                    = '手番の入玉宣言局面時２')
-            self._search_model.gymnasium.health_check_qs_model.on_termination('＜入玉宣言勝ち＞')
+                    hint                    = '手番の入玉宣言勝ち局面時２')
+            self._search_model.gymnasium.health_check_qs_model.on_out_of_termination('＜入玉宣言勝ち＞')
             return best_plot_model
 
         # これ以上深く読まない場合。
         if depth < 1:
             # 末端局面。
-            self._search_model.gymnasium.health_check_qs_model.on_termination('＜読みの最大深さ＞')
+            self._search_model.gymnasium.health_check_qs_model.on_out_of_termination('＜読みの最大深さ＞')
             return BackwardsPlotModel(
-                    is_mars_at_declaration  = self._search_model.gymnasium.is_mars,
-                    is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
-                    declaration             = constants.declaration.MAX_DEPTH_BY_THINK, # 読みの最大深さ。
+                    is_mars_at_out_of_termination  = self._search_model.gymnasium.is_mars,
+                    is_gote_at_out_of_termination  = self._search_model.gymnasium.table.is_gote,
+                    out_of_termination             = constants.out_of_termination.MAX_DEPTH_BY_THINK, # 読みの最大深さ。
                     cutoff_reason           = cutoff_reason.MAX_DEPTH,      # ［最大探索深さ］が打切り理由。
                     hint                    = f"{self._search_model.max_depth - depth}階の{Mars.japanese(self._search_model.gymnasium.is_mars)}でこれ以上深く読まない場合_{depth=}/{self._search_model.max_depth=}")
 
@@ -143,7 +143,6 @@ class QuiescenceSearch2ndPhaseModel():
         #     # 最善手が既存なら、その交換値を返すだけ。
         #     return best_plot_model_in_older_sibling.get_exchange_value_on_earth()
 
-        case_1 = 0
         case_2 = 0
         case_4 = 0
         case_5 = 0
@@ -172,20 +171,7 @@ class QuiescenceSearch2ndPhaseModel():
         #         move_list   = legal_move_list,
         #         gymnasium   = self._search_model.gymnasium)
 
-        # ［成れるのに成らない手］は除外
         for my_move in reversed(remaining_moves):
-            mind = do_not_depromotion_model._before_move_nrm(
-                    move    = my_move,
-                    table   = self._search_model.gymnasium.table)
-            if mind == constants.mind.WILL_NOT:
-                remaining_moves.remove(my_move)
-
-        for my_move in remaining_moves:
-
-            ##################
-            # MARK: 一手指す前
-            ##################
-
             dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
             cap_pt      = self.search_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
             is_capture  = (cap_pt != cshogi.NONE)
@@ -198,8 +184,46 @@ class QuiescenceSearch2ndPhaseModel():
                     pass
 
                 else:
-                    case_1 += 1
+                    remaining_moves.remove(my_move)
                     continue
+
+            # ［成れるのに成らない手］は除外
+            mind = do_not_depromotion_model._before_move_nrm(
+                    move    = my_move,
+                    table   = self._search_model.gymnasium.table)
+            if mind == constants.mind.WILL_NOT:
+                remaining_moves.remove(my_move)
+                continue
+
+        # ［駒を取る手］がないことを、［静止］と呼ぶ。
+        if len(remaining_moves) == 0:
+            self._search_model.gymnasium.health_check_qs_model.on_out_of_termination('＜静止＞')
+            return BackwardsPlotModel(
+                    is_mars_at_out_of_termination  = self._search_model.gymnasium.is_mars,
+                    is_gote_at_out_of_termination  = self._search_model.gymnasium.table.is_gote,
+                    out_of_termination             = constants.out_of_termination.QUIESCENCE,
+                    cutoff_reason           = cutoff_reason.NO_MOVES,
+                    hint                    = f"{self._search_model.max_depth - depth + 1}階の{Mars.japanese(self._search_model.gymnasium.is_mars)}は静止")
+
+        for my_move in remaining_moves:
+
+            ##################
+            # MARK: 一手指す前
+            ##################
+
+            dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
+            cap_pt      = self.search_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
+            #is_capture  = (cap_pt != cshogi.NONE)
+
+            # # ２階以降の呼出時は、駒を取る手でなければ無視。
+            # if not is_capture:
+            #     # ＜📚原則２＞ 王手は（駒を取らない手であっても）探索を続け、深さを１手延長する。
+            #     if self.search_model.gymnasium.table.is_check():
+            #         #depth_extend += 1  # FIXME 探索が終わらないくなる。
+            #         pass
+
+            #     else:
+            #         continue
 
             ################
             # MARK: 一手指す
@@ -281,9 +305,6 @@ class QuiescenceSearch2ndPhaseModel():
             
             # # 兄枝が有るなら。
             # else:
-            #     # def _log_1(case_1):
-            #     #     return f"[search] {case_1} {depth=}/{self._search_model.max_depth=} {Mars.japanese(self._search_model.gymnasium.is_mars)} {self.stringify()},{cshogi.move_to_usi(my_move)}(私{this_branch_value_on_earth}) {old_sibling_value=} < {child_plot_model.stringify()=}"
-
 
             #     if its_update_best:
             #         case_6t += 1
@@ -317,13 +338,13 @@ class QuiescenceSearch2ndPhaseModel():
 
         # 指したい手がなかったなら、静止探索の末端局面を返す。
         if best_old_sibling_plot_model_in_children is None:
-            self._search_model.gymnasium.health_check_qs_model.on_termination('＜指したい手無し＞') # TODO ＜静止＞とは分けたい。
+            self._search_model.gymnasium.health_check_qs_model.on_out_of_termination('＜指したい手無し＞')
             return BackwardsPlotModel(
-                    is_mars_at_declaration  = self._search_model.gymnasium.is_mars,
-                    is_gote_at_declaration  = self._search_model.gymnasium.table.is_gote,
-                    declaration             = constants.declaration.NO_CANDIDATES,  # 有力な候補手無し。
+                    is_mars_at_out_of_termination  = self._search_model.gymnasium.is_mars,
+                    is_gote_at_out_of_termination  = self._search_model.gymnasium.table.is_gote,
+                    out_of_termination             = constants.out_of_termination.NO_CANDIDATES,  # 有力な候補手無し。
                     cutoff_reason           = cutoff_reason.NO_MOVES,
-                    hint                    = f"{self._search_model.max_depth - depth + 1}階の{Mars.japanese(self._search_model.gymnasium.is_mars)}は指したい手無し,move数={len(legal_move_list)},{case_1=},{case_2=},{case_4=},{case_5=},{case_6t=},({'_'.join(case_6t_hint_list)}),{case_6f=},({'_'.join(case_6f_hint_list)}),{case_8a=},{case_8a=},{case_8b=},{case_8c=},{case_8d=},{case_8e=}")
+                    hint                    = f"{self._search_model.max_depth - depth + 1}階の{Mars.japanese(self._search_model.gymnasium.is_mars)}は指したい手無し,move数={len(legal_move_list)},{case_2=},{case_4=},{case_5=},{case_6t=},({'_'.join(case_6t_hint_list)}),{case_6f=},({'_'.join(case_6f_hint_list)}),{case_8a=},{case_8a=},{case_8b=},{case_8c=},{case_8d=},{case_8e=}")
 
         # 今回の手を付け加える。
         best_old_sibling_plot_model_in_children.append_move(
