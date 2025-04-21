@@ -127,7 +127,7 @@ class OutOfTerminationModel():
     _japanese_dict = {
         1 : '投了',
         2 : '入玉宣言勝ち',
-        3 : '読みの最大深さ',
+        3 : '水平線',   # 読みの最大深さ
         4 : '有力な候補手無し',
     }
 
@@ -155,8 +155,8 @@ class OutOfTerminationModel():
 
     @property
     def MAX_DEPTH_BY_THINK(self):
-        """読みの最大深さ。
-
+        """水平線。
+        読みの最大深さ。
         """
         return 3
 

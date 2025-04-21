@@ -129,11 +129,11 @@ class QuiescenceSearch1stPhaseModel():
             best_plot_model = BackwardsPlotModel(
                     is_mars_at_out_of_termination  = self._search_model.gymnasium.is_mars,
                     is_gote_at_out_of_termination  = self._search_model.gymnasium.table.is_gote,
-                    out_of_termination             = constants.out_of_termination.MAX_DEPTH_BY_THINK, # 読みの最大深さ。
+                    out_of_termination             = constants.out_of_termination.MAX_DEPTH_BY_THINK,
                     cutoff_reason           = cutoff_reason.MAX_DEPTH,
                     hint                    = 'これ以上深く読まない場合１')
             all_backwards_plot_models_at_first.append(best_plot_model)
-            self._search_model.gymnasium.health_check_qs_model.on_out_of_termination('＜読みの最大深さ＞')
+            self._search_model.gymnasium.health_check_qs_model.on_out_of_termination('＜水平線＞')
             return all_backwards_plot_models_at_first
 
         # まだ深く読む場合。
@@ -156,8 +156,9 @@ class QuiescenceSearch1stPhaseModel():
         do_not_depromotion_model._before_branches_nrm(
                 table=self._search_model.gymnasium.table)
 
-        # ［成れるのに成らない手］は除外
+        # データ・クリーニング
         for my_move in reversed(remaining_moves):
+            # ［成れるのに成らない手］は除外
             mind = do_not_depromotion_model._before_move_nrm(
                     move    = my_move,
                     table   = self._search_model.gymnasium.table)
@@ -222,7 +223,8 @@ class QuiescenceSearch1stPhaseModel():
             quiescenec_search_for_scramble_model = QuiescenceSearch2ndPhaseModel(
                     search_model    = self._search_model)
             future_plot_model = quiescenec_search_for_scramble_model.search_alice(      # 再帰呼出
-                    depth       = depth + depth_extend)
+                    depth       = depth + depth_extend,
+                    parent_move = my_move)
 
             ################
             # MARK: 一手戻す

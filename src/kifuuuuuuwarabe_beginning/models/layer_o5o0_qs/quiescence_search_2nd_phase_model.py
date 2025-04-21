@@ -33,7 +33,8 @@ class QuiescenceSearch2ndPhaseModel():
     def search_alice(
             self,
             #best_plot_model_in_older_sibling,
-            depth):
+            depth,
+            parent_move):
         """
         Parameters
         ----------
@@ -41,6 +42,8 @@ class QuiescenceSearch2ndPhaseModel():
         #     兄たちの中で最善の読み筋、またはナン。ベータカットに使う。
         depth : int
             あと何手深く読むか。
+        parent_move : int
+            １手前の手。
 
         Returns
         -------
@@ -113,11 +116,11 @@ class QuiescenceSearch2ndPhaseModel():
         # これ以上深く読まない場合。
         if depth < 1:
             # 末端局面。
-            self._search_model.gymnasium.health_check_qs_model.on_out_of_termination('＜読みの最大深さ＞')
+            self._search_model.gymnasium.health_check_qs_model.on_out_of_termination('＜水平線＞')
             return BackwardsPlotModel(
                     is_mars_at_out_of_termination  = self._search_model.gymnasium.is_mars,
                     is_gote_at_out_of_termination  = self._search_model.gymnasium.table.is_gote,
-                    out_of_termination             = constants.out_of_termination.MAX_DEPTH_BY_THINK, # 読みの最大深さ。
+                    out_of_termination             = constants.out_of_termination.MAX_DEPTH_BY_THINK,
                     cutoff_reason           = cutoff_reason.MAX_DEPTH,      # ［最大探索深さ］が打切り理由。
                     hint                    = f"{self._search_model.max_depth - depth}階の{Mars.japanese(self._search_model.gymnasium.is_mars)}でこれ以上深く読まない場合_{depth=}/{self._search_model.max_depth=}")
 
@@ -142,6 +145,7 @@ class QuiescenceSearch2ndPhaseModel():
 
         #     # 最善手が既存なら、その交換値を返すだけ。
         #     return best_plot_model_in_older_sibling.get_exchange_value_on_earth()
+
 
         case_2 = 0
         case_4 = 0
@@ -170,6 +174,29 @@ class QuiescenceSearch2ndPhaseModel():
         # remaining_moves = MoveListLogics.when_replacing_pieces_start_with_the_cheaper_ones(
         #         move_list   = legal_move_list,
         #         gymnasium   = self._search_model.gymnasium)
+
+        ############################
+        # MARK: データ・クリーニング
+        ############################
+
+        def filtering_same_destination_move_list(remaining_moves):
+            """［同］（１つ前の手の移動先に移動する手）を優先的に選ぶ。
+            """
+            dst_sq_of_previous_move_obj = SquareModel(cshogi.move_to(parent_move))      # ［１つ前の手］の［移動先マス］
+            same_destination_move_list = []
+
+            for my_move in remaining_moves:
+                dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
+                if dst_sq_obj.sq == dst_sq_of_previous_move_obj.sq:
+                    same_destination_move_list.append(my_move)
+            
+            if 0 < len(same_destination_move_list):
+                return same_destination_move_list
+            
+            return remaining_moves
+
+
+        remaining_moves = filtering_same_destination_move_list(remaining_moves=remaining_moves)
 
         for my_move in reversed(remaining_moves):
             dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
@@ -249,7 +276,8 @@ class QuiescenceSearch2ndPhaseModel():
             # NOTE ネガ・マックスではないので、評価値の正負を反転させなくていい。
             child_plot_model = self.search_alice(      # 再帰呼出
                     #best_plot_model_in_older_sibling    = best_plot_model_in_children,
-                    depth       = depth + depth_extend)
+                    depth       = depth + depth_extend,
+                    parent_move = my_move)
 
             ################
             # MARK: 一手戻す
