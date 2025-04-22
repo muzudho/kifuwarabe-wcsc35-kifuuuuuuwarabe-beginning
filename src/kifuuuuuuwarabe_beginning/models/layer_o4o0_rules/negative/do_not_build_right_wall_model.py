@@ -22,6 +22,28 @@ class DoNotBuildRightWallModel(NegativeRuleModel):
                 basketball_court_model  = basketball_court_model)
 
 
+    def _remove_rule_before_branches_nrm(self, remaining_moves, table):
+        """枝前削除条件。
+        真なら、このルールをリストから除外します。
+
+        狙い：１筋～４筋のいずれかの［ひ］が取られたとき。
+        実装：１筋～４筋の６段～７段に［ひ］が４つ居ればセーフ。
+        """
+        np = NineRankSidePerspectiveModel(table)
+
+        file_1_is_ok = (table.piece(np.masu(16)) == np.ji_pc(cshogi.PAWN) or table.piece(np.masu(17)) == np.ji_pc(cshogi.PAWN))
+        file_2_is_ok = (table.piece(np.masu(26)) == np.ji_pc(cshogi.PAWN) or table.piece(np.masu(27)) == np.ji_pc(cshogi.PAWN))
+        file_3_is_ok = (table.piece(np.masu(36)) == np.ji_pc(cshogi.PAWN) or table.piece(np.masu(37)) == np.ji_pc(cshogi.PAWN))
+        file_4_is_ok = (table.piece(np.masu(46)) == np.ji_pc(cshogi.PAWN) or table.piece(np.masu(47)) == np.ji_pc(cshogi.PAWN))
+        if (    file_1_is_ok
+            and file_2_is_ok
+            and file_3_is_ok
+            and file_4_is_ok):
+            return False
+
+        return True
+
+
     def _before_move_nrm(self, move, table):
         """指す前に。
 
