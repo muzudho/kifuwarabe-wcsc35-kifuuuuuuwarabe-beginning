@@ -4,7 +4,7 @@
 
 # デバッグ・モード
 [debug_mode]
-    search_do_undo = true
+    search_do_undo = false  # 何だっけこれ？
 
 
 # 探索関連
@@ -61,8 +61,11 @@
     # 号令［成らないということをするな］
     do_not_depromotion_model = true
 
+    # 号令［駒を打つな］
+    do_not_drop_piece = true
+
     # 号令［自陣に飛車打つな］
-    do_not_drop_rook_in_own_camp_model = true
+    do_not_drop_rook_in_own_camp = false
 
     # 号令［９筋に壁を作るな］
     do_not_build_wall_on_file_9 = true

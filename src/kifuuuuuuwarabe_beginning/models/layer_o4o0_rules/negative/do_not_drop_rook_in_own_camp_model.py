@@ -12,7 +12,7 @@ class DoNotDropRookInOwnCampModel(NegativeRuleModel):
 
     def __init__(self, basketball_court_model):
         super().__init__(
-                id          = 'do_not_drop_rook_in_own_camp_model',
+                id          = 'do_not_drop_rook_in_own_camp',
                 label       = '自陣に飛車打つな',
                 basketball_court_model  = basketball_court_model)
 
