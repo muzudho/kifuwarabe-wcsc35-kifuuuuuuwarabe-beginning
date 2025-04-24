@@ -3,7 +3,7 @@ import random
 import sys
 
 from ...models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateModel
-from ...models.layer_o5o0_qs import QuiescenceSearch1stPhaseModel
+from ...models.layer_o5o0_search import QuiescenceSearch1stPhaseModel
 from ...views import TableView
 from ..layer_o3o0 import MovesPickupFilterLogics, MovesReductionFilterLogics
 
