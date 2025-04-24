@@ -19,13 +19,13 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
                 config_doc  = config_doc)
 
 
-    def _before_move_nrm(self, move, table):
+    def _on_node_exit_negative(self, move, table):
         """指し手は［駒取って損しない］意志を残しているか？
         """
 
         # 動かした駒の種類
         pt = cshogi.pece_type取得(move)
-        #print(f'★ will_to_take_the_piece_without_losing_anything._before_move_nrm: {PieceTypeModel.kanji(pt)=}')
+        #print(f'★ will_to_take_the_piece_without_losing_anything._on_node_exit_negative: {PieceTypeModel.kanji(pt)=}')
 
         # 動かした駒が角以外なら対象外
         if pt != cshogi.BISHOP:
@@ -36,14 +36,14 @@ class WillToTakeThePieceWithoutLosingAnything(MatchOperation):
 
         # そこに駒はあるか？
         cap = table.piece(dst_sq)
-        #print(f'★ will_to_take_the_piece_without_losing_anything._before_move_nrm: {PieceModel.kanji(cap)=}')
+        #print(f'★ will_to_take_the_piece_without_losing_anything._on_node_exit_negative: {PieceModel.kanji(cap)=}')
 
         # 取った駒が無ければ、対象外
         if cap == cshogi.NONE:
             return constants.mind.NOT_IN_THIS_CASE
 
         cap_type = cshogi.piece_to_piece_type(cap)
-        #print(f'★ will_to_take_the_piece_without_losing_anything._before_move_nrm: {PieceTypeModel.kanji(cap_type)=}')
+        #print(f'★ will_to_take_the_piece_without_losing_anything._on_node_exit_negative: {PieceTypeModel.kanji(cap_type)=}')
 
         # 取った駒が歩以外なら対象外
         if cap_type != cshogi.PAWN:

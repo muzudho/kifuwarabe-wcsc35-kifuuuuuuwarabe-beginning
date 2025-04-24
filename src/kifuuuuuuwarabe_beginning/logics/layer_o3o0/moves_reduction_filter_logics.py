@@ -5,7 +5,7 @@ class MovesReductionFilterLogics():
 
 
     @staticmethod
-    def before_branches_o1x(remaining_moves, gymnasium):
+    def on_node_entry_negative(remaining_moves, gymnasium):
         """［指前］
         どの手も指す前です。
 
@@ -30,7 +30,7 @@ class MovesReductionFilterLogics():
             old_remaining_moves = remaining_moves.copy()    # バックアップ
 
             # １手も指さず、目の前にある盤に対して。
-            remaining_moves = negative_rule.before_branches_o1o1x(
+            remaining_moves = negative_rule.on_node_exit_negative(
                     remaining_moves = remaining_moves,
                     table           = gymnasium.table)
 
@@ -51,7 +51,7 @@ class MovesReductionFilterLogics():
 
         for negative_rule in negative_rules_to_remove:
             gymnasium.gourei_collection_model.negative_rule_list_of_active.remove(negative_rule)
-            gymnasium.thinking_logger_module.append(f"[moves_reduction_filter_logics.py > before_branches_o1x] delete negative rule. {negative_rule.label}")
+            gymnasium.thinking_logger_module.append(f"[moves_reduction_filter_logics.py > on_node_entry_negative] delete negative rule. {negative_rule.label}")
 
 
         return remaining_moves

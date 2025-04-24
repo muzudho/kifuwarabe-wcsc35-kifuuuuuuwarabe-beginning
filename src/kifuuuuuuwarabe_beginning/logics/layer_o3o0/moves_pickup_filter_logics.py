@@ -5,7 +5,7 @@ class MovesPickupFilterLogics():
 
 
     @staticmethod
-    def before_branches_o1x(remaining_moves, gymnasium):
+    def on_node_entry_positive(remaining_moves, gymnasium):
         """［指前］
         どの手も指す前です。
 
@@ -27,7 +27,7 @@ class MovesPickupFilterLogics():
         # 号令リスト
         for positive_rule in gymnasium.gourei_collection_model.positive_rule_list_of_active:
             # １手も指さず、目の前にある盤に対して。
-            temp_moves_to_pickup = positive_rule.before_branches_o1o1x(
+            temp_moves_to_pickup = positive_rule.on_node_exit_positive(
                     remaining_moves = remaining_moves,
                     table           = gymnasium.table)
             moves_to_pickup.extend(temp_moves_to_pickup)
@@ -38,6 +38,6 @@ class MovesPickupFilterLogics():
 
         for positive_rule in positive_rules_to_remove:
             gymnasium.gourei_collection_model.positive_rule_list_of_active.remove(positive_rule)
-            gymnasium.thinking_logger_module.append(f"[moves_pickup_filter_logics.py > before_branches_o1x] delete positive rule. {positive_rule.label}")
+            gymnasium.thinking_logger_module.append(f"[moves_pickup_filter_logics.py > on_node_entry_positive] delete positive rule. {positive_rule.label}")
 
         return moves_to_pickup

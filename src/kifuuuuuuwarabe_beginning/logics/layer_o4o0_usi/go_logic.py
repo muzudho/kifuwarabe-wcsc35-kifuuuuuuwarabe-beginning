@@ -149,7 +149,7 @@ class _Go2nd():
         old_remaining_moves_qs = remaining_moves_qs.copy()
 
         # 枝の前でポジティブ・ルール
-        remaining_moves_pr = MovesPickupFilterLogics.before_branches_o1x(
+        remaining_moves_pr = MovesPickupFilterLogics.on_node_entry_positive(
                 remaining_moves = remaining_moves_qs,
                 gymnasium       = self._gymnasium)
         
@@ -170,7 +170,7 @@ class _Go2nd():
             # ［指前］
             #       制約：
             #           指し手は必ず１つ以上残っています。
-            remaining_moves_nr = MovesReductionFilterLogics.before_branches_o1x(
+            remaining_moves_nr = MovesReductionFilterLogics.on_node_entry_negative(
                     remaining_moves = remaining_moves_qs,
                     gymnasium       = self._gymnasium)
             length_by_kifuwarabe = len(remaining_moves_nr)

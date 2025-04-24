@@ -19,7 +19,7 @@ class DoNotMoveRightLanceModel(NegativeRuleModel):
                 basketball_court_model  = basketball_court_model)
 
 
-    def _remove_rule_before_branches_nrm(self, remaining_moves, table):
+    def _remove_rule_on_node_entry_negative(self, remaining_moves, table):
         """枝前削除条件。
         真なら、このルールをリストから除外します。
         """
@@ -29,7 +29,7 @@ class DoNotMoveRightLanceModel(NegativeRuleModel):
         return table.piece(np.masu(28)) == np.ji_pc(cshogi.KING)
 
 
-    def _before_move_nrm(self, move, table):
+    def _on_node_exit_negative(self, move, table):
         """指す前に。
         """
 
@@ -41,7 +41,7 @@ class DoNotMoveRightLanceModel(NegativeRuleModel):
             return constants.mind.NOT_IN_THIS_CASE  # 対象外。
 
         # １筋の駒が動いたら意志無し
-        #print(f'★ ＤoNotMoveRightLance._before_move_nrm(): {src_sq_obj.file=} {np.suji(1)=}')
+        #print(f'★ ＤoNotMoveRightLance._on_node_exit_negative(): {src_sq_obj.file=} {np.suji(1)=}')
         if src_sq_obj.file == np.suji(1):
             return constants.mind.WILL_NOT
 

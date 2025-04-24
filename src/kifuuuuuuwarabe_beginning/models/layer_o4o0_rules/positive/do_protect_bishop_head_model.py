@@ -23,7 +23,7 @@ class DoProtectBishopHeadModel(PositiveRuleModel):
     # MARK: オーバーライドメソッド
     ##############################
 
-    def _remove_rule_before_branches_prm(self, remaining_moves, table):
+    def _remove_rule_on_node_entry_positive(self, remaining_moves, table):
         """枝前削除条件。
         真なら、このルールをリストから除外します。
         """
@@ -33,7 +33,7 @@ class DoProtectBishopHeadModel(PositiveRuleModel):
         return table.piece(np.masu(77)) == np.ji_pc(cshogi.BISHOP)
 
 
-    def _before_move_prm(self, move, table):
+    def _on_node_exit_positive(self, move, table):
         """指す前にこの手に決める。
 
         Returns
@@ -81,7 +81,7 @@ class DoProtectBishopHeadModel(PositiveRuleModel):
     # MARK: オーバーライドメソッド
     ##############################
 
-    def _remove_rule_before_branches_prm(self, remaining_moves, table):
+    def _remove_rule_on_node_entry_positive(self, remaining_moves, table):
         """枝前削除条件。
         真なら、このルールをリストから除外します。
         """

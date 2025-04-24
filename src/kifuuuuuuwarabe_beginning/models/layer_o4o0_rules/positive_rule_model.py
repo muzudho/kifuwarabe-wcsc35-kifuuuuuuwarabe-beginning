@@ -20,7 +20,7 @@ class PositiveRuleModel(RuleModel):
                 table   = table)
 
 
-    def before_branches_o1o1x(self, remaining_moves, table, remove_condition=None, skip_condition=None):
+    def on_node_exit_positive(self, remaining_moves, table, remove_condition=None, skip_condition=None):
         """どの枝も指す前に。
 
         Returns
@@ -33,7 +33,7 @@ class PositiveRuleModel(RuleModel):
             return []
         
         # （事前リムーブ分岐）条件が合致したら、このルールをリストから除外する処理。
-        if self._remove_rule_before_branches_prm(
+        if self._remove_rule_on_node_entry_positive(
                 remaining_moves = remaining_moves,
                 table           = table):
             # （処理を行わず）このオブジェクトを除外
@@ -52,7 +52,7 @@ class PositiveRuleModel(RuleModel):
 
         for i in range(len(remaining_moves))[::-1]:     # `[::-1]` - 逆順
             m = remaining_moves[i]
-            if self._before_move_prm(m, table):
+            if self._on_node_exit_positive(m, table):
                 moves_to_pickup.append(m)
 
         return moves_to_pickup
@@ -70,7 +70,7 @@ class PositiveRuleModel(RuleModel):
     # MARK: バーチャルメソッド
     ##########################
 
-    def _remove_rule_before_branches_prm(self, remaining_moves, table):
+    def _remove_rule_on_node_entry_positive(self, remaining_moves, table):
         """枝前削除条件。
         真なら、このルールをリストから除外します。
         """
@@ -94,7 +94,7 @@ class PositiveRuleModel(RuleModel):
         """
 
 
-    def _before_move_prm(self, move, table):
+    def _on_node_exit_positive(self, move, table):
         """指す前にこの手に決める。
 
         Returns

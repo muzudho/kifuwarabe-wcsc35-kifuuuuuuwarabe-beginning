@@ -164,7 +164,7 @@ class QuiescenceSearch2ndPhaseModel():
         do_not_depromotion_model = DoNotDepromotionModel(
                 basketball_court_model=self._search_model.gymnasium.basketball_court_model)    # TODO 号令［成らないということをするな］
 
-        do_not_depromotion_model._before_branches_nrm(
+        do_not_depromotion_model._on_node_entry_negative(
                 table=self._search_model.gymnasium.table)
 
         legal_move_list = list(self.search_model.gymnasium.table.legal_moves)
@@ -215,7 +215,7 @@ class QuiescenceSearch2ndPhaseModel():
                     continue
 
             # ［成れるのに成らない手］は除外
-            mind = do_not_depromotion_model._before_move_nrm(
+            mind = do_not_depromotion_model._on_node_exit_negative(
                     move    = my_move,
                     table   = self._search_model.gymnasium.table)
             if mind == constants.mind.WILL_NOT:

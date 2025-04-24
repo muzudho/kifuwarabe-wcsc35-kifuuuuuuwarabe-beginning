@@ -19,7 +19,7 @@ class DoNotUpToRank6Model(NegativeRuleModel):
                 basketball_court_model  = basketball_court_model)
 
 
-    def _remove_rule_before_branches_nrm(self, remaining_moves, table):
+    def _remove_rule_on_node_entry_negative(self, remaining_moves, table):
         """枝前削除条件。
         真なら、このルールをリストから除外します。
         """
@@ -30,7 +30,7 @@ class DoNotUpToRank6Model(NegativeRuleModel):
         return table.piece(np.masu(28)) == np.ji_pc(cshogi.KING)
 
 
-    def _before_move_nrm(self, move, table):
+    def _on_node_exit_negative(self, move, table):
         """指す前に。
         """
         np = NineRankSidePerspectiveModel(table)

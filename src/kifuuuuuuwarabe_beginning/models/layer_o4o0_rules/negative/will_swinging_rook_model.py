@@ -18,14 +18,14 @@ class WillSwingingRookModel(NegativeRuleModel):
                 basketball_court_model  = basketball_court_model)
 
 
-    def _skip_step_before_branches_nrm(self, remaining_moves, table):
+    def _skip_step_on_node_entry_negative(self, remaining_moves, table):
         """枝前スキップ条件。
         真なら、枝前ステップではこのルールをスキップします。
         """
         return constants.mind.WILL != self.will_on_board(table)
 
 
-    def _before_move_nrm(self, move, table):
+    def _on_node_exit_negative(self, move, table):
         """指し手は［振り飛車をする］意志を残しているか？
         """
         np = NineRankSidePerspectiveModel(table)

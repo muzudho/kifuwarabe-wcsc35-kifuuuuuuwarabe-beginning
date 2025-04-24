@@ -20,7 +20,7 @@ class DoNotDepromotionModel(NegativeRuleModel):
         self._promotion_doc = None
 
 
-    def _before_branches_nrm(self, table):
+    def _on_node_entry_negative(self, table):
         """枝前に。
         """
 
@@ -45,7 +45,7 @@ class DoNotDepromotionModel(NegativeRuleModel):
                 self._promotion_doc[src_sq_obj.sq].append(dst_sq_obj.sq)
 
 
-    def _before_move_nrm(self, move, table):
+    def _on_node_exit_negative(self, move, table):
         """指す前に。
         """
 

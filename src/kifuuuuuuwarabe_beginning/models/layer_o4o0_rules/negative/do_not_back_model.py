@@ -23,7 +23,7 @@ class DoNotBackModel(NegativeRuleModel):
         self._back_board = [None] * constants.BOARD_AREA
 
 
-    def _before_move_nrm(self, move, table):
+    def _on_node_exit_negative(self, move, table):
         """指す前に。
         """
 
@@ -58,7 +58,7 @@ class DoNotBackModel(NegativeRuleModel):
         return constants.mind.WILL
 
 
-    def _after_best_moving_nrm(self, move, table):
+    def _after_best_moving_negative(self, move, table):
         """指す手の確定時。
         """
 

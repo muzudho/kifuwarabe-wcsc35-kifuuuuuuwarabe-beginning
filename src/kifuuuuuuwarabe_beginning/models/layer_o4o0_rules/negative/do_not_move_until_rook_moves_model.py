@@ -19,7 +19,7 @@ class DoNotMoveUntilRookMovesModel(NegativeRuleModel):
                 basketball_court_model  = basketball_court_model)
 
 
-    def _before_move_nrm(self, move, table):
+    def _on_node_exit_negative(self, move, table):
         """指す前に。
         """
         np = NineRankSidePerspectiveModel(table)

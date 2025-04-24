@@ -18,7 +18,7 @@ class WillForThreeGoldAndSilverCoinsToGatherToTheRightModel(NegativeRuleModel):
                 basketball_court_model  = basketball_court_model)
 
 
-    def _before_move_nrm(self, move, table):
+    def _on_node_exit_negative(self, move, table):
         """指す前に。
 
         先手から見て５筋と６筋の間にドアがあるとする。

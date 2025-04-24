@@ -22,7 +22,7 @@ class DoNotBuildRightWallModel(NegativeRuleModel):
                 basketball_court_model  = basketball_court_model)
 
 
-    def _remove_rule_before_branches_nrm(self, remaining_moves, table):
+    def _remove_rule_on_node_entry_negative(self, remaining_moves, table):
         """枝前削除条件。
         真なら、このルールをリストから除外します。
 
@@ -44,7 +44,7 @@ class DoNotBuildRightWallModel(NegativeRuleModel):
         return True
 
 
-    def _before_move_nrm(self, move, table):
+    def _on_node_exit_negative(self, move, table):
         """指す前に。
 
         定義：　移動前の玉の以右の全ての筋について、８段目、９段目の両方に駒がある状態を［右壁］とする。

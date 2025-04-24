@@ -20,14 +20,14 @@ class NegativeRuleModel(RuleModel):
                 table   = table)
 
 
-    def before_branches_o1o1x(self, remaining_moves, table):
+    def on_node_exit_negative(self, remaining_moves, table):
         """枝前処理。
         """
         if not self.is_enabled:
             return remaining_moves
         
         # （事前リムーブ分岐）条件が合致したら、このルールをリストから除外する処理。
-        if self._remove_rule_before_branches_nrm(
+        if self._remove_rule_on_node_entry_negative(
                 remaining_moves = remaining_moves,
                 table           = table):
             # （処理を行わず）このオブジェクトを除外
@@ -35,16 +35,16 @@ class NegativeRuleModel(RuleModel):
             return remaining_moves
         
         # （事前スキップ判定）条件に一致したら、スキップする処理。
-        if self._skip_step_before_branches_nrm(
+        if self._skip_step_on_node_entry_negative(
                 remaining_moves = remaining_moves,
                 table           = table):
              return remaining_moves
 
-        self._before_branches_nrm(table)
+        self._on_node_entry_negative(table)
 
         for i in range(len(remaining_moves))[::-1]:     # `[::-1]` - 逆順
             m = remaining_moves[i]
-            mind = self._before_move_nrm(m, table)
+            mind = self._on_node_exit_negative(m, table)
             if mind == constants.mind.WILL_NOT:
                 del remaining_moves[i]
 
@@ -54,7 +54,7 @@ class NegativeRuleModel(RuleModel):
     def after_best_moving_o1o1o0(self, move, table):
         """指す手の確定時。
         """
-        self._after_best_moving_nrm(
+        self._after_best_moving_negative(
                 move    = move,
                 table   = table)
 
@@ -63,27 +63,27 @@ class NegativeRuleModel(RuleModel):
     # MARK: バーチャルメソッド
     ##########################
 
-    def _remove_rule_before_branches_nrm(self, remaining_moves, table):
+    def _remove_rule_on_node_entry_negative(self, remaining_moves, table):
         """枝前削除条件。
         真なら、このルールをリストから除外します。
         """
         return False
 
 
-    def _skip_step_before_branches_nrm(self, remaining_moves, table):
+    def _skip_step_on_node_entry_negative(self, remaining_moves, table):
         """枝前スキップ条件。
         真なら、枝前ステップではこのルールをスキップします。
         """
         return False
 
 
-    def _before_branches_nrm(self, table):
+    def _on_node_entry_negative(self, table):
         """枝前に。
         """
         pass
 
 
-    def _before_move_nrm(self, move, table):
+    def _on_node_exit_negative(self, move, table):
         """指す前に。
         """
         pass
@@ -95,7 +95,7 @@ class NegativeRuleModel(RuleModel):
         pass
 
 
-    def _after_best_moving_nrm(self, move, table):
+    def _after_best_moving_negative(self, move, table):
         """指す手の確定時。
         """
         pass
