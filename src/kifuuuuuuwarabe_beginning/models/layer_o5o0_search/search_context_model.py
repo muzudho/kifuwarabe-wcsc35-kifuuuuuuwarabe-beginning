@@ -1,7 +1,7 @@
 from ..layer_o2o0 import FrontwardsPlotModel
 
 
-class SearchModel():
+class SearchContextModel():
 
 
     def __init__(self, max_depth, gymnasium):

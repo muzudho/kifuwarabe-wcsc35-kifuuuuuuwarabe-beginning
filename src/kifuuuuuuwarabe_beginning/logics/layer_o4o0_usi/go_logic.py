@@ -275,7 +275,7 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
             remaining_moves                     = remaining_moves)
 
     #print(f"{alice_s_best_piece_value=} {len(all_backwards_plot_models_at_first)=}")
-    number_of_visited_nodes = qs_at_first.search_model.number_of_visited_nodes
+    number_of_visited_nodes = qs_at_first.search_context_model.number_of_visited_nodes
 
     def _eliminate_not_capture_not_positive(all_backwards_plot_models_at_first, gymnasium):
         """次の１つの手は、候補に挙げる必要がないので除去します。
