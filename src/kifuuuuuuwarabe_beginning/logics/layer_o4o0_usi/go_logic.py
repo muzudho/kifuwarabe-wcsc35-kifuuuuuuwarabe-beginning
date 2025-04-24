@@ -149,7 +149,7 @@ class _Go2nd():
         old_remaining_moves_qs = remaining_moves_qs.copy()
 
         # 枝の前でポジティブ・ルール
-        remaining_moves_pr = MovesPickupFilterLogics.on_node_entry_positive(
+        remaining_moves_pr = MovesPickupFilterLogics.on_node_entry_positive_main(
                 remaining_moves = remaining_moves_qs,
                 gymnasium       = self._gymnasium)
         

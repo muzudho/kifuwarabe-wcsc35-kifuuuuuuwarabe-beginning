@@ -33,6 +33,30 @@ class DoProtectBishopHeadModel(PositiveRuleModel):
         return table.piece(np.masu(77)) == np.ji_pc(cshogi.BISHOP)
 
 
+    def _on_node_entry_positive(self, remaining_moves, table):
+        """どの枝も指す前に。
+
+        Returns
+        -------
+        moves_to_pickup : list<int>
+            ピックアップした指し手。
+        """
+
+        np = NineRankSidePerspectiveModel(table)
+
+        # ［７六歩］が有るか確認。
+        self._is_76hiyoko = False
+
+        for move in remaining_moves:
+            src_sq_obj = SquareModel(cshogi.move_from(move))
+            dst_sq_obj = SquareModel(cshogi.move_to(move))
+            if table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.PAWN) and dst_sq_obj.sq == np.masu(76):
+                self._is_76hiyoko = True
+                break
+
+        return []
+
+
     def _on_node_exit_positive(self, move, table):
         """指す前にこの手に決める。
 
@@ -46,34 +70,21 @@ class DoProtectBishopHeadModel(PositiveRuleModel):
         src_sq_obj = SquareModel(cshogi.move_from(move))
         dst_sq_obj = SquareModel(cshogi.move_to(move))
 
-        # NOTE 後ろ向き探索だからか、
-
-        # ［７六歩］なら、それを選ぶ。
-        # print(f"（２）［７六歩］があれば、それを選ぶ。： {np.masu(76)=} {table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.PAWN) and dst_sq_obj.sq == np.masu(76)}")
+        # これが［７六歩］なら、選ぶ。
         if table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.PAWN) and dst_sq_obj.sq == np.masu(76):
             return True
 
-        # NOTE for ループ内だから。要注意。
-        # # # FIXME ［７六歩］が指せる局面で、［６六歩］を指してしまう。なぜか両方のフラグが有効になっている。後ろ向き探索だから？
-        # # # FIXME 歩を取られるのが嫌なのか、［６六歩］を指さないことがある。
-        # # # # ［６六歩］なら、それを選ぶ。
-        # # # # print(f"［７六歩］無し： {table.sfen()=}")
-        # # # # print(f"（３）［６六歩］があれば、それを選ぶ。： {np.masu(66)=} {table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.PAWN) and dst_sq_obj.sq == np.masu(66)}")
-        # if table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.PAWN) and dst_sq_obj.sq == np.masu(66):
-        #     # print(f"［６六歩］有り： {table.sfen()=}")
-        #     return True
-        # # if table.piece(np.masu(34)) == np.mars_pc(cshogi.PAWN) and table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.PAWN) and dst_sq_obj.sq == np.masu(66):
-        # #     # print(f"［６六歩］有り： {table.sfen()=}")
-        # #     return True
-
-        # ［７七角］なら、それを選ぶ。
-        # print(f"（１）［７七角］があれば、それを選ぶ。： {np.masu(77)=} {table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.BISHOP) and dst_sq_obj.sq == np.masu(77)}")
+        # これが［７七角］なら、選ぶ。（［７六歩］を突いていなければ、そもそもこの手は存在しない）
         if table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.BISHOP) and dst_sq_obj.sq == np.masu(77):
             return True
         
-        # print(f"─")
+        # ［７六歩］が指せない局面で。（既に［７六歩］を突いていることを想定）
+        if not self._is_76hiyoko:
+            # これが［６六歩］なら、選ぶ。
+            if table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.PAWN) and dst_sq_obj.sq == np.masu(66):
+                return True
 
-        # それ以外は無視
+        # それ以外は無視。
         return False
 
 

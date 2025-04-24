@@ -20,7 +20,7 @@ class PositiveRuleModel(RuleModel):
                 table   = table)
 
 
-    def on_node_exit_positive(self, remaining_moves, table, remove_condition=None, skip_condition=None):
+    def on_node_entry_positive(self, remaining_moves, table):
         """どの枝も指す前に。
 
         Returns
@@ -41,12 +41,14 @@ class PositiveRuleModel(RuleModel):
             return []
         
         # （事前スキップ判定）条件に一致したら、スキップする処理。
-        if self._skip_step_before_branches_prm(
+        if self._skip_step_on_node_entry_positive(
                 remaining_moves = remaining_moves,
                 table           = table):
              return []
 
-        self._before_branches_prm(table)
+        self._on_node_entry_positive(
+                remaining_moves = remaining_moves,
+                table           = table)
 
         moves_to_pickup = []
 
@@ -77,14 +79,14 @@ class PositiveRuleModel(RuleModel):
         return False
 
 
-    def _skip_step_before_branches_prm(self, remaining_moves, table):
+    def _skip_step_on_node_entry_positive(self, remaining_moves, table):
         """枝前スキップ条件。
         真なら、枝前ステップではこのルールをスキップします。
         """
         return False
 
 
-    def _before_branches_prm(self, table):
+    def _on_node_entry_positive(self, remaining_moves, table):
         """枝前に。
 
         Returns
