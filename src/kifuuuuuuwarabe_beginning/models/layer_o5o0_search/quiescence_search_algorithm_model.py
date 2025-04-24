@@ -9,7 +9,7 @@ from ..layer_o2o0 import BackwardsPlotModel, cutoff_reason
 from ..layer_o4o0_rules.negative import DoNotDepromotionModel
 
 
-class QuiescenceSearch2ndPhaseModel():
+class QuiescenceSearchAlgorithmModel():
     """駒の取り合いのための静止探索。
     駒の取り合いが終わるまで、駒の取り合いを探索します。
     """

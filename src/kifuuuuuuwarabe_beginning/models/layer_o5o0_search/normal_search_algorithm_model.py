@@ -6,11 +6,11 @@ from ..layer_o1o0 import constants, Mars, SquareModel
 from ..layer_o1o0o_9o0_table_helper import TableHelper
 from ..layer_o2o0 import BackwardsPlotModel, cutoff_reason
 from ..layer_o4o0_rules.negative import DoNotDepromotionModel
-from .quiescence_search_2nd_phase_model import QuiescenceSearch2ndPhaseModel
+from .quiescence_search_algorithm_model import QuiescenceSearchAlgorithmModel
 from .search_context_model import SearchContextModel
 
 
-class QuiescenceSearch1stPhaseModel():
+class NormalSearchAlgorithmModel():
     """１階の全てのリーガル・ムーブについて静止探索。
     """
 
@@ -220,7 +220,7 @@ class QuiescenceSearch1stPhaseModel():
             ####################
 
             # NOTE この辺りは［１階］。max_depth - depth。
-            quiescenec_search_for_scramble_model = QuiescenceSearch2ndPhaseModel(
+            quiescenec_search_for_scramble_model = QuiescenceSearchAlgorithmModel(
                     search_context_model    = self._search_context_model)
             future_plot_model = quiescenec_search_for_scramble_model.search_alice(      # 再帰呼出
                     depth       = depth + depth_extend,

@@ -3,7 +3,7 @@ import random
 import sys
 
 from ...models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateModel
-from ...models.layer_o5o0_search import QuiescenceSearch1stPhaseModel
+from ...models.layer_o5o0_search import NormalSearchAlgorithmModel
 from ...views import TableView
 from ..layer_o3o0 import MovesPickupFilterLogics, MovesReductionFilterLogics
 
@@ -260,7 +260,7 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
     max_depth = gymnasium.config_doc['search']['capture_depth']   # 2
 
     # 駒の取り合いのための静止探索
-    qs_at_first = QuiescenceSearch1stPhaseModel(
+    qs_at_first = NormalSearchAlgorithmModel(
             max_depth   = max_depth,
             gymnasium   = gymnasium)
 
