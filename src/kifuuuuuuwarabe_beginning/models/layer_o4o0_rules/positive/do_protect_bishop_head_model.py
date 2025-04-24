@@ -53,6 +53,7 @@ class DoProtectBishopHeadModel(PositiveRuleModel):
         if table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.PAWN) and dst_sq_obj.sq == np.masu(76):
             return True
 
+        # NOTE for ループ内だから。要注意。
         # # # FIXME ［７六歩］が指せる局面で、［６六歩］を指してしまう。なぜか両方のフラグが有効になっている。後ろ向き探索だから？
         # # # FIXME 歩を取られるのが嫌なのか、［６六歩］を指さないことがある。
         # # # # ［６六歩］なら、それを選ぶ。
