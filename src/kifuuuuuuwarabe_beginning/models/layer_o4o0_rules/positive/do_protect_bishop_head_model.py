@@ -46,13 +46,31 @@ class DoProtectBishopHeadModel(PositiveRuleModel):
         src_sq_obj = SquareModel(cshogi.move_from(move))
         dst_sq_obj = SquareModel(cshogi.move_to(move))
 
-        # ［７七角］があれば、それを選ぶ。
-        if table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.BISHOP) and dst_sq_obj.sq == np.masu(77):
-            return True
+        # NOTE 後ろ向き探索だからか、
 
-        # ［７六歩］があれば、それを選ぶ。
+        # ［７六歩］なら、それを選ぶ。
+        # print(f"（２）［７六歩］があれば、それを選ぶ。： {np.masu(76)=} {table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.PAWN) and dst_sq_obj.sq == np.masu(76)}")
         if table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.PAWN) and dst_sq_obj.sq == np.masu(76):
             return True
+
+        # # # FIXME ［７六歩］が指せる局面で、［６六歩］を指してしまう。なぜか両方のフラグが有効になっている。後ろ向き探索だから？
+        # # # FIXME 歩を取られるのが嫌なのか、［６六歩］を指さないことがある。
+        # # # # ［６六歩］なら、それを選ぶ。
+        # # # # print(f"［７六歩］無し： {table.sfen()=}")
+        # # # # print(f"（３）［６六歩］があれば、それを選ぶ。： {np.masu(66)=} {table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.PAWN) and dst_sq_obj.sq == np.masu(66)}")
+        # if table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.PAWN) and dst_sq_obj.sq == np.masu(66):
+        #     # print(f"［６六歩］有り： {table.sfen()=}")
+        #     return True
+        # # if table.piece(np.masu(34)) == np.mars_pc(cshogi.PAWN) and table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.PAWN) and dst_sq_obj.sq == np.masu(66):
+        # #     # print(f"［６六歩］有り： {table.sfen()=}")
+        # #     return True
+
+        # ［７七角］なら、それを選ぶ。
+        # print(f"（１）［７七角］があれば、それを選ぶ。： {np.masu(77)=} {table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.BISHOP) and dst_sq_obj.sq == np.masu(77)}")
+        if table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.BISHOP) and dst_sq_obj.sq == np.masu(77):
+            return True
+        
+        # print(f"─")
 
         # それ以外は無視
         return False
