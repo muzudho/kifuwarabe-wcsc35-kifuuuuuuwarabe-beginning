@@ -579,6 +579,8 @@ lnsgkgsnl/1r5b1/ppppppppp/9/9/9/1+p7/9/K1+p6 b Prb2g2s2n2l6p 1
 ## 号令［右壁を作るな］が失効する動作確認
 
 ```
+＜📖出典＞フラッドゲート： http://wdoor.c.u-tokyo.ac.jp/shogi/view/2025/04/22/wdoor+floodgate-300-10F+910+KifuuuuuuwarabeBeginning+20250422223012.csa
+
 position startpos moves 2g2f 3c3d 7g7f 2b3c 2f2e 8b1b 8h3c+ 2a3c B*6e B*5d 6e8c+ 5d7f 7i7h 3a3b 8c5f 3d3e 2e2d 2c2d 5f1b 1a1b R*2b B*2c 2h2d P*2a 2b2c+ 3b2c 2d2c+ R*2b 2c2b 2a2b R*8f P*8e 8f7f 4a3b S*2a R*7b 7f7e 7c7d 7e8e
 all_backwards_plot_models_at_first len=29
 QS_select_length=2

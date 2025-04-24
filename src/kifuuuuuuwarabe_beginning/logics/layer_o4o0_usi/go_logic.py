@@ -154,6 +154,12 @@ class _Go2nd():
                 gymnasium       = self._gymnasium)
         
         if 0 < len(remaining_moves_pr):
+            for move in remaining_moves_pr:
+                self._gymnasium.health_check_go_model.append(
+                        move    = move,
+                        name    = 'PR_remaining',
+                        value   = 'PR_remaining')
+
             # ピックアップされた手の中から選びます。
             remaining_moves_r = remaining_moves_pr
 

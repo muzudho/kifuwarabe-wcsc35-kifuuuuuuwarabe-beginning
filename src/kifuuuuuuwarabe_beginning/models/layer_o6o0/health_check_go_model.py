@@ -83,10 +83,15 @@ class HealthCheckGoModel():
             return ''
 
 
-        def fn_nr_remaining(i):
+        def fn_pr_nr_remaining(i):
             move_prop = health_list[i][1]
+
+            if 'PR_remaining' in move_prop:
+                return f"{move_prop['PR_remaining']:12}"
+
             if 'NR_remaining' in move_prop:
                 return f"{move_prop['NR_remaining']:12}"
+
             return f"{'':12}"
         
 
@@ -142,7 +147,7 @@ class HealthCheckGoModel():
             for negative_rule in self._gymnasium.gourei_collection_model.negative_rule_list_of_active:
                 body_list.append(fn_negative_rule(i, negative_rule.id))
 
-            body_list.append(fn_nr_remaining(i))        # ネガティブ・ルールで選別して残った手
+            body_list.append(fn_pr_nr_remaining(i))        # ネガティブ・ルールで選別して残った手
             body_list.append(fn_bm_bestmove(i))         # ベストムーブ
             body_list.append(fn_qs_plot(i))             # 静止探索の読み筋の詳細
             lines.append(', '.join(body_list))
