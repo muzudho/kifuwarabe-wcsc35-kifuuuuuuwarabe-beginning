@@ -13,15 +13,15 @@ class TableModel:
         return TableModel(
                 # 平手指定局面を明示
                 designated_sfen='lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1',
-                piece_moved_list=[])
+                piece_moved_obj_list=[])
 
 
-    def __init__(self, designated_sfen, piece_moved_list):
+    def __init__(self, designated_sfen, piece_moved_obj_list):
         self._designated_sfen = designated_sfen
         self._board = cshogi.Board(self._designated_sfen)
 
         # 局面の重複を調べるために、０手の SFEN をリストで持ちたい
-        self._piece_moved_list = piece_moved_list
+        self._piece_moved_obj_list = piece_moved_obj_list
 
 
     @property
@@ -50,7 +50,7 @@ class TableModel:
         result = self._board.push(move)
 
         # 指した後に記録
-        self._piece_moved_list.append(PieceMovedModel(
+        self._piece_moved_obj_list.append(PieceMovedModel(
                 move=move,
                 sfen_with_0_moves=self._board.sfen()))  # 指した後の sfen を記憶
         
@@ -62,7 +62,7 @@ class TableModel:
         """
 
         # 状態を戻す
-        self._piece_moved_list.pop()
+        self._piece_moved_obj_list.pop()
 
         return self._board.pop()
 
@@ -168,21 +168,37 @@ class TableModel:
         return self._board.move_number
 
 
+    ######################
+    # MARK: 指し手のリスト
+    ######################
+
+    def copy_piece_moved_obj_list(self):
+        """［指し手のリスト］のコピー。
+        """
+        return list(self._piece_moved_obj_list)
+
+
+    def len_of_history(self):
+        """［指し手のリスト］の要素数。
+        """
+        return len(self._piece_moved_obj_list)
+
+
+    def history_at(self, index):
+        """［指し手のリスト］の要素。
+        """
+        return self._piece_moved_obj_list[index].move
+
+
     #########
     # MARK: C
     #########
-
-    def copy_piece_moved_list(self):
-        """［指し手のリスト］のコピー。
-        """
-        return list(self._piece_moved_list)
-
 
     def copy_table_with_0_moves(self):
         """テーブルのコピー。ただし、指定局面の１手目に戻っている"""
         return TableModel(
                 designated_sfen=self.designated_sfen,
-                piece_moved_list=self.copy_piece_moved_list())
+                piece_moved_obj_list=self.copy_piece_moved_obj_list())
 
 
     ##############
@@ -194,8 +210,8 @@ class TableModel:
 
         def _dump_piece_moved_list():
             items = []
-            for piece_moved in self._piece_moved_list:
-                items.append(f"{piece_moved=}")
+            for piece_moved_obj in self._piece_moved_obj_list:
+                items.append(f"{piece_moved_obj=}")
             
             return ' '.join(items)
 

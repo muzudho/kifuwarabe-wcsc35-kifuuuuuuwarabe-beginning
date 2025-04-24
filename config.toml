@@ -28,6 +28,9 @@
     # 訓令［ゾウの頭を守れ］
     do_protect_bishop_head = true
 
+    # 号令［相手が手を戻したら自分も戻せ］
+    if_opponent_rollback_move_me_too = true
+
     # 号令［戻るな］
     do_not_back = true
 

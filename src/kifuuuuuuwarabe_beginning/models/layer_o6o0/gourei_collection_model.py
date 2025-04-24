@@ -6,7 +6,8 @@ from ..layer_o4o0_rules.negative import \
     DoNotMoveUntilRookMovesModel, DoNotMoveLeftLanceModel, DoNotMoveRightLanceModel, DoNotMoveRookModel, \
     WillForThreeGoldAndSilverCoinsToGatherToTheRightModel, WillNotToMove37PawnModel, WillSwingingRookModel
 from ..layer_o4o0_rules.positive import \
-    DoProtectBishopHeadModel
+    DoProtectBishopHeadModel, \
+    IfOpponentRollbackMoveMeToo
 
 
 class GoureiCollectionModel():
@@ -17,7 +18,8 @@ class GoureiCollectionModel():
     def __init__(self, basketball_court_model):
 
         self._positive_rule_list_of_active = [
-            DoProtectBishopHeadModel(basketball_court_model=basketball_court_model),    # 訓令［ゾウの頭を守れ］
+            DoProtectBishopHeadModel(basketball_court_model=basketball_court_model),        # 訓令［ゾウの頭を守れ］
+            IfOpponentRollbackMoveMeToo(basketball_court_model=basketball_court_model),     # 号令［相手が手を戻したら自分も戻せ］
         ]
 
         # 初期状態では、有効でない号令です。

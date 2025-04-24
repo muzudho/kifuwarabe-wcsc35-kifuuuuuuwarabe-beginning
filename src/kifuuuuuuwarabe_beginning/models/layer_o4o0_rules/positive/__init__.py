@@ -1,1 +1,2 @@
 from .do_protect_bishop_head_model import DoProtectBishopHeadModel
+from .if_opponent_rollback_move_me_too import IfOpponentRollbackMoveMeToo
