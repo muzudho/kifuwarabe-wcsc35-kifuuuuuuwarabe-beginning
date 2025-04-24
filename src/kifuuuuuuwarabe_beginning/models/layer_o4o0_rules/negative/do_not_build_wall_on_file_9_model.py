@@ -33,10 +33,10 @@ class DoNotBuildWallOnFile9Model(NegativeRuleModel):
         if dst_sq_obj.file != np.suji(9):   # ９筋目以外に移動する手なら。
             return constants.mind.NOT_IN_THIS_CASE          # 対象外。
 
-        # ９八、９九の両方に自駒があるか？
+        # ９八、９九のいずれかに自駒があるか？（もう片方は移動先）
         pc98 = table.piece(np.masu(98))
         pc99 = table.piece(np.masu(99))
-        if pc98 != cshogi.NONE and PieceModel.turn(pc98) == table.turn and pc99 != cshogi.NONE and PieceModel.turn(pc99) == table.turn:
+        if pc98 != cshogi.NONE and PieceModel.turn(pc98) == table.turn or pc99 != cshogi.NONE and PieceModel.turn(pc99) == table.turn:
             # 意志無し。
             return constants.mind.WILL_NOT
 

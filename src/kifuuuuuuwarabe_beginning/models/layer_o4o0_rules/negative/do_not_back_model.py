@@ -7,7 +7,9 @@ from ..negative_rule_model import NegativeRuleModel
 
 class DoNotBackModel(NegativeRuleModel):
     """号令［戻るな］
-    ［常に進む］意志
+    ［手待ちをしない］意志
+
+    FIXME 駒が取られそうなときは、戻りたい。
     """
 
 
@@ -50,12 +52,13 @@ class DoNotBackModel(NegativeRuleModel):
 
         #print(f'★ ＤoNotBack: {Helper.sq_to_masu(src_sq_obj.sq)=} の前位置は {Helper.sq_to_masu(back_sq)=}。')
 
-        # 元居た位置に戻る手は、意志無し。
-        if dst_sq_obj.sq == back_sq:
-            return constants.mind.WILL_NOT
+        if dst_sq_obj.sq != back_sq:        # 元居た位置に戻る手でなければ。
+            return constants.mind.WILL      # 意志有り。
 
-        # それ以外なら、意志有り。
-        return constants.mind.WILL
+        # FIXME 駒が取られそうなときは、戻りたい。
+
+        # それ以外なら、意志無し。
+        return constants.mind.WILL_NOT
 
 
     def _after_best_moving_negative(self, move, table):
