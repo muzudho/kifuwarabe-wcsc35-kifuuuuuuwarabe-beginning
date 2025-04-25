@@ -44,15 +44,12 @@ class DoProtectBishopHeadModel(PositiveRuleModel):
 
         np = NineRankSidePerspectiveModel(table)
 
-        # ［７六歩］が有るか確認。
-        self._is_76hiyoko = False
-
-        for move in remaining_moves:
-            src_sq_obj = SquareModel(cshogi.move_from(move))
-            dst_sq_obj = SquareModel(cshogi.move_to(move))
-            if table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.PAWN) and dst_sq_obj.sq == np.masu(76):
-                self._is_76hiyoko = True
-                break
+        # ［ヒヨコ on ６六］が有るか確認。
+        self._is_hiyoko_on_66 = table.piece(np.masu(66)) == np.ji_pc(cshogi.PAWN)
+        # ［ヒヨコ on ７六］が有るか確認。
+        self._is_hiyoko_on_76 = table.piece(np.masu(76)) == np.ji_pc(cshogi.PAWN)
+        # ［歩 not on ３三］か確認。
+        self._is_pawn_not_on_33 = table.piece(np.masu(33)) != np.aite_pc(cshogi.PAWN)
 
         return []
 
@@ -69,20 +66,25 @@ class DoProtectBishopHeadModel(PositiveRuleModel):
 
         src_sq_obj = SquareModel(cshogi.move_from(move))
         dst_sq_obj = SquareModel(cshogi.move_to(move))
+        moving_pc = table.piece(src_sq_obj.sq)
 
-        # これが［７六歩］なら、選ぶ。
-        if table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.PAWN) and dst_sq_obj.sq == np.masu(76):
+        # これが［７六ヒヨコ］なら、選ぶ。
+        if moving_pc == np.ji_pc(cshogi.PAWN) and dst_sq_obj.sq == np.masu(76):
             return True
 
-        # これが［７七角］なら、選ぶ。（［７六歩］を突いていなければ、そもそもこの手は存在しない）
-        if table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.BISHOP) and dst_sq_obj.sq == np.masu(77):
-            return True
-        
-        # ［７六歩］が指せない局面で。（既に［７六歩］を突いていることを想定）
-        if not self._is_76hiyoko:
-            # これが［６六歩］なら、選ぶ。
-            if table.piece(src_sq_obj.sq) == np.ji_pc(cshogi.PAWN) and dst_sq_obj.sq == np.masu(66):
+        # これが［６六ヒヨコ］なら。
+        if moving_pc == np.ji_pc(cshogi.PAWN) and dst_sq_obj.sq == np.masu(66):
+            # ［ヒヨコ on ７六］、［歩 not on ３三］なら、選ぶ。
+            if self._is_hiyoko_on_76 and self._is_pawn_not_on_33:
                 return True
+            return False
+
+        # これが［７七ゾウ］なら。（［７六歩］を突いていなければ、そもそもこの手は存在しない）
+        if moving_pc == np.ji_pc(cshogi.BISHOP) and dst_sq_obj.sq == np.masu(77):
+            # not［歩 not on ３三］または［ヒヨコ on ６六］なら、選ぶ。
+            if not self._is_pawn_not_on_33 or self._is_hiyoko_on_66:
+                return True
+            return False
 
         # それ以外は無視。
         return False

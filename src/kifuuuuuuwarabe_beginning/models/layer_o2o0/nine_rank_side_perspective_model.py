@@ -280,9 +280,9 @@ class NineRankSidePerspectiveModel():
         """［相手］。手番を持ってない側。駒種類を相手番の駒へ変換
         """
         if self.is_opponent_turn():
-            piece = piece_type + 16
-        else:
             piece = piece_type
+        else:
+            piece = piece_type + 16
 
         return piece
 
