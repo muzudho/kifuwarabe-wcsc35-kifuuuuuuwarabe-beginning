@@ -208,13 +208,8 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
 
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(remaining_moves) == 0:
-            self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜静止＞')
-            return BackwardsPlotModel(
-                    is_mars_at_out_of_termination  = self._search_context_model.gymnasium.is_mars,
-                    is_gote_at_out_of_termination  = self._search_context_model.gymnasium.table.is_gote,
-                    out_of_termination             = constants.out_of_termination.QUIESCENCE,
-                    cutoff_reason           = cutoff_reason.NO_MOVES,
-                    hint                    = f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は静止")
+            future_plot_model = self.create_backwards_plot_model_at_quiescence(depth_qs=depth_qs)
+            return future_plot_model
 
         for my_move in remaining_moves:
 
@@ -348,15 +343,10 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         # MARK: 合法手スキャン後
         ########################
 
-        # 指したい手がなかったなら、静止探索の末端局面を返す。
+        # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
         if best_old_sibling_plot_model_in_children is None:
-            self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜指したい手無し＞')
-            return BackwardsPlotModel(
-                    is_mars_at_out_of_termination  = self._search_context_model.gymnasium.is_mars,
-                    is_gote_at_out_of_termination  = self._search_context_model.gymnasium.table.is_gote,
-                    out_of_termination             = constants.out_of_termination.NO_CANDIDATES,  # 有力な候補手無し。
-                    cutoff_reason           = cutoff_reason.NO_MOVES,
-                    hint                    = f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は指したい手無し,move数={len(legal_move_list)},{case_2=},{case_4=},{case_5=},{case_6t=},({'_'.join(case_6t_hint_list)}),{case_6f=},({'_'.join(case_6f_hint_list)}),{case_8a=},{case_8a=},{case_8b=},{case_8c=},{case_8d=},{case_8e=}")
+            future_plot_model = self.create_backwards_plot_model_at_no_candidates(depth_qs=depth_qs)
+            return future_plot_model
 
         # 今回の手を付け加える。
         best_old_sibling_plot_model_in_children.append_move(

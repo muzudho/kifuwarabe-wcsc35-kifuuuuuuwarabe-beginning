@@ -75,3 +75,24 @@ class SearchAlgorithmModel:
                 cutoff_reason                   = cutoff_reason.MAX_DEPTH,
                 hint                            = f"{self._search_context_model.max_depth - depth_qs}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}でこれ以上深く読まない場合_{depth_qs=}/{self._search_context_model.max_depth=}")
         return best_plot_model
+
+
+    def create_backwards_plot_model_at_quiescence(self, depth_qs):
+        self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜静止＞')
+        future_plot_model = BackwardsPlotModel(
+                is_mars_at_out_of_termination  = self._search_context_model.gymnasium.is_mars,
+                is_gote_at_out_of_termination  = self._search_context_model.gymnasium.table.is_gote,
+                out_of_termination             = constants.out_of_termination.QUIESCENCE,
+                cutoff_reason           = cutoff_reason.NO_MOVES,
+                hint                    = f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は静止")
+        return future_plot_model
+
+
+    def create_backwards_plot_model_at_no_candidates(self, depth_qs):
+        future_plot_model = BackwardsPlotModel(
+                is_mars_at_out_of_termination   = self._search_context_model.gymnasium.is_mars,
+                is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
+                out_of_termination              = constants.out_of_termination.NO_CANDIDATES,
+                cutoff_reason                   = cutoff_reason.NO_MOVES,
+                hint                            = f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は指したい手無し")
+        return future_plot_model

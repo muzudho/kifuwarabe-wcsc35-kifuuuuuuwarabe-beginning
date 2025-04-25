@@ -124,13 +124,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(remaining_moves) == 0:
-            self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜静止＞')
-            future_plot_model = BackwardsPlotModel(
-                    is_mars_at_out_of_termination  = self._search_context_model.gymnasium.is_mars,
-                    is_gote_at_out_of_termination  = self._search_context_model.gymnasium.table.is_gote,
-                    out_of_termination             = constants.out_of_termination.QUIESCENCE,
-                    cutoff_reason           = cutoff_reason.NO_MOVES,
-                    hint                    = f"１階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は静止_{depth_qs=}/{self._search_context_model.max_depth=}_{len(all_backwards_plot_models_at_first)=}/{len(remaining_moves)=}")
+            future_plot_model = self.create_backwards_plot_model_at_quiescence(depth_qs=depth_qs)
             all_backwards_plot_models_at_first.append(future_plot_model)
             self._search_context_model.end_time = time.time()    # 計測終了時間
             return all_backwards_plot_models_at_first
@@ -232,12 +226,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
         # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
         if len(all_backwards_plot_models_at_first) < 1:
-            future_plot_model = BackwardsPlotModel(
-                    is_mars_at_out_of_termination  = self._search_context_model.gymnasium.is_mars,
-                    is_gote_at_out_of_termination  = self._search_context_model.gymnasium.table.is_gote,
-                    out_of_termination             = constants.out_of_termination.NO_CANDIDATES, # 有力な候補手無し。
-                    cutoff_reason           = cutoff_reason.NO_MOVES,
-                    hint                    = f"１階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は指したい手無し_{depth_qs=}/{self._search_context_model.max_depth=}_{len(all_backwards_plot_models_at_first)=}/{len(remaining_moves)=}")
+            future_plot_model = self.create_backwards_plot_model_at_no_candidates(depth_qs=depth_qs)
             all_backwards_plot_models_at_first.append(future_plot_model)
             self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜指したい手無し＞')
 
