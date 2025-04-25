@@ -63,8 +63,6 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
         # 指さなくても分かること（ライブラリー使用）
 
-        # NOTE このあたりは［０階］。max_depth - depth。
-
         if self._search_context_model.gymnasium.table.is_game_over():
             """手番の投了局面時。
             """
@@ -103,21 +101,11 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
         # 最善手は探さなくていい。全部返すから。
 
-        # 指し手を全部調べる。
-        do_not_depromotion_model = DoNotDepromotionModel(
-                basketball_court_model=self._search_context_model.gymnasium.basketball_court_model)    # TODO 号令［成らないということをするな］
+        ############################
+        # MARK: データ・クリーニング
+        ############################
 
-        do_not_depromotion_model._on_node_entry_negative(
-                table=self._search_context_model.gymnasium.table)
-
-        # データ・クリーニング
-        for my_move in reversed(remaining_moves):
-            # ［成れるのに成らない手］は除外
-            mind = do_not_depromotion_model._on_node_exit_negative(
-                    move    = my_move,
-                    table   = self._search_context_model.gymnasium.table)
-            if mind == constants.mind.WILL_NOT:
-                remaining_moves.remove(my_move)
+        remaining_moves = self.remove_depromoted_moves(remaining_moves=remaining_moves)       # ［成れるのに成らない手］は除外
 
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(remaining_moves) == 0:

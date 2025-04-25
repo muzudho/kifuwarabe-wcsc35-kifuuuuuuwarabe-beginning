@@ -2,6 +2,7 @@ import cshogi
 
 from ..layer_o1o0 import constants, Mars, SquareModel
 from ..layer_o2o0 import BackwardsPlotModel, cutoff_reason
+from ..layer_o4o0_rules.negative import DoNotDepromotionModel
 
 
 class SearchAlgorithmModel:
@@ -96,3 +97,24 @@ class SearchAlgorithmModel:
                 cutoff_reason                   = cutoff_reason.NO_MOVES,
                 hint                            = f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は指したい手無し")
         return future_plot_model
+
+
+    def remove_depromoted_moves(self, remaining_moves):
+        """［成れるのに成らない手］は除外。
+        """
+        # 指し手を全部調べる。
+        do_not_depromotion_model = DoNotDepromotionModel(
+                basketball_court_model=self._search_context_model.gymnasium.basketball_court_model)    # TODO 号令［成らないということをするな］
+
+        do_not_depromotion_model._on_node_entry_negative(
+                table=self._search_context_model.gymnasium.table)
+
+        for my_move in reversed(remaining_moves):
+            # ［成れるのに成らない手］は除外
+            mind = do_not_depromotion_model._on_node_exit_negative(
+                    move    = my_move,
+                    table   = self._search_context_model.gymnasium.table)
+            if mind == constants.mind.WILL_NOT:
+                remaining_moves.remove(my_move)
+
+        return remaining_moves

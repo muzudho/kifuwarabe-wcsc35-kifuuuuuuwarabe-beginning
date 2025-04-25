@@ -96,20 +96,14 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         depth_qs_extend        = 0
 
         # 合法手を全部調べる。
-        do_not_depromotion_model = DoNotDepromotionModel(
-                basketball_court_model=self._search_context_model.gymnasium.basketball_court_model)    # TODO 号令［成らないということをするな］
-
-        do_not_depromotion_model._on_node_entry_negative(
-                table=self._search_context_model.gymnasium.table)
-
         legal_move_list = list(self._search_context_model.gymnasium.table.legal_moves)
-
         remaining_moves = legal_move_list
 
         ############################
         # MARK: データ・クリーニング
         ############################
 
+        remaining_moves = self.remove_depromoted_moves(remaining_moves=remaining_moves)       # ［成れるのに成らない手］は除外
         remaining_moves = QuiescenceSearchAlgorithmModel.filtering_same_destination_move_list(parent_move=parent_move, remaining_moves=remaining_moves)
         remaining_moves = QuiescenceSearchAlgorithmModel.get_cheapest_move_list(remaining_moves=remaining_moves)
 
@@ -128,14 +122,6 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
                 else:
                     remaining_moves.remove(my_move)
                     continue
-
-            # ［成れるのに成らない手］は除外
-            mind = do_not_depromotion_model._on_node_exit_negative(
-                    move    = my_move,
-                    table   = self._search_context_model.gymnasium.table)
-            if mind == constants.mind.WILL_NOT:
-                remaining_moves.remove(my_move)
-                continue
 
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(remaining_moves) == 0:
