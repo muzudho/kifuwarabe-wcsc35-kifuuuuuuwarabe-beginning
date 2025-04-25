@@ -29,14 +29,11 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
 
     def search_alice(
             self,
-            #best_plot_model_in_older_sibling,
             depth_qs,
             parent_move):
         """
         Parameters
         ----------
-        # best_plot_model_in_older_sibling : BackwardsPlotModel
-        #     兄たちの中で最善の読み筋、またはナン。ベータカットに使う。
         depth : int
             あと何手深く読むか。
         parent_move : int
@@ -98,31 +95,6 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         best_move_cap_pt    = None
         depth_qs_extend        = 0
 
-
-        # def _get_beta_cutoff_value(best_plot_model_in_older_sibling):
-        #     # 最善手が未定なら、天井（底）を最大にします。
-        #     if best_plot_model_in_older_sibling is None:
-        #         if self._search_context_model.gymnasium.is_mars:
-        #             return constants.value.BETA_CUTOFF_VALUE        # 天井
-        #         return - constants.value.BETA_CUTOFF_VALUE  # 底
-
-        #     # 最善手が既存なら、その交換値を返すだけ。
-        #     return best_plot_model_in_older_sibling.get_exchange_value_on_earth()
-
-
-        case_2 = 0
-        case_4 = 0
-        case_5 = 0
-        case_6t = 0
-        case_6t_hint_list = []
-        case_6f = 0
-        case_6f_hint_list = []
-        case_8a = 0
-        case_8b = 0
-        case_8c = 0
-        case_8d = 0
-        case_8e = 0
-
         # 合法手を全部調べる。
         do_not_depromotion_model = DoNotDepromotionModel(
                 basketball_court_model=self._search_context_model.gymnasium.basketball_court_model)    # TODO 号令［成らないということをするな］
@@ -138,49 +110,8 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         # MARK: データ・クリーニング
         ############################
 
-        def filtering_same_destination_move_list(remaining_moves):
-            """［同］（１つ前の手の移動先に移動する手）を優先的に選ぶ。
-            """
-            dst_sq_of_previous_move_obj = SquareModel(cshogi.move_to(parent_move))      # ［１つ前の手］の［移動先マス］
-            same_destination_move_list = []
-
-            for my_move in remaining_moves:
-                dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
-                if dst_sq_obj.sq == dst_sq_of_previous_move_obj.sq:
-                    same_destination_move_list.append(my_move)
-            
-            if 0 < len(same_destination_move_list):
-                return same_destination_move_list
-            
-            return remaining_moves
-
-
-        def get_cheapest_move_list(remaining_moves):
-            """TODO 一番安い駒の指し手だけを選ぶ。
-            """
-            cheapest_value = PieceValuesModel.get_big_value()
-            cheapest_move_list = []
-            for my_move in remaining_moves:
-                moving_pt = TableHelper.get_moving_pt_from_move(my_move)
-                value = PieceValuesModel.by_piece_type(moving_pt)
-                if value == cheapest_move_list:
-                    cheapest_move_list.append(my_move)
-                elif value < cheapest_value:
-                    cheapest_value = value
-                    cheapest_move_list = [my_move]            
-            return cheapest_move_list
-
-
-        remaining_moves = filtering_same_destination_move_list(remaining_moves=remaining_moves)
-
-        remaining_moves = get_cheapest_move_list(remaining_moves=remaining_moves)
-        # # ヘルスチェック
-        # # FIXME 木構造の各ノードでログが被ってしまう。
-        # for my_move in remaining_moves:
-        #     self._search_context_model.gymnasium.health_check_go_model.append(
-        #             move    = my_move,
-        #             name    = 'QS_cheapest',
-        #             value   = True)
+        remaining_moves = QuiescenceSearchAlgorithmModel.filtering_same_destination_move_list(parent_move=parent_move, remaining_moves=remaining_moves)
+        remaining_moves = QuiescenceSearchAlgorithmModel.get_cheapest_move_list(remaining_moves=remaining_moves)
 
         for my_move in reversed(remaining_moves):
             dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
@@ -254,7 +185,6 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
 
             # NOTE ネガ・マックスではないので、評価値の正負を反転させなくていい。
             child_plot_model = self.search_alice(      # 再帰呼出
-                    #best_plot_model_in_older_sibling    = best_plot_model_in_children,
                     depth_qs       = depth_qs + depth_qs_extend,
                     parent_move = my_move)
 
@@ -288,11 +218,6 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             # この枝の点（将来の点＋取った駒の点）
             this_branch_value_on_earth = child_plot_model.get_exchange_value_on_earth() + piece_exchange_value_on_earth
 
-            # # TODO 既存の最善手より良い手を見つけてしまったら、ベータカットします。
-            # if beta_cutoff_value < this_branch_value:
-            #     #will_beta_cutoff = True   # TODO ベータカット
-            #     pass
-
             # この枝が長兄なら。
             if best_old_sibling_plot_model_in_children is None:
                 old_sibling_value = 0
@@ -300,44 +225,14 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
                 # 兄枝のベスト評価値
                 old_sibling_value = best_old_sibling_plot_model_in_children.get_exchange_value_on_earth()     # とりあえず最善の読み筋の点数。
 
-
             (a, b) = ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
             its_update_best = (a < b)
-
-            # # この枝が長兄なら。
-            # if best_old_sibling_plot_model_in_children is None:
-
-            #     if its_update_best:
-            #         case_8a += 1
-            
-            # # 兄枝が有るなら。
-            # else:
-
-            #     if its_update_best:
-            #         case_6t += 1
-            #         case_6t_hint_list.append(f"{old_sibling_value=} < {this_branch_value_on_earth=}")
-
-            #         #self._search_context_model.gymnasium.thinking_logger_module.append(f"[search] 6t {self._search_context_model.frontwards_plot_model=}")
-            #         # if self._search_context_model.frontwards_plot_model.equals_move_usi_list(['3a4b']):   # FIXME デバッグ絞込み
-            #         #     self._search_context_model.gymnasium.thinking_logger_module.append(_log_1('6t'))
-
-            #     else:
-            #         case_6f += 1
-            #         case_6f_hint_list.append(f"{old_sibling_value=} < {this_branch_value_on_earth=}")
-
-            #         #self._search_context_model.gymnasium.thinking_logger_module.append(f"[search] 6f {self._search_context_model.frontwards_plot_model=}")
-            #         # if self._search_context_model.frontwards_plot_model.equals_move_usi_list(['3a4b']):   # FIXME デバッグ絞込み
-            #         #     self._search_context_model.gymnasium.thinking_logger_module.append(_log_1('6f'))
                         
             # 最善手の更新
             if its_update_best:
                 best_old_sibling_plot_model_in_children = child_plot_model
                 best_move = my_move
                 best_move_cap_pt = cap_pt
-
-            # # FIXME 探索の打切り判定
-            # if is_beta_cutoff:
-            #     break   # （アンドゥや、depth の勘定をきちんとしたあとで）ループから抜ける
 
         ########################
         # MARK: 合法手スキャン後
@@ -355,3 +250,36 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
                 hint                = f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の手記憶")
 
         return best_old_sibling_plot_model_in_children
+
+
+    def filtering_same_destination_move_list(parent_move, remaining_moves):
+        """［同］（１つ前の手の移動先に移動する手）を優先的に選ぶ。
+        """
+        dst_sq_of_previous_move_obj = SquareModel(cshogi.move_to(parent_move))      # ［１つ前の手］の［移動先マス］
+        same_destination_move_list = []
+
+        for my_move in remaining_moves:
+            dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
+            if dst_sq_obj.sq == dst_sq_of_previous_move_obj.sq:
+                same_destination_move_list.append(my_move)
+        
+        if 0 < len(same_destination_move_list):
+            return same_destination_move_list
+        
+        return remaining_moves
+
+
+    def get_cheapest_move_list(remaining_moves):
+        """TODO 一番安い駒の指し手だけを選ぶ。
+        """
+        cheapest_value = PieceValuesModel.get_big_value()
+        cheapest_move_list = []
+        for my_move in remaining_moves:
+            moving_pt = TableHelper.get_moving_pt_from_move(my_move)
+            value = PieceValuesModel.by_piece_type(moving_pt)
+            if value == cheapest_move_list:
+                cheapest_move_list.append(my_move)
+            elif value < cheapest_value:
+                cheapest_value = value
+                cheapest_move_list = [my_move]            
+        return cheapest_move_list

@@ -29,7 +29,6 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
     def search_as_root(
             self,
-            #best_plot_model_in_older_sibling,
             depth_normal,
             depth_qs,
             remaining_moves):
@@ -41,8 +40,6 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
         Parameters
         ----------
-        # best_plot_model_in_older_sibling : BackwardsPlotModel
-        #     兄たちの中で最善の読み筋、またはナン。ベータカットに使う。
         depth_normal : int
             通常の探索で、あと何手深く読むか。
         depth_qs : int
