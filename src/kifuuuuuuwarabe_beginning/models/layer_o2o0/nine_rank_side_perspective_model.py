@@ -276,7 +276,7 @@ class NineRankSidePerspectiveModel():
         return piece
 
 
-    def mars_pc(self, piece_type):
+    def aite_pc(self, piece_type):
         """［相手］。手番を持ってない側。駒種類を相手番の駒へ変換
         """
         if self.is_opponent_turn():

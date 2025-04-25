@@ -20,7 +20,7 @@ class SquareModel():
         return self._sq % 9
 
 
-    def to_north(self):
+    def to_north_or_none(self):
         """北。
         """
         if self.rank == 0:
@@ -28,7 +28,7 @@ class SquareModel():
         return SquareModel(sq=self._sq - 1)
 
 
-    def to_south(self):
+    def to_south_or_none(self):
         """南。
         """
         if self.rank == 8:

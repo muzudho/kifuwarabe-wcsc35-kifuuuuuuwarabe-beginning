@@ -21,31 +21,34 @@ class DoNotPeckAtChickOnRoundheadedPieceModel(NegativeRuleModel):
     def _on_node_exit_negative(self, move, table):
         """指す前に。
         """
-        np = NineRankSidePerspectiveModel(table)
+        #np = NineRankSidePerspectiveModel(table)
         moving_pt = TableHelper.get_moving_pt_from_move(move)
         src_sq_obj = SquareModel(cshogi.move_from(move))
-        dst_sq_obj = SquareModel(cshogi.move_to(move))
+        #dst_sq_obj = SquareModel(cshogi.move_to(move))
         is_drop = cshogi.move_is_drop(move) # ［打］
         moving_pc = table.piece(src_sq_obj.sq)
         moving_color = PieceModel.turn(moving_pc)
 
         if is_drop:                                 # 打なら。
-            print(f"{cshogi.move_to_usi(move)} is 打。")
+            #print(f"{cshogi.move_to_usi(move)} is 打。")
             return constants.mind.NOT_IN_THIS_CASE  # 対象外。
         
         if moving_pt != cshogi.PAWN:                # 歩でないなら。
-            print(f"{cshogi.move_to_usi(move)} is not 歩。")
+            #print(f"{cshogi.move_to_usi(move)} is not 歩。")
             return constants.mind.NOT_IN_THIS_CASE  # 対象外。
         
         if moving_color == cshogi.WHITE:
-            print(f"{cshogi.move_to_usi(move)} is 後手。")
-            south_of_src_sq_obj = src_sq_obj.to_north()
+            #print(f"{cshogi.move_to_usi(move)} is 後手。")
+            south_of_src_sq_obj = src_sq_obj.to_north_or_none()
         else:
-            print(f"{cshogi.move_to_usi(move)} is 先手。")
-            south_of_src_sq_obj = src_sq_obj.to_south()
+            #print(f"{cshogi.move_to_usi(move)} is 先手。")
+            south_of_src_sq_obj = src_sq_obj.to_south_or_none()
+
+        if not south_of_src_sq_obj:                 # 盤底なら。
+            return constants.mind.NOT_IN_THIS_CASE  # 対象外。
 
         south_of_src_pt = table.piece_type(south_of_src_sq_obj.sq)
-        print(f"{cshogi.move_to_usi(move)}'s south is {PieceTypeModel.kanji(south_of_src_pt)}。")
+        #print(f"{cshogi.move_to_usi(move)}'s south is {PieceTypeModel.kanji(south_of_src_pt)}。")
         if south_of_src_pt not in [cshogi.BISHOP, cshogi.KNIGHT]:   # 移動元の１段下の駒がゾウ、ウサギでないなら。
             return constants.mind.NOT_IN_THIS_CASE                  # 対象外。
 
