@@ -10,7 +10,7 @@ from .quiescence_search_algorithm_model import QuiescenceSearchAlgorithmModel
 from .search_context_model import SearchContextModel
 
 
-class NormalSearchAlgorithmModel():
+class RootSearchAlgorithmModel():
     """１階の全てのリーガル・ムーブについて静止探索。
     """
 
@@ -34,7 +34,7 @@ class NormalSearchAlgorithmModel():
         return self._search_context_model
 
 
-    def search_at_first(
+    def search_as_root(
             self,
             #best_plot_model_in_older_sibling,
             depth_normal,
@@ -218,7 +218,20 @@ class NormalSearchAlgorithmModel():
             ####################
 
             # NOTE この辺りは［１階］。max_depth - depth。
-            # 静止探索。
+
+            # if 0 < depth_normal:    # 通常探索
+            #     qs_at_first = NormalSearchAlgorithmModel(
+            #             max_depth   = depth_qs,
+            #             gymnasium   = self._search_context_model.gymnasium)
+            #   # TODO 戻り値が違う。
+            #     all_backwards_plot_models_at_first = qs_at_first.search_as_normal(
+            #             #best_plot_model_in_older_sibling    = None,
+            #             depth_normal                        = depth_normal - 1,
+            #             depth_qs                             = depth_qs,
+            #             #beta_cutoff_value                   = constants.value.BETA_CUTOFF_VALUE,    # すごい高い点数。
+            #             remaining_moves                     = remaining_moves)
+
+            # else:   # 静止探索。
             quiescenec_search_for_scramble_model = QuiescenceSearchAlgorithmModel(
                     search_context_model    = self._search_context_model)
             future_plot_model = quiescenec_search_for_scramble_model.search_alice(      # 再帰呼出

@@ -1,4 +1,4 @@
 from .komadoku_filter_model import KomadokuFilterModel
-from .normal_search_algorithm_model import NormalSearchAlgorithmModel
+from .root_search_algorithm_model import RootSearchAlgorithmModel
 from .quiescence_search_algorithm_model import QuiescenceSearchAlgorithmModel
 from .search_context_model import SearchContextModel

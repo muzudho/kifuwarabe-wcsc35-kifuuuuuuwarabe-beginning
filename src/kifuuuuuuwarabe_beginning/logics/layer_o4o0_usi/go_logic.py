@@ -3,7 +3,7 @@ import random
 import sys
 
 from ...models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateModel
-from ...models.layer_o5o0_search import NormalSearchAlgorithmModel
+from ...models.layer_o5o0_search import RootSearchAlgorithmModel
 from ...views import TableView
 from ..layer_o3o0 import MovesPickupFilterLogics, MovesReductionFilterLogics
 
@@ -259,8 +259,8 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
     """
     max_depth = gymnasium.config_doc['search']['capture_depth']   # 2
 
-    # 駒の取り合いのための静止探索
-    qs_at_first = NormalSearchAlgorithmModel(
+    # １階の探索（特殊）
+    qs_at_first = RootSearchAlgorithmModel(
             max_depth   = max_depth,
             gymnasium   = gymnasium)
 
@@ -268,7 +268,7 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
         #print(f"D-132: _q uiescence_search {max_depth=}")
         return remaining_moves, 0
 
-    all_backwards_plot_models_at_first = qs_at_first.search_at_first(
+    all_backwards_plot_models_at_first = qs_at_first.search_as_root(
             #best_plot_model_in_older_sibling    = None,
             depth_normal                        = 1,
             depth_qs                               = max_depth,
