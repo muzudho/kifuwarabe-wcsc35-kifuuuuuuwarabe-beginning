@@ -196,7 +196,24 @@ class QuiescenceSearchAlgorithmModel():
             return remaining_moves
 
 
+        def get_cheapest_move_list(remaining_moves):
+            """TODO 一番安い駒の指し手だけを選ぶ。
+            """
+            cheapest_value = PieceValuesModel.get_big_value()
+            cheapest_move_list = []
+            for my_move in remaining_moves:
+                moving_pt = TableHelper.get_moving_pt_from_move(my_move)
+                value = PieceValuesModel.by_piece_type(moving_pt)
+                if value == cheapest_move_list:
+                    cheapest_move_list.append(my_move)
+                elif value < cheapest_value:
+                    cheapest_value = value
+                    cheapest_move_list = [my_move]
+            return cheapest_move_list
+
+
         remaining_moves = filtering_same_destination_move_list(remaining_moves=remaining_moves)
+        remaining_moves = get_cheapest_move_list(remaining_moves=remaining_moves)
 
         for my_move in reversed(remaining_moves):
             dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
