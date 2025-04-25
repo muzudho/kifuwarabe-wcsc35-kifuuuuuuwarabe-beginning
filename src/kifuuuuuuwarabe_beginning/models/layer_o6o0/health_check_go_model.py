@@ -37,42 +37,42 @@ class HealthCheckGoModel():
 
         def fn_move(i):
             move = health_list[i][0]
-            return f"{cshogi.move_to_usi(move):5}"
+            return f"{cshogi.move_to_usi(move)}"
 
 
         def fn_legal(i):
             move_prop = health_list[i][1]
             if 'legal' in move_prop:
-                return f"{'legal':5}"
-            return f"{'':5}"
+                return 'legal'
+            return ''
         
 
         def fn_eater(i):
             move_prop = health_list[i][1]
             if 'SQ_eater' in move_prop:
-                return f"{move_prop['SQ_eater']:12}"
-            return f"{'':12}"
+                return f"{move_prop['SQ_eater']}"
+            return ''
 
 
-        def fn_cheapest(i):
+        def fn_qs_cheapest(i):
             move_prop = health_list[i][1]
-            if 'cheapest' in move_prop:
-                return f"{move_prop['cheapest']:12}"
-            return f"{'':12}"
+            if 'QS_cheapest' in move_prop:
+                return 'QS_cheapest'
+            return ''
 
 
         def fn_qs_eliminate171(i):
             move_prop = health_list[i][1]
             if 'QS_eliminate171' in move_prop:
-                return f"{move_prop['QS_eliminate171']:30}"
-            return f"{'':30}"
+                return f"{move_prop['QS_eliminate171']}"
+            return ''
 
 
         def fn_qs_select(i):
             move_prop = health_list[i][1]
             if 'QS_select' in move_prop:
-                return f"{move_prop['QS_select']:9}"
-            return f"{'':9}"
+                return f"{move_prop['QS_select']}"
+            return ''
 
 
         def fn_negative_rule(i, rule_id):
@@ -87,25 +87,25 @@ class HealthCheckGoModel():
             move_prop = health_list[i][1]
 
             if 'PR_remaining' in move_prop:
-                return f"{move_prop['PR_remaining']:12}"
+                return f"{move_prop['PR_remaining']}"
 
             if 'NR_remaining' in move_prop:
-                return f"{move_prop['NR_remaining']:12}"
+                return f"{move_prop['NR_remaining']}"
 
-            return f"{'':12}"
+            return ''
         
 
         def fn_bm_bestmove(i):
             move_prop = health_list[i][1]
             if 'BM_bestmove' in move_prop:
-                return f"{'BM_bestmove':11}"
-            return f"{'':11}"
+                return 'BM_bestmove'
+            return ''
 
 
         def fn_qs_plot(i):
             move_prop = health_list[i][1]
             if 'QS_backwards_plot_model' in move_prop:
-                return move_prop['QS_backwards_plot_model'].stringify()
+                return f"{move_prop['QS_backwards_plot_model'].stringify()}"
             return ''
 
 
@@ -117,20 +117,20 @@ class HealthCheckGoModel():
         lines.append('-------------------------')
 
         header_list = []
-        header_list.append(f"{'move':5}")
-        header_list.append(f"{'legal':5}")
-        header_list.append(f"{'eater':12}")
-        header_list.append(f"{'cheapest':12}")
+        header_list.append('move')
+        header_list.append('legal')
+        header_list.append('eater')
+        header_list.append('QS_cheapest')
         header_list.append('qs_plot')
-        header_list.append(f"{'qs_eliminate171':30}")
-        header_list.append(f"{'qs_select':9}")
+        header_list.append('qs_eliminate171')
+        header_list.append('qs_select')
 
         # 号令リスト
         for negative_rule in self._gymnasium.gourei_collection_model.negative_rule_list_of_active:
             header_list.append(f"NR[{negative_rule.label}]")    # 日本語表示
 
-        header_list.append(f"{'PR_NR_remaining':12}")
-        header_list.append(f"{'bm_bestmove':11}")
+        header_list.append('PR_NR_remaining')
+        header_list.append('bm_bestmove')
         lines.append(', '.join(header_list))
         
 
@@ -139,7 +139,7 @@ class HealthCheckGoModel():
             body_list.append(fn_move(i))                # USI書式の指し手
             body_list.append(fn_legal(i))               # リーガル・ムーブ
             body_list.append(fn_eater(i))
-            body_list.append(fn_cheapest(i))
+            body_list.append(fn_qs_cheapest(i))         # 一番安い駒を選ぶ。
             body_list.append(fn_qs_plot(i))             # 静止探索の読み筋の詳細
             body_list.append(fn_qs_eliminate171(i))     # 静止探索で選ばれた手をエリミネートした手
             body_list.append(fn_qs_select(i))           # 静止探索で選ばれた手
