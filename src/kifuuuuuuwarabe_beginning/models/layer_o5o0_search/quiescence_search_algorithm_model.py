@@ -90,10 +90,10 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         # MARK: 合法手スキャン
         ######################
 
-        best_old_sibling_plot_model_in_children = None
+        best_plot_model     = None
         best_move           = None
         best_move_cap_pt    = None
-        depth_qs_extend        = 0
+        depth_qs_extend     = 0
 
         # 合法手を全部調べる。
         legal_move_list = list(self._search_context_model.gymnasium.table.legal_moves)
@@ -103,25 +103,10 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         # MARK: データ・クリーニング
         ############################
 
-        remaining_moves = self.remove_depromoted_moves(remaining_moves=remaining_moves)       # ［成れるのに成らない手］は除外
+        remaining_moves = self.remove_depromoted_moves(remaining_moves=remaining_moves)         # ［成れるのに成らない手］は除外
         remaining_moves = QuiescenceSearchAlgorithmModel.filtering_same_destination_move_list(parent_move=parent_move, remaining_moves=remaining_moves)
         remaining_moves = QuiescenceSearchAlgorithmModel.get_cheapest_move_list(remaining_moves=remaining_moves)
-
-        for my_move in reversed(remaining_moves):
-            dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
-            cap_pt      = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
-            is_capture  = (cap_pt != cshogi.NONE)
-
-            # ２階以降の呼出時は、駒を取る手でなければ無視。
-            if not is_capture:
-                # ＜📚原則２＞ 王手は（駒を取らない手であっても）探索を続け、深さを１手延長する。
-                if self._search_context_model.gymnasium.table.is_check():
-                    #depth_extend += 1  # FIXME 探索が終わらないくなる。
-                    pass
-
-                else:
-                    remaining_moves.remove(my_move)
-                    continue
+        remaining_moves = self.filtering_capture_or_mate(remaining_moves=remaining_moves)       # 駒を取る手と、王手のみ残す
 
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(remaining_moves) == 0:
@@ -153,13 +138,13 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             ################
 
             self._search_context_model.gymnasium.do_move_o1x(move = my_move)
-            self._search_context_model.number_of_visited_nodes += 1
 
             ####################
             # MARK: 一手指した後
             ####################
 
-            depth_qs       = depth_qs - 1     # 深さを１下げる。
+            self._search_context_model.number_of_visited_nodes += 1
+            depth_qs -= 1     # 深さを１下げる。
             self._search_context_model.frontwards_plot_model.append_move(
                     move    = my_move,
                     cap_pt  = cap_pt)
@@ -184,7 +169,7 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 一手戻した後
             ####################
 
-            depth_qs       = depth_qs + 1                 # 深さを１上げる。
+            depth_qs += 1                 # 深さを１上げる。
             ptolemaic_theory_model  = PtolemaicTheoryModel(
                     is_mars=self._search_context_model.gymnasium.is_mars)
             self._search_context_model.frontwards_plot_model.pop_move()
@@ -205,18 +190,18 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             this_branch_value_on_earth = child_plot_model.get_exchange_value_on_earth() + piece_exchange_value_on_earth
 
             # この枝が長兄なら。
-            if best_old_sibling_plot_model_in_children is None:
+            if best_plot_model is None:
                 old_sibling_value = 0
             else:
                 # 兄枝のベスト評価値
-                old_sibling_value = best_old_sibling_plot_model_in_children.get_exchange_value_on_earth()     # とりあえず最善の読み筋の点数。
+                old_sibling_value = best_plot_model.get_exchange_value_on_earth()     # とりあえず最善の読み筋の点数。
 
             (a, b) = ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
             its_update_best = (a < b)
                         
             # 最善手の更新
             if its_update_best:
-                best_old_sibling_plot_model_in_children = child_plot_model
+                best_plot_model = child_plot_model
                 best_move = my_move
                 best_move_cap_pt = cap_pt
 
@@ -225,17 +210,17 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         ########################
 
         # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
-        if best_old_sibling_plot_model_in_children is None:
-            future_plot_model = self.create_backwards_plot_model_at_no_candidates(depth_qs=depth_qs)
-            return future_plot_model
+        if best_plot_model is None:
+            best_plot_model = self.create_backwards_plot_model_at_no_candidates(depth_qs=depth_qs)
+            return best_plot_model
 
         # 今回の手を付け加える。
-        best_old_sibling_plot_model_in_children.append_move(
+        best_plot_model.append_move(
                 move                = best_move,
                 capture_piece_type  = best_move_cap_pt,
                 hint                = f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の手記憶")
 
-        return best_old_sibling_plot_model_in_children
+        return best_plot_model
 
 
     def filtering_same_destination_move_list(parent_move, remaining_moves):
@@ -269,3 +254,24 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
                 cheapest_value = value
                 cheapest_move_list = [my_move]            
         return cheapest_move_list
+
+
+    def filtering_capture_or_mate(self, remaining_moves):
+        """駒を取る手と、王手のみ残す。
+        """
+        for my_move in reversed(remaining_moves):
+            dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
+            cap_pt      = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
+            is_capture  = (cap_pt != cshogi.NONE)
+
+            # ２階以降の呼出時は、駒を取る手でなければ無視。
+            if not is_capture:
+                # ＜📚原則２＞ 王手は（駒を取らない手であっても）探索を続け、深さを１手延長する。
+                if self._search_context_model.gymnasium.table.is_check():
+                    #depth_extend += 1  # FIXME 探索が終わらないくなる。
+                    pass
+
+                else:
+                    remaining_moves.remove(my_move)
+                    continue
+        return remaining_moves

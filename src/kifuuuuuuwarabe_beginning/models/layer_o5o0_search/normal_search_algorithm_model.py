@@ -2,18 +2,18 @@ import cshogi
 import time
 
 from ...logics.layer_o1o0 import MoveListLogics
-from ..layer_o1o0 import constants, Mars, SquareModel
+from ..layer_o1o_9o0 import PieceValuesModel
+from ..layer_o1o0 import constants, Mars, PtolemaicTheoryModel, SquareModel
 from ..layer_o1o0o_9o0_table_helper import TableHelper
 from ..layer_o2o0 import BackwardsPlotModel, cutoff_reason
 from ..layer_o4o0_rules.negative import DoNotDepromotionModel
 from .quiescence_search_algorithm_model import QuiescenceSearchAlgorithmModel
 from .search_algorithm_model import SearchAlgorithmModel
-from .normal_search_algorithm_model import NormalSearchAlgorithmModel
 from .search_context_model import SearchContextModel
 
 
-class RootSearchAlgorithmModel(SearchAlgorithmModel):
-    """１階の全てのリーガル・ムーブについて静止探索。
+class NormalSearchAlgorithmModel(SearchAlgorithmModel):
+    """２階以降の通常の探索。
     """
 
 
@@ -28,11 +28,10 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
                 search_context_model=search_context_model)
 
 
-    def search_as_root(
+    def search_as_normal(
             self,
             depth_normal,
-            depth_qs,
-            remaining_moves):
+            depth_qs):
         """静止探索の開始。
 
         大まかにいって、１手目は全ての合法手を探索し、
@@ -45,18 +44,16 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             通常の探索で、あと何手深く読むか。
         depth_qs : int
             静止探索で、あと何手深く読むか。
-        remaining_moves : list<int>
-            指し手のリスト。
 
         Returns
         -------
-        all_backwards_plot_models_at_first : list<BackwardsPlotModel>
-            全ての１階の合法手の読み筋。
+        best_prot_model : BackwardsPlotModel
+            最善の読み筋。
+            これは駒得評価値も算出できる。
         """
 
         self._search_context_model.start_time = time.time()          # 探索開始時間
         self._search_context_model.restart_time = self._search_context_model.start_time   # 前回の計測開始時間
-        all_backwards_plot_models_at_first = []
 
         ########################
         # MARK: 指す前にやること
@@ -68,8 +65,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             """手番の投了局面時。
             """
             best_plot_model = self.create_backwards_plot_model_at_game_over()
-            all_backwards_plot_models_at_first.append(best_plot_model)
-            return all_backwards_plot_models_at_first
+            return best_plot_model
 
         # 一手詰めを詰める
         if not self._search_context_model.gymnasium.table.is_check():
@@ -78,21 +74,18 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             if (mate_move := self._search_context_model.gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
                 best_plot_model = self.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move)
-                all_backwards_plot_models_at_first.append(best_plot_model)
-                return all_backwards_plot_models_at_first
+                return best_plot_model
 
         if self._search_context_model.gymnasium.table.is_nyugyoku():
             """手番の入玉宣言勝ち局面時。
             """
             best_plot_model = self.create_backwards_plot_model_at_nyugyoku_win()
-            all_backwards_plot_models_at_first.append(best_plot_model)
-            return all_backwards_plot_models_at_first
+            return best_plot_model
 
         # これ以上深く読まない場合。
         if depth_qs < 1:
             best_plot_model = self.create_backwards_plot_model_at_horizon(depth_qs)
-            all_backwards_plot_models_at_first.append(best_plot_model)
-            return all_backwards_plot_models_at_first
+            return best_plot_model
 
         # まだ深く読む場合。
 
@@ -100,7 +93,14 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         # MARK: 合法手スキャン
         ######################
 
-        # 最善手は探さなくていい。全部返すから。
+        best_plot_model     = None
+        best_move           = None
+        best_move_cap_pt    = None
+        depth_qs_extend     = 0
+
+        # 合法手を全部調べる。
+        legal_move_list = list(self._search_context_model.gymnasium.table.legal_moves)
+        remaining_moves = legal_move_list
 
         ############################
         # MARK: データ・クリーニング
@@ -110,10 +110,9 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(remaining_moves) == 0:
-            child_plot_model = self.create_backwards_plot_model_at_quiescence(depth_qs=depth_qs)
-            all_backwards_plot_models_at_first.append(child_plot_model)
+            future_plot_model = self.create_backwards_plot_model_at_quiescence(depth_qs=depth_qs)
             self._search_context_model.end_time = time.time()    # 計測終了時間
-            return all_backwards_plot_models_at_first
+            return future_plot_model
 
         for my_move in remaining_moves:
 
@@ -121,8 +120,8 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 一手指す前
             ##################
 
-            dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
             # 打の場合、取った駒無し。空マス。
+            dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
             cap_pt      = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
 
             # １階呼出時は、どの手も無視しません。
@@ -156,31 +155,14 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 相手番の処理
             ####################
 
-            # NOTE この辺りは［１階］。max_depth - depth。
-
             # if 0 < depth_normal:    # 通常探索
-
-            search_context_model = SearchContextModel(
-                    max_depth = depth_qs,
-                    gymnasium = self._search_context_model.gymnasium)
-            normal_search_algorithm_model = NormalSearchAlgorithmModel(
-                    search_context_model = search_context_model)
-            child_plot_model = normal_search_algorithm_model.search_as_normal(      # 再帰呼出
-                    depth_normal   = 1,
-                    depth_qs       = depth_qs + depth_qs_extend)
-
-            #   # TODO 戻り値が違う。
-            #     all_backwards_plot_models_at_first = qs_at_first.search_as_normal(
-            #             #best_plot_model_in_older_sibling    = None,
-            #             depth_normal                        = depth_normal - 1,
-            #             depth_qs                             = depth_qs,
-            #             #beta_cutoff_value                   = constants.value.BETA_CUTOFF_VALUE,    # すごい高い点数。
-            #             remaining_moves                     = remaining_moves)
-
+            # child_plot_model = self.search_as_normal(      # 再帰呼出
+            #         depth_normal   = depth_normal - 1,
+            #         depth_qs       = depth_qs + depth_qs_extend)
             # else:   # 静止探索。
-            quiescenec_search_for_scramble_model = QuiescenceSearchAlgorithmModel(
+            quiescence_search_algorithum_model = QuiescenceSearchAlgorithmModel(
                     search_context_model    = self._search_context_model)
-            child_plot_model = quiescenec_search_for_scramble_model.search_alice(      # 再帰呼出
+            child_plot_model = quiescence_search_algorithum_model.search_alice(      # 再帰呼出
                     depth_qs       = depth_qs + depth_qs_extend,
                     parent_move = my_move)
 
@@ -195,6 +177,8 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             ####################
 
             depth_qs += 1    # 深さを１上げる。
+            ptolemaic_theory_model  = PtolemaicTheoryModel(
+                    is_mars=self._search_context_model.gymnasium.is_mars)
             self._search_context_model.frontwards_plot_model.pop_move()
             self._search_context_model.gymnasium.health_check_qs_model.pop_node()
 
@@ -202,14 +186,31 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 手番の処理
             ##################
 
-            # １階の手は、全ての手の読み筋を記憶します。最善手は選びません。
-            child_plot_model.append_move(
-                    move                = my_move,
-                    capture_piece_type  = cap_pt,
-                    hint                = f"１階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の手はなんでも記憶")
-            all_backwards_plot_models_at_first.append(child_plot_model)
+            its_update_best = False
 
-            # NOTE この辺りは［０階］。
+            # NOTE `earth` - 自分。 `mars` - 対戦相手。
+            piece_exchange_value_on_earth = PieceValuesModel.get_piece_exchange_value_on_earth(      # 交換値に変換。正の数とする。
+                    pt          = cap_pt,
+                    is_mars     = self._search_context_model.gymnasium.is_mars)
+
+            # この枝の点（将来の点＋取った駒の点）
+            this_branch_value_on_earth = child_plot_model.get_exchange_value_on_earth() + piece_exchange_value_on_earth
+
+            # この枝が長兄なら。
+            if best_plot_model is None:
+                old_sibling_value = 0
+            else:
+                # 兄枝のベスト評価値
+                old_sibling_value = best_plot_model.get_exchange_value_on_earth()     # とりあえず最善の読み筋の点数。
+
+            (a, b) = ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
+            its_update_best = (a < b)
+
+            # 最善手の更新
+            if its_update_best:
+                best_plot_model = child_plot_model
+                best_move = my_move
+                best_move_cap_pt = cap_pt
 
             # ベータカットもしません。全部返すから。
 
@@ -218,11 +219,16 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         ########################
 
         # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
-        if len(all_backwards_plot_models_at_first) < 1:
-            child_plot_model = self.create_backwards_plot_model_at_no_candidates(depth_qs=depth_qs)
-            all_backwards_plot_models_at_first.append(child_plot_model)
-            self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜指したい手無し＞')
+        if best_plot_model is None:
+            best_plot_model = self.create_backwards_plot_model_at_no_candidates(depth_qs=depth_qs)
+            return best_plot_model
 
         self._search_context_model.end_time = time.time()    # 計測終了時間
 
-        return all_backwards_plot_models_at_first
+        # 今回の手を付け加える。
+        best_plot_model.append_move(
+                move                = best_move,
+                capture_piece_type  = best_move_cap_pt,
+                hint                = f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の手記憶")
+
+        return best_plot_model

@@ -264,14 +264,14 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
             gymnasium = gymnasium)
 
     # １階の探索（特殊）
-    qs_at_first = RootSearchAlgorithmModel(
+    root_search_algorithum_model = RootSearchAlgorithmModel(
             search_context_model = search_context_model)
 
     if max_depth < 1:
         #print(f"D-132: _q uiescence_search {max_depth=}")
         return remaining_moves, 0
 
-    all_backwards_plot_models_at_first = qs_at_first.search_as_root(
+    all_backwards_plot_models_at_first = root_search_algorithum_model.search_as_root(
             #best_plot_model_in_older_sibling    = None,
             depth_normal                        = 1,
             depth_qs                               = max_depth,
@@ -279,7 +279,7 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
             remaining_moves                     = remaining_moves)
 
     #print(f"{alice_s_best_piece_value=} {len(all_backwards_plot_models_at_first)=}")
-    number_of_visited_nodes = qs_at_first.search_context_model.number_of_visited_nodes
+    number_of_visited_nodes = root_search_algorithum_model.search_context_model.number_of_visited_nodes
 
     def _eliminate_not_capture_not_positive(all_backwards_plot_models_at_first, gymnasium):
         """次の１つの手は、候補に挙げる必要がないので除去します。
