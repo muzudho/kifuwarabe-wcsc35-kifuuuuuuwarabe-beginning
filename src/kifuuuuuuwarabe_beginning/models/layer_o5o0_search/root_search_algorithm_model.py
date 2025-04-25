@@ -86,28 +86,16 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
                 return all_backwards_plot_models_at_first
 
         if self._search_context_model.gymnasium.table.is_nyugyoku():
-            """手番の入玉勝ち局面時。
+            """手番の入玉宣言勝ち局面時。
             """
-            best_plot_model = BackwardsPlotModel(
-                    is_mars_at_out_of_termination  = self._search_context_model.gymnasium.is_mars,
-                    is_gote_at_out_of_termination  = self._search_context_model.gymnasium.table.is_gote,
-                    out_of_termination             = constants.out_of_termination.NYUGYOKU_WIN,
-                    cutoff_reason           = cutoff_reason.NYUGYOKU_WIN,
-                    hint                    = '手番の入玉宣言勝ち局面時１')
+            best_plot_model = self.create_backwards_plot_model_at_nyugyoku_win()
             all_backwards_plot_models_at_first.append(best_plot_model)
-            self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜入玉宣言勝ち＞')
             return all_backwards_plot_models_at_first
 
         # これ以上深く読まない場合。
         if depth_qs < 1:
-            best_plot_model = BackwardsPlotModel(
-                    is_mars_at_out_of_termination  = self._search_context_model.gymnasium.is_mars,
-                    is_gote_at_out_of_termination  = self._search_context_model.gymnasium.table.is_gote,
-                    out_of_termination             = constants.out_of_termination.MAX_DEPTH_BY_THINK,
-                    cutoff_reason           = cutoff_reason.MAX_DEPTH,
-                    hint                    = 'これ以上深く読まない場合１')
+            best_plot_model = self.create_backwards_plot_model_at_horizon(depth_qs)
             all_backwards_plot_models_at_first.append(best_plot_model)
-            self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜水平線＞')
             return all_backwards_plot_models_at_first
 
         # まだ深く読む場合。
@@ -136,6 +124,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(remaining_moves) == 0:
+            self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜静止＞')
             future_plot_model = BackwardsPlotModel(
                     is_mars_at_out_of_termination  = self._search_context_model.gymnasium.is_mars,
                     is_gote_at_out_of_termination  = self._search_context_model.gymnasium.table.is_gote,
@@ -143,7 +132,6 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
                     cutoff_reason           = cutoff_reason.NO_MOVES,
                     hint                    = f"１階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は静止_{depth_qs=}/{self._search_context_model.max_depth=}_{len(all_backwards_plot_models_at_first)=}/{len(remaining_moves)=}")
             all_backwards_plot_models_at_first.append(future_plot_model)
-            self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜静止＞')
             self._search_context_model.end_time = time.time()    # 計測終了時間
             return all_backwards_plot_models_at_first
 
@@ -206,7 +194,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             quiescenec_search_for_scramble_model = QuiescenceSearchAlgorithmModel(
                     search_context_model    = self._search_context_model)
             future_plot_model = quiescenec_search_for_scramble_model.search_alice(      # 再帰呼出
-                    depth       = depth_qs + depth_qs_extend,
+                    depth_qs       = depth_qs + depth_qs_extend,
                     parent_move = my_move)
 
             ################

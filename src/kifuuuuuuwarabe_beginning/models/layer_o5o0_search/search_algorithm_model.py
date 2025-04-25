@@ -53,3 +53,25 @@ class SearchAlgorithmModel:
                 capture_piece_type  = cap_pt,
                 hint                = f"{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の一手詰め時")
         return best_plot_model
+
+
+    def create_backwards_plot_model_at_nyugyoku_win(self):
+        self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜入玉宣言勝ち＞')
+        best_plot_model = BackwardsPlotModel(
+                is_mars_at_out_of_termination  = self._search_context_model.gymnasium.is_mars,
+                is_gote_at_out_of_termination  = self._search_context_model.gymnasium.table.is_gote,
+                out_of_termination             = constants.out_of_termination.NYUGYOKU_WIN,
+                cutoff_reason           = cutoff_reason.NYUGYOKU_WIN,
+                hint                    = '手番の入玉宣言勝ち局面時')
+        return best_plot_model
+
+
+    def create_backwards_plot_model_at_horizon(self, depth_qs):
+        self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜水平線＞')
+        best_plot_model = BackwardsPlotModel(
+                is_mars_at_out_of_termination   = self._search_context_model.gymnasium.is_mars,
+                is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
+                out_of_termination              = constants.out_of_termination.MAX_DEPTH_BY_THINK,
+                cutoff_reason                   = cutoff_reason.MAX_DEPTH,
+                hint                            = f"{self._search_context_model.max_depth - depth_qs}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}でこれ以上深く読まない場合_{depth_qs=}/{self._search_context_model.max_depth=}")
+        return best_plot_model

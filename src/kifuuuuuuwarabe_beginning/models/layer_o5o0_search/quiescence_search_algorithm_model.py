@@ -30,7 +30,7 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
     def search_alice(
             self,
             #best_plot_model_in_older_sibling,
-            depth,
+            depth_qs,
             parent_move):
         """
         Parameters
@@ -56,7 +56,7 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         cur_time = time.time()                                          # 現在の時間
         erapsed_seconds = cur_time - self._search_context_model.restart_time    # 経過秒
         if 4 <= erapsed_seconds:                                        # 4秒以上経過してたら、情報出力
-            print(f"info depth {self._search_context_model.max_depth - depth} seldepth 0 time 1 nodes {self._search_context_model.number_of_visited_nodes} score cp 0 string thinking")
+            print(f"info depth {self._search_context_model.max_depth - depth_qs} seldepth 0 time 1 nodes {self._search_context_model.number_of_visited_nodes} score cp 0 string thinking")
             self._search_context_model.restart_time = cur_time                   # 前回の計測時間を更新
 
         # 指さなくても分かること（ライブラリー使用）
@@ -79,25 +79,13 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         if self._search_context_model.gymnasium.table.is_nyugyoku():
             """手番の入玉宣言勝ち局面時。
             """
-            best_plot_model = BackwardsPlotModel(
-                    is_mars_at_out_of_termination  = self._search_context_model.gymnasium.is_mars,
-                    is_gote_at_out_of_termination  = self._search_context_model.gymnasium.table.is_gote,
-                    out_of_termination             = constants.out_of_termination.NYUGYOKU_WIN,
-                    cutoff_reason           = cutoff_reason.NYUGYOKU_WIN,
-                    hint                    = '手番の入玉宣言勝ち局面時２')
-            self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜入玉宣言勝ち＞')
+            best_plot_model = self.create_backwards_plot_model_at_nyugyoku_win()
             return best_plot_model
 
         # これ以上深く読まない場合。
-        if depth < 1:
-            # 末端局面。
-            self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜水平線＞')
-            return BackwardsPlotModel(
-                    is_mars_at_out_of_termination  = self._search_context_model.gymnasium.is_mars,
-                    is_gote_at_out_of_termination  = self._search_context_model.gymnasium.table.is_gote,
-                    out_of_termination             = constants.out_of_termination.MAX_DEPTH_BY_THINK,
-                    cutoff_reason           = cutoff_reason.MAX_DEPTH,      # ［最大探索深さ］が打切り理由。
-                    hint                    = f"{self._search_context_model.max_depth - depth}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}でこれ以上深く読まない場合_{depth=}/{self._search_context_model.max_depth=}")
+        if depth_qs < 1:
+            best_plot_model = self.create_backwards_plot_model_at_horizon(depth_qs)
+            return best_plot_model
 
         # まだ深く読む場合。
 
@@ -108,7 +96,7 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         best_old_sibling_plot_model_in_children = None
         best_move           = None
         best_move_cap_pt    = None
-        depth_extend        = 0
+        depth_qs_extend        = 0
 
 
         # def _get_beta_cutoff_value(best_plot_model_in_older_sibling):
@@ -226,7 +214,7 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
                     is_gote_at_out_of_termination  = self._search_context_model.gymnasium.table.is_gote,
                     out_of_termination             = constants.out_of_termination.QUIESCENCE,
                     cutoff_reason           = cutoff_reason.NO_MOVES,
-                    hint                    = f"{self._search_context_model.max_depth - depth + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は静止")
+                    hint                    = f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は静止")
 
         for my_move in remaining_moves:
 
@@ -259,7 +247,7 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 一手指した後
             ####################
 
-            depth       = depth - 1     # 深さを１下げる。
+            depth_qs       = depth_qs - 1     # 深さを１下げる。
             self._search_context_model.frontwards_plot_model.append_move(
                     move    = my_move,
                     cap_pt  = cap_pt)
@@ -272,7 +260,7 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             # NOTE ネガ・マックスではないので、評価値の正負を反転させなくていい。
             child_plot_model = self.search_alice(      # 再帰呼出
                     #best_plot_model_in_older_sibling    = best_plot_model_in_children,
-                    depth       = depth + depth_extend,
+                    depth_qs       = depth_qs + depth_qs_extend,
                     parent_move = my_move)
 
             ################
@@ -285,7 +273,7 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 一手戻した後
             ####################
 
-            depth       = depth + 1                 # 深さを１上げる。
+            depth_qs       = depth_qs + 1                 # 深さを１上げる。
             ptolemaic_theory_model  = PtolemaicTheoryModel(
                     is_mars=self._search_context_model.gymnasium.is_mars)
             self._search_context_model.frontwards_plot_model.pop_move()
@@ -368,12 +356,12 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
                     is_gote_at_out_of_termination  = self._search_context_model.gymnasium.table.is_gote,
                     out_of_termination             = constants.out_of_termination.NO_CANDIDATES,  # 有力な候補手無し。
                     cutoff_reason           = cutoff_reason.NO_MOVES,
-                    hint                    = f"{self._search_context_model.max_depth - depth + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は指したい手無し,move数={len(legal_move_list)},{case_2=},{case_4=},{case_5=},{case_6t=},({'_'.join(case_6t_hint_list)}),{case_6f=},({'_'.join(case_6f_hint_list)}),{case_8a=},{case_8a=},{case_8b=},{case_8c=},{case_8d=},{case_8e=}")
+                    hint                    = f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は指したい手無し,move数={len(legal_move_list)},{case_2=},{case_4=},{case_5=},{case_6t=},({'_'.join(case_6t_hint_list)}),{case_6f=},({'_'.join(case_6f_hint_list)}),{case_8a=},{case_8a=},{case_8b=},{case_8c=},{case_8d=},{case_8e=}")
 
         # 今回の手を付け加える。
         best_old_sibling_plot_model_in_children.append_move(
                 move                = best_move,
                 capture_piece_type  = best_move_cap_pt,
-                hint                = f"{self._search_context_model.max_depth - depth + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の手記憶")
+                hint                = f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の手記憶")
 
         return best_old_sibling_plot_model_in_children
