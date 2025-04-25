@@ -7,9 +7,10 @@ from ..layer_o1o0 import constants, Mars, PtolemaicTheoryModel, SquareModel
 from ..layer_o1o0o_9o0_table_helper import TableHelper
 from ..layer_o2o0 import BackwardsPlotModel, cutoff_reason
 from ..layer_o4o0_rules.negative import DoNotDepromotionModel
+from .search_algorithm_model import SearchAlgorithmModel
 
 
-class QuiescenceSearchAlgorithmModel():
+class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
     """駒の取り合いのための静止探索。
     駒の取り合いが終わるまで、駒の取り合いを探索します。
     """
@@ -20,9 +21,10 @@ class QuiescenceSearchAlgorithmModel():
         Parameters
         ----------
         search_context_model : SearchContextModel
-            探索モデル。        
+            探索モデル。
         """
-        self._search_context_model = search_context_model
+        super().__init__(
+                search_context_model=search_context_model)
 
 
     @property

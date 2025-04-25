@@ -3,7 +3,7 @@ import random
 import sys
 
 from ...models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateModel
-from ...models.layer_o5o0_search import RootSearchAlgorithmModel
+from ...models.layer_o5o0_search import RootSearchAlgorithmModel, SearchContextModel
 from ...views import TableView
 from ..layer_o3o0 import MovesPickupFilterLogics, MovesReductionFilterLogics
 
@@ -259,10 +259,13 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
     """
     max_depth = gymnasium.config_doc['search']['capture_depth']   # 2
 
+    search_context_model = SearchContextModel(
+            max_depth = max_depth,
+            gymnasium = gymnasium)
+
     # １階の探索（特殊）
     qs_at_first = RootSearchAlgorithmModel(
-            max_depth   = max_depth,
-            gymnasium   = gymnasium)
+            search_context_model = search_context_model)
 
     if max_depth < 1:
         #print(f"D-132: _q uiescence_search {max_depth=}")

@@ -7,26 +7,24 @@ from ..layer_o1o0o_9o0_table_helper import TableHelper
 from ..layer_o2o0 import BackwardsPlotModel, cutoff_reason
 from ..layer_o4o0_rules.negative import DoNotDepromotionModel
 from .quiescence_search_algorithm_model import QuiescenceSearchAlgorithmModel
+from .search_algorithm_model import SearchAlgorithmModel
 from .search_context_model import SearchContextModel
 
 
-class RootSearchAlgorithmModel():
+class RootSearchAlgorithmModel(SearchAlgorithmModel):
     """１階の全てのリーガル・ムーブについて静止探索。
     """
 
 
-    def __init__(self, max_depth, gymnasium):
+    def __init__(self, search_context_model):
         """
         Parameters
         ----------
-        max_depth : int
-            最大深さ。
-        gymnasium : GymnasiumModel
-            体育館。        
+        search_context_model : SearchContextModel
+            探索モデル。
         """
-        self._search_context_model = SearchContextModel(
-                max_depth           = max_depth,
-                gymnasium           = gymnasium)
+        super().__init__(
+                search_context_model=search_context_model)
     
 
     @property
