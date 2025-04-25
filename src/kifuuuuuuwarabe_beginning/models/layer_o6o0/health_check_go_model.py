@@ -63,8 +63,8 @@ class HealthCheckGoModel():
 
         def fn_qs_eliminate171(i):
             move_prop = health_list[i][1]
-            if 'eliminate171' in move_prop:
-                return f"{move_prop['eliminate171']:30}"
+            if 'QS_eliminate171' in move_prop:
+                return f"{move_prop['QS_eliminate171']:30}"
             return f"{'':30}"
 
 
@@ -121,6 +121,7 @@ class HealthCheckGoModel():
         header_list.append(f"{'legal':5}")
         header_list.append(f"{'eater':12}")
         header_list.append(f"{'cheapest':12}")
+        header_list.append('qs_plot')
         header_list.append(f"{'qs_eliminate171':30}")
         header_list.append(f"{'qs_select':9}")
 
@@ -130,7 +131,6 @@ class HealthCheckGoModel():
 
         header_list.append(f"{'PR_NR_remaining':12}")
         header_list.append(f"{'bm_bestmove':11}")
-        header_list.append('qs_plot')
         lines.append(', '.join(header_list))
         
 
@@ -140,6 +140,7 @@ class HealthCheckGoModel():
             body_list.append(fn_legal(i))               # リーガル・ムーブ
             body_list.append(fn_eater(i))
             body_list.append(fn_cheapest(i))
+            body_list.append(fn_qs_plot(i))             # 静止探索の読み筋の詳細
             body_list.append(fn_qs_eliminate171(i))     # 静止探索で選ばれた手をエリミネートした手
             body_list.append(fn_qs_select(i))           # 静止探索で選ばれた手
 
@@ -149,7 +150,6 @@ class HealthCheckGoModel():
 
             body_list.append(fn_pr_nr_remaining(i))        # ネガティブ・ルールで選別して残った手
             body_list.append(fn_bm_bestmove(i))         # ベストムーブ
-            body_list.append(fn_qs_plot(i))             # 静止探索の読み筋の詳細
             lines.append(', '.join(body_list))
 
         return '\n'.join(lines)

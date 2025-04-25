@@ -321,21 +321,21 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
                 
                 gymnasium.health_check_go_model.append(
                         move    = backwards_plot_model.peek_move,
-                        name    = 'eliminate171',
+                        name    = 'QS_eliminate171',
                         value   = f"{backwards_plot_model.stringify_2():10} not_cap_not_posite")
 
             # （２）最高点でない手。
             elif value_on_earth < best_exchange_value:
                 gymnasium.health_check_go_model.append(
                         move    = backwards_plot_model.peek_move,
-                        name    = 'eliminate171',
+                        name    = 'QS_eliminate171',
                         value   = f"{backwards_plot_model.stringify_2():10} not_best")
 
             # （３）リスクヘッジにならない手
             elif exists_zero_value_move and value_on_earth < 0:
                 gymnasium.health_check_go_model.append(
                         move    = backwards_plot_model.peek_move,
-                        name    = 'eliminate171',
+                        name    = 'QS_eliminate171',
                         value   = f"{backwards_plot_model.stringify_2():10} not_risk_hedge")
 
             # それ以外の手は選択します。
@@ -343,7 +343,7 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
                 alice_s_move_list.append(backwards_plot_model.peek_move)
                 gymnasium.health_check_go_model.append(
                         move    = backwards_plot_model.peek_move,
-                        name    = 'eliminate171',
+                        name    = 'QS_eliminate171',
                         value   = f"{backwards_plot_model.stringify_2():10} ok")
 
         return alice_s_move_list

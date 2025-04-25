@@ -289,7 +289,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             move_str = HumanPresentableMoveModel.from_move(move=move, moving_pt=moving_pt, cap_pt=cap_pt, is_mars=is_mars, is_gote=is_gote).stringify()
 
             piece_exchange_value_on_earth   = self._list_of_accumulate_exchange_value_on_earth[layer_no]
-            tokens.append(f"({len_of_move_list - layer_no}){move_str}({piece_exchange_value_on_earth})")
+            tokens.append(f"({len_of_move_list - layer_no}){move_str}[{piece_exchange_value_on_earth}]")
 
             # 手番交代
             is_mars = not is_mars
