@@ -211,12 +211,13 @@ class QuiescenceSearchAlgorithmModel():
         remaining_moves = filtering_same_destination_move_list(remaining_moves=remaining_moves)
 
         remaining_moves = get_cheapest_move_list(remaining_moves=remaining_moves)
-        # ヘルスチェック
-        for my_move in remaining_moves:
-            self.search_context_model.gymnasium.health_check_go_model.append(
-                    move    = my_move,
-                    name    = 'QS_cheapest',
-                    value   = True)
+        # # ヘルスチェック
+        # # FIXME 木構造の各ノードでログが被ってしまう。
+        # for my_move in remaining_moves:
+        #     self.search_context_model.gymnasium.health_check_go_model.append(
+        #             move    = my_move,
+        #             name    = 'QS_cheapest',
+        #             value   = True)
 
         for my_move in reversed(remaining_moves):
             dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］

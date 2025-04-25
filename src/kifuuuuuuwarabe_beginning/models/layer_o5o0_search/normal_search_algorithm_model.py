@@ -37,7 +37,8 @@ class NormalSearchAlgorithmModel():
     def search_at_first(
             self,
             #best_plot_model_in_older_sibling,
-            depth,
+            depth_normal,
+            depth_qs,
             remaining_moves):
         """静止探索の開始。
 
@@ -49,8 +50,10 @@ class NormalSearchAlgorithmModel():
         ----------
         # best_plot_model_in_older_sibling : BackwardsPlotModel
         #     兄たちの中で最善の読み筋、またはナン。ベータカットに使う。
-        depth : int
-            あと何手深く読むか。
+        depth_normal : int
+            通常の探索で、あと何手深く読むか。
+        depth_qs : int
+            静止探索で、あと何手深く読むか。
         remaining_moves : list<int>
             指し手のリスト。
 
@@ -125,7 +128,7 @@ class NormalSearchAlgorithmModel():
             return all_backwards_plot_models_at_first
 
         # これ以上深く読まない場合。
-        if depth < 1:
+        if depth_qs < 1:
             best_plot_model = BackwardsPlotModel(
                     is_mars_at_out_of_termination  = self._search_context_model.gymnasium.is_mars,
                     is_gote_at_out_of_termination  = self._search_context_model.gymnasium.table.is_gote,
@@ -167,7 +170,7 @@ class NormalSearchAlgorithmModel():
                     is_gote_at_out_of_termination  = self._search_context_model.gymnasium.table.is_gote,
                     out_of_termination             = constants.out_of_termination.QUIESCENCE,
                     cutoff_reason           = cutoff_reason.NO_MOVES,
-                    hint                    = f"１階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は静止_{depth=}/{self._search_context_model.max_depth=}_{len(all_backwards_plot_models_at_first)=}/{len(remaining_moves)=}")
+                    hint                    = f"１階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は静止_{depth_qs=}/{self._search_context_model.max_depth=}_{len(all_backwards_plot_models_at_first)=}/{len(remaining_moves)=}")
             all_backwards_plot_models_at_first.append(future_plot_model)
             self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜静止＞')
             self._search_context_model.end_time = time.time()    # 計測終了時間
@@ -189,9 +192,9 @@ class NormalSearchAlgorithmModel():
 
             # ２階以降の呼出時は、駒を取る手でなければ無視。 FIXME 王手が絡んでいるとき、取れないこともあるから、王手が絡むときは場合分けしたい。
             if not is_capture:
-                depth_extend = 1    # ＜📚原則１＞により、駒を取らない手は、探索を１手延長します。
+                depth_qs_extend = 1    # ＜📚原則１＞により、駒を取らない手は、探索を１手延長します。
             else:
-                depth_extend = 0
+                depth_qs_extend = 0
 
             ################
             # MARK: 一手指す
@@ -204,7 +207,7 @@ class NormalSearchAlgorithmModel():
             ####################
 
             self._search_context_model.number_of_visited_nodes  += 1
-            depth                                       -= 1    # 深さを１下げる。
+            depth_qs                                       -= 1    # 深さを１下げる。
             self._search_context_model.frontwards_plot_model.append_move(
                     move    = my_move,
                     cap_pt  = cap_pt)
@@ -215,10 +218,11 @@ class NormalSearchAlgorithmModel():
             ####################
 
             # NOTE この辺りは［１階］。max_depth - depth。
+            # 静止探索。
             quiescenec_search_for_scramble_model = QuiescenceSearchAlgorithmModel(
                     search_context_model    = self._search_context_model)
             future_plot_model = quiescenec_search_for_scramble_model.search_alice(      # 再帰呼出
-                    depth       = depth + depth_extend,
+                    depth       = depth_qs + depth_qs_extend,
                     parent_move = my_move)
 
             ################
@@ -231,7 +235,7 @@ class NormalSearchAlgorithmModel():
             # MARK: 一手戻した後
             ####################
 
-            depth       += 1    # 深さを１上げる。
+            depth_qs       += 1    # 深さを１上げる。
             self._search_context_model.frontwards_plot_model.pop_move()
             self._search_context_model.gymnasium.health_check_qs_model.pop_node()
 
@@ -261,7 +265,7 @@ class NormalSearchAlgorithmModel():
                     is_gote_at_out_of_termination  = self._search_context_model.gymnasium.table.is_gote,
                     out_of_termination             = constants.out_of_termination.NO_CANDIDATES, # 有力な候補手無し。
                     cutoff_reason           = cutoff_reason.NO_MOVES,
-                    hint                    = f"１階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は指したい手無し_{depth=}/{self._search_context_model.max_depth=}_{len(all_backwards_plot_models_at_first)=}/{len(remaining_moves)=}")
+                    hint                    = f"１階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は指したい手無し_{depth_qs=}/{self._search_context_model.max_depth=}_{len(all_backwards_plot_models_at_first)=}/{len(remaining_moves)=}")
             all_backwards_plot_models_at_first.append(future_plot_model)
             self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜指したい手無し＞')
 
