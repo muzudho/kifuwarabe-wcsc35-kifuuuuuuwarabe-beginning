@@ -25,11 +25,6 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         """
         super().__init__(
                 search_context_model=search_context_model)
-
-
-    @property
-    def search_context_model(self):
-        return self._search_context_model
     
 
     def search_alice(
@@ -61,49 +56,27 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         cur_time = time.time()                                          # 現在の時間
         erapsed_seconds = cur_time - self._search_context_model.restart_time    # 経過秒
         if 4 <= erapsed_seconds:                                        # 4秒以上経過してたら、情報出力
-            print(f"info depth {self._search_context_model.max_depth - depth} seldepth 0 time 1 nodes {self.search_context_model.number_of_visited_nodes} score cp 0 string thinking")
-            self.search_context_model.restart_time = cur_time                   # 前回の計測時間を更新
+            print(f"info depth {self._search_context_model.max_depth - depth} seldepth 0 time 1 nodes {self._search_context_model.number_of_visited_nodes} score cp 0 string thinking")
+            self._search_context_model.restart_time = cur_time                   # 前回の計測時間を更新
 
         # 指さなくても分かること（ライブラリー使用）
 
-        if self.search_context_model.gymnasium.table.is_game_over():
+        if self._search_context_model.gymnasium.table.is_game_over():
             """手番の投了局面時。
             """
-            best_plot_model = BackwardsPlotModel(
-                    is_mars_at_out_of_termination  = self._search_context_model.gymnasium.is_mars,
-                    is_gote_at_out_of_termination  = self._search_context_model.gymnasium.table.is_gote,
-                    out_of_termination             = constants.out_of_termination.RESIGN,
-                    cutoff_reason           = cutoff_reason.GAME_OVER,
-                    hint                    = '手番の投了局面時２')
-            self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
+            best_plot_model = self.create_backwards_plot_model_at_game_over()
             return best_plot_model
 
         # 一手詰めを詰める
-        if not self.search_context_model.gymnasium.table.is_check():
+        if not self._search_context_model.gymnasium.table.is_check():
             """手番玉に王手がかかっていない時で"""
 
-            if (mate_move := self.search_context_model.gymnasium.table.mate_move_in_1ply()):
+            if (mate_move := self._search_context_model.gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
-                dst_sq_obj = SquareModel(cshogi.move_to(mate_move))           # ［移動先マス］
-                cap_pt = self.search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
-
-                best_plot_model = BackwardsPlotModel(
-                        is_mars_at_out_of_termination  = not self._search_context_model.gymnasium.is_mars,     # ［詰む］のは、もう１手先だから。
-                        is_gote_at_out_of_termination  = self._search_context_model.gymnasium.table.is_gote,
-                        out_of_termination             = constants.out_of_termination.RESIGN,
-                        cutoff_reason           = cutoff_reason.MATE_MOVE_IN_1_PLY,
-                        hint                    = '一手詰め時B')
-            
-                # 今回の手を付け加える。
-                best_plot_model.append_move(
-                        move                = mate_move,
-                        capture_piece_type  = cap_pt,
-                        hint                = f"{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の一手詰め時")
-                self._search_context_model.gymnasium.health_check_qs_model.append_node(f"＜一手詰め＞{cshogi.move_to_usi(mate_move)}")
-                self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
+                best_plot_model = self.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move)
                 return best_plot_model
 
-        if self.search_context_model.gymnasium.table.is_nyugyoku():
+        if self._search_context_model.gymnasium.table.is_nyugyoku():
             """手番の入玉宣言勝ち局面時。
             """
             best_plot_model = BackwardsPlotModel(
@@ -169,7 +142,7 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         do_not_depromotion_model._on_node_entry_negative(
                 table=self._search_context_model.gymnasium.table)
 
-        legal_move_list = list(self.search_context_model.gymnasium.table.legal_moves)
+        legal_move_list = list(self._search_context_model.gymnasium.table.legal_moves)
 
         remaining_moves = legal_move_list
 
@@ -216,20 +189,20 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         # # ヘルスチェック
         # # FIXME 木構造の各ノードでログが被ってしまう。
         # for my_move in remaining_moves:
-        #     self.search_context_model.gymnasium.health_check_go_model.append(
+        #     self._search_context_model.gymnasium.health_check_go_model.append(
         #             move    = my_move,
         #             name    = 'QS_cheapest',
         #             value   = True)
 
         for my_move in reversed(remaining_moves):
             dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
-            cap_pt      = self.search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
+            cap_pt      = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
             is_capture  = (cap_pt != cshogi.NONE)
 
             # ２階以降の呼出時は、駒を取る手でなければ無視。
             if not is_capture:
                 # ＜📚原則２＞ 王手は（駒を取らない手であっても）探索を続け、深さを１手延長する。
-                if self.search_context_model.gymnasium.table.is_check():
+                if self._search_context_model.gymnasium.table.is_check():
                     #depth_extend += 1  # FIXME 探索が終わらないくなる。
                     pass
 
@@ -262,13 +235,13 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             ##################
 
             dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
-            cap_pt      = self.search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
+            cap_pt      = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
             #is_capture  = (cap_pt != cshogi.NONE)
 
             # # ２階以降の呼出時は、駒を取る手でなければ無視。
             # if not is_capture:
             #     # ＜📚原則２＞ 王手は（駒を取らない手であっても）探索を続け、深さを１手延長する。
-            #     if self.search_context_model.gymnasium.table.is_check():
+            #     if self._search_context_model.gymnasium.table.is_check():
             #         #depth_extend += 1  # FIXME 探索が終わらないくなる。
             #         pass
 
@@ -279,7 +252,7 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 一手指す
             ################
 
-            self.search_context_model.gymnasium.do_move_o1x(move = my_move)
+            self._search_context_model.gymnasium.do_move_o1x(move = my_move)
             self._search_context_model.number_of_visited_nodes += 1
 
             ####################
@@ -306,7 +279,7 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 一手戻す
             ################
 
-            self.search_context_model.gymnasium.undo_move_o1x()
+            self._search_context_model.gymnasium.undo_move_o1x()
 
             ####################
             # MARK: 一手戻した後
@@ -361,17 +334,17 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             #         case_6t += 1
             #         case_6t_hint_list.append(f"{old_sibling_value=} < {this_branch_value_on_earth=}")
 
-            #         #self.search_context_model.gymnasium.thinking_logger_module.append(f"[search] 6t {self._search_context_model.frontwards_plot_model=}")
+            #         #self._search_context_model.gymnasium.thinking_logger_module.append(f"[search] 6t {self._search_context_model.frontwards_plot_model=}")
             #         # if self._search_context_model.frontwards_plot_model.equals_move_usi_list(['3a4b']):   # FIXME デバッグ絞込み
-            #         #     self.search_context_model.gymnasium.thinking_logger_module.append(_log_1('6t'))
+            #         #     self._search_context_model.gymnasium.thinking_logger_module.append(_log_1('6t'))
 
             #     else:
             #         case_6f += 1
             #         case_6f_hint_list.append(f"{old_sibling_value=} < {this_branch_value_on_earth=}")
 
-            #         #self.search_context_model.gymnasium.thinking_logger_module.append(f"[search] 6f {self._search_context_model.frontwards_plot_model=}")
+            #         #self._search_context_model.gymnasium.thinking_logger_module.append(f"[search] 6f {self._search_context_model.frontwards_plot_model=}")
             #         # if self._search_context_model.frontwards_plot_model.equals_move_usi_list(['3a4b']):   # FIXME デバッグ絞込み
-            #         #     self.search_context_model.gymnasium.thinking_logger_module.append(_log_1('6f'))
+            #         #     self._search_context_model.gymnasium.thinking_logger_module.append(_log_1('6f'))
                         
             # 最善手の更新
             if its_update_best:

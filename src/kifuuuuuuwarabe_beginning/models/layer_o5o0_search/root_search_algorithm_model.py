@@ -25,11 +25,6 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         """
         super().__init__(
                 search_context_model=search_context_model)
-    
-
-    @property
-    def search_context_model(self):
-        return self._search_context_model
 
 
     def search_as_root(
@@ -72,17 +67,12 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         # 指さなくても分かること（ライブラリー使用）
 
         # NOTE このあたりは［０階］。max_depth - depth。
+
         if self._search_context_model.gymnasium.table.is_game_over():
             """手番の投了局面時。
             """
-            best_plot_model = BackwardsPlotModel(
-                    is_mars_at_out_of_termination  = self._search_context_model.gymnasium.is_mars,
-                    is_gote_at_out_of_termination  = self._search_context_model.gymnasium.table.is_gote,
-                    out_of_termination             = constants.out_of_termination.RESIGN,
-                    cutoff_reason           = cutoff_reason.GAME_OVER,
-                    hint                    = '手番の投了局面時１')
+            best_plot_model = self.create_backwards_plot_model_at_game_over()
             all_backwards_plot_models_at_first.append(best_plot_model)
-            self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
             return all_backwards_plot_models_at_first
 
         # 一手詰めを詰める
@@ -91,25 +81,8 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
             if (mate_move := self._search_context_model.gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
-                dst_sq_obj = SquareModel(cshogi.move_to(mate_move))           # ［移動先マス］
-                cap_pt = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
-
-                best_plot_model = BackwardsPlotModel(
-                        is_mars_at_out_of_termination  = not self._search_context_model.gymnasium.is_mars,  # ［詰む］のは、もう１手先だから。
-                        is_gote_at_out_of_termination  = self._search_context_model.gymnasium.table.is_gote,
-                        out_of_termination             = constants.out_of_termination.RESIGN,
-                        cutoff_reason           = cutoff_reason.MATE_MOVE_IN_1_PLY,
-                        hint                    = '一手詰めA')
-            
-                # 今回の手を付け加える。
-                best_plot_model.append_move(
-                        move                = mate_move,
-                        capture_piece_type  = cap_pt,
-                        hint                = f"一手詰め１_{Mars.japanese(self._search_context_model.gymnasium.is_mars)}")
-
+                best_plot_model = self.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move)
                 all_backwards_plot_models_at_first.append(best_plot_model)
-                self._search_context_model.gymnasium.health_check_qs_model.append_node(f"＜一手詰め＞{cshogi.move_to_usi(mate_move)}")
-                self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
                 return all_backwards_plot_models_at_first
 
         if self._search_context_model.gymnasium.table.is_nyugyoku():
