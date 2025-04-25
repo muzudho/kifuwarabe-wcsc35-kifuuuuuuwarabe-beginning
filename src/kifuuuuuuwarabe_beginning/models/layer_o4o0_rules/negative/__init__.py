@@ -8,6 +8,7 @@ from .do_not_drop_rook_in_own_camp_model import DoNotDropRookInOwnCampModel
 from .do_not_move_left_lance_model import DoNotMoveLeftLanceModel
 from .do_not_move_right_lance_model import DoNotMoveRightLanceModel
 from .do_not_move_rook_model import DoNotMoveRookModel
+from .do_not_peck_at_chick_on_roundheaded_piece_model import DoNotPeckAtChickOnRoundheadedPieceModel
 from .do_not_go_left_model import DoNotGoLeftModel
 from .do_not_up_dog_and_cat_side_by_side_model import DoNotUpDogAndCatSideBySideModel
 from .do_not_up_to_rank_6_model import DoNotUpToRank6Model

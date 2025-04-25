@@ -18,3 +18,19 @@ class SquareModel():
     @property
     def rank(self):
         return self._sq % 9
+
+
+    def to_north(self):
+        """北。
+        """
+        if self.rank == 0:
+            return None
+        return SquareModel(sq=self._sq - 1)
+
+
+    def to_south(self):
+        """南。
+        """
+        if self.rank == 8:
+            return None
+        return SquareModel(sq=self._sq + 1)

@@ -38,7 +38,10 @@ class RuleModel:
     @property
     def is_enabled(self):
         """設定ファイルで使用が許可されているか。
+        記述が無ければ偽扱い。
         """
+        if self._id not in self._basketball_court_model.config_doc['gourei_commands']:
+            return False
         return self._basketball_court_model.config_doc['gourei_commands'][self._id]
 
 

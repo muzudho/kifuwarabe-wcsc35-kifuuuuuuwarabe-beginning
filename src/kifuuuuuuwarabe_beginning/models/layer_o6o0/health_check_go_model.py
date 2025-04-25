@@ -128,7 +128,7 @@ class HealthCheckGoModel():
         for negative_rule in self._gymnasium.gourei_collection_model.negative_rule_list_of_active:
             header_list.append(f"NR[{negative_rule.label}]")    # 日本語表示
 
-        header_list.append(f"{'nr_remaining':12}")
+        header_list.append(f"{'PR_NR_remaining':12}")
         header_list.append(f"{'bm_bestmove':11}")
         header_list.append('qs_plot')
         lines.append(', '.join(header_list))

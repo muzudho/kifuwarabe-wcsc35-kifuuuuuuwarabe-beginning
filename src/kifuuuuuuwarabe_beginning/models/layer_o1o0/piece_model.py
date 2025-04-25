@@ -80,6 +80,15 @@ class PieceModel():
     ]
 
 
+    @staticmethod
+    def turn(piece):
+        # FIXME cshogi.NONE をエラーとしたい。
+        if piece <= 16:
+            return cshogi.BLACK
+        
+        return cshogi.WHITE
+
+
     @classmethod
     def kanji(clazz, piece):
         return clazz._kanji_list[piece]
@@ -88,12 +97,3 @@ class PieceModel():
     @classmethod
     def on_board(clazz, piece):
         return clazz._on_board_list[piece]
-
-
-    @staticmethod
-    def turn(piece):
-        # FIXME cshogi.NONE をエラーとしたい。
-        if piece <= 16:
-            return cshogi.BLACK
-        
-        return cshogi.WHITE

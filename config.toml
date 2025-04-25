@@ -73,6 +73,9 @@
     # 号令［９筋に壁を作るな］
     do_not_build_wall_on_file_9 = true
 
+    # 号令［頭が丸い駒の頭のヒヨコを突くな］
+    do_not_peck_at_chick_on_roundheaded_piece = true
+
     # 以下、古い実装
     # --------------
 
