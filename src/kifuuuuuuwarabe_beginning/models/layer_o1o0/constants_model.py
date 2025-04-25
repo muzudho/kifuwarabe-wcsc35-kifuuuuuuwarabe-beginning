@@ -127,8 +127,9 @@ class OutOfTerminationModel():
     _japanese_dict = {
         1 : '投了',
         2 : '入玉宣言勝ち',
-        3 : '水平線',   # 読みの最大深さ
+        3 : '水平線',           # 読みの最大深さ
         4 : '有力な候補手無し',
+        5 : '静止',
     }
 
 
@@ -136,7 +137,7 @@ class OutOfTerminationModel():
     def japanese(clazz, number):
         if number in clazz._japanese_dict:
             return clazz._japanese_dict[number]
-        return '＜未定義の終端外＞'
+        return f"＜未定義の終端外[{number}]＞"
 
 
     @property
