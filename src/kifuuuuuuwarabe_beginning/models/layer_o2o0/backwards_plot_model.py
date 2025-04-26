@@ -226,7 +226,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         return len(self._move_list) < 1
 
 
-    def append_move(self, move, capture_piece_type, hint):
+    def append_move_from_back(self, move, capture_piece_type, best_value, hint):
         """
         Parameters
         ----------
@@ -234,6 +234,8 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             シーショーギの指し手。
         capture_piece_type : int
             取った駒の種類。
+        best_value : int
+            ベスト点。
         hint : str
             デバッグ用文字列。
         """

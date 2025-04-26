@@ -33,7 +33,7 @@ class FrontwardsPlotModel(): # TODO Rename PathFromRoot
         return self.is_gote_at_first
 
 
-    def append_move(self, move, cap_pt):
+    def append_move_from_front(self, move, cap_pt):
         """指し手の追加。
         """
         self._move_list.append(move)

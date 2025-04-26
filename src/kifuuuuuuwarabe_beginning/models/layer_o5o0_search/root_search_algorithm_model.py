@@ -1,6 +1,7 @@
 import cshogi
 import time
 
+from ..layer_o1o_9o0 import PieceValuesModel
 from ..layer_o1o0 import constants, Mars, SquareModel
 from .quiescence_search_algorithm_model import QuiescenceSearchAlgorithmModel
 from .search_algorithm_model import SearchAlgorithmModel
@@ -140,6 +141,14 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
             is_capture  = (cap_pt != cshogi.NONE)
 
+            if is_capture:
+                # NOTE `earth` - 自分。 `mars` - 対戦相手。
+                piece_exchange_value_on_earth = PieceValuesModel.get_piece_exchange_value_on_earth(      # 交換値に変換。正の数とする。
+                        pt          = cap_pt,
+                        is_mars     = self._search_context_model.gymnasium.is_mars)
+            else:
+                piece_exchange_value_on_earth = 0
+
             # ２階以降の呼出時は、駒を取る手でなければ無視。 FIXME 王手が絡んでいるとき、取れないこともあるから、王手が絡むときは場合分けしたい。
             if not is_capture:
                 depth_qs_extend = 1    # ＜📚原則１＞により、駒を取らない手は、探索を１手延長します。
@@ -158,7 +167,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
             self._search_context_model.number_of_visited_nodes  += 1
             depth_qs -= 1    # 深さを１下げる。
-            self._search_context_model.frontwards_plot_model.append_move(
+            self._search_context_model.frontwards_plot_model.append_move_from_front(
                     move    = my_move,
                     cap_pt  = cap_pt)
             self._search_context_model.gymnasium.health_check_qs_model.append_node(cshogi.move_to_usi(my_move))
@@ -196,9 +205,10 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             ##################
 
             # １階の手は、全ての手の読み筋を記憶します。最善手は選びません。
-            child_plot_model.append_move(
+            child_plot_model.append_move_from_back(
                     move                = my_move,
                     capture_piece_type  = cap_pt,
+                    best_value          = child_plot_model.get_exchange_value_on_earth() + piece_exchange_value_on_earth,
                     hint                = '')   # f"１階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の手はなんでも記憶"
             all_backwards_plot_models_at_first.append(child_plot_model)
 

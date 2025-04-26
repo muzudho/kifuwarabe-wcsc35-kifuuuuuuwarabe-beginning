@@ -123,12 +123,19 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         # MARK: ノード訪問時
         ####################
 
+        if self._search_context_model.gymnasium.is_mars:
+            best_value = 10000
+        else:
+            best_value = -10000
+
         for my_move in remaining_moves:
 
             ##################
             # MARK: 一手指す前
             ##################
 
+            ptolemaic_theory_model  = PtolemaicTheoryModel(
+                    is_mars=self._search_context_model.gymnasium.is_mars)
             # 打の場合、取った駒無し。空マス。
             dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
             cap_pt      = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
@@ -145,7 +152,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
             self._search_context_model.number_of_visited_nodes  += 1
             depth_qs -= 1    # 深さを１下げる。
-            self._search_context_model.frontwards_plot_model.append_move(
+            self._search_context_model.frontwards_plot_model.append_move_from_front(
                     move    = my_move,
                     cap_pt  = cap_pt)
             self._search_context_model.gymnasium.health_check_qs_model.append_node(cshogi.move_to_usi(my_move))
@@ -171,8 +178,6 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             ####################
 
             depth_qs += 1    # 深さを１上げる。
-            ptolemaic_theory_model  = PtolemaicTheoryModel(
-                    is_mars=self._search_context_model.gymnasium.is_mars)
             self._search_context_model.frontwards_plot_model.pop_move()
             self._search_context_model.gymnasium.health_check_qs_model.pop_node()
 
@@ -202,9 +207,10 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
             # 最善手の更新
             if its_update_best:
-                best_plot_model = child_plot_model
-                best_move = my_move
-                best_move_cap_pt = cap_pt
+                best_plot_model     = child_plot_model
+                best_move           = my_move
+                best_move_cap_pt    = cap_pt
+                best_value          = this_branch_value_on_earth
 
             # ベータカットもしません。全部返すから。
 
@@ -214,15 +220,15 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
         # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
         if best_plot_model is None:
-            best_plot_model = self.create_backwards_plot_model_at_no_candidates(depth_qs=depth_qs)
-            return best_plot_model
+            return self.create_backwards_plot_model_at_no_candidates(depth_qs=depth_qs)
 
         self._search_context_model.end_time = time.time()    # 計測終了時間
 
         # 今回の手を付け加える。
-        best_plot_model.append_move(
+        best_plot_model.append_move_from_back(
                 move                = best_move,
                 capture_piece_type  = best_move_cap_pt,
+                best_value          = best_value,
                 hint                = f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の手記憶")
 
         return best_plot_model

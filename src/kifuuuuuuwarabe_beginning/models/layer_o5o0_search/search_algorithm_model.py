@@ -49,9 +49,15 @@ class SearchAlgorithmModel:
                 hint                            = '')
     
         # 今回の手を付け加える。
-        best_plot_model.append_move(
+        if self._search_context_model.gymnasium.is_mars:
+            best_value = 10000      # 火星の負け
+        else:
+            best_value = -10000     # 地球の負け
+
+        best_plot_model.append_move_from_back(
                 move                = mate_move,
                 capture_piece_type  = cap_pt,
+                best_value          = best_value,
                 hint                = f"{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の一手詰め時")
         return best_plot_model
 
