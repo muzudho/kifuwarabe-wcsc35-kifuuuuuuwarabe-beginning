@@ -128,16 +128,16 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             これは駒得評価値も算出できる。
         """
 
-        if parent_pv.is_terminate:
-            return parent_pv.backwards_plot_model
+        # if parent_pv.is_terminate:
+        #     return parent_pv.backwards_plot_model
 
         # まだ深く読む場合。
 
-        # ［駒を取る手］がないことを、［静止］と呼ぶ。
-        if len(pv_list) == 0:
-            best_plot_model = self.create_backwards_plot_model_at_quiescence(depth_qs=-1)
-            self._search_context_model.end_time = time.time()    # 計測終了時間
-            return best_plot_model
+        # # ［駒を取る手］がないことを、［静止］と呼ぶ。
+        # if len(pv_list) == 0:
+        #     best_plot_model = self.create_backwards_plot_model_at_quiescence(depth_qs=-1)
+        #     self._search_context_model.end_time = time.time()    # 計測終了時間
+        #     return best_plot_model
 
         ####################
         # MARK: ノード訪問時
@@ -158,8 +158,8 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
         for pv in pv_list:
 
-            if pv.is_terminate:     # TODO 探索終了している手は、リストを分けたらどうか。
-                continue
+            # if pv.is_terminate:     # TODO 探索終了している手は、リストを分けたらどうか。
+            #     continue
 
             my_move = pv.vertical_list_of_move_pv[-1]
 
