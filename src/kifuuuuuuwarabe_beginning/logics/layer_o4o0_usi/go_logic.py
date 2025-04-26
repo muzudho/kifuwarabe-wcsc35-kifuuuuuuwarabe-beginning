@@ -290,7 +290,6 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
             depth_qs        = max_depth,
             remaining_moves = remaining_moves)
 
-    #print(f"{alice_s_best_piece_value=} {len(all_pv_list)=}")
     number_of_visited_nodes = root_search_algorithum_model.search_context_model.number_of_visited_nodes
 
     def _eliminate_not_capture_not_positive(all_pv_list, gymnasium):
@@ -312,7 +311,7 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
         # まず、水平枝の中の最高点を調べます。
         best_exchange_value = constants.value.NOTHING_CAPTURE_MOVE
         for pv in all_pv_list:
-            value_on_earth = pv.backwards_plot_model.get_exchange_value_on_earth()
+            value_on_earth = pv.value_pv
             if best_exchange_value < value_on_earth:
                 best_exchange_value = value_on_earth
 
@@ -320,17 +319,15 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
         if best_exchange_value == 0:
             exists_zero_value_move = True
 
-        gymnasium.thinking_logger_module.append_message(f"all_pv_list len={len(all_pv_list)}")
-
         for pv in all_pv_list:
 
             gymnasium.health_check_go_model.append_health(
                     move    = pv.backwards_plot_model.peek_move,
-                    name    = 'QS_backwards_plot_model',
-                    value   = pv.backwards_plot_model)
+                    name    = 'QS_principal_variation',
+                    value   = pv)
 
             # （１）駒を取らない手で非正の手（最高点のケースを除く）。
-            value_on_earth = pv.backwards_plot_model.get_exchange_value_on_earth()
+            value_on_earth = pv.value_pv
             if not pv.backwards_plot_model.is_capture_at_last and value_on_earth < 1 and value_on_earth != best_exchange_value:
                 if value_on_earth == 0:
                     exists_zero_value_move = True

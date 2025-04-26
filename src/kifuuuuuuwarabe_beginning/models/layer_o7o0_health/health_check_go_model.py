@@ -98,10 +98,10 @@ class HealthCheckGoModel():
             return ''
 
 
-        def fn_qs_plot(i):
+        def fn_qs_principal_variation(i):
             move_prop = health_list[i][1]
-            if 'QS_backwards_plot_model' in move_prop:
-                return f"{move_prop['QS_backwards_plot_model'].stringify()}"
+            if 'QS_principal_variation' in move_prop:
+                return f"{move_prop['QS_principal_variation'].backwards_plot_model.stringify()}"
             return ''
 
 
@@ -132,7 +132,7 @@ class HealthCheckGoModel():
             body_list = []
             body_list.append(fn_move(i))                # USI書式の指し手
             body_list.append(fn_move_jp(i))             # USI書式の指し手（日本人向け）
-            body_list.append(fn_qs_plot(i))             # 静止探索の読み筋の詳細
+            body_list.append(fn_qs_principal_variation(i))             # 静止探索の読み筋の詳細
             body_list.append(fn_qs_eliminate171(i))     # 静止探索で選ばれた手をエリミネートした手
             body_list.append(fn_qs_select(i))           # 静止探索で選ばれた手
 
