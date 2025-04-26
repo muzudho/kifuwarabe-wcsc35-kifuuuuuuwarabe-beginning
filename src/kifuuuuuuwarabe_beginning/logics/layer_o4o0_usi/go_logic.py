@@ -272,22 +272,17 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
     number_of_visited_nodes : int
         ［訪問ノード数］
     """
-    max_depth = gymnasium.config_doc['search']['capture_depth']   # 2
+    max_depth_qs = gymnasium.config_doc['search']['capture_depth']   # 静止探索の深さ
 
     search_context_model = SearchContextModel(
-            max_depth = max_depth,
+            max_depth_qs = max_depth_qs,
             gymnasium = gymnasium)
 
     # １階の探索（特殊）
     root_search_algorithum_model = RootSearchAlgorithmModel(
             search_context_model = search_context_model)
 
-    if max_depth < 1:
-        #print(f"D-132: _q uiescence_search {max_depth=}")
-        return remaining_moves, 0
-
     all_pv_list = root_search_algorithum_model.search_as_root(
-            depth_qs        = max_depth,
             remaining_moves = remaining_moves)
 
     number_of_visited_nodes = root_search_algorithum_model.search_context_model.number_of_visited_nodes

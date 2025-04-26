@@ -26,7 +26,6 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
     def search_as_root(
             self,
-            depth_qs,
             remaining_moves):
         """静止探索の開始。
 
@@ -36,8 +35,6 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
         Parameters
         ----------
-        depth_qs : int
-            静止探索で、あと何手深く読むか。
         remaining_moves : list<int>
             指し手のリスト。
 
@@ -77,10 +74,10 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             backwards_plot_model=self.create_backwards_plot_model_at_nyugyoku_win()
             return [PrincipalVariationModel(move_pv=None, cap_pt_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
 
-        # これ以上深く読まない場合。
-        if depth_qs < 1:
-            backwards_plot_model=self.create_backwards_plot_model_at_horizon(depth_qs)
-            return [PrincipalVariationModel(move_pv=None, cap_pt_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
+        # # これ以上深く読まない場合。
+        # if depth_qs < 1:
+        #     backwards_plot_model=self.create_backwards_plot_model_at_horizon(depth_qs)
+        #     return [PrincipalVariationModel(move_pv=None, cap_pt_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
 
         # まだ深く読む場合。
 
@@ -99,7 +96,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(remaining_moves) == 0:
             self._search_context_model.end_time = time.time()    # 計測終了時間
-            backwards_plot_model=self.create_backwards_plot_model_at_quiescence(depth_qs=depth_qs)
+            backwards_plot_model=self.create_backwards_plot_model_at_quiescence(depth_qs=-1)
             return [PrincipalVariationModel(move_pv=None, cap_pt_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
 
         ####################
@@ -156,7 +153,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         ####################
 
         for pv in all_pv_list:
-            my_move = pv.move_pv
+            my_move = pv.last_child_move_pv
 
             ##################
             # MARK: 一手指す前
@@ -175,7 +172,6 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             ####################
 
             self._search_context_model.number_of_visited_nodes  += 1
-            depth_qs -= 1    # 深さを１下げる。
             self._search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=my_move, hint='')
 
             ####################
@@ -186,8 +182,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
             counter_search_algorithm_model = CounterSearchAlgorithmModel(            # 応手サーチ。
                     search_context_model = self._search_context_model)
-            child_plot_model = counter_search_algorithm_model.search_as_normal(      # 再帰呼出
-                    depth_qs       = depth_qs)
+            child_plot_model = counter_search_algorithm_model.search_as_normal()     # 再帰呼出
 
             ################
             # MARK: 一手戻す
@@ -199,7 +194,6 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 一手戻した後
             ####################
 
-            depth_qs += 1    # 深さを１上げる。
             self._search_context_model.frontwards_plot_model.pop_move()
             self._search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
 

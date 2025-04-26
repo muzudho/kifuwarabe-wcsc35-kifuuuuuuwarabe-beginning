@@ -24,8 +24,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
 
     def search_as_normal(
-            self,
-            depth_qs):
+            self):
         """静止探索の開始。
 
         大まかにいって、１手目は全ての合法手を探索し、
@@ -34,8 +33,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
         Parameters
         ----------
-        depth_qs : int
-            静止探索で、あと何手深く読むか。
+        pass
 
         Returns
         -------
@@ -74,10 +72,10 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             best_plot_model = self.create_backwards_plot_model_at_nyugyoku_win()
             return best_plot_model
 
-        # これ以上深く読まない場合。
-        if depth_qs < 1:
-            best_plot_model = self.create_backwards_plot_model_at_horizon(depth_qs)
-            return best_plot_model
+        # # これ以上深く読まない場合。
+        # if depth_qs < 1:
+        #     best_plot_model = self.create_backwards_plot_model_at_horizon(depth_qs)
+        #     return best_plot_model
 
         # まだ深く読む場合。
 
@@ -115,7 +113,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(remaining_moves) == 0:
-            best_plot_model = self.create_backwards_plot_model_at_quiescence(depth_qs=depth_qs)
+            best_plot_model = self.create_backwards_plot_model_at_quiescence(depth_qs=-1)
             self._search_context_model.end_time = time.time()    # 計測終了時間
             return best_plot_model
 
@@ -149,7 +147,6 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             ####################
 
             self._search_context_model.number_of_visited_nodes  += 1
-            depth_qs -= 1    # 深さを１下げる。
             self._search_context_model.frontwards_plot_model.append_move_from_front(
                     move    = my_move,
                     cap_pt  = cap_pt)
@@ -162,7 +159,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             quiescence_search_algorithum_model = QuiescenceSearchAlgorithmModel(    # 静止探索。
                     search_context_model    = self._search_context_model)
             child_plot_model = quiescence_search_algorithum_model.search_alice(      # 再帰呼出
-                    depth_qs       = depth_qs,
+                    depth_qs    = self._search_context_model.max_depth_qs,
                     parent_move = my_move)
 
             ################
@@ -175,7 +172,6 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 一手戻した後
             ####################
 
-            depth_qs += 1    # 深さを１上げる。
             self._search_context_model.frontwards_plot_model.pop_move()
             self._search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
 
@@ -218,7 +214,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
         # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
         if best_plot_model is None:
-            return self.create_backwards_plot_model_at_no_candidates(depth_qs=depth_qs)
+            return self.create_backwards_plot_model_at_no_candidates(depth_qs=-1)
 
         self._search_context_model.end_time = time.time()    # 計測終了時間
 
@@ -227,7 +223,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
                 move                = best_move,
                 capture_piece_type  = best_move_cap_pt,
                 best_value          = best_value,
-                hint                = '')   # f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の手記憶"
+                hint                = '')
 
         return best_plot_model
 

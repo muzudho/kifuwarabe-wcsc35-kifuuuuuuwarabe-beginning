@@ -15,17 +15,21 @@ class PrincipalVariationModel:
         backwards_plot_model : BackwardsPlotModel
             後ろ向き探索の読み筋。
         """
-        self._move_pv = move_pv
+        if move_pv:
+            self._vertical_move_list_pv = [move_pv]
+        else:
+            self._vertical_move_list_pv = []
+
         self._cap_pt_pv = cap_pt_pv
         self._value_pv = value_pv
         self._backwards_plot_model = backwards_plot_model
 
 
     @property
-    def move_pv(self):
-        """指し手。
+    def last_child_move_pv(self):
+        """最終の子の指し手。
         """
-        return self._move_pv
+        return self._vertical_move_list_pv[-1]
 
 
     @property

@@ -4,16 +4,16 @@ from ..layer_o2o0 import FrontwardsPlotModel
 class SearchContextModel():
 
 
-    def __init__(self, max_depth, gymnasium):
+    def __init__(self, max_depth_qs, gymnasium):
         """
         Parameters
         ----------
-        max_depth : int
+        max_depth_qs : int
             最大深さ。
         gymnasium : GymnasiumModel
             体育館。        
         """
-        self._max_depth     = max_depth
+        self._max_depth_qs     = max_depth_qs
         self._gymnasium     = gymnasium
         self._number_of_visited_nodes = 0
         self._start_time    = None
@@ -25,8 +25,8 @@ class SearchContextModel():
 
 
     @property
-    def max_depth(self):
-        return self._max_depth
+    def max_depth_qs(self):
+        return self._max_depth_qs
 
 
     @property

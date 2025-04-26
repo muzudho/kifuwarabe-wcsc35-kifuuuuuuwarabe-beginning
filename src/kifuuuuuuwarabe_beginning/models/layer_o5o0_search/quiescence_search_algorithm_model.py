@@ -50,7 +50,8 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         cur_time = time.time()                                          # 現在の時間
         erapsed_seconds = cur_time - self._search_context_model.restart_time    # 経過秒
         if 4 <= erapsed_seconds:                                        # 4秒以上経過してたら、情報出力
-            print(f"info depth {self._search_context_model.max_depth - depth_qs} seldepth 0 time 1 nodes {self._search_context_model.number_of_visited_nodes} score cp 0 string thinking")
+            # ［ルート探索］、［カウンター探索］の２を足している。
+            print(f"info depth {2 + self._search_context_model.max_depth_qs - depth_qs} seldepth 0 time 1 nodes {self._search_context_model.number_of_visited_nodes} score cp 0 string thinking")
             self._search_context_model.restart_time = cur_time                   # 前回の計測時間を更新
 
         # 指さなくても分かること（ライブラリー使用）
@@ -212,7 +213,7 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
                 move                = best_move,
                 capture_piece_type  = best_move_cap_pt,
                 best_value          = best_value,
-                hint                = '')   # f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の手記憶"
+                hint                = '')
 
         return best_plot_model
 
