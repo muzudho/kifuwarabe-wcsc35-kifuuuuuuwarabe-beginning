@@ -164,6 +164,12 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             if not pv.is_terminate:
                 child_pv_list = quiescence_search_algorithum_model.search_after_entry_node_quiescence(parent_pv=pv)
 
+                # ［駒を取る手］がないことを、［静止］と呼ぶ。
+                if len(pv_list) == 0:
+                    pv.backwards_plot_model = self.create_backwards_plot_model_at_quiescence(depth_qs=-1)
+                    pv.is_terminate = True
+
+            if not pv.is_terminate:
                 child_plot_model = quiescence_search_algorithum_model.search_as_quiescence(      # 再帰呼出
                         depth_qs    = self._search_context_model.max_depth_qs,
                         pv_list     = child_pv_list)
