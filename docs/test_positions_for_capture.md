@@ -85,6 +85,8 @@ board
 
 ```
 🌟３手先で飛車が取れると思っている？
+後手：きふわらべ　先手：人
+
 position sfen lngn5/kgsl2psr/ppppppbpp/7P1/8S/8P/PPPPPPP2/LBSL3R1/KGGNN4 w - 1
 board
 [ next 1 move(s) | white | repetition - ]

@@ -6,8 +6,7 @@ from ...modules import ThinkingLoggerModule
 from ..layer_o1o0 import TableModel, TurnModel
 from ..layer_o1o0.table_access_object import PieceValueTAO
 from ..layer_o2o0 import BasketballCourtModel
-from .health_check_go_model import HealthCheckGoModel
-from .health_check_qs_model import HealthCheckQsModel
+from ..layer_o7o0_health import HealthCheckGoModel, HealthCheckQsModel
 from .gourei_collection_model import GoureiCollectionModel
 
 

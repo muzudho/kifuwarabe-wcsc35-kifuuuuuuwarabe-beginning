@@ -254,31 +254,33 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         if capture_piece_type is None:
             raise ValueError(f"capture_piece_type をナンにしてはいけません。cshogi.NONE を使ってください。 {capture_piece_type=}")
 
-        if len(self._list_of_accumulate_exchange_value_on_earth) == 0:
-            accumulate_value_on_earth = self._get_out_of_termination_to_value_on_earth(   # ［終端外］の点数。
-                    out_of_termination  = self._out_of_termination,
-                    is_mars             = self._is_mars_at_out_of_termination)
-        else:
-            accumulate_value_on_earth = self._list_of_accumulate_exchange_value_on_earth[-1]
+        # if len(self._list_of_accumulate_exchange_value_on_earth) == 0:
+        #     accumulate_value_on_earth = self._get_out_of_termination_to_value_on_earth(   # ［終端外］の点数。
+        #             out_of_termination  = self._out_of_termination,
+        #             is_mars             = self._is_mars_at_out_of_termination)
+        # else:
+        #     accumulate_value_on_earth = self._list_of_accumulate_exchange_value_on_earth[-1]
 
-        piece_exchange_value_on_earth = 2 * PieceValuesModel.by_piece_type(pt=capture_piece_type)      # 交換値に変換。正の数とする。
-        if self.is_mars_at_peek:                    # 火星なら。
-            piece_exchange_value_on_earth *= -1     # 正負の符号を反転する。
+        # piece_exchange_value_on_earth = 2 * PieceValuesModel.by_piece_type(pt=capture_piece_type)      # 交換値に変換。正の数とする。
+        # if self.is_mars_at_peek:                    # 火星なら。
+        #     piece_exchange_value_on_earth *= -1     # 正負の符号を反転する。
 
-        # ＜📚原則１＞地球と火星のペアが完成したら、駒得点を逓減。
-        # # かつ、火星の［終端外］で終わるとき　＝　地球の［指し手］で読み終わるとき
-        # if (
-        #         self._out_of_termination == constants.out_of_termination.MAX_DEPTH_BY_THINK     # ［終端外］が［読みの深さの最大］。
-        #     and len(self._list_of_accumulate_exchange_value_on_earth) == 1                      # ［読みの深さの最大］のときの末端の指し手のとき。
-        #     and not self.is_mars_at_peek                                                        # ［地球］の手番。
-        #     ):
-        #     piece_exchange_value_on_earth = 0   # 駒得点をノーカウントにする。（［地球の手］を１回多くカウントするのは数えすぎだから）
+        # # ＜📚原則１＞地球と火星のペアが完成したら、駒得点を逓減。
+        # # # かつ、火星の［終端外］で終わるとき　＝　地球の［指し手］で読み終わるとき
+        # # if (
+        # #         self._out_of_termination == constants.out_of_termination.MAX_DEPTH_BY_THINK     # ［終端外］が［読みの深さの最大］。
+        # #     and len(self._list_of_accumulate_exchange_value_on_earth) == 1                      # ［読みの深さの最大］のときの末端の指し手のとき。
+        # #     and not self.is_mars_at_peek                                                        # ［地球］の手番。
+        # #     ):
+        # #     piece_exchange_value_on_earth = 0   # 駒得点をノーカウントにする。（［地球の手］を１回多くカウントするのは数えすぎだから）
 
-        # （完全に読み切るわけではないので）深くの手ほど価値を減らします。ただしあまり深くの駒を弱く調整すると、浅い銀と深い角が同じ価値になるなど不具合が生じます。
-        piece_exchange_value_on_earth = (piece_exchange_value_on_earth + accumulate_value_on_earth)     # * 3 / 4     # * 9 / 10
+        # # （完全に読み切るわけではないので）深くの手ほど価値を減らします。ただしあまり深くの駒を弱く調整すると、浅い銀と深い角が同じ価値になるなど不具合が生じます。
+        # # 累計します。
+        # piece_exchange_value_on_earth = (piece_exchange_value_on_earth + accumulate_value_on_earth)     # * 3 / 4     # * 9 / 10
 
-        # 累計します。
-        self._list_of_accumulate_exchange_value_on_earth.append(piece_exchange_value_on_earth)
+        # self._list_of_accumulate_exchange_value_on_earth.append(piece_exchange_value_on_earth)
+
+        self._list_of_accumulate_exchange_value_on_earth.append(best_value)
 
 
     def stringify(self):
