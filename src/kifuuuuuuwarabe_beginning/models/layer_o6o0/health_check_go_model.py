@@ -55,13 +55,6 @@ class HealthCheckGoModel():
             if 'GO_move_jp' in move_prop:
                 return move_prop['GO_move_jp']
             return ''
-        
-
-        def fn_eater(i):
-            move_prop = health_list[i][1]
-            if 'SQ_eater' in move_prop:
-                return f"{move_prop['SQ_eater']}"
-            return ''
 
 
         def fn_qs_eliminate171(i):
@@ -122,8 +115,6 @@ class HealthCheckGoModel():
         header_list = []
         header_list.append('move')
         header_list.append('move_jp')
-        header_list.append('eater')
-        # header_list.append('QS_cheapest')
         header_list.append('qs_plot')
         header_list.append('qs_eliminate171')
         header_list.append('qs_select')
@@ -141,8 +132,6 @@ class HealthCheckGoModel():
             body_list = []
             body_list.append(fn_move(i))                # USI書式の指し手
             body_list.append(fn_move_jp(i))             # USI書式の指し手（日本人向け）
-            body_list.append(fn_eater(i))
-            # body_list.append(fn_qs_cheapest(i))         # 一番安い駒を選ぶ。
             body_list.append(fn_qs_plot(i))             # 静止探索の読み筋の詳細
             body_list.append(fn_qs_eliminate171(i))     # 静止探索で選ばれた手をエリミネートした手
             body_list.append(fn_qs_select(i))           # 静止探索で選ばれた手
