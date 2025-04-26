@@ -48,9 +48,9 @@ class SearchAlgorithmModel:
     
         # 今回の手を付け加える。
         if self._search_context_model.gymnasium.is_mars:
-            best_value = 10000      # 火星の負け
+            best_value = constants.value.BIG_VALUE        # 火星の負け
         else:
-            best_value = -10000     # 地球の負け
+            best_value = constants.value.SMALL_VALUE      # 地球の負け
 
         best_plot_model.append_move_from_back(
                 move                = mate_move,
@@ -94,6 +94,16 @@ class SearchAlgorithmModel:
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.NO_CANDIDATES,
                 hint                            = '')
+
+
+    def remove_drop_moves(self, remaining_moves):
+        """［打］は除外。
+        """
+        for my_move in reversed(remaining_moves):   # 指し手を全部調べる。
+            if cshogi.move_is_drop(my_move):
+                remaining_moves.remove(my_move)
+
+        return remaining_moves
 
 
     def remove_depromoted_moves(self, remaining_moves):

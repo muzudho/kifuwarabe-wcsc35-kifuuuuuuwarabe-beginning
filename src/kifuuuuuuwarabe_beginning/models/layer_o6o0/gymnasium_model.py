@@ -3,7 +3,7 @@ import cshogi
 from datetime import datetime
 
 from ...modules import ThinkingLoggerModule
-from ..layer_o1o0 import TableModel, TurnModel
+from ..layer_o1o0 import PtolemaicTheoryModel, TableModel, TurnModel
 from ..layer_o1o0.table_access_object import PieceValueTAO
 from ..layer_o2o0 import BasketballCourtModel
 from ..layer_o7o0_health import HealthCheckGoModel, HealthCheckQsModel
@@ -45,6 +45,9 @@ class GymnasiumModel():
 
         self._health_check_go_model = None   # 健康診断
         self._health_check_qs_model = None   # 健康診断
+
+        # ［天動説］
+        self._ptolemaic_theory_model  = PtolemaicTheoryModel(gymnasium=self)
 
 
     @property
@@ -145,6 +148,11 @@ class GymnasiumModel():
     @property
     def health_check_qs_model(self):
         return self._health_check_qs_model
+
+
+    @property
+    def ptolemaic_theory_model(self):
+        return self._ptolemaic_theory_model
 
 
     ########################

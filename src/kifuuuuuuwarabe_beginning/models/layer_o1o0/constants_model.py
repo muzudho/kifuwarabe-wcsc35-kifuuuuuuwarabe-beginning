@@ -119,6 +119,20 @@ class _Value():
         return 50000
 
 
+    @property
+    def BIG_VALUE(self):
+        """大きい数。
+        """
+        return 100000
+
+
+    @property
+    def SMALL_VALUE(self):
+        """小さい数。
+        """
+        return -100000
+
+
 class OutOfTerminationModel():
     """［終端外］。
     """

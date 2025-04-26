@@ -58,13 +58,6 @@ class PieceValuesModel():
 
 
     @staticmethod
-    def get_big_value():
-        """とりあえず、でかい値。
-        """
-        return 10000
-
-
-    @staticmethod
     def get_piece_exchange_value_on_earth(pt, is_mars):
         piece_exchange_value = 2 * PieceValuesModel.by_piece_type(pt=pt)      # 交換値に変換。正の数とする。
         if is_mars:

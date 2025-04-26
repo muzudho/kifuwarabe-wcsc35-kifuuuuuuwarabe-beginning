@@ -124,9 +124,9 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         ####################
 
         if self._search_context_model.gymnasium.is_mars:
-            best_value = 10000
+            best_value = constants.value.BIG_VALUE
         else:
-            best_value = -10000
+            best_value = constants.value.SMALL_VALUE
 
         for my_move in remaining_moves:
 
@@ -134,8 +134,6 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 一手指す前
             ##################
 
-            ptolemaic_theory_model  = PtolemaicTheoryModel(
-                    is_mars=self._search_context_model.gymnasium.is_mars)
             # 打の場合、取った駒無し。空マス。
             dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
             cap_pt      = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
@@ -202,7 +200,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
                 # 兄枝のベスト評価値
                 old_sibling_value = best_plot_model.get_exchange_value_on_earth()     # とりあえず最善の読み筋の点数。
 
-            (a, b) = ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
+            (a, b) = self._search_context_model.gymnasium.ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
             its_update_best = (a < b)
 
             # 最善手の更新

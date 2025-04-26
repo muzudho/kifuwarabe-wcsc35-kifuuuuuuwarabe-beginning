@@ -91,8 +91,9 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         # MARK: データ・クリーニング
         ############################
 
-        remaining_moves = self.remove_depromoted_moves(remaining_moves=remaining_moves)         # ［成れるのに成らない手］は除外
-        remaining_moves = QuiescenceSearchAlgorithmModel.filtering_same_destination_move_list(parent_move=parent_move, remaining_moves=remaining_moves)
+        remaining_moves = self.remove_drop_moves(remaining_moves=remaining_moves)           # 打の手を全部除外したい。
+        remaining_moves = self.remove_depromoted_moves(remaining_moves=remaining_moves)     # ［成れるのに成らない手］は除外
+        (remaining_moves, rolled_back) = QuiescenceSearchAlgorithmModel.filtering_same_destination_move_list(parent_move=parent_move, remaining_moves=remaining_moves, rollback_if_empty=True) # できれば［同］の手を残す。
         remaining_moves = QuiescenceSearchAlgorithmModel.get_cheapest_move_list(remaining_moves=remaining_moves)
         (remaining_moves, rolled_back) = self.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=False)       # 駒を取る手と、王手のみ残す
 
@@ -108,9 +109,9 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         best_move           = None
         best_move_cap_pt    = None
         if self._search_context_model.gymnasium.is_mars:
-            best_value = 10000
+            best_value = constants.value.BIG_VALUE
         else:
-            best_value = -10000
+            best_value = constants.value.SMALL_VALUE
         depth_qs_extend     = 0
 
         for my_move in remaining_moves:
@@ -119,8 +120,6 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 一手指す前
             ##################
 
-            ptolemaic_theory_model  = PtolemaicTheoryModel(
-                    is_mars=self._search_context_model.gymnasium.is_mars)
             dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
             cap_pt      = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
 
@@ -190,7 +189,7 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
                 # 兄枝のベスト評価値
                 old_sibling_value = best_plot_model.get_exchange_value_on_earth()     # とりあえず最善の読み筋の点数。
 
-            (a, b) = ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
+            (a, b) = self._search_context_model.gymnasium.ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
             its_update_best = (a < b)
                         
             # 最善手の更新（１つに絞る）
@@ -218,27 +217,37 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         return best_plot_model
 
 
-    def filtering_same_destination_move_list(parent_move, remaining_moves):
+    def filtering_same_destination_move_list(parent_move, remaining_moves, rollback_if_empty):
         """［同］（１つ前の手の移動先に移動する手）を優先的に選ぶ。
+
+        Returns
+        -------
+        move_list : list
+            指し手のリスト。
+        rolled_back : bool
+            ロールバックされた。
         """
-        dst_sq_of_previous_move_obj = SquareModel(cshogi.move_to(parent_move))      # ［１つ前の手］の［移動先マス］
+        dst_sq_of_parent_move_obj = SquareModel(cshogi.move_to(parent_move))      # ［１つ親の手］の［移動先マス］
         same_destination_move_list = []
 
         for my_move in remaining_moves:
             dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
-            if dst_sq_obj.sq == dst_sq_of_previous_move_obj.sq:
+            if dst_sq_obj.sq == dst_sq_of_parent_move_obj.sq:
                 same_destination_move_list.append(my_move)
         
         if 0 < len(same_destination_move_list):
-            return same_destination_move_list
+            return same_destination_move_list, False
         
-        return remaining_moves
+        if rollback_if_empty:
+            return remaining_moves, True
+        return [], False
 
 
     def get_cheapest_move_list(remaining_moves):
         """TODO 一番安い駒の指し手だけを選ぶ。
+        TODO 打はどう扱う？
         """
-        cheapest_value = PieceValuesModel.get_big_value()
+        cheapest_value = constants.value.BIG_VALUE
         cheapest_move_list = []
         for my_move in remaining_moves:
             moving_pt = TableHelper.get_moving_pt_from_move(my_move)
