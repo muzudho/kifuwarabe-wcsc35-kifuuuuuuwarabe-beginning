@@ -110,8 +110,8 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
 
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(remaining_moves) == 0:
-            future_plot_model = self.create_backwards_plot_model_at_quiescence(depth_qs=depth_qs)
-            return future_plot_model
+            best_plot_model = self.create_backwards_plot_model_at_quiescence(depth_qs=depth_qs)
+            return best_plot_model
 
         for my_move in remaining_moves:
 

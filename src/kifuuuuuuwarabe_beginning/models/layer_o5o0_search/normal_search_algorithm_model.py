@@ -110,9 +110,9 @@ class NormalSearchAlgorithmModel(SearchAlgorithmModel):
 
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(remaining_moves) == 0:
-            future_plot_model = self.create_backwards_plot_model_at_quiescence(depth_qs=depth_qs)
+            best_plot_model = self.create_backwards_plot_model_at_quiescence(depth_qs=depth_qs)
             self._search_context_model.end_time = time.time()    # 計測終了時間
-            return future_plot_model
+            return best_plot_model
 
         for my_move in remaining_moves:
 
