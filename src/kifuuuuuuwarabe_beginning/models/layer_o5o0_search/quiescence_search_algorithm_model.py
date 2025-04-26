@@ -5,7 +5,7 @@ from ...logics.layer_o1o0 import MoveListLogics
 from ..layer_o1o_9o0 import PieceValuesModel
 from ..layer_o1o0 import constants, Mars, PtolemaicTheoryModel, SquareModel
 from ..layer_o1o0o_9o0_table_helper import TableHelper
-from ..layer_o2o0 import BackwardsPlotModel, cutoff_reason
+from ..layer_o2o0 import BackwardsPlotModel
 from ..layer_o4o0_rules.negative import DoNotDepromotionModel
 from .search_algorithm_model import SearchAlgorithmModel
 

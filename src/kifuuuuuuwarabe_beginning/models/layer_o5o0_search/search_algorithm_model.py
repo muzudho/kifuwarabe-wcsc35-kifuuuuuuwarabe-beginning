@@ -1,7 +1,7 @@
 import cshogi
 
 from ..layer_o1o0 import constants, Mars, SquareModel
-from ..layer_o2o0 import BackwardsPlotModel, cutoff_reason
+from ..layer_o2o0 import BackwardsPlotModel
 from ..layer_o4o0_rules.negative import DoNotDepromotionModel
 
 
@@ -31,7 +31,6 @@ class SearchAlgorithmModel:
                 is_mars_at_out_of_termination   = self._search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.RESIGN,
-                cutoff_reason                   = cutoff_reason.GAME_OVER,
                 hint                            = '')
 
 
@@ -45,7 +44,6 @@ class SearchAlgorithmModel:
                 is_mars_at_out_of_termination   = not self._search_context_model.gymnasium.is_mars,     # ［詰む］のは、もう１手先だから。
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.RESIGN,
-                cutoff_reason                   = cutoff_reason.MATE_MOVE_IN_1_PLY,
                 hint                            = '')
     
         # 今回の手を付け加える。
@@ -68,7 +66,6 @@ class SearchAlgorithmModel:
                 is_mars_at_out_of_termination   = self._search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.NYUGYOKU_WIN,
-                cutoff_reason                   = cutoff_reason.NYUGYOKU_WIN,
                 hint                            = '')
         return best_plot_model
 
@@ -79,7 +76,6 @@ class SearchAlgorithmModel:
                 is_mars_at_out_of_termination   = self._search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.MAX_DEPTH_BY_THINK,
-                cutoff_reason                   = cutoff_reason.MAX_DEPTH,
                 hint                            = f"{self._search_context_model.max_depth - depth_qs}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}でこれ以上深く読まない場合_{depth_qs=}/{self._search_context_model.max_depth=}")
         return best_plot_model
 
@@ -90,7 +86,6 @@ class SearchAlgorithmModel:
                 is_mars_at_out_of_termination   = self._search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.QUIESCENCE,
-                cutoff_reason                   = cutoff_reason.QUIESCENCE,
                 hint                            = f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は静止")
         return future_plot_model
 
@@ -101,7 +96,6 @@ class SearchAlgorithmModel:
                 is_mars_at_out_of_termination   = self._search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.NO_CANDIDATES,
-                cutoff_reason                   = cutoff_reason.NO_MOVES,
                 hint                            = f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は指したい手無し")
         return future_plot_model
 

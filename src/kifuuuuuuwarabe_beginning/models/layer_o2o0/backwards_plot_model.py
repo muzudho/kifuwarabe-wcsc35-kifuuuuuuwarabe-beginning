@@ -1,74 +1,7 @@
 import cshogi
 
-from ..layer_o1o_9o0 import PieceValuesModel
-from ..layer_o1o0 import constants, OutOfTerminationModel, Mars, PieceTypeModel, PlanetPieceTypeModel, SquareModel
+from ..layer_o1o0 import constants, OutOfTerminationModel, Mars
 from ..layer_o1o0o1o0_japanese import JapaneseMoveModel
-
-
-class CutoffReason():
-    """カットオフした理由。
-    """
-
-
-    _label = [
-        '',                 # [0]
-        '詰み形',           # [1]
-        '一手詰め',         # [2]
-        '入玉宣言勝ち',     # [3]
-        '応手無し',         # [4] 末端局面で合法手の中から指したい手無し
-        '探索深さ最大',     # [5]
-        '静止',             # [6] 駒の取り合いが無くなった。
-    ]
-
-
-    @classmethod
-    def japanese(clazz, number):
-        return clazz._label[number]
-
-
-    @property
-    def GAME_OVER(self):
-        """投了。詰み形。
-        """
-        return 1
-    
-
-    @property
-    def MATE_MOVE_IN_1_PLY(self):
-        """一手詰め。
-        """
-        return 2
-
-
-    @property
-    def NYUGYOKU_WIN(self):
-        """入玉宣言勝ち。
-        """
-        return 3
-
-
-    @property
-    def NO_MOVES(self):
-        """（合法手の中から）指したい手無し。
-        """
-        return 4
-
-
-    @property
-    def MAX_DEPTH(self):
-        """探索深さ最大。
-        """
-        return 5
-
-
-    @property
-    def QUIESCENCE(self):
-        """静止。駒の取り合いがなくなった。
-        """
-        return 6
-
-
-cutoff_reason = CutoffReason()
 
 
 class BackwardsPlotModel(): # TODO Rename PathFromLeaf
@@ -104,7 +37,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         return value
 
 
-    def __init__(self, is_mars_at_out_of_termination, is_gote_at_out_of_termination, out_of_termination, cutoff_reason, hint):
+    def __init__(self, is_mars_at_out_of_termination, is_gote_at_out_of_termination, out_of_termination, hint):
         """初期化。
 
         Parameters
@@ -115,8 +48,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             ［葉局面］＝［終端外］手番は後手か。
         out_of_termination : int
             ［終端外］
-        cutoff_reason : int
-            カットオフの理由
         hint : str
             デバッグ用文字列
         """
@@ -126,7 +57,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         self._move_list = []
         self._cap_list = []
         self._list_of_accumulate_exchange_value_on_earth = []   # 地球から見た、取った駒の交換値。
-        self._cutoff_reason = cutoff_reason
         self._hint_list = [hint]
 
 
@@ -199,11 +129,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
                     is_mars     = self._is_mars_at_out_of_termination)
 
         return self._list_of_accumulate_exchange_value_on_earth[-1]
-
-
-    @property
-    def cutoff_reason(self):
-        return self._cutoff_reason
 
 
     @property
@@ -319,9 +244,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
         tokens.append(f"{Mars.japanese(is_mars)}の{OutOfTerminationModel.japanese(self.out_of_termination)}")   # ［終端外］
 
-        # カットオフ理由
-        tokens.append(CutoffReason.japanese(self._cutoff_reason))
-
         # ヒント・リスト
         tokens.append(' '.join(self._hint_list))
 
@@ -338,7 +260,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
 
     def stringify_dump(self):
-        return f"{self._is_mars_at_out_of_termination=} {self._out_of_termination=} {self._move_list=} {self._cap_list=} {self._list_of_accumulate_exchange_value_on_earth=} {self._cutoff_reason=} {' '.join(self._hint_list)=}"
+        return f"{self._is_mars_at_out_of_termination=} {self._out_of_termination=} {self._move_list=} {self._cap_list=} {self._list_of_accumulate_exchange_value_on_earth=} {' '.join(self._hint_list)=}"
 
 
     def stringify_debug_1(self):

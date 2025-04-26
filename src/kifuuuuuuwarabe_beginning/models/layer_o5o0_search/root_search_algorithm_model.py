@@ -178,11 +178,8 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
             # NOTE この辺りは［１階］。max_depth - depth。
 
-            search_context_model = SearchContextModel(
-                    max_depth = depth_qs,
-                    gymnasium = self._search_context_model.gymnasium)
             counter_search_algorithm_model = CounterSearchAlgorithmModel(            # 応手サーチ。
-                    search_context_model = search_context_model)
+                    search_context_model = self._search_context_model)
             child_plot_model = counter_search_algorithm_model.search_as_normal(      # 再帰呼出
                     depth_qs       = depth_qs + depth_qs_extend)
 
