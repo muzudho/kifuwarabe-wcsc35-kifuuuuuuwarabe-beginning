@@ -94,7 +94,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         pv_list = []
 
         # 残った指し手について
-        for my_move in vertical_list_of_move_pv:
+        for my_move in remaining_moves:
             ##################
             # MARK: 一手指す前
             ##################
@@ -114,8 +114,8 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             pv_list.append(pv)
 
 
-        return remaining_moves
-        #return pv_list
+        #return remaining_moves
+        return pv_list
 
 
     def search_as_normal(self, pv, remaining_moves):
