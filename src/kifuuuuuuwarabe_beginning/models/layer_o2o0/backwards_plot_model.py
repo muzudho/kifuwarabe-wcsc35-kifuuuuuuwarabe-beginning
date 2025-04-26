@@ -220,29 +220,30 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
             # １手目は読み筋から省く。（別項目として表示されるから）
             if layer_no == len_of_move_list - 1:
-                continue
+                pass
+            
+            else:
+                move        = self._move_list[layer_no]
+                cap_pt      = self._cap_list[layer_no]
 
-            move        = self._move_list[layer_no]
-            cap_pt      = self._cap_list[layer_no]
+                if not isinstance(move, int):   # FIXME バグがあるよう
+                    raise ValueError(f"move は int 型である必要があります。 {layer_no=} {type(move)=} {move=} {self._move_list=}")
 
-            if not isinstance(move, int):   # FIXME バグがあるよう
-                raise ValueError(f"move は int 型である必要があります。 {layer_no=} {type(move)=} {move=} {self._move_list=}")
+                # 指し手のUSI表記を独自形式に変更。
+                move_jp_str = JapaneseMoveModel.from_move(
+                        move    = move,
+                        cap_pt  = cap_pt,
+                        is_mars = is_mars,
+                        is_gote = is_gote).stringify()
 
-            # 指し手のUSI表記を独自形式に変更。
-            move_jp_str = JapaneseMoveModel.from_move(
-                    move    = move,
-                    cap_pt  = cap_pt,
-                    is_mars = is_mars,
-                    is_gote = is_gote).stringify()
-
-            piece_exchange_value_on_earth   = self._list_of_accumulate_exchange_value_on_earth[layer_no]
-            tokens.append(f"({len_of_move_list - layer_no}){move_jp_str}[{piece_exchange_value_on_earth}]")
+                piece_exchange_value_on_earth   = self._list_of_accumulate_exchange_value_on_earth[layer_no]
+                tokens.append(f"({len_of_move_list - layer_no}){move_jp_str}[{piece_exchange_value_on_earth}]")
 
             # 手番交代
             is_mars = not is_mars
             is_gote = not is_gote
 
-        tokens.append(f"{Mars.japanese(is_mars)}の{OutOfTerminationModel.japanese(self.out_of_termination)}")   # ［終端外］
+        tokens.append(f"(終端外){Mars.japanese(is_mars)}の{OutOfTerminationModel.japanese(self.out_of_termination)}")   # ［終端外］
 
         # ヒント・リスト
         tokens.append(' '.join(self._hint_list))
