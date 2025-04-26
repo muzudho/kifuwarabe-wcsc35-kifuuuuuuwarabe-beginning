@@ -100,6 +100,10 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
         remaining_moves = self.remove_depromoted_moves(remaining_moves=remaining_moves)       # ［成れるのに成らない手］は除外
 
+        (remaining_moves, rolled_back) = self.filtering_capture_or_mate(    # 駒を取る手と、王手のみ残す
+                remaining_moves=remaining_moves,
+                rollback_if_empty=True)     # ［カウンター探索］では、［駒を取る手、王手］が無ければ、（巻き戻して）それ以外の手を指します。
+
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(remaining_moves) == 0:
             best_plot_model = self.create_backwards_plot_model_at_quiescence(depth_qs=depth_qs)

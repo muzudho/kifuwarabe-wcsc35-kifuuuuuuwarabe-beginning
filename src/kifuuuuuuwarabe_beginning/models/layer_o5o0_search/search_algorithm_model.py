@@ -120,3 +120,42 @@ class SearchAlgorithmModel:
                 remaining_moves.remove(my_move)
 
         return remaining_moves
+
+
+    def filtering_capture_or_mate(self, remaining_moves, rollback_if_empty):
+        """駒を取る手と、王手のみ残す。
+
+        Returns
+        -------
+        remaining_moves : list
+            残りの指し手。
+        rolled_back : bool
+            ロールバックされた。
+        """
+
+        rolled_back = False
+
+        if rollback_if_empty:
+            old_remaining_moves = remaining_moves.copy()    # バックアップ
+
+        for my_move in reversed(remaining_moves):
+            dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
+            cap_pt      = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
+            is_capture  = (cap_pt != cshogi.NONE)
+
+            # ２階以降の呼出時は、駒を取る手でなければ無視。
+            if not is_capture:
+                # ＜📚原則２＞ 王手は（駒を取らない手であっても）探索を続け、深さを１手延長する。
+                if self._search_context_model.gymnasium.table.is_check():
+                    #depth_extend += 1  # FIXME 探索が終わらないくなる。
+                    pass
+
+                else:
+                    remaining_moves.remove(my_move)
+                    continue
+
+        if rollback_if_empty and len(remaining_moves) == 0:
+            remaining_moves = old_remaining_moves   # 復元
+            rolled_back     = True
+
+        return remaining_moves, rolled_back
