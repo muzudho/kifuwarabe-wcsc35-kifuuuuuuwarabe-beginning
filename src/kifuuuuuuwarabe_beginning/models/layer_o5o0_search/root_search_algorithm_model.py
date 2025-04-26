@@ -162,9 +162,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             if not pv.is_terminate:
                 remaining_moves = counter_search_algorithm_model.search_after_entry_node(pv=pv, vertical_list_of_move_pv=vertical_list_of_move_pv)
 
-                child_plot_model = counter_search_algorithm_model.search_as_normal(pv=pv, remaining_moves=remaining_moves)       # 再帰呼出
-            else:
-                child_plot_model = pv.backwards_plot_model
+                pv.backwards_plot_model = counter_search_algorithm_model.search_as_normal(pv=pv, remaining_moves=remaining_moves)       # 再帰呼出
             
 
             ######################
@@ -186,15 +184,13 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             ##################
 
             # １階の手は、全ての手の読み筋を記憶します。最善手は選びません。
-            child_plot_model.append_move_from_back(
+            pv.backwards_plot_model.append_move_from_back(
                     move                = last_child_move,
                     capture_piece_type  = pv.vertical_list_of_cap_pt_pv[-1],
-                    best_value          = child_plot_model.get_exchange_value_on_earth(),
+                    best_value          = pv.backwards_plot_model.get_exchange_value_on_earth(),
                     hint                = '')
-            backwards_plot_model=child_plot_model
 
-            pv.value_pv += backwards_plot_model.get_exchange_value_on_earth()
-            pv.backwards_plot_model = backwards_plot_model
+            pv.value_pv += pv.backwards_plot_model.get_exchange_value_on_earth()
 
             # ベータカットもしません。全部返すから。
             pv_list.append(pv.copy_pv())
