@@ -104,8 +104,6 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         # MARK: ノード訪問時
         ####################
 
-        pv_list = []
-
         def set_controls(remaining_moves):
             """利きを記録
             """
@@ -125,29 +123,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         ##################
 
         # 準備。
-        for my_move in remaining_moves:
-
-            # （あれば）駒を取る。
-            dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
-            cap_pt      = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # ［移動先マス］にある［駒種類］。つまりそれは取った駒。打の［移動先マス］は常に空きマス。
-            is_capture  = (cap_pt != cshogi.NONE)
-
-            pv = PrincipalVariationModel(vertical_list_of_move_pv=[my_move], vertical_list_of_cap_pt_pv=[cap_pt], value_pv=0, backwards_plot_model=None)
-            pv_list.append(pv)
-
-            # （取っていれば）取った駒の点数計算。
-            if is_capture:
-                # NOTE `earth` - 自分。 `mars` - 対戦相手。
-                pv.value_pv += PieceValuesModel.get_piece_exchange_value_on_earth(      # 交換値に変換。正の数とする。
-                        pt          = cap_pt,
-                        is_mars     = self._search_context_model.gymnasium.is_mars)
-            else:
-                pv.value_pv += 0
-
-            self._search_context_model.frontwards_plot_model.append_move_from_front(
-                    move    = my_move,
-                    cap_pt  = cap_pt)
-
+        pv_list = RootSearchAlgorithmModel._make_pv_list(remaining_moves=remaining_moves, search_context_model=self._search_context_model)
 
         ####################
         # MARK: 深さ優先探索
@@ -231,4 +207,37 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         # 指し手が無いということはない。ゲームオーバー判定を先にしているから。
 
         self._search_context_model.end_time = time.time()    # 計測終了時間
+        return pv_list
+
+
+    def _make_pv_list(remaining_moves, search_context_model):
+        """PVリスト作成。
+        """
+        pv_list = []
+
+        # 準備。
+        for my_move in remaining_moves:
+
+            # （あれば）駒を取る。
+            dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
+            cap_pt      = search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # ［移動先マス］にある［駒種類］。つまりそれは取った駒。打の［移動先マス］は常に空きマス。
+            is_capture  = (cap_pt != cshogi.NONE)
+
+            pv = PrincipalVariationModel(vertical_list_of_move_pv=[my_move], vertical_list_of_cap_pt_pv=[cap_pt], value_pv=0, backwards_plot_model=None)
+
+            # （取っていれば）取った駒の点数計算。
+            if is_capture:
+                # NOTE `earth` - 自分。 `mars` - 対戦相手。
+                pv.value_pv += PieceValuesModel.get_piece_exchange_value_on_earth(      # 交換値に変換。正の数とする。
+                        pt          = cap_pt,
+                        is_mars     = search_context_model.gymnasium.is_mars)
+            else:
+                pv.value_pv += 0
+
+            pv_list.append(pv)
+
+            search_context_model.frontwards_plot_model.append_move_from_front(
+                    move    = my_move,
+                    cap_pt  = cap_pt)
+
         return pv_list
