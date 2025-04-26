@@ -13,15 +13,15 @@ class SearchContextModel():
         gymnasium : GymnasiumModel
             体育館。        
         """
-        self._max_depth = max_depth
-        self._gymnasium = gymnasium
-
+        self._max_depth     = max_depth
+        self._gymnasium     = gymnasium
         self._number_of_visited_nodes = 0
-        self._start_time = None
-        self._restart_time = None
-        self._end_time = None
+        self._start_time    = None
+        self._restart_time  = None
+        self._end_time      = None
         self._frontwards_plot_model = FrontwardsPlotModel(
                 is_gote_at_first=gymnasium.table.is_gote)
+        self.clear_root_searched_control_map()
 
 
     @property
@@ -77,8 +77,17 @@ class SearchContextModel():
     @property
     def frontwards_plot_model(self):
         return self._frontwards_plot_model
-    
 
-    # @frontwards_plot_model.setter
-    # def frontwards_plot_model(self, value):
-    #     self._frontwards_plot_model = value
+
+    def clear_root_searched_control_map(self):
+        """利きの早見表をクリアー。
+        """
+        self._root_searched_control_map = [False] * 81
+
+
+    def set_root_searched_control_map(self, sq, value):
+        self._root_searched_control_map[sq] = value
+
+
+    def get_root_searched_control_map(self, sq):
+        return self._root_searched_control_map[sq]

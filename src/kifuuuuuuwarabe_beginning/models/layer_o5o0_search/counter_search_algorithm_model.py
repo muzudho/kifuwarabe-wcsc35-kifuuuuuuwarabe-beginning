@@ -88,7 +88,6 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         best_plot_model     = None
         best_move           = None
         best_move_cap_pt    = None
-        depth_qs_extend     = 0
 
         # 合法手を全部調べる。
         legal_move_list = list(self._search_context_model.gymnasium.table.legal_moves)
@@ -100,15 +99,29 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
         remaining_moves = self.remove_depromoted_moves(remaining_moves=remaining_moves)       # ［成れるのに成らない手］は除外
 
+        aigoma_move_list = self._choice_aigoma_move_list(remaining_moves=remaining_moves)    # ［間駒］（相手の利きの上に置く手）を抽出。
+
+        # TODO ［間駒］以外の［打］は（多すぎるので）除外。
+        for my_move in reversed(remaining_moves):
+            is_drop = cshogi.move_is_drop(my_move)
+            if is_drop:
+                remaining_moves.remove(my_move)
+
         (remaining_moves, rolled_back) = self.filtering_capture_or_mate(    # 駒を取る手と、王手のみ残す
                 remaining_moves=remaining_moves,
                 rollback_if_empty=True)     # ［カウンター探索］では、［駒を取る手、王手］が無ければ、（巻き戻して）それ以外の手を指します。
+
+        remaining_moves.extend(aigoma_move_list)
 
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(remaining_moves) == 0:
             best_plot_model = self.create_backwards_plot_model_at_quiescence(depth_qs=depth_qs)
             self._search_context_model.end_time = time.time()    # 計測終了時間
             return best_plot_model
+
+        ####################
+        # MARK: ノード訪問時
+        ####################
 
         for my_move in remaining_moves:
 
@@ -119,16 +132,6 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             # 打の場合、取った駒無し。空マス。
             dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
             cap_pt      = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
-
-            # １階呼出時は、どの手も無視しません。
-
-            is_capture  = (cap_pt != cshogi.NONE)
-
-            # ２階以降の呼出時は、駒を取る手でなければ無視。 FIXME 王手が絡んでいるとき、取れないこともあるから、王手が絡むときは場合分けしたい。
-            if not is_capture:
-                depth_qs_extend = 1    # ＜📚原則１＞により、駒を取らない手は、探索を１手延長します。
-            else:
-                depth_qs_extend = 0
 
             ################
             # MARK: 一手指す
@@ -154,7 +157,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             quiescence_search_algorithum_model = QuiescenceSearchAlgorithmModel(    # 静止探索。
                     search_context_model    = self._search_context_model)
             child_plot_model = quiescence_search_algorithum_model.search_alice(      # 再帰呼出
-                    depth_qs       = depth_qs + depth_qs_extend,
+                    depth_qs       = depth_qs,
                     parent_move = my_move)
 
             ################
@@ -223,3 +226,14 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
                 hint                = f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の手記憶")
 
         return best_plot_model
+
+
+    def _choice_aigoma_move_list(self, remaining_moves):
+        # TODO ［間駒］（相手の利きの上に置く手）を抽出。
+        aigoma_move_list = []
+        for my_move in remaining_moves:
+            dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
+            is_aigoma = self._search_context_model.get_root_searched_control_map(sq=dst_sq_obj.sq)
+            if is_aigoma:
+                aigoma_move_list.append(my_move)
+        return aigoma_move_list

@@ -113,6 +113,10 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             best_plot_model = self.create_backwards_plot_model_at_quiescence(depth_qs=depth_qs)
             return best_plot_model
 
+        ####################
+        # MARK: ノード訪問時
+        ####################
+
         for my_move in remaining_moves:
 
             ##################
@@ -121,17 +125,11 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
 
             dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
             cap_pt      = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
-            #is_capture  = (cap_pt != cshogi.NONE)
 
-            # # ２階以降の呼出時は、駒を取る手でなければ無視。
-            # if not is_capture:
             #     # ＜📚原則２＞ 王手は（駒を取らない手であっても）探索を続け、深さを１手延長する。
             #     if self._search_context_model.gymnasium.table.is_check():
             #         #depth_extend += 1  # FIXME 探索が終わらないくなる。
             #         pass
-
-            #     else:
-            #         continue
 
             ################
             # MARK: 一手指す

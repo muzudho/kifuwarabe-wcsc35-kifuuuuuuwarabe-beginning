@@ -108,6 +108,24 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             self._search_context_model.end_time = time.time()    # 計測終了時間
             return all_backwards_plot_models_at_first
 
+        ####################
+        # MARK: ノード訪問時
+        ####################
+
+        def set_controls(remaining_moves):
+            """利きを記録
+            """
+            self._search_context_model.clear_root_searched_control_map()
+
+            for my_move in remaining_moves:
+                if cshogi.move_is_drop(my_move):
+                    continue
+                dst_sq_obj = SquareModel(cshogi.move_to(my_move))       # ［移動先マス］
+                self._search_context_model.set_root_searched_control_map(sq=dst_sq_obj.sq, value=True)
+
+
+        set_controls(remaining_moves=remaining_moves)
+
         for my_move in remaining_moves:
 
             ##################

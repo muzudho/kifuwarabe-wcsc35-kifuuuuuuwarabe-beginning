@@ -81,25 +81,27 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
 
     @staticmethod
-    def _out_of_termination_to_value_on_earth(out_of_termination, is_mars):
+    def _get_out_of_termination_to_value_on_earth(out_of_termination, is_mars):
+        """［終端外］の駒の価値。
+        """
         if out_of_termination == constants.out_of_termination.RESIGN:
-            previous = constants.value.GAME_OVER
+            value = constants.value.GAME_OVER
         elif out_of_termination == constants.out_of_termination.NYUGYOKU_WIN:
-            previous = constants.value.NYUGYOKU_WIN
+            value = constants.value.NYUGYOKU_WIN
         elif out_of_termination == constants.out_of_termination.MAX_DEPTH_BY_THINK:
-            previous = constants.value.ZERO
+            value = constants.value.ZERO
         elif out_of_termination == constants.out_of_termination.NO_CANDIDATES:
-            previous = constants.value.ZERO
+            value = constants.value.ZERO
         elif out_of_termination == constants.out_of_termination.QUIESCENCE:
-            previous = constants.value.ZERO
+            value = constants.value.ZERO
         else:
             raise ValueError(f"想定外の［終端外］。{out_of_termination=}")
 
         # 対戦相手なら正負を逆転。
         if is_mars:
-            previous *= -1
+            value *= -1
 
-        return previous
+        return value
 
 
     def __init__(self, is_mars_at_out_of_termination, is_gote_at_out_of_termination, out_of_termination, cutoff_reason, hint):
@@ -191,9 +193,8 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         """駒得の交換値。
         """
 
-
         if len(self._list_of_accumulate_exchange_value_on_earth) == 0:
-            return self._out_of_termination_to_value_on_earth(   # ［終端外］の点数。
+            return self._get_out_of_termination_to_value_on_earth(   # ［終端外］の点数。
                     out_of_termination = self._out_of_termination,
                     is_mars     = self._is_mars_at_out_of_termination)
 
@@ -229,6 +230,8 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         """
         Parameters
         ----------
+        move : int
+            シーショーギの指し手。
         capture_piece_type : int
             取った駒の種類。
         hint : str
@@ -250,9 +253,9 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             raise ValueError(f"capture_piece_type をナンにしてはいけません。cshogi.NONE を使ってください。 {capture_piece_type=}")
 
         if len(self._list_of_accumulate_exchange_value_on_earth) == 0:
-            accumulate_value_on_earth = self._out_of_termination_to_value_on_earth(   # ［終端外］の点数。
-                    out_of_termination = self._out_of_termination,
-                    is_mars     = self._is_mars_at_out_of_termination)
+            accumulate_value_on_earth = self._get_out_of_termination_to_value_on_earth(   # ［終端外］の点数。
+                    out_of_termination  = self._out_of_termination,
+                    is_mars             = self._is_mars_at_out_of_termination)
         else:
             accumulate_value_on_earth = self._list_of_accumulate_exchange_value_on_earth[-1]
 
@@ -260,15 +263,15 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         if self.is_mars_at_peek:                    # 火星なら。
             piece_exchange_value_on_earth *= -1     # 正負の符号を反転する。
 
-        # かつ、火星の［終端外］で終わるとき　＝　地球の［指し手］で読み終わるとき
-        if (
-                self._out_of_termination == constants.out_of_termination.MAX_DEPTH_BY_THINK   # ［終端外］が［読みの深さの最大］。
-            and len(self._list_of_accumulate_exchange_value_on_earth) == 1      # ［読みの深さの最大］のときの末端の指し手のとき。
-            and not self.is_mars_at_peek                                        # ［地球］の手番。
-            ):
-            piece_exchange_value_on_earth = 0   # 駒得点をノーカウントにする。（［地球の手］を１回多くカウントするのは数えすぎだから）
-
         # ＜📚原則１＞地球と火星のペアが完成したら、駒得点を逓減。
+        # # かつ、火星の［終端外］で終わるとき　＝　地球の［指し手］で読み終わるとき
+        # if (
+        #         self._out_of_termination == constants.out_of_termination.MAX_DEPTH_BY_THINK     # ［終端外］が［読みの深さの最大］。
+        #     and len(self._list_of_accumulate_exchange_value_on_earth) == 1                      # ［読みの深さの最大］のときの末端の指し手のとき。
+        #     and not self.is_mars_at_peek                                                        # ［地球］の手番。
+        #     ):
+        #     piece_exchange_value_on_earth = 0   # 駒得点をノーカウントにする。（［地球の手］を１回多くカウントするのは数えすぎだから）
+
         # （完全に読み切るわけではないので）深くの手ほど価値を減らします。ただしあまり深くの駒を弱く調整すると、浅い銀と深い角が同じ価値になるなど不具合が生じます。
         piece_exchange_value_on_earth = (piece_exchange_value_on_earth + accumulate_value_on_earth)     # * 3 / 4     # * 9 / 10
 
