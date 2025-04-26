@@ -22,15 +22,6 @@ class PrincipalVariationModel:
         self._is_terminate = is_terminate
 
 
-    def copy_pv(self):
-        return PrincipalVariationModel(
-                vertical_list_of_move_pv    = self._vertical_list_of_move_pv,
-                vertical_list_of_cap_pt_pv  = self._vertical_list_of_cap_pt_pv,
-                value_pv                    = self._value_pv,
-                backwards_plot_model        = self._backwards_plot_model,
-                is_terminate                = self._is_terminate)
-
-
     @property
     def vertical_list_of_move_pv(self):
         """指し手の履歴。
@@ -94,3 +85,26 @@ class PrincipalVariationModel:
         work = list(self._vertical_list_of_move_pv)
         self._vertical_list_of_move_pv = []
         return work
+
+
+    def copy_pv(self):
+        return PrincipalVariationModel(
+                vertical_list_of_move_pv    = self._vertical_list_of_move_pv,
+                vertical_list_of_cap_pt_pv  = self._vertical_list_of_cap_pt_pv,
+                value_pv                    = self._value_pv,
+                backwards_plot_model        = self._backwards_plot_model,
+                is_terminate                = self._is_terminate)
+
+
+    def new_and_append(self, move_pv, cap_pt_pv, value_pv, replace_backwards_plot_model, replace_is_terminate):
+        vertical_list_of_move_pv = list(self._vertical_list_of_cap_pt_pv)
+        vertical_list_of_move_pv.append(move_pv)
+        vertical_list_of_cap_pt_pv = list(self._vertical_list_of_cap_pt_pv)
+        vertical_list_of_cap_pt_pv.append(cap_pt_pv)
+
+        return PrincipalVariationModel(
+                vertical_list_of_move_pv    = vertical_list_of_move_pv,
+                vertical_list_of_cap_pt_pv  = vertical_list_of_cap_pt_pv,
+                value_pv                    = self._value_pv + value_pv,
+                backwards_plot_model        = replace_backwards_plot_model,
+                is_terminate                = replace_is_terminate)
