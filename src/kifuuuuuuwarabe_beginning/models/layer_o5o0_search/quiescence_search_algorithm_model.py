@@ -124,20 +124,20 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         depth_qs_extend     = 0
 
         # # TODO remaining_moves から pv へ変換したい。 parent_pv が None であってはいけない。
-        #pv_list = SearchAlgorithmModel.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=self._search_context_model)
+        pv_list = SearchAlgorithmModel.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=self._search_context_model)
 
-        # # 残った指し手について
-        # for my_move in remaining_moves:
-        #     pass
 
-        for my_move in remaining_moves:
+        for pv in pv_list:
 
-            ##################
-            # MARK: 一手指す前
-            ##################
+            ################################
+            # MARK: 履歴の最後の一手を指す前
+            ################################
 
-            dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
-            cap_pt      = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
+            my_move = pv.vertical_list_of_move_pv[-1]
+            cap_pt  = pv.vertical_list_of_cap_pt_pv[-1]
+
+            # dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
+            # cap_pt      = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
 
             #     # ＜📚原則２＞ 王手は（駒を取らない手であっても）探索を続け、深さを１手延長する。
             #     if self._search_context_model.gymnasium.table.is_check():
@@ -177,7 +177,7 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             #         parent_move     = my_move)
             child_plot_model = self.search_alice(      # 再帰呼出
                     depth_qs    = depth_qs + depth_qs_extend,
-                    parent_pv   =None,     # FIXME
+                    parent_pv   = pv,
                     parent_move = my_move)
 
             ################
