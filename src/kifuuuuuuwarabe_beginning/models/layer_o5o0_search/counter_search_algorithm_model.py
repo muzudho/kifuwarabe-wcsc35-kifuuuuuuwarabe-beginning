@@ -5,6 +5,7 @@ from ..layer_o1o_9o0 import PieceValuesModel
 from ..layer_o1o0 import constants, Mars, PtolemaicTheoryModel, SquareModel
 from .quiescence_search_algorithm_model import QuiescenceSearchAlgorithmModel
 from .search_algorithm_model import SearchAlgorithmModel
+from .principal_variation_model import PrincipalVariationModel
 
 
 class CounterSearchAlgorithmModel(SearchAlgorithmModel):
@@ -25,6 +26,10 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
     def search_before_entry_node(self, pv):
         """ノードに入る前に。
+
+        Returns
+        -------
+        None
         """
         self._search_context_model.start_time = time.time()          # 探索開始時間
         self._search_context_model.restart_time = self._search_context_model.start_time   # 前回の計測開始時間

@@ -157,12 +157,15 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
             counter_search_algorithm_model = CounterSearchAlgorithmModel(            # 応手サーチ。
                     search_context_model = self._search_context_model)
-            child_plot_model = counter_search_algorithm_model.search_before_entry_node(pv=pv)
+            pv.backwards_plot_model = counter_search_algorithm_model.search_before_entry_node(pv=pv)
 
             if not pv.is_terminate:
                 remaining_moves = counter_search_algorithm_model.search_after_entry_node(pv=pv, vertical_list_of_move_pv=vertical_list_of_move_pv)
 
                 child_plot_model = counter_search_algorithm_model.search_as_normal(pv=pv, remaining_moves=remaining_moves)       # 再帰呼出
+            else:
+                child_plot_model = pv.backwards_plot_model
+            
 
             ######################
             # MARK: 履歴を全部戻す
@@ -187,7 +190,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
                     move                = last_child_move,
                     capture_piece_type  = pv.vertical_list_of_cap_pt_pv[-1],
                     best_value          = child_plot_model.get_exchange_value_on_earth(),
-                    hint                = '')   # f"１階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の手はなんでも記憶"
+                    hint                = '')
             backwards_plot_model=child_plot_model
 
             pv.value_pv += backwards_plot_model.get_exchange_value_on_earth()
