@@ -123,26 +123,17 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
         Returns
         -------
+        None
         best_prot_model : BackwardsPlotModel
             最善の読み筋。
             これは駒得評価値も算出できる。
         """
 
-        # if parent_pv.is_terminate:
-        #     return parent_pv.backwards_plot_model
-
-        # まだ深く読む場合。
-
-        # # ［駒を取る手］がないことを、［静止］と呼ぶ。
-        # if len(pv_list) == 0:
-        #     best_plot_model = self.create_backwards_plot_model_at_quiescence(depth_qs=-1)
-        #     self._search_context_model.end_time = time.time()    # 計測終了時間
-        #     return best_plot_model
-
         ####################
         # MARK: ノード訪問時
         ####################
 
+        #best_pv             = None  # ベストな子
         best_plot_model     = None
         best_move           = None
         best_move_cap_pt    = None
@@ -152,34 +143,32 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         else:
             best_value = constants.value.SMALL_VALUE
 
-        # remaining_moves = []
-        # for child_pv in pv_list:
-        #     remaining_moves.append(child_pv.vertical_list_of_move_pv[-1])
-
         for pv in pv_list:
 
-            # if pv.is_terminate:     # TODO 探索終了している手は、リストを分けたらどうか。
-            #     continue
+            ################################
+            # MARK: 履歴の最後の一手を指す前
+            ################################
 
             my_move = pv.vertical_list_of_move_pv[-1]
 
-            ##################
-            # MARK: 一手指す前
-            ##################
-
-            # 打の場合、取った駒無し。空マス。
             dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
             cap_pt      = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
+            # cap_pt  = pv.vertical_list_of_cap_pt_pv[-1]
 
-            ################
-            # MARK: 一手指す
-            ################
+            ##############################
+            # MARK: 履歴の最後の一手を指す
+            ##############################
 
             self._search_context_model.gymnasium.do_move_o1x(move = my_move)
 
-            ####################
-            # MARK: 一手指した後
-            ####################
+            ##################################
+            # MARK: 履歴の最後の一手を指した後
+            ##################################
+
+            # # NOTE `earth` - 自分。 `mars` - 対戦相手。
+            # piece_exchange_value_on_earth = PieceValuesModel.get_piece_exchange_value_on_earth(      # 交換値に変換。正の数とする。
+            #         pt          = cap_pt,
+            #         is_mars     = self._search_context_model.gymnasium.is_mars)
 
             self._search_context_model.number_of_visited_nodes  += 1
             self._search_context_model.frontwards_plot_model.append_move_from_front(
@@ -199,15 +188,15 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
                     depth_qs    = self._search_context_model.max_depth_qs,
                     parent_move = my_move)
 
-            ################
-            # MARK: 一手戻す
-            ################
+            ##############################
+            # MARK: 履歴の最後の一手を戻す
+            ##############################
 
             self._search_context_model.gymnasium.undo_move_o1x()
 
-            ####################
-            # MARK: 一手戻した後
-            ####################
+            ##################################
+            # MARK: 履歴の最後の一手を戻した後
+            ##################################
 
             self._search_context_model.frontwards_plot_model.pop_move()
             self._search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
@@ -228,16 +217,19 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
             # この枝が長兄なら。
             if best_plot_model is None:
+            #if best_pv is None:
                 old_sibling_value = 0
             else:
                 # 兄枝のベスト評価値
                 old_sibling_value = best_plot_model.get_exchange_value_on_earth()     # とりあえず最善の読み筋の点数。
+                #old_sibling_value = best_pv.backwards_plot_model.get_exchange_value_on_earth()     # とりあえず最善の読み筋の点数。
 
             (a, b) = self._search_context_model.gymnasium.ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
             its_update_best = (a < b)
 
             # 最善手の更新
             if its_update_best:
+                #best_pv             = pv
                 best_plot_model     = child_plot_model
                 best_move           = my_move
                 best_move_cap_pt    = cap_pt
@@ -251,18 +243,21 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
         # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
         if best_plot_model is None:
+        #if best_pv is None:
             return self.create_backwards_plot_model_at_no_candidates(depth_qs=-1)
-
-        self._search_context_model.end_time = time.time()    # 計測終了時間
 
         # 今回の手を付け加える。
         best_plot_model.append_move_from_back(
+        #best_pv.backwards_plot_model.append_move_from_back(
                 move                = best_move,
                 capture_piece_type  = best_move_cap_pt,
                 best_value          = best_value,
                 hint                = '')
 
+        self._search_context_model.end_time = time.time()    # 計測終了時間
+
         return best_plot_model
+        #return best_pv.backwards_plot_model
 
 
     def _choice_aigoma_move_list(self, remaining_moves):

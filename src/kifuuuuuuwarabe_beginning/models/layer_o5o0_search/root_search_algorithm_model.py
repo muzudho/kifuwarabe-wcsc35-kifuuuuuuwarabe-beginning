@@ -122,7 +122,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         # MARK: PVリスト探索
         ####################
 
-        pv_list = []
+        next_pv_list = []
 
         for pv in RootSearchAlgorithmModel._make_pv_list(remaining_moves=remaining_moves, search_context_model=self._search_context_model):
             vertical_list_of_move_pv = pv.pop_vertical_list_of_move_pv()      # 指し手の履歴をポップします。
@@ -164,7 +164,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
                 for child_pv in reversed(child_pv_list):
                     if child_pv.is_terminate:           # ［読み筋］の探索が終了していれば。
-                        pv_list.append(child_pv)        # 別のリストへ［読み筋］を退避します。
+                        next_pv_list.append(child_pv)        # 別のリストへ［読み筋］を退避します。
                         child_pv_list.remove(child_pv)
 
                 pv.backwards_plot_model = counter_search_algorithm_model.search_as_normal(parent_pv=pv, pv_list=child_pv_list)       # 再帰呼出
@@ -197,7 +197,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             pv.value_pv += pv.backwards_plot_model.get_exchange_value_on_earth()
 
             # ベータカットもしません。全部返すから。
-            pv_list.append(pv.copy_pv())
+            next_pv_list.append(pv.copy_pv())
 
         ########################
         # MARK: 合法手スキャン後
@@ -206,7 +206,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         # 指し手が無いということはない。ゲームオーバー判定を先にしているから。
 
         self._search_context_model.end_time = time.time()    # 計測終了時間
-        return pv_list
+        return next_pv_list
 
 
     def _make_pv_list(remaining_moves, search_context_model):
