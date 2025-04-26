@@ -60,7 +60,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             """手番の投了局面時。
             """
             backwards_plot_model=self.create_backwards_plot_model_at_game_over()
-            return [PrincipalVariationModel(move_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
+            return [PrincipalVariationModel(move_pv=None, cap_pt_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
 
         # 一手詰めを詰める
         if not self._search_context_model.gymnasium.table.is_check():
@@ -69,18 +69,18 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             if (mate_move := self._search_context_model.gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
                 backwards_plot_model=self.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move)
-                return [PrincipalVariationModel(move_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
+                return [PrincipalVariationModel(move_pv=None, cap_pt_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
 
         if self._search_context_model.gymnasium.table.is_nyugyoku():
             """手番の入玉宣言勝ち局面時。
             """
             backwards_plot_model=self.create_backwards_plot_model_at_nyugyoku_win()
-            return [PrincipalVariationModel(move_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
+            return [PrincipalVariationModel(move_pv=None, cap_pt_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
 
         # これ以上深く読まない場合。
         if depth_qs < 1:
             backwards_plot_model=self.create_backwards_plot_model_at_horizon(depth_qs)
-            return [PrincipalVariationModel(move_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
+            return [PrincipalVariationModel(move_pv=None, cap_pt_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
 
         # まだ深く読む場合。
 
@@ -100,7 +100,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         if len(remaining_moves) == 0:
             self._search_context_model.end_time = time.time()    # 計測終了時間
             backwards_plot_model=self.create_backwards_plot_model_at_quiescence(depth_qs=depth_qs)
-            return [PrincipalVariationModel(move_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
+            return [PrincipalVariationModel(move_pv=None, cap_pt_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
 
         ####################
         # MARK: ノード訪問時
@@ -128,10 +128,28 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
         # 準備。
         for my_move in remaining_moves:
-            all_pv_list.append(PrincipalVariationModel(move_pv=my_move, value_pv=0, backwards_plot_model=None))
 
-            # TODO 駒を取る。
-            # TODO 点数計算。
+            # （あれば）駒を取る。
+            dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
+            cap_pt      = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # ［移動先マス］にある［駒種類］。つまりそれは取った駒。打の［移動先マス］は常に空きマス。
+            is_capture  = (cap_pt != cshogi.NONE)
+
+            pv = PrincipalVariationModel(move_pv=my_move, cap_pt_pv=cap_pt, value_pv=0, backwards_plot_model=None)
+            all_pv_list.append(pv)
+
+            # （取っていれば）取った駒の点数計算。
+            if is_capture:
+                # NOTE `earth` - 自分。 `mars` - 対戦相手。
+                pv.value_pv += PieceValuesModel.get_piece_exchange_value_on_earth(      # 交換値に変換。正の数とする。
+                        pt          = cap_pt,
+                        is_mars     = self._search_context_model.gymnasium.is_mars)
+            else:
+                pv.value_pv += 0
+
+            self._search_context_model.frontwards_plot_model.append_move_from_front(
+                    move    = my_move,
+                    cap_pt  = cap_pt)
+
 
         ####################
         # MARK: 深さ優先探索
@@ -146,28 +164,6 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
             # TODO 駒を取った計算はパス。
 
-            dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
-            # 打の場合、取った駒無し。空マス。
-            cap_pt      = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
-
-            # １階呼出時は、どの手も無視しません。
-
-            is_capture  = (cap_pt != cshogi.NONE)
-
-            if is_capture:
-                # NOTE `earth` - 自分。 `mars` - 対戦相手。
-                piece_exchange_value_on_earth = PieceValuesModel.get_piece_exchange_value_on_earth(      # 交換値に変換。正の数とする。
-                        pt          = cap_pt,
-                        is_mars     = self._search_context_model.gymnasium.is_mars)
-            else:
-                piece_exchange_value_on_earth = 0
-
-            # ２階以降の呼出時は、駒を取る手でなければ無視。 FIXME 王手が絡んでいるとき、取れないこともあるから、王手が絡むときは場合分けしたい。
-            if not is_capture:
-                depth_qs_extend = 1    # ＜📚原則１＞により、駒を取らない手は、探索を１手延長します。
-            else:
-                depth_qs_extend = 0
-
             ################
             # MARK: 一手指す
             ################
@@ -180,9 +176,6 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
             self._search_context_model.number_of_visited_nodes  += 1
             depth_qs -= 1    # 深さを１下げる。
-            self._search_context_model.frontwards_plot_model.append_move_from_front(
-                    move    = my_move,
-                    cap_pt  = cap_pt)
             self._search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=my_move, hint='')
 
             ####################
@@ -194,7 +187,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             counter_search_algorithm_model = CounterSearchAlgorithmModel(            # 応手サーチ。
                     search_context_model = self._search_context_model)
             child_plot_model = counter_search_algorithm_model.search_as_normal(      # 再帰呼出
-                    depth_qs       = depth_qs + depth_qs_extend)
+                    depth_qs       = depth_qs)
 
             ################
             # MARK: 一手戻す
@@ -217,13 +210,13 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             # １階の手は、全ての手の読み筋を記憶します。最善手は選びません。
             child_plot_model.append_move_from_back(
                     move                = my_move,
-                    capture_piece_type  = cap_pt,
-                    best_value          = child_plot_model.get_exchange_value_on_earth() + piece_exchange_value_on_earth,
+                    capture_piece_type  = pv.cap_pt_pv,
+                    best_value          = child_plot_model.get_exchange_value_on_earth(),
                     hint                = '')   # f"１階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の手はなんでも記憶"
             backwards_plot_model=child_plot_model
 
-            pv.value_pv=backwards_plot_model.get_exchange_value_on_earth()
-            pv.backwards_plot_model=backwards_plot_model
+            pv.value_pv += backwards_plot_model.get_exchange_value_on_earth()
+            pv.backwards_plot_model = backwards_plot_model
 
             # ベータカットもしません。全部返すから。
 
@@ -231,12 +224,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         # MARK: 合法手スキャン後
         ########################
 
-        # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
-        if len(all_pv_list) < 1:
-            self._search_context_model.end_time = time.time()    # 計測終了時間
-            backwards_plot_model = self.create_backwards_plot_model_at_no_candidates(depth_qs=depth_qs)
-            return [PrincipalVariationModel(move_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
+        # 指し手が無いということはない。ゲームオーバー判定を先にしているから。
 
         self._search_context_model.end_time = time.time()    # 計測終了時間
-
         return all_pv_list
