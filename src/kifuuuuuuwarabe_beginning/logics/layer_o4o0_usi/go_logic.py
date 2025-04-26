@@ -63,10 +63,17 @@ class _Go2nd():
         """
 
         for move in move_list:
+            # 指し手のUSI表記に、独自形式を併記。
+            move_jp_str = JapaneseMoveModel.from_move(
+                    move    = move,
+                    cap_pt  = self._gymnasium.table.piece_type(sq=cshogi.move_to(move)),
+                    is_mars = False,
+                    is_gote = self._gymnasium.table.is_gote).stringify()
+
             self._gymnasium.health_check_go_model.append_health(
                     move    = move,
-                    name    = 'legal',
-                    value   =  True)
+                    name    = 'GO_move_jp',
+                    value   = move_jp_str)
 
         length_by_cshogi        = len(move_list)  # cshogi が示した合法手の数
         length_of_quiescence_search_by_kifuwarabe   = length_by_cshogi  # きふわらべ が静止探索で絞り込んだ指し手の数

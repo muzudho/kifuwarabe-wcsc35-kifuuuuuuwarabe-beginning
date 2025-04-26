@@ -22,6 +22,16 @@ class HealthCheckGoModel():
 
 
     def append_health(self, move, name, value):
+        """
+        Parameters
+        ----------
+        move : int
+            シーショーギの指し手。
+        name : str
+            列名。
+        value : Any
+            列値。
+        """
         if move not in self._document:
             self._document[move] = {}
         
@@ -40,10 +50,10 @@ class HealthCheckGoModel():
             return f"{cshogi.move_to_usi(move)}"
 
 
-        def fn_legal(i):
+        def fn_move_jp(i):
             move_prop = health_list[i][1]
-            if 'legal' in move_prop:
-                return 'legal'
+            if 'GO_move_jp' in move_prop:
+                return move_prop['GO_move_jp']
             return ''
         
 
@@ -52,13 +62,6 @@ class HealthCheckGoModel():
             if 'SQ_eater' in move_prop:
                 return f"{move_prop['SQ_eater']}"
             return ''
-
-
-        # def fn_qs_cheapest(i):
-        #     move_prop = health_list[i][1]
-        #     if 'QS_cheapest' in move_prop:
-        #         return 'QS_cheapest'
-        #     return ''
 
 
         def fn_qs_eliminate171(i):
@@ -118,7 +121,7 @@ class HealthCheckGoModel():
 
         header_list = []
         header_list.append('move')
-        header_list.append('legal')
+        header_list.append('move_jp')
         header_list.append('eater')
         # header_list.append('QS_cheapest')
         header_list.append('qs_plot')
@@ -137,7 +140,7 @@ class HealthCheckGoModel():
         for i in range(0, len(health_list)):
             body_list = []
             body_list.append(fn_move(i))                # USI書式の指し手
-            body_list.append(fn_legal(i))               # リーガル・ムーブ
+            body_list.append(fn_move_jp(i))             # USI書式の指し手（日本人向け）
             body_list.append(fn_eater(i))
             # body_list.append(fn_qs_cheapest(i))         # 一番安い駒を選ぶ。
             body_list.append(fn_qs_plot(i))             # 静止探索の読み筋の詳細
