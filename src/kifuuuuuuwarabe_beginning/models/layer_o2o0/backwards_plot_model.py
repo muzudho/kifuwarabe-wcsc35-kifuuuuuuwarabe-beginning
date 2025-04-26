@@ -37,7 +37,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         return value
 
 
-    def __init__(self, is_mars_at_out_of_termination, is_gote_at_out_of_termination, out_of_termination, hint):
+    def __init__(self, is_mars_at_out_of_termination, is_gote_at_out_of_termination, out_of_termination, hint, move_list = [], cap_list = [], list_of_accumulate_exchange_value_on_earth = []):
         """初期化。
 
         Parameters
@@ -48,16 +48,16 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             ［葉局面］＝［終端外］手番は後手か。
         out_of_termination : int
             ［終端外］
-        hint : str
+        hint_list : list<str>
             デバッグ用文字列
         """
         self._is_mars_at_out_of_termination = is_mars_at_out_of_termination
         self._is_gote_at_out_of_termination = is_gote_at_out_of_termination
-        self._out_of_termination = out_of_termination
-        self._move_list = []
-        self._cap_list = []
-        self._list_of_accumulate_exchange_value_on_earth = []   # 地球から見た、取った駒の交換値。
-        self._hint_list = [hint]
+        self._out_of_termination            = out_of_termination
+        self._hint_list                     = [hint]
+        self._move_list                     = move_list
+        self._cap_list                      = cap_list
+        self._list_of_accumulate_exchange_value_on_earth = list_of_accumulate_exchange_value_on_earth   # 地球から見た、取った駒の交換値。
 
 
     @property
@@ -266,3 +266,14 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
     def stringify_debug_1(self):
         return f"{len(self._move_list)=} {len(self._cap_list)=} {len(self._list_of_accumulate_exchange_value_on_earth)=}"
+
+
+    def copy_bpm(self):
+        return BackwardsPlotModel(
+                is_mars_at_out_of_termination   = self._is_mars_at_out_of_termination,
+                is_gote_at_out_of_termination   = self._is_gote_at_out_of_termination,
+                out_of_termination              = self._out_of_termination,
+                hint                            = list(self._hint),
+                move_list                       = list(self._move_list),
+                cap_list                        = list(self._cap_list),
+                list_of_accumulate_exchange_value_on_earth = list(self._list_of_accumulate_exchange_value_on_earth))
