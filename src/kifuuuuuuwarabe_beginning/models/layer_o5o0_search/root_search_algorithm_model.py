@@ -60,7 +60,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             """手番の投了局面時。
             """
             backwards_plot_model=self.create_backwards_plot_model_at_game_over()
-            return [PrincipalVariationModel(value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
+            return [PrincipalVariationModel(move_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
 
         # 一手詰めを詰める
         if not self._search_context_model.gymnasium.table.is_check():
@@ -69,18 +69,18 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             if (mate_move := self._search_context_model.gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
                 backwards_plot_model=self.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move)
-                return [PrincipalVariationModel(value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
+                return [PrincipalVariationModel(move_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
 
         if self._search_context_model.gymnasium.table.is_nyugyoku():
             """手番の入玉宣言勝ち局面時。
             """
             backwards_plot_model=self.create_backwards_plot_model_at_nyugyoku_win()
-            return [PrincipalVariationModel(value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
+            return [PrincipalVariationModel(move_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
 
         # これ以上深く読まない場合。
         if depth_qs < 1:
             backwards_plot_model=self.create_backwards_plot_model_at_horizon(depth_qs)
-            return [PrincipalVariationModel(value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
+            return [PrincipalVariationModel(move_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
 
         # まだ深く読む場合。
 
@@ -100,7 +100,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         if len(remaining_moves) == 0:
             self._search_context_model.end_time = time.time()    # 計測終了時間
             backwards_plot_model=self.create_backwards_plot_model_at_quiescence(depth_qs=depth_qs)
-            return [PrincipalVariationModel(value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
+            return [PrincipalVariationModel(move_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
 
         ####################
         # MARK: ノード訪問時
@@ -122,11 +122,29 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
         set_controls(remaining_moves=remaining_moves)
 
+        ##################
+        # MARK: 幅優先探索
+        ##################
+
+        # 準備。
         for my_move in remaining_moves:
+            all_pv_list.append(PrincipalVariationModel(move_pv=my_move, value_pv=0, backwards_plot_model=None))
+
+            # TODO 駒を取る。
+            # TODO 点数計算。
+
+        ####################
+        # MARK: 深さ優先探索
+        ####################
+
+        for pv in all_pv_list:
+            my_move = pv.move_pv
 
             ##################
             # MARK: 一手指す前
             ##################
+
+            # TODO 駒を取った計算はパス。
 
             dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
             # 打の場合、取った駒無し。空マス。
@@ -203,9 +221,9 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
                     best_value          = child_plot_model.get_exchange_value_on_earth() + piece_exchange_value_on_earth,
                     hint                = '')   # f"１階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の手はなんでも記憶"
             backwards_plot_model=child_plot_model
-            all_pv_list.append(PrincipalVariationModel(value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model))
 
-            # NOTE この辺りは［０階］。
+            pv.value_pv=backwards_plot_model.get_exchange_value_on_earth()
+            pv.backwards_plot_model=backwards_plot_model
 
             # ベータカットもしません。全部返すから。
 
@@ -217,7 +235,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         if len(all_pv_list) < 1:
             self._search_context_model.end_time = time.time()    # 計測終了時間
             backwards_plot_model = self.create_backwards_plot_model_at_no_candidates(depth_qs=depth_qs)
-            return [PrincipalVariationModel(value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
+            return [PrincipalVariationModel(move_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
 
         self._search_context_model.end_time = time.time()    # 計測終了時間
 
