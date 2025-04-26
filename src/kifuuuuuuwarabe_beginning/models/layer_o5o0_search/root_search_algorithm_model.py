@@ -118,18 +118,14 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
         set_controls(remaining_moves=remaining_moves)
 
-        ##################
-        # MARK: 幅優先探索
-        ##################
+        ####################
+        # MARK: PVリスト探索
+        ####################
 
-        # 準備。
         pv_list = RootSearchAlgorithmModel._make_pv_list(remaining_moves=remaining_moves, search_context_model=self._search_context_model)
 
-        ####################
-        # MARK: 深さ優先探索
-        ####################
-
         for pv in pv_list:
+            #pv_list.append(pv.copy_pv())
             vertical_list_of_move_pv = pv.pop_vertical_list_of_move_pv()      # 指し手の履歴をポップします。
 
             ########################
