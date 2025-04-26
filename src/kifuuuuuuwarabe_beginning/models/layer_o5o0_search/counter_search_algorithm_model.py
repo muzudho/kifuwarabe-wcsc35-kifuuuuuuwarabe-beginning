@@ -179,7 +179,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
             depth_qs += 1    # 深さを１上げる。
             self._search_context_model.frontwards_plot_model.pop_move()
-            self._search_context_model.gymnasium.health_check_qs_model.pop_node()
+            self._search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
 
             ##################
             # MARK: 手番の処理

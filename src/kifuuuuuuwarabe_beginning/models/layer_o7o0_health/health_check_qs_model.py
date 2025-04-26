@@ -38,7 +38,7 @@ class HealthCheckQsItemModel:
                     return cshogi.move_to_usi(move)
                 return ''
 
-            
+
             def _hint():
                 if hint != '':
                     return f" {hint}"
@@ -99,7 +99,7 @@ class HealthCheckQsModel:
         self._current_item.pop_node()
 
 
-    def pop_node(self):
+    def pop_node_qs(self):
         if not self._enabled:
             return
 

@@ -3,10 +3,8 @@ import time
 
 from ..layer_o1o_9o0 import PieceValuesModel
 from ..layer_o1o0 import constants, Mars, SquareModel
-from .quiescence_search_algorithm_model import QuiescenceSearchAlgorithmModel
 from .search_algorithm_model import SearchAlgorithmModel
 from .counter_search_algorithm_model import CounterSearchAlgorithmModel
-from .search_context_model import SearchContextModel
 
 
 class RootSearchAlgorithmModel(SearchAlgorithmModel):
@@ -50,7 +48,6 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
         self._search_context_model.start_time = time.time()          # 探索開始時間
         self._search_context_model.restart_time = self._search_context_model.start_time   # 前回の計測開始時間
-        all_backwards_plot_models_at_first = []
 
         ########################
         # MARK: 指す前にやること
@@ -61,9 +58,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         if self._search_context_model.gymnasium.table.is_game_over():
             """手番の投了局面時。
             """
-            best_plot_model = self.create_backwards_plot_model_at_game_over()
-            all_backwards_plot_models_at_first.append(best_plot_model)
-            return all_backwards_plot_models_at_first
+            return [self.create_backwards_plot_model_at_game_over()]
 
         # 一手詰めを詰める
         if not self._search_context_model.gymnasium.table.is_check():
@@ -71,22 +66,16 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
             if (mate_move := self._search_context_model.gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
-                best_plot_model = self.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move)
-                all_backwards_plot_models_at_first.append(best_plot_model)
-                return all_backwards_plot_models_at_first
+                return [self.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move)]
 
         if self._search_context_model.gymnasium.table.is_nyugyoku():
             """手番の入玉宣言勝ち局面時。
             """
-            best_plot_model = self.create_backwards_plot_model_at_nyugyoku_win()
-            all_backwards_plot_models_at_first.append(best_plot_model)
-            return all_backwards_plot_models_at_first
+            return [self.create_backwards_plot_model_at_nyugyoku_win()]
 
         # これ以上深く読まない場合。
         if depth_qs < 1:
-            best_plot_model = self.create_backwards_plot_model_at_horizon(depth_qs)
-            all_backwards_plot_models_at_first.append(best_plot_model)
-            return all_backwards_plot_models_at_first
+            return [self.create_backwards_plot_model_at_horizon(depth_qs)]
 
         # まだ深く読む場合。
 
@@ -104,14 +93,14 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(remaining_moves) == 0:
-            best_plot_model = self.create_backwards_plot_model_at_quiescence(depth_qs=depth_qs)
-            all_backwards_plot_models_at_first.append(best_plot_model)
             self._search_context_model.end_time = time.time()    # 計測終了時間
-            return all_backwards_plot_models_at_first
+            return [self.create_backwards_plot_model_at_quiescence(depth_qs=depth_qs)]
 
         ####################
         # MARK: ノード訪問時
         ####################
+
+        all_backwards_plot_models_at_first = []
 
         def set_controls(remaining_moves):
             """利きを記録
@@ -195,7 +184,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
             depth_qs += 1    # 深さを１上げる。
             self._search_context_model.frontwards_plot_model.pop_move()
-            self._search_context_model.gymnasium.health_check_qs_model.pop_node()
+            self._search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
 
             ##################
             # MARK: 手番の処理
