@@ -29,7 +29,10 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
         Returns
         -------
-        None
+        backwards_plot_model : BackwardsPlotModel
+            読み筋。
+        is_terminate : bool
+            読み終わり。
         """
         self._search_context_model.start_time = time.time()          # 探索開始時間
         self._search_context_model.restart_time = self._search_context_model.start_time   # 前回の計測開始時間
@@ -43,9 +46,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         if self._search_context_model.gymnasium.table.is_game_over():
             """手番の投了局面時。
             """
-            pv.is_terminate = True
-            best_plot_model = self.create_backwards_plot_model_at_game_over()
-            return best_plot_model
+            return self.create_backwards_plot_model_at_game_over(), True
 
         # 一手詰めを詰める
         if not self._search_context_model.gymnasium.table.is_check():
@@ -53,21 +54,19 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
             if (mate_move := self._search_context_model.gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
-                pv.is_terminate = True
-                best_plot_model = self.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move)
-                return best_plot_model
+                return self.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move), True
 
         if self._search_context_model.gymnasium.table.is_nyugyoku():
             """手番の入玉宣言勝ち局面時。
             """
-            pv.is_terminate = True
-            best_plot_model = self.create_backwards_plot_model_at_nyugyoku_win()
-            return best_plot_model
+            return self.create_backwards_plot_model_at_nyugyoku_win(), True
 
         # # これ以上深く読まない場合。
         # if depth_qs < 1:
         #     best_plot_model = self.create_backwards_plot_model_at_horizon(depth_qs)
         #     return best_plot_model
+
+        return pv.backwards_plot_model, pv.is_terminate
 
 
     def search_after_entry_node(self, pv, vertical_list_of_move_pv):
