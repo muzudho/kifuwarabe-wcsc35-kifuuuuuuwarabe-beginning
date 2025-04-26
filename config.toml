@@ -60,7 +60,7 @@
     do_not_move_rook = true
 
     # 号令［成らないということをするな］
-    do_not_depromotion_model = true
+    do_not_depromotion = true
 
     # 号令［駒を打つな］
     do_not_drop_piece = true

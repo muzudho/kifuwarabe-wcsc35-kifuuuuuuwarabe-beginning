@@ -21,7 +21,7 @@ class NegativeRuleModel(RuleModel):
 
 
     def on_node_exit_negative(self, remaining_moves, table):
-        """枝前処理。
+        """ノード来訪時。
         """
         if not self.is_enabled:
             return remaining_moves
@@ -64,21 +64,21 @@ class NegativeRuleModel(RuleModel):
     ##########################
 
     def _remove_rule_on_node_entry_negative(self, remaining_moves, table):
-        """枝前削除条件。
+        """ノード来訪時削除条件。
         真なら、このルールをリストから除外します。
         """
         return False
 
 
     def _skip_step_on_node_entry_negative(self, remaining_moves, table):
-        """枝前スキップ条件。
-        真なら、枝前ステップではこのルールをスキップします。
+        """ノード来訪時スキップ条件。
+        真なら、ノード来訪時ステップではこのルールをスキップします。
         """
         return False
 
 
     def _on_node_entry_negative(self, table):
-        """枝前に。
+        """ノード来訪時。
         """
         pass
 

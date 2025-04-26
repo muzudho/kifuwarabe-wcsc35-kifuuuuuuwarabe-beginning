@@ -23,7 +23,7 @@ class DoNotBuildRightWallModel(NegativeRuleModel):
 
 
     def _remove_rule_on_node_entry_negative(self, remaining_moves, table):
-        """枝前削除条件。
+        """ノード来訪時削除条件。
         真なら、このルールをリストから除外します。
 
         狙い：１筋～４筋のいずれかの［ひ］が取られたとき。

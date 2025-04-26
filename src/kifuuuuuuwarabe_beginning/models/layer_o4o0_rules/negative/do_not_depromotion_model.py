@@ -13,7 +13,7 @@ class DoNotDepromotionModel(NegativeRuleModel):
 
     def __init__(self, basketball_court_model):
         super().__init__(
-                id          = 'do_not_depromotion_model',
+                id          = 'do_not_depromotion',
                 label       = '成らないということをするな',
                 basketball_court_model  = basketball_court_model)
 
@@ -21,10 +21,10 @@ class DoNotDepromotionModel(NegativeRuleModel):
 
 
     def _on_node_entry_negative(self, table):
-        """枝前に。
+        """ノード来訪時。
         """
 
-        # 枝前処理で、［成る手］の一覧を作る。
+        # ノード来訪時、［成る手］の一覧を作る。
         # {
         #   移動元：［移動先］
         # }

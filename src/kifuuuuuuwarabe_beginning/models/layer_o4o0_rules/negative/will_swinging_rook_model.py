@@ -19,8 +19,8 @@ class WillSwingingRookModel(NegativeRuleModel):
 
 
     def _skip_step_on_node_entry_negative(self, remaining_moves, table):
-        """枝前スキップ条件。
-        真なら、枝前ステップではこのルールをスキップします。
+        """ノード来訪時スキップ条件。
+        真なら、ノード来訪時ステップではこのルールをスキップします。
         """
         return constants.mind.WILL != self.will_on_board(table)
 

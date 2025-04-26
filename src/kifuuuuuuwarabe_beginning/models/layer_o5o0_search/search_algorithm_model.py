@@ -103,14 +103,14 @@ class SearchAlgorithmModel:
     def remove_depromoted_moves(self, remaining_moves):
         """［成れるのに成らない手］は除外。
         """
-        # 指し手を全部調べる。
-        do_not_depromotion_model = DoNotDepromotionModel(
-                basketball_court_model=self._search_context_model.gymnasium.basketball_court_model)    # TODO 号令［成らないということをするな］
 
-        do_not_depromotion_model._on_node_entry_negative(
+        do_not_depromotion_model = DoNotDepromotionModel(                                               # 号令［成らないということをするな］を利用。
+                basketball_court_model=self._search_context_model.gymnasium.basketball_court_model)
+
+        do_not_depromotion_model._on_node_entry_negative(               # ノード来訪時。
                 table=self._search_context_model.gymnasium.table)
 
-        for my_move in reversed(remaining_moves):
+        for my_move in reversed(remaining_moves):   # 指し手を全部調べる。
             # ［成れるのに成らない手］は除外
             mind = do_not_depromotion_model._on_node_exit_negative(
                     move    = my_move,
