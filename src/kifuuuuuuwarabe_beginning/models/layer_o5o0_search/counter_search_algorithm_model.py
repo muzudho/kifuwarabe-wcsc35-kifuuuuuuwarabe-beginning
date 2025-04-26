@@ -23,8 +23,49 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
                 search_context_model=search_context_model)
 
 
-    def search_as_normal(
-            self):
+    def search_before_entry_node(self, pv):
+        """ノードに入る前に。
+        """
+        self._search_context_model.start_time = time.time()          # 探索開始時間
+        self._search_context_model.restart_time = self._search_context_model.start_time   # 前回の計測開始時間
+
+        ########################
+        # MARK: 指す前にやること
+        ########################
+
+        # 指さなくても分かること（ライブラリー使用）
+
+        if self._search_context_model.gymnasium.table.is_game_over():
+            """手番の投了局面時。
+            """
+            pv.is_terminate = True
+            best_plot_model = self.create_backwards_plot_model_at_game_over()
+            return best_plot_model
+
+        # 一手詰めを詰める
+        if not self._search_context_model.gymnasium.table.is_check():
+            """手番玉に王手がかかっていない時で"""
+
+            if (mate_move := self._search_context_model.gymnasium.table.mate_move_in_1ply()):
+                """一手詰めの指し手があれば、それを取得"""
+                pv.is_terminate = True
+                best_plot_model = self.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move)
+                return best_plot_model
+
+        if self._search_context_model.gymnasium.table.is_nyugyoku():
+            """手番の入玉宣言勝ち局面時。
+            """
+            pv.is_terminate = True
+            best_plot_model = self.create_backwards_plot_model_at_nyugyoku_win()
+            return best_plot_model
+
+        # # これ以上深く読まない場合。
+        # if depth_qs < 1:
+        #     best_plot_model = self.create_backwards_plot_model_at_horizon(depth_qs)
+        #     return best_plot_model
+
+
+    def search_as_normal(self, pv):
         """静止探索の開始。
 
         大まかにいって、１手目は全ての合法手を探索し、
@@ -42,40 +83,8 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             これは駒得評価値も算出できる。
         """
 
-        self._search_context_model.start_time = time.time()          # 探索開始時間
-        self._search_context_model.restart_time = self._search_context_model.start_time   # 前回の計測開始時間
-
-        ########################
-        # MARK: 指す前にやること
-        ########################
-
-        # 指さなくても分かること（ライブラリー使用）
-
-        if self._search_context_model.gymnasium.table.is_game_over():
-            """手番の投了局面時。
-            """
-            best_plot_model = self.create_backwards_plot_model_at_game_over()
-            return best_plot_model
-
-        # 一手詰めを詰める
-        if not self._search_context_model.gymnasium.table.is_check():
-            """手番玉に王手がかかっていない時で"""
-
-            if (mate_move := self._search_context_model.gymnasium.table.mate_move_in_1ply()):
-                """一手詰めの指し手があれば、それを取得"""
-                best_plot_model = self.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move)
-                return best_plot_model
-
-        if self._search_context_model.gymnasium.table.is_nyugyoku():
-            """手番の入玉宣言勝ち局面時。
-            """
-            best_plot_model = self.create_backwards_plot_model_at_nyugyoku_win()
-            return best_plot_model
-
-        # # これ以上深く読まない場合。
-        # if depth_qs < 1:
-        #     best_plot_model = self.create_backwards_plot_model_at_horizon(depth_qs)
-        #     return best_plot_model
+        if pv.is_terminate:
+            return pv.backwards_plot_model
 
         # まだ深く読む場合。
 
@@ -155,6 +164,8 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             ####################
             # MARK: 相手番の処理
             ####################
+
+            # TODO 静止探索は後回しにしたい。
 
             quiescence_search_algorithum_model = QuiescenceSearchAlgorithmModel(    # 静止探索。
                     search_context_model    = self._search_context_model)

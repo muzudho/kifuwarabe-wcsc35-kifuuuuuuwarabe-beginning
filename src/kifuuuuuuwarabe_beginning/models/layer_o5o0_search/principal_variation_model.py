@@ -23,6 +23,14 @@ class PrincipalVariationModel:
         self._cap_pt_pv = cap_pt_pv
         self._value_pv = value_pv
         self._backwards_plot_model = backwards_plot_model
+        self._is_terminate = False
+
+
+    @property
+    def vertical_move_list_pv(self):
+        """指し手の履歴。
+        """
+        return self._vertical_move_list_pv
 
 
     @property
@@ -53,8 +61,6 @@ class PrincipalVariationModel:
 
     @cap_pt_pv.setter
     def cap_pt_pv(self, value):
-        """取った駒の種類。
-        """
         self._cap_pt_pv = value
 
 
@@ -67,6 +73,16 @@ class PrincipalVariationModel:
 
     @backwards_plot_model.setter
     def backwards_plot_model(self, value):
-        """後ろ向き探索の読み筋。
-        """
         self._backwards_plot_model = value
+
+
+    @property
+    def is_terminate(self):
+        """探索は終端です。
+        """
+        return self._is_terminate
+
+    
+    @is_terminate.setter
+    def is_terminate(self, value):
+        self._is_terminate = value
