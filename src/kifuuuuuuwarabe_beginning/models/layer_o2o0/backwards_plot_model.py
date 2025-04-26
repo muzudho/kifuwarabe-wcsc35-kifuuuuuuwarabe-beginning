@@ -292,6 +292,11 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
         len_of_move_list = len(self._move_list)
         for layer_no in reversed(range(0, len_of_move_list)):  # 逆順。
+
+            # １手目は読み筋から省く。（別項目として表示されるから）
+            if layer_no == len_of_move_list - 1:
+                continue
+
             move        = self._move_list[layer_no]
             cap_pt      = self._cap_list[layer_no]
 
