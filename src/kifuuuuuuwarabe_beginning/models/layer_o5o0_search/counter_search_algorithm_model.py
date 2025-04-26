@@ -150,10 +150,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             ################################
 
             my_move = pv.vertical_list_of_move_pv[-1]
-
-            dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
-            cap_pt      = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
-            # cap_pt  = pv.vertical_list_of_cap_pt_pv[-1]
+            cap_pt  = pv.vertical_list_of_cap_pt_pv[-1]
 
             ##############################
             # MARK: 履歴の最後の一手を指す
