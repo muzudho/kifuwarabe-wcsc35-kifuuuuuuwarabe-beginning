@@ -61,22 +61,16 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             """
             return self.create_backwards_plot_model_at_nyugyoku_win(), True
 
-        # # これ以上深く読まない場合。
-        # if depth_qs < 1:
-        #     best_plot_model = self.create_backwards_plot_model_at_horizon(depth_qs)
-        #     return best_plot_model
-
         return pv.backwards_plot_model, pv.is_terminate
 
 
-    def search_after_entry_node(self, parent_pv, vertical_list_of_move_pv):
+    def search_after_entry_node(self, parent_pv):
         """
         Returns
         -------
         pv_list : list<PrincipalVariationModel>
             読み筋のリスト。
         """
-        # TODO
         if parent_pv.is_terminate:
             return []
 
@@ -113,8 +107,6 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
                     replace_is_terminate            = False)
             pv_list.append(pv)
 
-
-        #return remaining_moves
         return pv_list
 
 
