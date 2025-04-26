@@ -86,3 +86,11 @@ class PrincipalVariationModel:
     @is_terminate.setter
     def is_terminate(self, value):
         self._is_terminate = value
+
+
+    def pop_vertical_move_list_pv(self):
+        """指し手の履歴をポップします。
+        """
+        work = list(self._vertical_move_list_pv)
+        self._vertical_move_list_pv = []
+        return work

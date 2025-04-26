@@ -153,7 +153,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         ####################
 
         for pv in all_pv_list:
-            vertical_move_list_pv = pv.vertical_move_list_pv
+            vertical_move_list_pv = pv.pop_vertical_move_list_pv()      # 指し手の履歴をポップします。
 
             ########################
             # MARK: 履歴を全部指す前
