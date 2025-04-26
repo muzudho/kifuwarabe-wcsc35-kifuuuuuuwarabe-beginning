@@ -123,7 +123,6 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
         Returns
         -------
-        None
         best_prot_model : BackwardsPlotModel
             最善の読み筋。
             これは駒得評価値も算出できる。
@@ -134,7 +133,6 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         ####################
 
         best_pv             = None  # ベストな子
-        #best_plot_model     = None
         best_move           = None
         best_move_cap_pt    = None
 
@@ -208,12 +206,10 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             this_branch_value_on_earth = child_plot_model.get_exchange_value_on_earth() + piece_exchange_value_on_earth
 
             # この枝が長兄なら。
-            #if best_plot_model is None:
             if best_pv is None:
                 old_sibling_value = 0
             else:
                 # 兄枝のベスト評価値
-                #old_sibling_value = best_plot_model.get_exchange_value_on_earth()     # とりあえず最善の読み筋の点数。
                 old_sibling_value = best_pv.backwards_plot_model.get_exchange_value_on_earth()     # とりあえず最善の読み筋の点数。
 
             (a, b) = self._search_context_model.gymnasium.ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
@@ -223,7 +219,6 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             if its_update_best:
                 best_pv             = pv
                 best_pv.backwards_plot_model    = child_plot_model
-                #best_plot_model     = child_plot_model
                 best_move           = my_move
                 best_move_cap_pt    = cap_pt
                 best_value          = this_branch_value_on_earth
@@ -235,12 +230,10 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         ########################
 
         # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
-        #if best_plot_model is None:
         if best_pv is None:
             return self.create_backwards_plot_model_at_no_candidates(depth_qs=-1)
 
         # 今回の手を付け加える。
-        #best_plot_model.append_move_from_back(
         best_pv.backwards_plot_model.append_move_from_back(
                 move                = best_move,
                 capture_piece_type  = best_move_cap_pt,
@@ -249,7 +242,6 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
         self._search_context_model.end_time = time.time()    # 計測終了時間
 
-        #return best_plot_model
         return best_pv.backwards_plot_model
 
 
