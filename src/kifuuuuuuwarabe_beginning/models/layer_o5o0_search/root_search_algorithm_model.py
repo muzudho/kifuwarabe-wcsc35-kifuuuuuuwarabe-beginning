@@ -58,7 +58,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             """手番の投了局面時。
             """
             backwards_plot_model=self.create_backwards_plot_model_at_game_over()
-            return [PrincipalVariationModel(vertical_list_of_move_pv=[], cap_pt_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
+            return [PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
 
         # 一手詰めを詰める
         if not self._search_context_model.gymnasium.table.is_check():
@@ -67,18 +67,18 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             if (mate_move := self._search_context_model.gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
                 backwards_plot_model=self.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move)
-                return [PrincipalVariationModel(vertical_list_of_move_pv=[], cap_pt_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
+                return [PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
 
         if self._search_context_model.gymnasium.table.is_nyugyoku():
             """手番の入玉宣言勝ち局面時。
             """
             backwards_plot_model=self.create_backwards_plot_model_at_nyugyoku_win()
-            return [PrincipalVariationModel(vertical_list_of_move_pv=[], cap_pt_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
+            return [PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
 
         # # これ以上深く読まない場合。
         # if depth_qs < 1:
         #     backwards_plot_model=self.create_backwards_plot_model_at_horizon(depth_qs)
-        #     return [PrincipalVariationModel(vertical_list_of_move_pv=[], cap_pt_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
+        #     return [PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
 
         # まだ深く読む場合。
 
@@ -98,7 +98,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         if len(remaining_moves) == 0:
             self._search_context_model.end_time = time.time()    # 計測終了時間
             backwards_plot_model=self.create_backwards_plot_model_at_quiescence(depth_qs=-1)
-            return [PrincipalVariationModel(vertical_list_of_move_pv=[], cap_pt_pv=None, value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
+            return [PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
 
         ####################
         # MARK: ノード訪問時
@@ -132,7 +132,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             cap_pt      = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # ［移動先マス］にある［駒種類］。つまりそれは取った駒。打の［移動先マス］は常に空きマス。
             is_capture  = (cap_pt != cshogi.NONE)
 
-            pv = PrincipalVariationModel(vertical_list_of_move_pv=[my_move], cap_pt_pv=cap_pt, value_pv=0, backwards_plot_model=None)
+            pv = PrincipalVariationModel(vertical_list_of_move_pv=[my_move], vertical_list_of_cap_pt_pv=[cap_pt], value_pv=0, backwards_plot_model=None)
             pv_list.append(pv)
 
             # （取っていれば）取った駒の点数計算。
@@ -214,7 +214,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             # １階の手は、全ての手の読み筋を記憶します。最善手は選びません。
             child_plot_model.append_move_from_back(
                     move                = last_child_move,
-                    capture_piece_type  = pv.cap_pt_pv,
+                    capture_piece_type  = pv.vertical_list_of_cap_pt_pv[-1],
                     best_value          = child_plot_model.get_exchange_value_on_earth(),
                     hint                = '')   # f"１階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の手はなんでも記憶"
             backwards_plot_model=child_plot_model
