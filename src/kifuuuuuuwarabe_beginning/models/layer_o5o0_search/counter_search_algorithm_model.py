@@ -158,14 +158,18 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
             quiescence_search_algorithum_model = QuiescenceSearchAlgorithmModel(    # 静止探索。
                     search_context_model    = self._search_context_model)
-            # quiescence_search_algorithum_model.search_before_entry_node_qs(
-            #         parent_pv   = pv,
-            #         depth_qs    = self._search_context_model.max_depth_qs,
-            #         parent_move = my_move)
-            child_plot_model = quiescence_search_algorithum_model.search_alice(      # 再帰呼出
+            (pv.backwards_plot_model, pv.is_terminate) = quiescence_search_algorithum_model.search_before_entry_node_qs(
                     depth_qs    = self._search_context_model.max_depth_qs,
-                    parent_pv   = pv,
+                    pv          = pv,
                     parent_move = my_move)
+            
+            if not pv.is_terminate:
+                child_plot_model = quiescence_search_algorithum_model.search_alice(      # 再帰呼出
+                        depth_qs    = self._search_context_model.max_depth_qs,
+                        parent_pv   = pv,
+                        parent_move = my_move)
+            else:
+                child_plot_model = pv.backwards_plot_model
 
             ##############################
             # MARK: 履歴の最後の一手を戻す

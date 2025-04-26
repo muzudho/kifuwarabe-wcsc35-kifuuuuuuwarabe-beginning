@@ -27,8 +27,53 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
     def search_before_entry_node_qs(
             self,
             depth_qs,
+            pv,
             parent_move):
-        pass
+        """
+        Returns
+        -------
+        backwards_plot_model : BackwardsPlotModel
+            読み筋。
+        is_terminate : bool
+            読み終わり。
+        """
+
+        ########################
+        # MARK: 指す前にやること
+        ########################
+
+        cur_time = time.time()                                          # 現在の時間
+        erapsed_seconds = cur_time - self._search_context_model.restart_time    # 経過秒
+        if 4 <= erapsed_seconds:                                        # 4秒以上経過してたら、情報出力
+            # ［ルート探索］、［カウンター探索］の２を足している。
+            print(f"info depth {2 + self._search_context_model.max_depth_qs - depth_qs} seldepth 0 time 1 nodes {self._search_context_model.number_of_visited_nodes} score cp 0 string thinking")
+            self._search_context_model.restart_time = cur_time                   # 前回の計測時間を更新
+
+        # 指さなくても分かること（ライブラリー使用）
+
+        if self._search_context_model.gymnasium.table.is_game_over():
+            """手番の投了局面時。
+            """
+            return self.create_backwards_plot_model_at_game_over(), True
+
+        # 一手詰めを詰める
+        if not self._search_context_model.gymnasium.table.is_check():
+            """手番玉に王手がかかっていない時で"""
+
+            if (mate_move := self._search_context_model.gymnasium.table.mate_move_in_1ply()):
+                """一手詰めの指し手があれば、それを取得"""
+                return self.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move), True
+
+        if self._search_context_model.gymnasium.table.is_nyugyoku():
+            """手番の入玉宣言勝ち局面時。
+            """
+            return self.create_backwards_plot_model_at_nyugyoku_win(), True
+
+        # これ以上深く読まない場合。
+        if depth_qs < 1:
+            return self.create_backwards_plot_model_at_horizon(depth_qs), True
+
+        return pv.backwards_plot_model, pv.is_terminate
 
 
     def search_alice(
@@ -50,41 +95,6 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             最善の読み筋。
             これは駒得評価値も算出できる。
         """
-
-        ########################
-        # MARK: 指す前にやること
-        ########################
-
-        cur_time = time.time()                                          # 現在の時間
-        erapsed_seconds = cur_time - self._search_context_model.restart_time    # 経過秒
-        if 4 <= erapsed_seconds:                                        # 4秒以上経過してたら、情報出力
-            # ［ルート探索］、［カウンター探索］の２を足している。
-            print(f"info depth {2 + self._search_context_model.max_depth_qs - depth_qs} seldepth 0 time 1 nodes {self._search_context_model.number_of_visited_nodes} score cp 0 string thinking")
-            self._search_context_model.restart_time = cur_time                   # 前回の計測時間を更新
-
-        # 指さなくても分かること（ライブラリー使用）
-
-        if self._search_context_model.gymnasium.table.is_game_over():
-            """手番の投了局面時。
-            """
-            return self.create_backwards_plot_model_at_game_over()
-
-        # 一手詰めを詰める
-        if not self._search_context_model.gymnasium.table.is_check():
-            """手番玉に王手がかかっていない時で"""
-
-            if (mate_move := self._search_context_model.gymnasium.table.mate_move_in_1ply()):
-                """一手詰めの指し手があれば、それを取得"""
-                return self.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move)
-
-        if self._search_context_model.gymnasium.table.is_nyugyoku():
-            """手番の入玉宣言勝ち局面時。
-            """
-            return self.create_backwards_plot_model_at_nyugyoku_win()
-
-        # これ以上深く読まない場合。
-        if depth_qs < 1:
-            return self.create_backwards_plot_model_at_horizon(depth_qs)
 
         # まだ深く読む場合。
 
@@ -136,9 +146,6 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             my_move = pv.vertical_list_of_move_pv[-1]
             cap_pt  = pv.vertical_list_of_cap_pt_pv[-1]
 
-            # dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
-            # cap_pt      = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
-
             #     # ＜📚原則２＞ 王手は（駒を取らない手であっても）探索を続け、深さを１手延長する。
             #     if self._search_context_model.gymnasium.table.is_check():
             #         #depth_extend += 1  # FIXME 探索が終わらないくなる。
@@ -171,14 +178,18 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             ####################
 
             # NOTE ネガ・マックスではないので、評価値の正負を反転させなくていい。
-            # self.search_before_entry_node_qs(
-            #         parent_pv       = pv,
-            #         depth_qs        = depth_qs + depth_qs_extend,
-            #         parent_move     = my_move)
-            child_plot_model = self.search_alice(      # 再帰呼出
-                    depth_qs    = depth_qs + depth_qs_extend,
-                    parent_pv   = pv,
-                    parent_move = my_move)
+            (pv.backwards_plot_model, pv.is_terminate) = self.search_before_entry_node_qs(
+                    depth_qs        = depth_qs + depth_qs_extend,
+                    pv              = pv,
+                    parent_move     = my_move)
+
+            if not pv.is_terminate:
+                child_plot_model = self.search_alice(      # 再帰呼出
+                        depth_qs    = depth_qs + depth_qs_extend,
+                        parent_pv   = pv,
+                        parent_move = my_move)
+            else:
+                child_plot_model = pv.backwards_plot_model
 
             ################
             # MARK: 一手戻す

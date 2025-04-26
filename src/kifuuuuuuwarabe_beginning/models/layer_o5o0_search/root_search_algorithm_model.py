@@ -194,9 +194,8 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
                     best_value          = pv.backwards_plot_model.get_exchange_value_on_earth(),
                     hint                = '')
 
-            pv.value_pv += pv.backwards_plot_model.get_exchange_value_on_earth()
-
             # ベータカットもしません。全部返すから。
+            pv.value_pv += pv.backwards_plot_model.get_exchange_value_on_earth()
             next_pv_list.append(pv.copy_pv())
 
         ########################
