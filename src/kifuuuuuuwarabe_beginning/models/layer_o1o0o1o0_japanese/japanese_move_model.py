@@ -26,6 +26,7 @@ class JapaneseMoveModel:
         """
         src_sq_obj  = SquareModel(cshogi.move_from(move))       # ［移動元マス］
         dst_sq_obj  = SquareModel(cshogi.move_to(move))         # ［移動先マス］
+        is_prom     = cshogi.move_is_promotion(move)            # ［成］
         is_drop     = cshogi.move_is_drop(move)                 # ［打］
 
         moving_pt = TableHelper.get_moving_pt_from_move(move)   # 駒種類。盤上の移動元の駒か、打った駒。
@@ -41,16 +42,18 @@ class JapaneseMoveModel:
                 src_sq_obj      = src_sq_obj,
                 dst_sq_obj      = dst_sq_obj,
                 moving_pt_str   = moving_pt_str,
+                is_prom         = is_prom,
                 is_drop         = is_drop,
                 is_mars         = is_mars)
 
 
-    def __init__(self, move, cap_pt, src_sq_obj, dst_sq_obj, moving_pt_str, is_drop, is_mars):
+    def __init__(self, move, cap_pt, src_sq_obj, dst_sq_obj, moving_pt_str, is_prom, is_drop, is_mars):
         self._move          = move
         self._cap_pt        = cap_pt
         self._src_sq_obj    = src_sq_obj
         self._dst_sq_obj    = dst_sq_obj
         self._moving_pt_str = moving_pt_str
+        self._is_prom       = is_prom
         self._is_drop       = is_drop
         self._is_mars       = is_mars
 
@@ -68,6 +71,11 @@ class JapaneseMoveModel:
     @property
     def moving_pt_str(self):
         return self._moving_pt_str
+
+
+    @property
+    def is_prom(self):
+        return self._is_prom
 
 
     @property
@@ -96,13 +104,19 @@ class JapaneseMoveModel:
         except IndexError as ex:
             print(f"human_presentable_move_model.py: {cshogi.move_to_usi(self._move)=} {self._src_sq_obj.file=} {self._src_sq_obj.rank=} {self._dst_sq_obj.file=} {self._dst_sq_obj.rank=} {ex=}")
             raise
+        
+
+        def _prom():
+            if self._is_prom:
+                return '成'
+            return ''
 
 
-        def drop_kanji():
+        def _drop_kanji():
             if self._is_drop:
                 return StringResourcesModel.drop_kanji()
             return ''
-
+        
 
         def _cap(cap_pt, is_mars):
             if cap_pt == cshogi.NONE:
@@ -113,4 +127,4 @@ class JapaneseMoveModel:
             return f"+{PlanetPieceTypeModel.mars_kanji(piece_type=cap_pt)}"     # 地球側が取ったのは火星側の駒
 
 
-        return f"{src_str}{dst_file_str}{dst_rank_str}{self.moving_pt_str}{drop_kanji()}{_cap(cap_pt=self._cap_pt,is_mars=self._is_mars)}"
+        return f"{src_str}{dst_file_str}{dst_rank_str}{self.moving_pt_str}{_prom()}{_drop_kanji()}{_cap(cap_pt=self._cap_pt,is_mars=self._is_mars)}"
