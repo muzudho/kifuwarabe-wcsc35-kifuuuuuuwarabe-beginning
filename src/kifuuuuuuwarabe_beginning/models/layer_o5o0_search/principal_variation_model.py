@@ -88,11 +88,18 @@ class PrincipalVariationModel:
 
 
     def copy_pv(self):
+        """コピー。
+        """
+        if self._backwards_plot_model:
+            copy_backwards_plot_model = self._backwards_plot_model.copy_bpm()
+        else:
+            copy_backwards_plot_model = None
+
         return PrincipalVariationModel(
-                vertical_list_of_move_pv    = self._vertical_list_of_move_pv,
-                vertical_list_of_cap_pt_pv  = self._vertical_list_of_cap_pt_pv,
+                vertical_list_of_move_pv    = list(self._vertical_list_of_move_pv),
+                vertical_list_of_cap_pt_pv  = list(self._vertical_list_of_cap_pt_pv),
                 value_pv                    = self._value_pv,
-                backwards_plot_model        = self._backwards_plot_model,
+                backwards_plot_model        = copy_backwards_plot_model,
                 is_terminate                = self._is_terminate)
 
 

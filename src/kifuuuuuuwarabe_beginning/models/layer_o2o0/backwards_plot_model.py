@@ -268,12 +268,12 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         return f"{len(self._move_list)=} {len(self._cap_list)=} {len(self._list_of_accumulate_exchange_value_on_earth)=}"
 
 
-    # def copy_bpm(self):
-    #     return BackwardsPlotModel(
-    #             is_mars_at_out_of_termination   = self._is_mars_at_out_of_termination,
-    #             is_gote_at_out_of_termination   = self._is_gote_at_out_of_termination,
-    #             out_of_termination              = self._out_of_termination,
-    #             hint                            = list(self._hint),
-    #             move_list                       = list(self._move_list),
-    #             cap_list                        = list(self._cap_list),
-    #             list_of_accumulate_exchange_value_on_earth = list(self._list_of_accumulate_exchange_value_on_earth))
+    def copy_bpm(self):
+        return BackwardsPlotModel(
+                is_mars_at_out_of_termination   = self._is_mars_at_out_of_termination,
+                is_gote_at_out_of_termination   = self._is_gote_at_out_of_termination,
+                out_of_termination              = self._out_of_termination,
+                hint                            = list(self._hint),
+                move_list                       = list(self._move_list),
+                cap_list                        = list(self._cap_list),
+                list_of_accumulate_exchange_value_on_earth = list(self._list_of_accumulate_exchange_value_on_earth))
