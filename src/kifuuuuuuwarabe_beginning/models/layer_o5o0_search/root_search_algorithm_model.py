@@ -162,11 +162,11 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             if not pv.is_terminate:
                 child_pv_list = counter_search_algorithm_model.search_after_entry_node(parent_pv=pv)
 
-                remaining_moves = []
-                for child_pv in child_pv_list:
-                    remaining_moves.append(child_pv.vertical_list_of_move_pv[-1])
+                # remaining_moves = []
+                # for child_pv in child_pv_list:
+                #     remaining_moves.append(child_pv.vertical_list_of_move_pv[-1])
 
-                pv.backwards_plot_model = counter_search_algorithm_model.search_as_normal(pv=pv, remaining_moves=remaining_moves)       # 再帰呼出
+                pv.backwards_plot_model = counter_search_algorithm_model.search_as_normal(parent_pv=pv, pv_list=child_pv_list)       # 再帰呼出
             
 
             ######################

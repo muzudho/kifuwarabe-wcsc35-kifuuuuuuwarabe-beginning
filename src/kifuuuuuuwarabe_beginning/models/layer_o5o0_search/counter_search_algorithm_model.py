@@ -110,7 +110,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         return pv_list
 
 
-    def search_as_normal(self, pv, remaining_moves):
+    def search_as_normal(self, parent_pv, pv_list):
         """静止探索の開始。
 
         大まかにいって、１手目は全ての合法手を探索し、
@@ -128,13 +128,13 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             これは駒得評価値も算出できる。
         """
 
-        if pv.is_terminate:
-            return pv.backwards_plot_model
+        if parent_pv.is_terminate:
+            return parent_pv.backwards_plot_model
 
         # まだ深く読む場合。
 
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
-        if len(remaining_moves) == 0:
+        if len(pv_list) == 0:
             best_plot_model = self.create_backwards_plot_model_at_quiescence(depth_qs=-1)
             self._search_context_model.end_time = time.time()    # 計測終了時間
             return best_plot_model
@@ -152,7 +152,16 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         else:
             best_value = constants.value.SMALL_VALUE
 
-        for my_move in remaining_moves:
+        # remaining_moves = []
+        # for child_pv in pv_list:
+        #     remaining_moves.append(child_pv.vertical_list_of_move_pv[-1])
+
+        for pv in pv_list:
+
+            if pv.is_terminate:     # TODO 探索終了している手は、リストを分けたらどうか。
+                continue
+
+            my_move = pv.vertical_list_of_move_pv[-1]
 
             ##################
             # MARK: 一手指す前
