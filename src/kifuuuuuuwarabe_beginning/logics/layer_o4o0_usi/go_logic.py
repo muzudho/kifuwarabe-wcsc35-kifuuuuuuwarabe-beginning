@@ -282,12 +282,12 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
     root_search_algorithum_model = RootSearchAlgorithmModel(
             search_context_model = search_context_model)
 
-    all_pv_list = root_search_algorithum_model.search_as_root(
+    pv_list = root_search_algorithum_model.search_as_root(
             remaining_moves = remaining_moves)
 
     number_of_visited_nodes = root_search_algorithum_model.search_context_model.number_of_visited_nodes
 
-    def _eliminate_not_capture_not_positive(all_pv_list, gymnasium):
+    def _eliminate_not_capture_not_positive(pv_list, gymnasium):
         """次の１つの手は、候補に挙げる必要がないので除去します。
         （１）駒を取らない手で非正の手（最高点のケースを除く）。このとき、［零点の手］があるかどうか調べます。
         次の手は、候補に挙げる必要がないので除去します。
@@ -305,7 +305,7 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
 
         # まず、水平枝の中の最高点を調べます。
         best_exchange_value = constants.value.NOTHING_CAPTURE_MOVE
-        for pv in all_pv_list:
+        for pv in pv_list:
             value_on_earth = pv.value_pv
             if best_exchange_value < value_on_earth:
                 best_exchange_value = value_on_earth
@@ -314,7 +314,7 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
         if best_exchange_value == 0:
             exists_zero_value_move = True
 
-        for pv in all_pv_list:
+        for pv in pv_list:
 
             gymnasium.health_check_go_model.append_health(
                     move    = pv.backwards_plot_model.peek_move,
@@ -359,7 +359,7 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
 
     return (
         _eliminate_not_capture_not_positive(
-                all_pv_list     = all_pv_list,
-                gymnasium       = gymnasium),
+                pv_list     = pv_list,
+                gymnasium   = gymnasium),
         number_of_visited_nodes
     )

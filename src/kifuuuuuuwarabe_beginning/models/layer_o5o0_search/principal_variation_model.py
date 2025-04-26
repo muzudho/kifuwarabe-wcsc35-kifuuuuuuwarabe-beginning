@@ -2,12 +2,12 @@ class PrincipalVariationModel:
     """読み筋モデル"""
 
 
-    def __init__(self, move_pv, cap_pt_pv, value_pv, backwards_plot_model):
+    def __init__(self, vertical_list_of_move_pv, cap_pt_pv, value_pv, backwards_plot_model):
         """
         Parameters
         ----------
-        move_pv : int
-            シーショーギの指し手。
+        vertical_list_of_move_pv : list<int>
+            シーショーギの指し手のリスト。
         cap_pt_pv : int
             取った駒の種類。
         value_pv : int
@@ -15,29 +15,31 @@ class PrincipalVariationModel:
         backwards_plot_model : BackwardsPlotModel
             後ろ向き探索の読み筋。
         """
-        if move_pv:
-            self._vertical_move_list_pv = [move_pv]
-        else:
-            self._vertical_move_list_pv = []
-
+        self._vertical_list_of_move_pv = vertical_list_of_move_pv
         self._cap_pt_pv = cap_pt_pv
         self._value_pv = value_pv
         self._backwards_plot_model = backwards_plot_model
         self._is_terminate = False
 
 
+    # def copy_pv(self):
+    #     return PrincipalVariationModel(
+    #             move_pv=
+    #     )
+
+
     @property
-    def vertical_move_list_pv(self):
+    def vertical_list_of_move_pv(self):
         """指し手の履歴。
         """
-        return self._vertical_move_list_pv
+        return self._vertical_list_of_move_pv
 
 
     @property
     def last_child_move_pv(self):
         """最終の子の指し手。
         """
-        return self._vertical_move_list_pv[-1]
+        return self._vertical_list_of_move_pv[-1]
 
 
     @property
@@ -88,9 +90,9 @@ class PrincipalVariationModel:
         self._is_terminate = value
 
 
-    def pop_vertical_move_list_pv(self):
+    def pop_vertical_list_of_move_pv(self):
         """指し手の履歴をポップします。
         """
-        work = list(self._vertical_move_list_pv)
-        self._vertical_move_list_pv = []
+        work = list(self._vertical_list_of_move_pv)
+        self._vertical_list_of_move_pv = []
         return work

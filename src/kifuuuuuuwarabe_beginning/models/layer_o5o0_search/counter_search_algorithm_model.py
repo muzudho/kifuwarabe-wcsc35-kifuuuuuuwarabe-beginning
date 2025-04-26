@@ -65,9 +65,10 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         #     return best_plot_model
 
 
-    def search_after_entry_node(self, pv):
+    def search_after_entry_node(self, pv, vertical_list_of_move_pv):
+        # TODO
         if pv.is_terminate:
-            return
+            return []
 
         ##########################
         # MARK: 合法手クリーニング
@@ -79,6 +80,30 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         remaining_moves = CounterSearchAlgorithmModel._remove_drop_except_aigoma(remaining_moves)  # ［間駒］以外の［打］は（多すぎるので）除外。
         (remaining_moves, rolled_back) = self.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=True)    # ［カウンター探索］では、駒を取る手と、王手のみ残す。［駒を取る手、王手］が無ければ、（巻き戻して）それ以外の手を指します。
         remaining_moves.extend(aigoma_move_list)
+
+        new_pv_list = []
+
+        # 残った指し手について
+        for my_move in vertical_list_of_move_pv:
+            ##################
+            # MARK: 一手指す前
+            ##################
+
+            # 打の場合、取った駒無し。空マス。
+            dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
+            cap_pt      = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # ［移動先マス］にある［駒種類］。つまりそれは取った駒。打の［移動先マス］は常に空きマス。
+            is_capture  = (cap_pt != cshogi.NONE)
+
+            # （取っていれば）取った駒の点数計算。
+            if is_capture:
+                # NOTE `earth` - 自分。 `mars` - 対戦相手。
+                value_temp = PieceValuesModel.get_piece_exchange_value_on_earth(
+                        pt          = cap_pt,
+                        is_mars     = self._search_context_model.gymnasium.is_mars)
+            else:
+                value_temp = 0
+
+
         return remaining_moves
 
 
