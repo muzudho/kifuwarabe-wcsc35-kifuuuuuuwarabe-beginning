@@ -21,7 +21,7 @@ class HealthCheckGoModel():
         pass
 
 
-    def append(self, move, name, value):
+    def append_health(self, move, name, value):
         if move not in self._document:
             self._document[move] = {}
         

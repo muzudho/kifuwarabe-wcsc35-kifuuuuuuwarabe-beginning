@@ -44,7 +44,7 @@ class MovesReductionFilterLogics():
 
             # ログ貯蓄
             for move in remaining_moves:
-                gymnasium.health_check_go_model.append(
+                gymnasium.health_check_go_model.append_health(
                         move    = move,
                         name    = f"NR[{negative_rule.id}]",
                         value   = True)
