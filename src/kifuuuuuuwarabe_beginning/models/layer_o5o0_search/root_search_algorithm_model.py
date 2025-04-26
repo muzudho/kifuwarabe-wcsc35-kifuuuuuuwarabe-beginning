@@ -188,7 +188,9 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             child_plot_model = counter_search_algorithm_model.search_before_entry_node(pv=pv)
 
             if not pv.is_terminate:
-                child_plot_model = counter_search_algorithm_model.search_as_normal(pv=pv)       # 再帰呼出
+                remaining_moves = counter_search_algorithm_model.search_after_entry_node(pv=pv)
+
+                child_plot_model = counter_search_algorithm_model.search_as_normal(pv=pv, remaining_moves=remaining_moves)       # 再帰呼出
 
             ######################
             # MARK: 履歴を全部戻す

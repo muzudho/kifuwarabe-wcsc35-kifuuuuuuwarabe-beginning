@@ -65,7 +65,24 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         #     return best_plot_model
 
 
-    def search_as_normal(self, pv):
+    def search_after_entry_node(self, pv):
+        if pv.is_terminate:
+            return
+
+        ##########################
+        # MARK: 合法手クリーニング
+        ##########################
+        
+        remaining_moves = list(self._search_context_model.gymnasium.table.legal_moves)      # 全合法手。
+        remaining_moves = self.remove_depromoted_moves(remaining_moves=remaining_moves)     # ［成れるのに成らない手］は除外
+        aigoma_move_list = self._choice_aigoma_move_list(remaining_moves=remaining_moves)   # ［間駒］（相手の利きの上に置く手）を抽出。
+        remaining_moves = CounterSearchAlgorithmModel._remove_drop_except_aigoma(remaining_moves)  # ［間駒］以外の［打］は（多すぎるので）除外。
+        (remaining_moves, rolled_back) = self.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=True)    # ［カウンター探索］では、駒を取る手と、王手のみ残す。［駒を取る手、王手］が無ければ、（巻き戻して）それ以外の手を指します。
+        remaining_moves.extend(aigoma_move_list)
+        return remaining_moves
+
+
+    def search_as_normal(self, pv, remaining_moves):
         """静止探索の開始。
 
         大まかにいって、１手目は全ての合法手を探索し、
@@ -88,38 +105,6 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
         # まだ深く読む場合。
 
-        ######################
-        # MARK: 合法手スキャン
-        ######################
-
-        best_plot_model     = None
-        best_move           = None
-        best_move_cap_pt    = None
-
-        # 合法手を全部調べる。
-        legal_move_list = list(self._search_context_model.gymnasium.table.legal_moves)
-        remaining_moves = legal_move_list
-
-        ############################
-        # MARK: データ・クリーニング
-        ############################
-
-        remaining_moves = self.remove_depromoted_moves(remaining_moves=remaining_moves)       # ［成れるのに成らない手］は除外
-
-        aigoma_move_list = self._choice_aigoma_move_list(remaining_moves=remaining_moves)    # ［間駒］（相手の利きの上に置く手）を抽出。
-
-        # TODO ［間駒］以外の［打］は（多すぎるので）除外。
-        for my_move in reversed(remaining_moves):
-            is_drop = cshogi.move_is_drop(my_move)
-            if is_drop:
-                remaining_moves.remove(my_move)
-
-        (remaining_moves, rolled_back) = self.filtering_capture_or_mate(    # 駒を取る手と、王手のみ残す
-                remaining_moves=remaining_moves,
-                rollback_if_empty=True)     # ［カウンター探索］では、［駒を取る手、王手］が無ければ、（巻き戻して）それ以外の手を指します。
-
-        remaining_moves.extend(aigoma_move_list)
-
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(remaining_moves) == 0:
             best_plot_model = self.create_backwards_plot_model_at_quiescence(depth_qs=-1)
@@ -129,6 +114,10 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         ####################
         # MARK: ノード訪問時
         ####################
+
+        best_plot_model     = None
+        best_move           = None
+        best_move_cap_pt    = None
 
         if self._search_context_model.gymnasium.is_mars:
             best_value = constants.value.BIG_VALUE
@@ -248,3 +237,12 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             if is_aigoma:
                 aigoma_move_list.append(my_move)
         return aigoma_move_list
+
+
+    def _remove_drop_except_aigoma(remaining_moves):
+        # ［間駒］以外の［打］は（多すぎるので）除外。
+        for my_move in reversed(remaining_moves):
+            is_drop = cshogi.move_is_drop(my_move)
+            if is_drop:
+                remaining_moves.remove(my_move)
+        return remaining_moves
