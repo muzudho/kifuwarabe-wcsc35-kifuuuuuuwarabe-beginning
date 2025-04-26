@@ -1,5 +1,6 @@
 import cshogi
 
+from ..layer_o1o_9o0 import PieceValuesModel
 from ..layer_o1o0 import constants, Mars, SquareModel
 from ..layer_o2o0 import BackwardsPlotModel
 from ..layer_o4o0_rules.negative import DoNotDepromotionModel
@@ -8,6 +9,33 @@ from ..layer_o4o0_rules.negative import DoNotDepromotionModel
 class SearchAlgorithmModel:
     """検索アルゴリズム。
     """
+
+
+    @staticmethod
+    def convert_remaining_moves_to_pv_list(parent_pv, remaining_moves, search_context_model):
+        pv_list = []
+
+        # 残った指し手について
+        for my_move in remaining_moves:
+            ##################
+            # MARK: 一手指す前
+            ##################
+
+            # 打の場合、取った駒無し。空マス。
+            dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
+            cap_pt      = search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # ［移動先マス］にある［駒種類］。つまりそれは取った駒。打の［移動先マス］は常に空きマス。
+
+            pv = parent_pv.new_and_append(
+                    move_pv     = my_move,
+                    cap_pt_pv   = cap_pt,
+                    value_pv    = PieceValuesModel.get_piece_exchange_value_on_earth(
+                                        pt          = cap_pt,
+                                        is_mars     = search_context_model.gymnasium.is_mars),
+                    replace_backwards_plot_model    = parent_pv.backwards_plot_model,
+                    replace_is_terminate            = False)
+            pv_list.append(pv)
+        
+        return pv_list
 
 
     def __init__(self, search_context_model):

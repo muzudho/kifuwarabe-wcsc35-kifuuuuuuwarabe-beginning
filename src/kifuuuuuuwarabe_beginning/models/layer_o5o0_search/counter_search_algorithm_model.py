@@ -85,28 +85,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         (remaining_moves, rolled_back) = self.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=True)    # ［カウンター探索］では、駒を取る手と、王手のみ残す。［駒を取る手、王手］が無ければ、（巻き戻して）それ以外の手を指します。
         remaining_moves.extend(aigoma_move_list)
 
-        pv_list = []
-
-        # 残った指し手について
-        for my_move in remaining_moves:
-            ##################
-            # MARK: 一手指す前
-            ##################
-
-            # 打の場合、取った駒無し。空マス。
-            dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
-            cap_pt      = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # ［移動先マス］にある［駒種類］。つまりそれは取った駒。打の［移動先マス］は常に空きマス。
-
-            pv = parent_pv.new_and_append(
-                    move_pv     = my_move,
-                    cap_pt_pv   = cap_pt,
-                    value_pv    = PieceValuesModel.get_piece_exchange_value_on_earth(
-                                        pt          = cap_pt,
-                                        is_mars     = self._search_context_model.gymnasium.is_mars),
-                    replace_backwards_plot_model    = parent_pv.backwards_plot_model,
-                    replace_is_terminate            = False)
-            pv_list.append(pv)
-
+        pv_list = SearchAlgorithmModel.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=self._search_context_model)
         return pv_list
 
 
@@ -179,8 +158,13 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
             quiescence_search_algorithum_model = QuiescenceSearchAlgorithmModel(    # 静止探索。
                     search_context_model    = self._search_context_model)
+            # quiescence_search_algorithum_model.search_before_entry_node_qs(
+            #         parent_pv   = pv,
+            #         depth_qs    = self._search_context_model.max_depth_qs,
+            #         parent_move = my_move)
             child_plot_model = quiescence_search_algorithum_model.search_alice(      # 再帰呼出
                     depth_qs    = self._search_context_model.max_depth_qs,
+                    parent_pv   = pv,
                     parent_move = my_move)
 
             ##############################

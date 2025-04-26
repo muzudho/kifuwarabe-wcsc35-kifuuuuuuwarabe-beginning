@@ -24,9 +24,17 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
                 search_context_model=search_context_model)
     
 
+    def search_before_entry_node_qs(
+            self,
+            depth_qs,
+            parent_move):
+        pass
+
+
     def search_alice(
             self,
             depth_qs,
+            parent_pv,
             parent_move):
         """
         Parameters
@@ -115,6 +123,13 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             best_value = constants.value.SMALL_VALUE
         depth_qs_extend     = 0
 
+        # # TODO remaining_moves から pv へ変換したい。 parent_pv が None であってはいけない。
+        #pv_list = SearchAlgorithmModel.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=self._search_context_model)
+
+        # # 残った指し手について
+        # for my_move in remaining_moves:
+        #     pass
+
         for my_move in remaining_moves:
 
             ##################
@@ -128,6 +143,11 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             #     if self._search_context_model.gymnasium.table.is_check():
             #         #depth_extend += 1  # FIXME 探索が終わらないくなる。
             #         pass
+
+            # NOTE `earth` - 自分。 `mars` - 対戦相手。
+            piece_exchange_value_on_earth = PieceValuesModel.get_piece_exchange_value_on_earth(      # 交換値に変換。正の数とする。
+                    pt          = cap_pt,
+                    is_mars     = self._search_context_model.gymnasium.is_mars)
 
             ################
             # MARK: 一手指す
@@ -151,8 +171,13 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             ####################
 
             # NOTE ネガ・マックスではないので、評価値の正負を反転させなくていい。
+            # self.search_before_entry_node_qs(
+            #         parent_pv       = pv,
+            #         depth_qs        = depth_qs + depth_qs_extend,
+            #         parent_move     = my_move)
             child_plot_model = self.search_alice(      # 再帰呼出
-                    depth_qs       = depth_qs + depth_qs_extend,
+                    depth_qs    = depth_qs + depth_qs_extend,
+                    parent_pv   =None,     # FIXME
                     parent_move = my_move)
 
             ################
@@ -174,11 +199,6 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             ##################
 
             its_update_best = False
-
-            # NOTE `earth` - 自分。 `mars` - 対戦相手。
-            piece_exchange_value_on_earth = PieceValuesModel.get_piece_exchange_value_on_earth(      # 交換値に変換。正の数とする。
-                    pt          = cap_pt,
-                    is_mars     = self._search_context_model.gymnasium.is_mars)
 
             # この枝の点（将来の点＋取った駒の点）
             this_branch_value_on_earth = child_plot_model.get_exchange_value_on_earth() + piece_exchange_value_on_earth
