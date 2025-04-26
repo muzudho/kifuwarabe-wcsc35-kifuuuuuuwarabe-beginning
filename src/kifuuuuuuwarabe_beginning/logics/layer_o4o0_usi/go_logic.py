@@ -75,9 +75,9 @@ class _Go2nd():
                     name    = 'GO_move_jp',
                     value   = move_jp_str)
 
-        length_by_cshogi        = len(move_list)  # cshogi が示した合法手の数
+        length_by_cshogi                            = len(move_list)    # cshogi が示した合法手の数
         length_of_quiescence_search_by_kifuwarabe   = length_by_cshogi  # きふわらべ が静止探索で絞り込んだ指し手の数
-        length_by_kifuwarabe    = length_by_cshogi      # きふわらべ が最終的に絞り込んだ指し手の数
+        length_by_kifuwarabe                        = length_by_cshogi  # きふわらべ が最終的に絞り込んだ指し手の数
         #print(f"D-74: {len(all_regal_moves)=}")
 
         if self._gymnasium.table.is_game_over():
@@ -286,14 +286,14 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
         #print(f"D-132: _q uiescence_search {max_depth=}")
         return remaining_moves, 0
 
-    all_backwards_plot_models_at_first = root_search_algorithum_model.search_as_root(
-            depth_qs                               = max_depth,
-            remaining_moves                     = remaining_moves)
+    all_pv_list = root_search_algorithum_model.search_as_root(
+            depth_qs        = max_depth,
+            remaining_moves = remaining_moves)
 
-    #print(f"{alice_s_best_piece_value=} {len(all_backwards_plot_models_at_first)=}")
+    #print(f"{alice_s_best_piece_value=} {len(all_pv_list)=}")
     number_of_visited_nodes = root_search_algorithum_model.search_context_model.number_of_visited_nodes
 
-    def _eliminate_not_capture_not_positive(all_backwards_plot_models_at_first, gymnasium):
+    def _eliminate_not_capture_not_positive(all_pv_list, gymnasium):
         """次の１つの手は、候補に挙げる必要がないので除去します。
         （１）駒を取らない手で非正の手（最高点のケースを除く）。このとき、［零点の手］があるかどうか調べます。
         次の手は、候補に挙げる必要がないので除去します。
@@ -311,8 +311,8 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
 
         # まず、水平枝の中の最高点を調べます。
         best_exchange_value = constants.value.NOTHING_CAPTURE_MOVE
-        for backwards_plot_model in all_backwards_plot_models_at_first:
-            value_on_earth = backwards_plot_model.get_exchange_value_on_earth()
+        for pv in all_pv_list:
+            value_on_earth = pv.backwards_plot_model.get_exchange_value_on_earth()
             if best_exchange_value < value_on_earth:
                 best_exchange_value = value_on_earth
 
@@ -320,54 +320,54 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
         if best_exchange_value == 0:
             exists_zero_value_move = True
 
-        gymnasium.thinking_logger_module.append_message(f"all_backwards_plot_models_at_first len={len(all_backwards_plot_models_at_first)}")
+        gymnasium.thinking_logger_module.append_message(f"all_pv_list len={len(all_pv_list)}")
 
-        for backwards_plot_model in all_backwards_plot_models_at_first:
+        for pv in all_pv_list:
 
             gymnasium.health_check_go_model.append_health(
-                    move    = backwards_plot_model.peek_move,
+                    move    = pv.backwards_plot_model.peek_move,
                     name    = 'QS_backwards_plot_model',
-                    value   = backwards_plot_model)
+                    value   = pv.backwards_plot_model)
 
             # （１）駒を取らない手で非正の手（最高点のケースを除く）。
-            value_on_earth = backwards_plot_model.get_exchange_value_on_earth()
-            if not backwards_plot_model.is_capture_at_last and value_on_earth < 1 and value_on_earth != best_exchange_value:
+            value_on_earth = pv.backwards_plot_model.get_exchange_value_on_earth()
+            if not pv.backwards_plot_model.is_capture_at_last and value_on_earth < 1 and value_on_earth != best_exchange_value:
                 if value_on_earth == 0:
                     exists_zero_value_move = True
                 
                 gymnasium.health_check_go_model.append_health(
-                        move    = backwards_plot_model.peek_move,
+                        move    = pv.backwards_plot_model.peek_move,
                         name    = 'QS_eliminate171',
-                        value   = f"{backwards_plot_model.stringify_2():10} not_cap_not_posite")
+                        value   = f"{pv.backwards_plot_model.stringify_2():10} not_cap_not_posite")
 
             # （２）最高点でない手。
             elif value_on_earth < best_exchange_value:
                 gymnasium.health_check_go_model.append_health(
-                        move    = backwards_plot_model.peek_move,
+                        move    = pv.backwards_plot_model.peek_move,
                         name    = 'QS_eliminate171',
-                        value   = f"{backwards_plot_model.stringify_2():10} not_best")
+                        value   = f"{pv.backwards_plot_model.stringify_2():10} not_best")
 
             # （３）リスクヘッジにならない手
             elif exists_zero_value_move and value_on_earth < 0:
                 gymnasium.health_check_go_model.append_health(
-                        move    = backwards_plot_model.peek_move,
+                        move    = pv.backwards_plot_model.peek_move,
                         name    = 'QS_eliminate171',
-                        value   = f"{backwards_plot_model.stringify_2():10} not_risk_hedge")
+                        value   = f"{pv.backwards_plot_model.stringify_2():10} not_risk_hedge")
 
             # それ以外の手は選択します。
             else:
-                alice_s_move_list.append(backwards_plot_model.peek_move)
+                alice_s_move_list.append(pv.backwards_plot_model.peek_move)
                 gymnasium.health_check_go_model.append_health(
-                        move    = backwards_plot_model.peek_move,
+                        move    = pv.backwards_plot_model.peek_move,
                         name    = 'QS_eliminate171',
-                        value   = f"{backwards_plot_model.stringify_2():10} ok")
+                        value   = f"{pv.backwards_plot_model.stringify_2():10} ok")
 
         return alice_s_move_list
 
 
     return (
         _eliminate_not_capture_not_positive(
-                all_backwards_plot_models_at_first  = all_backwards_plot_models_at_first,
-                gymnasium                           = gymnasium),
+                all_pv_list     = all_pv_list,
+                gymnasium       = gymnasium),
         number_of_visited_nodes
     )

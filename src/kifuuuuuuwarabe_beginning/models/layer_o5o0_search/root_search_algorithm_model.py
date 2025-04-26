@@ -5,6 +5,7 @@ from ..layer_o1o_9o0 import PieceValuesModel
 from ..layer_o1o0 import constants, Mars, SquareModel
 from .search_algorithm_model import SearchAlgorithmModel
 from .counter_search_algorithm_model import CounterSearchAlgorithmModel
+from .principal_variation_model import PrincipalVariationModel
 
 
 class RootSearchAlgorithmModel(SearchAlgorithmModel):
@@ -42,7 +43,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
         Returns
         -------
-        all_backwards_plot_models_at_first : list<BackwardsPlotModel>
+        all_pv_list : list<PrincipalVariationModel>
             全ての１階の合法手の読み筋。
         """
 
@@ -58,7 +59,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         if self._search_context_model.gymnasium.table.is_game_over():
             """手番の投了局面時。
             """
-            return [self.create_backwards_plot_model_at_game_over()]
+            return [PrincipalVariationModel(backwards_plot_model=self.create_backwards_plot_model_at_game_over())]
 
         # 一手詰めを詰める
         if not self._search_context_model.gymnasium.table.is_check():
@@ -66,16 +67,16 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
             if (mate_move := self._search_context_model.gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
-                return [self.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move)]
+                return [PrincipalVariationModel(backwards_plot_model=self.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move))]
 
         if self._search_context_model.gymnasium.table.is_nyugyoku():
             """手番の入玉宣言勝ち局面時。
             """
-            return [self.create_backwards_plot_model_at_nyugyoku_win()]
+            return [PrincipalVariationModel(backwards_plot_model=self.create_backwards_plot_model_at_nyugyoku_win())]
 
         # これ以上深く読まない場合。
         if depth_qs < 1:
-            return [self.create_backwards_plot_model_at_horizon(depth_qs)]
+            return [PrincipalVariationModel(backwards_plot_model=self.create_backwards_plot_model_at_horizon(depth_qs))]
 
         # まだ深く読む場合。
 
@@ -94,13 +95,13 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(remaining_moves) == 0:
             self._search_context_model.end_time = time.time()    # 計測終了時間
-            return [self.create_backwards_plot_model_at_quiescence(depth_qs=depth_qs)]
+            return [PrincipalVariationModel(backwards_plot_model=self.create_backwards_plot_model_at_quiescence(depth_qs=depth_qs))]
 
         ####################
         # MARK: ノード訪問時
         ####################
 
-        all_backwards_plot_models_at_first = []
+        all_pv_list = []
 
         def set_controls(remaining_moves):
             """利きを記録
@@ -196,7 +197,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
                     capture_piece_type  = cap_pt,
                     best_value          = child_plot_model.get_exchange_value_on_earth() + piece_exchange_value_on_earth,
                     hint                = '')   # f"１階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の手はなんでも記憶"
-            all_backwards_plot_models_at_first.append(child_plot_model)
+            all_pv_list.append(PrincipalVariationModel(backwards_plot_model=child_plot_model))
 
             # NOTE この辺りは［０階］。
 
@@ -207,11 +208,11 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         ########################
 
         # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
-        if len(all_backwards_plot_models_at_first) < 1:
+        if len(all_pv_list) < 1:
             child_plot_model = self.create_backwards_plot_model_at_no_candidates(depth_qs=depth_qs)
-            all_backwards_plot_models_at_first.append(child_plot_model)
+            all_pv_list.append(child_plot_model)
             self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜指したい手無し＞')
 
         self._search_context_model.end_time = time.time()    # 計測終了時間
 
-        return all_backwards_plot_models_at_first
+        return all_pv_list
