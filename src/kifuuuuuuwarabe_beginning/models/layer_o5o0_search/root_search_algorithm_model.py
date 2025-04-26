@@ -160,14 +160,14 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             (pv.backwards_plot_model, pv.is_terminate) = counter_search_algorithm_model.search_before_entry_node(pv=pv)
 
             if not pv.is_terminate:
-                child_pv_list = counter_search_algorithm_model.search_after_entry_node(parent_pv=pv)
+                child_pv_list = counter_search_algorithm_model.search_after_entry_node_counter(parent_pv=pv)
 
                 for child_pv in reversed(child_pv_list):
                     if child_pv.is_terminate:           # ［読み筋］の探索が終了していれば。
                         next_pv_list.append(child_pv)        # 別のリストへ［読み筋］を退避します。
                         child_pv_list.remove(child_pv)
 
-                pv.backwards_plot_model = counter_search_algorithm_model.search_as_normal(parent_pv=pv, pv_list=child_pv_list)       # 再帰呼出
+                pv.backwards_plot_model = counter_search_algorithm_model.search_as_counter(pv_list=child_pv_list)       # 再帰呼出
 
             ######################
             # MARK: 履歴を全部戻す

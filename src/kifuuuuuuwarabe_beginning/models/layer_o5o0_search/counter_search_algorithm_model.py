@@ -64,7 +64,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         return pv.backwards_plot_model, pv.is_terminate
 
 
-    def search_after_entry_node(self, parent_pv):
+    def search_after_entry_node_counter(self, parent_pv):
         """
         Returns
         -------
@@ -85,16 +85,13 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         (remaining_moves, rolled_back) = self.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=True)    # ［カウンター探索］では、駒を取る手と、王手のみ残す。［駒を取る手、王手］が無ければ、（巻き戻して）それ以外の手を指します。
         remaining_moves.extend(aigoma_move_list)
 
+        # remaining_moves から pv へ変換。
         pv_list = SearchAlgorithmModel.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=self._search_context_model)
         return pv_list
 
 
-    def search_as_normal(self, parent_pv, pv_list):
-        """静止探索の開始。
-
-        大まかにいって、１手目は全ての合法手を探索し、
-        ２手目以降は、駒を取る手を中心に探索します。
-        TODO できれば２手目も全ての合法手を探索したい。指した後取られる手があるから。
+    def search_as_counter(self, pv_list):
+        """応手の開始。
 
         Parameters
         ----------
@@ -158,16 +155,18 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
             quiescence_search_algorithum_model = QuiescenceSearchAlgorithmModel(    # 静止探索。
                     search_context_model    = self._search_context_model)
+            
             (pv.backwards_plot_model, pv.is_terminate) = quiescence_search_algorithum_model.search_before_entry_node_qs(
                     depth_qs    = self._search_context_model.max_depth_qs,
                     pv          = pv,
                     parent_move = my_move)
             
             if not pv.is_terminate:
-                child_plot_model = quiescence_search_algorithum_model.search_alice(      # 再帰呼出
+                child_pv_list = quiescence_search_algorithum_model.search_after_entry_node_quiescence(parent_pv=pv)
+
+                child_plot_model = quiescence_search_algorithum_model.search_as_quiescence(      # 再帰呼出
                         depth_qs    = self._search_context_model.max_depth_qs,
-                        parent_pv   = pv,
-                        parent_move = my_move)
+                        pv_list     = child_pv_list)
             else:
                 child_plot_model = pv.backwards_plot_model
 

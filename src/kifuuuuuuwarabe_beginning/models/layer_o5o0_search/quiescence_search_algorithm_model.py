@@ -76,11 +76,37 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         return pv.backwards_plot_model, pv.is_terminate
 
 
-    def search_alice(
+    def search_after_entry_node_quiescence(self, parent_pv):
+        """
+        Returns
+        -------
+        pv_list : list<PrincipalVariationModel>
+            読み筋のリスト。
+        """
+        if parent_pv.is_terminate:
+            return []
+
+        ##########################
+        # MARK: 合法手クリーニング
+        ##########################
+
+        legal_move_list = list(self._search_context_model.gymnasium.table.legal_moves)
+        remaining_moves = legal_move_list
+        remaining_moves = self.remove_drop_moves(remaining_moves=remaining_moves)           # 打の手を全部除外したい。
+        remaining_moves = self.remove_depromoted_moves(remaining_moves=remaining_moves)     # ［成れるのに成らない手］は除外
+        (remaining_moves, rolled_back) = QuiescenceSearchAlgorithmModel.filtering_same_destination_move_list(parent_move=parent_pv.vertical_list_of_move_pv[-1], remaining_moves=remaining_moves, rollback_if_empty=True) # できれば［同］の手を残す。
+        remaining_moves = QuiescenceSearchAlgorithmModel.get_cheapest_move_list(remaining_moves=remaining_moves)
+        (remaining_moves, rolled_back) = self.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=False)       # 駒を取る手と、王手のみ残す
+
+        # remaining_moves から pv へ変換。
+        pv_list = SearchAlgorithmModel.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=self._search_context_model)
+        return pv_list
+
+
+    def search_as_quiescence(
             self,
             depth_qs,
-            parent_pv,
-            parent_move):
+            pv_list):
         """
         Parameters
         ----------
@@ -96,28 +122,8 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             これは駒得評価値も算出できる。
         """
 
-        # まだ深く読む場合。
-
-        ######################
-        # MARK: 合法手スキャン
-        ######################
-
-        # 合法手を全部調べる。
-        legal_move_list = list(self._search_context_model.gymnasium.table.legal_moves)
-        remaining_moves = legal_move_list
-
-        ############################
-        # MARK: データ・クリーニング
-        ############################
-
-        remaining_moves = self.remove_drop_moves(remaining_moves=remaining_moves)           # 打の手を全部除外したい。
-        remaining_moves = self.remove_depromoted_moves(remaining_moves=remaining_moves)     # ［成れるのに成らない手］は除外
-        (remaining_moves, rolled_back) = QuiescenceSearchAlgorithmModel.filtering_same_destination_move_list(parent_move=parent_move, remaining_moves=remaining_moves, rollback_if_empty=True) # できれば［同］の手を残す。
-        remaining_moves = QuiescenceSearchAlgorithmModel.get_cheapest_move_list(remaining_moves=remaining_moves)
-        (remaining_moves, rolled_back) = self.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=False)       # 駒を取る手と、王手のみ残す
-
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
-        if len(remaining_moves) == 0:
+        if len(pv_list) == 0:
             return self.create_backwards_plot_model_at_quiescence(depth_qs=depth_qs)
 
         ####################
@@ -132,10 +138,6 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         else:
             best_value = constants.value.SMALL_VALUE
         depth_qs_extend     = 0
-
-        # # TODO remaining_moves から pv へ変換したい。 parent_pv が None であってはいけない。
-        pv_list = SearchAlgorithmModel.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=self._search_context_model)
-
 
         for pv in pv_list:
 
@@ -184,10 +186,11 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
                     parent_move     = my_move)
 
             if not pv.is_terminate:
-                child_plot_model = self.search_alice(      # 再帰呼出
+                child_pv_list = self.search_after_entry_node_quiescence(parent_pv=pv)
+
+                child_plot_model = self.search_as_quiescence(      # 再帰呼出
                         depth_qs    = depth_qs + depth_qs_extend,
-                        parent_pv   = pv,
-                        parent_move = my_move)
+                        pv_list     = child_pv_list)
             else:
                 child_plot_model = pv.backwards_plot_model
 
