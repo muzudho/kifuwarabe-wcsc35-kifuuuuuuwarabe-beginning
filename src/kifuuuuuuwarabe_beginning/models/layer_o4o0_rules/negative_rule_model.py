@@ -40,7 +40,9 @@ class NegativeRuleModel(RuleModel):
                 table           = table):
              return remaining_moves
 
-        self._on_node_entry_negative(table)
+        self._on_node_entry_negative(
+                remaining_moves = remaining_moves,
+                table           = table)
 
         for i in range(len(remaining_moves))[::-1]:     # `[::-1]` - 逆順
             m = remaining_moves[i]
@@ -77,7 +79,7 @@ class NegativeRuleModel(RuleModel):
         return False
 
 
-    def _on_node_entry_negative(self, table):
+    def _on_node_entry_negative(self, remaining_moves, table):
         """ノード来訪時。
         """
         pass

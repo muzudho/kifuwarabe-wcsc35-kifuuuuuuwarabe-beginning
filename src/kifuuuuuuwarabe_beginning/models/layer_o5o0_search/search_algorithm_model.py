@@ -108,7 +108,8 @@ class SearchAlgorithmModel:
                 basketball_court_model=self._search_context_model.gymnasium.basketball_court_model)
 
         do_not_depromotion_model._on_node_entry_negative(               # ノード来訪時。
-                table=self._search_context_model.gymnasium.table)
+                remaining_moves = remaining_moves,
+                table           = self._search_context_model.gymnasium.table)
 
         for my_move in reversed(remaining_moves):   # 指し手を全部調べる。
             # ［成れるのに成らない手］は除外

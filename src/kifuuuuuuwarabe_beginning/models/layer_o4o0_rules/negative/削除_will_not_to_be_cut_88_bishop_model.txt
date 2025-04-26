@@ -19,23 +19,6 @@ class WillNotToBeCut88Bishop(MatchOperation):
                 config_doc  = config_doc)
 
 
-    # def _on_node_entry_negative(self, remaining_moves, table):
-    #     # １手指してから判定
-    #     for i in range(len(remaining_moves))[::-1]:     # `[::-1]` - 逆順
-    #         m = remaining_moves[i]
-    #         table.do_move_o1o1x(m)   # １手指す
-
-    #         # ［８八の角を素抜かれない］意志
-    #         if self.is_enabled:
-    #             mind = self.after_moving(table)
-    #             if mind == constants.mind.WILL_NOT:
-    #                 del remaining_moves[i]
-
-    #         table.undo_move_o1o1x() # １手戻す
-
-    #     return remaining_moves
-
-
     def after_moving_all(self, table):
         """指した後に意志があるか？        
         """

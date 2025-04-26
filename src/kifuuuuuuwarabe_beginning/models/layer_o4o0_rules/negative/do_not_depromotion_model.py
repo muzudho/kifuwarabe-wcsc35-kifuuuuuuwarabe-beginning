@@ -20,7 +20,7 @@ class DoNotDepromotionModel(NegativeRuleModel):
         self._promotion_doc = None
 
 
-    def _on_node_entry_negative(self, table):
+    def _on_node_entry_negative(self, remaining_moves, table):
         """ノード来訪時。
         """
 
@@ -30,7 +30,7 @@ class DoNotDepromotionModel(NegativeRuleModel):
         # }
         self._promotion_doc = {}
 
-        for move in list(table.legal_moves):
+        for move in remaining_moves:
             is_promotion = cshogi.move_is_promotion(move)
             if not is_promotion:
                 continue
