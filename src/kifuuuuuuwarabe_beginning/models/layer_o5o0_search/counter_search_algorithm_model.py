@@ -1,19 +1,14 @@
 import cshogi
 import time
 
-from ...logics.layer_o1o0 import MoveListLogics
 from ..layer_o1o_9o0 import PieceValuesModel
 from ..layer_o1o0 import constants, Mars, PtolemaicTheoryModel, SquareModel
-from ..layer_o1o0o_9o0_table_helper import TableHelper
-from ..layer_o2o0 import BackwardsPlotModel, cutoff_reason
-from ..layer_o4o0_rules.negative import DoNotDepromotionModel
 from .quiescence_search_algorithm_model import QuiescenceSearchAlgorithmModel
 from .search_algorithm_model import SearchAlgorithmModel
-from .search_context_model import SearchContextModel
 
 
-class NormalSearchAlgorithmModel(SearchAlgorithmModel):
-    """２階以降の通常の探索。
+class CounterSearchAlgorithmModel(SearchAlgorithmModel):
+    """２階の探索。
     """
 
 
@@ -30,7 +25,6 @@ class NormalSearchAlgorithmModel(SearchAlgorithmModel):
 
     def search_as_normal(
             self,
-            depth_normal,
             depth_qs):
         """静止探索の開始。
 
@@ -40,8 +34,6 @@ class NormalSearchAlgorithmModel(SearchAlgorithmModel):
 
         Parameters
         ----------
-        depth_normal : int
-            通常の探索で、あと何手深く読むか。
         depth_qs : int
             静止探索で、あと何手深く読むか。
 
@@ -155,12 +147,7 @@ class NormalSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 相手番の処理
             ####################
 
-            # if 0 < depth_normal:    # 通常探索
-            # child_plot_model = self.search_as_normal(      # 再帰呼出
-            #         depth_normal   = depth_normal - 1,
-            #         depth_qs       = depth_qs + depth_qs_extend)
-            # else:   # 静止探索。
-            quiescence_search_algorithum_model = QuiescenceSearchAlgorithmModel(
+            quiescence_search_algorithum_model = QuiescenceSearchAlgorithmModel(    # 静止探索。
                     search_context_model    = self._search_context_model)
             child_plot_model = quiescence_search_algorithum_model.search_alice(      # 再帰呼出
                     depth_qs       = depth_qs + depth_qs_extend,

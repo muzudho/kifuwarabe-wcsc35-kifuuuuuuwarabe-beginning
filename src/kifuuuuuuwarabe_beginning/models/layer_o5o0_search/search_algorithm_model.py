@@ -32,7 +32,7 @@ class SearchAlgorithmModel:
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.RESIGN,
                 cutoff_reason                   = cutoff_reason.GAME_OVER,
-                hint                            = '手番の投了局面時')
+                hint                            = '')
 
 
     def create_backwards_plot_model_at_mate_move_in_1_ply(self, mate_move):
@@ -46,7 +46,7 @@ class SearchAlgorithmModel:
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.RESIGN,
                 cutoff_reason                   = cutoff_reason.MATE_MOVE_IN_1_PLY,
-                hint                            = '一手詰め時')
+                hint                            = '')
     
         # 今回の手を付け加える。
         best_plot_model.append_move(
@@ -63,7 +63,7 @@ class SearchAlgorithmModel:
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.NYUGYOKU_WIN,
                 cutoff_reason                   = cutoff_reason.NYUGYOKU_WIN,
-                hint                            = '手番の入玉宣言勝ち局面時')
+                hint                            = '')
         return best_plot_model
 
 

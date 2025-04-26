@@ -1,14 +1,10 @@
 import cshogi
 import time
 
-from ...logics.layer_o1o0 import MoveListLogics
 from ..layer_o1o0 import constants, Mars, SquareModel
-from ..layer_o1o0o_9o0_table_helper import TableHelper
-from ..layer_o2o0 import BackwardsPlotModel, cutoff_reason
-from ..layer_o4o0_rules.negative import DoNotDepromotionModel
 from .quiescence_search_algorithm_model import QuiescenceSearchAlgorithmModel
 from .search_algorithm_model import SearchAlgorithmModel
-from .normal_search_algorithm_model import NormalSearchAlgorithmModel
+from .counter_search_algorithm_model import CounterSearchAlgorithmModel
 from .search_context_model import SearchContextModel
 
 
@@ -30,7 +26,6 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
     def search_as_root(
             self,
-            depth_normal,
             depth_qs,
             remaining_moves):
         """静止探索の開始。
@@ -41,8 +36,6 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
         Parameters
         ----------
-        depth_normal : int
-            通常の探索で、あと何手深く読むか。
         depth_qs : int
             静止探索で、あと何手深く読むか。
         remaining_moves : list<int>
@@ -158,31 +151,13 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
             # NOTE この辺りは［１階］。max_depth - depth。
 
-            # if 0 < depth_normal:    # 通常探索
-
             search_context_model = SearchContextModel(
                     max_depth = depth_qs,
                     gymnasium = self._search_context_model.gymnasium)
-            normal_search_algorithm_model = NormalSearchAlgorithmModel(
+            counter_search_algorithm_model = CounterSearchAlgorithmModel(            # 応手サーチ。
                     search_context_model = search_context_model)
-            child_plot_model = normal_search_algorithm_model.search_as_normal(      # 再帰呼出
-                    depth_normal   = 1,
+            child_plot_model = counter_search_algorithm_model.search_as_normal(      # 再帰呼出
                     depth_qs       = depth_qs + depth_qs_extend)
-
-            #   # TODO 戻り値が違う。
-            #     all_backwards_plot_models_at_first = qs_at_first.search_as_normal(
-            #             #best_plot_model_in_older_sibling    = None,
-            #             depth_normal                        = depth_normal - 1,
-            #             depth_qs                             = depth_qs,
-            #             #beta_cutoff_value                   = constants.value.BETA_CUTOFF_VALUE,    # すごい高い点数。
-            #             remaining_moves                     = remaining_moves)
-
-            # else:   # 静止探索。
-            quiescenec_search_for_scramble_model = QuiescenceSearchAlgorithmModel(
-                    search_context_model    = self._search_context_model)
-            child_plot_model = quiescenec_search_for_scramble_model.search_alice(      # 再帰呼出
-                    depth_qs       = depth_qs + depth_qs_extend,
-                    parent_move = my_move)
 
             ################
             # MARK: 一手戻す
@@ -206,7 +181,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             child_plot_model.append_move(
                     move                = my_move,
                     capture_piece_type  = cap_pt,
-                    hint                = f"１階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の手はなんでも記憶")
+                    hint                = '')   # f"１階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の手はなんでも記憶"
             all_backwards_plot_models_at_first.append(child_plot_model)
 
             # NOTE この辺りは［０階］。

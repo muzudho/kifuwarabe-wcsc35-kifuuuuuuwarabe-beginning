@@ -287,10 +287,7 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
         return remaining_moves, 0
 
     all_backwards_plot_models_at_first = root_search_algorithum_model.search_as_root(
-            #best_plot_model_in_older_sibling    = None,
-            depth_normal                        = 1,
             depth_qs                               = max_depth,
-            #beta_cutoff_value                   = constants.value.BETA_CUTOFF_VALUE,    # すごい高い点数。
             remaining_moves                     = remaining_moves)
 
     #print(f"{alice_s_best_piece_value=} {len(all_backwards_plot_models_at_first)=}")
