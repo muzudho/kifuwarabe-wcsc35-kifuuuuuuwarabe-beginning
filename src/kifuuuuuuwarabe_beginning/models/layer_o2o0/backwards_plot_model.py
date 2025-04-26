@@ -37,7 +37,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         return value
 
 
-    def __init__(self, is_mars_at_out_of_termination, is_gote_at_out_of_termination, out_of_termination, hint, move_list, cap_list, list_of_accumulate_exchange_value_on_earth):
+    def __init__(self, is_mars_at_out_of_termination, is_gote_at_out_of_termination, out_of_termination, hint_list, move_list, cap_list, list_of_accumulate_exchange_value_on_earth):
         """初期化。
 
         Parameters
@@ -54,7 +54,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         self._is_mars_at_out_of_termination = is_mars_at_out_of_termination
         self._is_gote_at_out_of_termination = is_gote_at_out_of_termination
         self._out_of_termination            = out_of_termination
-        self._hint_list                     = [hint]
+        self._hint_list                     = hint_list
         self._move_list                     = move_list
         self._cap_list                      = cap_list
         self._list_of_accumulate_exchange_value_on_earth = list_of_accumulate_exchange_value_on_earth   # 地球から見た、取った駒の交換値。
@@ -273,7 +273,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
                 is_mars_at_out_of_termination   = self._is_mars_at_out_of_termination,
                 is_gote_at_out_of_termination   = self._is_gote_at_out_of_termination,
                 out_of_termination              = self._out_of_termination,
-                hint                            = list(self._hint),
+                hint_list                       = list(self._hint_list),
                 move_list                       = list(self._move_list),
                 cap_list                        = list(self._cap_list),
                 list_of_accumulate_exchange_value_on_earth = list(self._list_of_accumulate_exchange_value_on_earth))

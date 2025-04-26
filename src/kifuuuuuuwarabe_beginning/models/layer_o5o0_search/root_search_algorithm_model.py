@@ -122,10 +122,9 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         # MARK: PVリスト探索
         ####################
 
-        pv_list = RootSearchAlgorithmModel._make_pv_list(remaining_moves=remaining_moves, search_context_model=self._search_context_model)
+        pv_list = []
 
-        for pv in pv_list:
-            #pv_list.append(pv.copy_pv())
+        for pv in RootSearchAlgorithmModel._make_pv_list(remaining_moves=remaining_moves, search_context_model=self._search_context_model):
             vertical_list_of_move_pv = pv.pop_vertical_list_of_move_pv()      # 指し手の履歴をポップします。
 
             ########################
@@ -195,6 +194,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             pv.backwards_plot_model = backwards_plot_model
 
             # ベータカットもしません。全部返すから。
+            pv_list.append(pv.copy_pv())
 
         ########################
         # MARK: 合法手スキャン後

@@ -31,7 +31,7 @@ class SearchAlgorithmModel:
                 is_mars_at_out_of_termination   = self._search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.RESIGN,
-                hint                            = '',
+                hint_list                       = [],
                 move_list                       = [],
                 cap_list                        = [],
                 list_of_accumulate_exchange_value_on_earth  = [])
@@ -47,7 +47,7 @@ class SearchAlgorithmModel:
                 is_mars_at_out_of_termination   = not self._search_context_model.gymnasium.is_mars,     # ［詰む］のは、もう１手先だから。
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.RESIGN,
-                hint                            = '',
+                hint_list                       = [],
                 move_list                       = [],
                 cap_list                        = [],
                 list_of_accumulate_exchange_value_on_earth  = [])
@@ -72,7 +72,7 @@ class SearchAlgorithmModel:
                 is_mars_at_out_of_termination   = self._search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.NYUGYOKU_WIN,
-                hint                            = '',
+                hint_list                       = [],
                 move_list                       = [],
                 cap_list                        = [],
                 list_of_accumulate_exchange_value_on_earth  = [])
@@ -84,7 +84,7 @@ class SearchAlgorithmModel:
                 is_mars_at_out_of_termination   = self._search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.MAX_DEPTH_BY_THINK,
-                hint                            = '',
+                hint_list                       = [],
                 move_list                       = [],
                 cap_list                        = [],
                 list_of_accumulate_exchange_value_on_earth  = [])
@@ -96,7 +96,7 @@ class SearchAlgorithmModel:
                 is_mars_at_out_of_termination   = self._search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.QUIESCENCE,
-                hint                            = '',
+                hint_list                       = [],
                 move_list                       = [],
                 cap_list                        = [],
                 list_of_accumulate_exchange_value_on_earth  = [])
@@ -108,7 +108,7 @@ class SearchAlgorithmModel:
                 is_mars_at_out_of_termination   = self._search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.NO_CANDIDATES,
-                hint                            = '',
+                hint_list                       = [],
                 move_list                       = [],
                 cap_list                        = [],
                 list_of_accumulate_exchange_value_on_earth  = [])
