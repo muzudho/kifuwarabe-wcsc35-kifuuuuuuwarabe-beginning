@@ -155,7 +155,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             self._search_context_model.frontwards_plot_model.append_move_from_front(
                     move    = my_move,
                     cap_pt  = cap_pt)
-            self._search_context_model.gymnasium.health_check_qs_model.append_node(cshogi.move_to_usi(my_move))
+            self._search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=my_move, hint='')
 
             ####################
             # MARK: 相手番の処理
@@ -229,7 +229,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
                 move                = best_move,
                 capture_piece_type  = best_move_cap_pt,
                 best_value          = best_value,
-                hint                = f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の手記憶")
+                hint                = '')   # f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の手記憶"
 
         return best_plot_model
 

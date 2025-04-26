@@ -217,11 +217,12 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
         len_of_move_list = len(self._move_list)
         for layer_no in reversed(range(0, len_of_move_list)):  # 逆順。
+            piece_exchange_value_on_earth   = self._list_of_accumulate_exchange_value_on_earth[layer_no]
 
             # １手目は読み筋から省く。（別項目として表示されるから）
             if layer_no == len_of_move_list - 1:
-                pass
-            
+                tokens.append(f"({len_of_move_list - layer_no})[{piece_exchange_value_on_earth}]")
+
             else:
                 move        = self._move_list[layer_no]
                 cap_pt      = self._cap_list[layer_no]
@@ -236,7 +237,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
                         is_mars = is_mars,
                         is_gote = is_gote).stringify()
 
-                piece_exchange_value_on_earth   = self._list_of_accumulate_exchange_value_on_earth[layer_no]
                 tokens.append(f"({len_of_move_list - layer_no}){move_jp_str}[{piece_exchange_value_on_earth}]")
 
             # 手番交代

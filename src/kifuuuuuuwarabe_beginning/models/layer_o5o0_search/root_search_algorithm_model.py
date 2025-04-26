@@ -170,7 +170,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             self._search_context_model.frontwards_plot_model.append_move_from_front(
                     move    = my_move,
                     cap_pt  = cap_pt)
-            self._search_context_model.gymnasium.health_check_qs_model.append_node(cshogi.move_to_usi(my_move))
+            self._search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=my_move, hint='')
 
             ####################
             # MARK: 相手番の処理

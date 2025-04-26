@@ -1,12 +1,9 @@
 import cshogi
 import time
 
-from ...logics.layer_o1o0 import MoveListLogics
 from ..layer_o1o_9o0 import PieceValuesModel
 from ..layer_o1o0 import constants, Mars, PtolemaicTheoryModel, SquareModel
 from ..layer_o1o0o_9o0_table_helper import TableHelper
-from ..layer_o2o0 import BackwardsPlotModel
-from ..layer_o4o0_rules.negative import DoNotDepromotionModel
 from .search_algorithm_model import SearchAlgorithmModel
 
 
@@ -147,7 +144,7 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             self._search_context_model.frontwards_plot_model.append_move_from_front(
                     move    = my_move,
                     cap_pt  = cap_pt)
-            self._search_context_model.gymnasium.health_check_qs_model.append_node(cshogi.move_to_usi(my_move))
+            self._search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=my_move, hint='')
 
             ####################
             # MARK: 相手番の処理
@@ -216,7 +213,7 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
                 move                = best_move,
                 capture_piece_type  = best_move_cap_pt,
                 best_value          = best_value,
-                hint                = f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の手記憶")
+                hint                = '')   # f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の手記憶"
 
         return best_plot_model
 

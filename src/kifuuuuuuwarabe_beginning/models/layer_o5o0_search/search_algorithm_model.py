@@ -35,7 +35,7 @@ class SearchAlgorithmModel:
 
 
     def create_backwards_plot_model_at_mate_move_in_1_ply(self, mate_move):
-        self._search_context_model.gymnasium.health_check_qs_model.append_node(f"＜一手詰め＞{cshogi.move_to_usi(mate_move)}")
+        self._search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=mate_move, hint='＜一手詰め＞')
         self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
         dst_sq_obj = SquareModel(cshogi.move_to(mate_move))           # ［移動先マス］
         cap_pt = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
@@ -56,7 +56,7 @@ class SearchAlgorithmModel:
                 move                = mate_move,
                 capture_piece_type  = cap_pt,
                 best_value          = best_value,
-                hint                = f"{Mars.japanese(self._search_context_model.gymnasium.is_mars)}の一手詰め時")
+                hint                = f"{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は一手詰まされ")
         return best_plot_model
 
 
@@ -76,7 +76,7 @@ class SearchAlgorithmModel:
                 is_mars_at_out_of_termination   = self._search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.MAX_DEPTH_BY_THINK,
-                hint                            = f"{self._search_context_model.max_depth - depth_qs}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}でこれ以上深く読まない場合_{depth_qs=}/{self._search_context_model.max_depth=}")
+                hint                            = '')
         return best_plot_model
 
 
@@ -86,7 +86,7 @@ class SearchAlgorithmModel:
                 is_mars_at_out_of_termination   = self._search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.QUIESCENCE,
-                hint                            = f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は静止")
+                hint                            = '')
         return future_plot_model
 
 
@@ -96,7 +96,7 @@ class SearchAlgorithmModel:
                 is_mars_at_out_of_termination   = self._search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.NO_CANDIDATES,
-                hint                            = f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は指したい手無し")
+                hint                            = '')
         return future_plot_model
 
 
