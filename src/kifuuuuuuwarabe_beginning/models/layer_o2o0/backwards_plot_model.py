@@ -3,7 +3,7 @@ import cshogi
 from ..layer_o1o_9o0 import PieceValuesModel
 from ..layer_o1o0o_9o0_table_helper import TableHelper
 from ..layer_o1o0 import constants, OutOfTerminationModel, Mars, PieceTypeModel, PlanetPieceTypeModel, SquareModel
-from ..layer_o1o0o1o0_human import HumanPresentableMoveModel
+from ..layer_o1o0o1o0_japanese import JapaneseMoveModel
 
 
 class CutoffReason():
@@ -18,6 +18,7 @@ class CutoffReason():
         '入玉宣言勝ち',     # [3]
         '応手無し',         # [4] 末端局面で合法手の中から指したい手無し
         '探索深さ最大',     # [5]
+        '静止',             # [6] 駒の取り合いが無くなった。
     ]
 
 
@@ -59,6 +60,13 @@ class CutoffReason():
         """探索深さ最大。
         """
         return 5
+
+
+    @property
+    def QUIESCENCE(self):
+        """静止。駒の取り合いがなくなった。
+        """
+        return 6
 
 
 cutoff_reason = CutoffReason()
@@ -286,7 +294,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
                 raise ValueError(f"move は int 型である必要があります。 {layer_no=} {type(move)=} {move=} {self._move_list=}")
 
             # 指し手のUSI表記を独自形式に変更。
-            move_str = HumanPresentableMoveModel.from_move(move=move, moving_pt=moving_pt, cap_pt=cap_pt, is_mars=is_mars, is_gote=is_gote).stringify()
+            move_str = JapaneseMoveModel.from_move(move=move, moving_pt=moving_pt, cap_pt=cap_pt, is_mars=is_mars, is_gote=is_gote).stringify()
 
             piece_exchange_value_on_earth   = self._list_of_accumulate_exchange_value_on_earth[layer_no]
             tokens.append(f"({len_of_move_list - layer_no}){move_str}[{piece_exchange_value_on_earth}]")

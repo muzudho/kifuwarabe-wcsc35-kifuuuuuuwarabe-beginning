@@ -181,7 +181,7 @@ class GymnasiumModel():
             
             self._thinking_logger_module.delete_file()  # ログファイル　＞　削除。
 
-        self._thinking_logger_module.append(command)
+        self._thinking_logger_module.append_message(command)
         #print(f"★ [gymnasium.py > on_position] end.")
 
 

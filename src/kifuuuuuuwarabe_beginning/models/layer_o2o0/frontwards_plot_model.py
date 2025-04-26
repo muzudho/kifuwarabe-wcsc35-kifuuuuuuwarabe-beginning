@@ -1,7 +1,7 @@
 import cshogi
 
 from ..layer_o1o0o_9o0_table_helper import TableHelper
-from ..layer_o1o0o1o0_human import HumanPresentableMoveModel
+from ..layer_o1o0o1o0_japanese import JapaneseMoveModel
 
 
 class FrontwardsPlotModel(): # TODO Rename PathFromRoot
@@ -74,7 +74,7 @@ class FrontwardsPlotModel(): # TODO Rename PathFromRoot
 
             #move_str = cshogi.move_to_usi(move)
             # 指し手のUSI表記を独自形式に変更。
-            move_str = HumanPresentableMoveModel.from_move(move=move, moving_pt=moving_pt, cap_pt=cap_pt, is_mars=is_mars, is_gote=is_gote).stringify()
+            move_str = JapaneseMoveModel.from_move(move=move, moving_pt=moving_pt, cap_pt=cap_pt, is_mars=is_mars, is_gote=is_gote).stringify()
 
             tokens.append(move_str)
 

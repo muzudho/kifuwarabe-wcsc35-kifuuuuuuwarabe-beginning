@@ -4,8 +4,8 @@ from ..layer_o1o_8o0_str import StringResourcesModel
 from ..layer_o1o0 import PlanetPieceTypeModel, SquareModel
 
 
-class HumanPresentableMoveModel:
-    """人が読みやすい書式の指し手。
+class JapaneseMoveModel:
+    """日本人が読みやすい書式の指し手。
     """
 
 
@@ -14,6 +14,8 @@ class HumanPresentableMoveModel:
         """
         Parameters
         ----------
+        move : int
+            シーショーギの指し手。
         moving_pt : int
             駒種類。盤上の移動元の駒か、打った駒。
         cap_pt : int
@@ -21,7 +23,7 @@ class HumanPresentableMoveModel:
         is_mars : bool
             火星か。
         is_gote : bool
-            後手か。（盤から調べておくこと）
+            後手か。
         """
         src_sq_obj  = SquareModel(cshogi.move_from(move))       # ［移動元マス］
         dst_sq_obj  = SquareModel(cshogi.move_to(move))         # ［移動先マス］
@@ -32,7 +34,7 @@ class HumanPresentableMoveModel:
                 is_mars     = is_mars,
                 is_gote     = is_gote)
 
-        return HumanPresentableMoveModel(
+        return JapaneseMoveModel(
                 move            = move,
                 cap_pt          = cap_pt,
                 src_sq_obj      = src_sq_obj,

@@ -1,0 +1,1 @@
+from .japanese_move_model import JapaneseMoveModel

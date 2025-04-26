@@ -51,7 +51,7 @@ class MovesReductionFilterLogics():
 
         for negative_rule in negative_rules_to_remove:
             gymnasium.gourei_collection_model.negative_rule_list_of_active.remove(negative_rule)
-            gymnasium.thinking_logger_module.append(f"[moves_reduction_filter_logics.py > on_node_entry_negative] delete negative rule. {negative_rule.label}")
+            gymnasium.thinking_logger_module.append_message(f"[moves_reduction_filter_logics.py > on_node_entry_negative] delete negative rule. {negative_rule.label}")
 
 
         return remaining_moves
@@ -90,11 +90,11 @@ class MovesReductionFilterLogics():
             for negative_rule in negative_rules_to_activate:
                 gymnasium.gourei_collection_model.negative_rule_list_of_idle.remove(negative_rule)
                 gymnasium.gourei_collection_model.negative_rule_list_of_active.append(negative_rule)
-                gymnasium.thinking_logger_module.append(f"[moves_reduction_filter_logics.py > after_best_moving_o1o0] activate negative rule. {negative_rule.label}")
+                gymnasium.thinking_logger_module.append_message(f"[moves_reduction_filter_logics.py > after_best_moving_o1o0] activate negative rule. {negative_rule.label}")
 
             for negative_rule in negative_rules_to_remove:
                 gymnasium.gourei_collection_model.negative_rule_list_of_active.remove(negative_rule)
-                gymnasium.thinking_logger_module.append(f"[moves_reduction_filter_logics.py > after_best_moving_o1o0] delete negative rule. {negative_rule.label}")
+                gymnasium.thinking_logger_module.append_message(f"[moves_reduction_filter_logics.py > after_best_moving_o1o0] delete negative rule. {negative_rule.label}")
 
 
         _for_idle_negative_rules(
@@ -115,4 +115,4 @@ class MovesReductionFilterLogics():
 
         for negative_rule in negative_rules_to_remove:
             gymnasium.gourei_collection_model.negative_rule_list_of_active.remove(negative_rule)
-            gymnasium.thinking_logger_module.append(f"[moves_reduction_filter_logics.py > after_best_moving_o1o0] delete negative rule. {negative_rule.label}")
+            gymnasium.thinking_logger_module.append_message(f"[moves_reduction_filter_logics.py > after_best_moving_o1o0] delete negative rule. {negative_rule.label}")

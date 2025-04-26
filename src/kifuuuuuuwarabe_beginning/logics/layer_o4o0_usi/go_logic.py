@@ -76,7 +76,7 @@ class _Go2nd():
         if self._gymnasium.table.is_game_over():
             """投了局面時。
             """
-            self._gymnasium.thinking_logger_module.append(f"Game over.")
+            self._gymnasium.thinking_logger_module.append_message(f"Game over.")
             return ResultOfGoModel(
                     search_result_state_model   = SearchResultStateModel.RESIGN,
                     alice_s_profit              = 0,
@@ -89,7 +89,7 @@ class _Go2nd():
         if self._gymnasium.table.is_nyugyoku():
             """入玉宣言勝ち局面時。
             """
-            self._gymnasium.thinking_logger_module.append(f"Nyugyoku win.")
+            self._gymnasium.thinking_logger_module.append_message(f"Nyugyoku win.")
             return ResultOfGoModel(
                     search_result_state_model   = SearchResultStateModel.NYUGYOKU_WIN,
                     alice_s_profit              = 0,
@@ -105,7 +105,7 @@ class _Go2nd():
 
             if (matemove := self._gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
-                self._gymnasium.thinking_logger_module.append(f"Ittedume.")
+                self._gymnasium.thinking_logger_module.append_message(f"Ittedume.")
                 return ResultOfGoModel(
                         search_result_state_model   = SearchResultStateModel.MATE_IN_1_MOVE,
                         alice_s_profit              = 0,
@@ -128,11 +128,11 @@ class _Go2nd():
                 remaining_moves = move_list,
                 gymnasium       = self._gymnasium)
         length_of_quiescence_search_by_kifuwarabe   = len(remaining_moves_qs)
-        self._gymnasium.thinking_logger_module.append(f"QS_select_length={length_of_quiescence_search_by_kifuwarabe}")
+        self._gymnasium.thinking_logger_module.append_message(f"QS_select_length={length_of_quiescence_search_by_kifuwarabe}")
 
         if len(remaining_moves_qs) == 0:
             remaining_moves_qs = old_all_legal_moves
-            self._gymnasium.thinking_logger_module.append(f"QS is 0. Rollback to old_all_legal_moves. len={len(remaining_moves_qs)}.")
+            self._gymnasium.thinking_logger_module.append_message(f"QS is 0. Rollback to old_all_legal_moves. len={len(remaining_moves_qs)}.")
             for move in remaining_moves_qs:
                 self._gymnasium.health_check_go_model.append(
                         move    = move,
@@ -174,11 +174,11 @@ class _Go2nd():
                     remaining_moves = remaining_moves_qs,
                     gymnasium       = self._gymnasium)
             length_by_kifuwarabe = len(remaining_moves_nr)
-            self._gymnasium.thinking_logger_module.append(f"{length_by_kifuwarabe=}")
+            self._gymnasium.thinking_logger_module.append_message(f"{length_by_kifuwarabe=}")
 
             if len(remaining_moves_nr) == 0:
                 remaining_moves_nr = old_remaining_moves_qs
-                self._gymnasium.thinking_logger_module.append(f"NR is 0. Rollback to QS. len={len(remaining_moves_nr)}.")
+                self._gymnasium.thinking_logger_module.append_message(f"NR is 0. Rollback to QS. len={len(remaining_moves_nr)}.")
 
                 for move in remaining_moves_nr:
                     self._gymnasium.health_check_go_model.append(
@@ -204,7 +204,7 @@ class _Go2nd():
                 move    = best_move,
                 name    = 'BM_bestmove',
                 value   =  True)
-        self._gymnasium.thinking_logger_module.append(f"Best move={cshogi.move_to_usi(best_move)}")
+        self._gymnasium.thinking_logger_module.append_message(f"Best move={cshogi.move_to_usi(best_move)}")
 
         # ログ
         message = f"""\
@@ -229,7 +229,7 @@ GOREI COLLECTION
 """
 
         # TODO ネガティブ・ルールの一覧も表示したい。
-        self._gymnasium.thinking_logger_module.append(message)
+        self._gymnasium.thinking_logger_module.append_message(message)
         # NOTE これを書くと、将棋ホームでフリーズ： print(message, file=sys.stderr)
 
         # ［指後］
@@ -308,7 +308,7 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
         if best_exchange_value == 0:
             exists_zero_value_move = True
 
-        gymnasium.thinking_logger_module.append(f"all_backwards_plot_models_at_first len={len(all_backwards_plot_models_at_first)}")
+        gymnasium.thinking_logger_module.append_message(f"all_backwards_plot_models_at_first len={len(all_backwards_plot_models_at_first)}")
 
         for backwards_plot_model in all_backwards_plot_models_at_first:
 

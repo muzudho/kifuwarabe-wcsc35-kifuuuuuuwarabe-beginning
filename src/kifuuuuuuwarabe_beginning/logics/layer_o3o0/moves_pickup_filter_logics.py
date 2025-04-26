@@ -38,6 +38,6 @@ class MovesPickupFilterLogics():
 
         for positive_rule in positive_rules_to_remove:
             gymnasium.gourei_collection_model.positive_rule_list_of_active.remove(positive_rule)
-            gymnasium.thinking_logger_module.append(f"[moves_pickup_filter_logics.py > on_node_entry_positive_main] delete positive rule. {positive_rule.label}")
+            gymnasium.thinking_logger_module.append_message(f"[moves_pickup_filter_logics.py > on_node_entry_positive_main] delete positive rule. {positive_rule.label}")
 
         return moves_to_pickup

@@ -59,11 +59,11 @@ class SearchAlgorithmModel:
     def create_backwards_plot_model_at_nyugyoku_win(self):
         self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜入玉宣言勝ち＞')
         best_plot_model = BackwardsPlotModel(
-                is_mars_at_out_of_termination  = self._search_context_model.gymnasium.is_mars,
-                is_gote_at_out_of_termination  = self._search_context_model.gymnasium.table.is_gote,
-                out_of_termination             = constants.out_of_termination.NYUGYOKU_WIN,
-                cutoff_reason           = cutoff_reason.NYUGYOKU_WIN,
-                hint                    = '手番の入玉宣言勝ち局面時')
+                is_mars_at_out_of_termination   = self._search_context_model.gymnasium.is_mars,
+                is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
+                out_of_termination              = constants.out_of_termination.NYUGYOKU_WIN,
+                cutoff_reason                   = cutoff_reason.NYUGYOKU_WIN,
+                hint                            = '手番の入玉宣言勝ち局面時')
         return best_plot_model
 
 
@@ -81,15 +81,16 @@ class SearchAlgorithmModel:
     def create_backwards_plot_model_at_quiescence(self, depth_qs):
         self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜静止＞')
         future_plot_model = BackwardsPlotModel(
-                is_mars_at_out_of_termination  = self._search_context_model.gymnasium.is_mars,
-                is_gote_at_out_of_termination  = self._search_context_model.gymnasium.table.is_gote,
-                out_of_termination             = constants.out_of_termination.QUIESCENCE,
-                cutoff_reason           = cutoff_reason.NO_MOVES,
-                hint                    = f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は静止")
+                is_mars_at_out_of_termination   = self._search_context_model.gymnasium.is_mars,
+                is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
+                out_of_termination              = constants.out_of_termination.QUIESCENCE,
+                cutoff_reason                   = cutoff_reason.QUIESCENCE,
+                hint                            = f"{self._search_context_model.max_depth - depth_qs + 1}階の{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は静止")
         return future_plot_model
 
 
     def create_backwards_plot_model_at_no_candidates(self, depth_qs):
+        self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜候補手無し＞')
         future_plot_model = BackwardsPlotModel(
                 is_mars_at_out_of_termination   = self._search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,

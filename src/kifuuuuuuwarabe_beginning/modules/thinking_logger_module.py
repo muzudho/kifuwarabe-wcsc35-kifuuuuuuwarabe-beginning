@@ -31,6 +31,6 @@ class ThinkingLoggerModule():
                 pass
 
 
-    def append(self, message):
+    def append_message(self, message):
         with open(file=self._file_name, mode='a', encoding='utf-8') as f:
             f.write(f"{message}\n")
