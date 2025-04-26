@@ -32,7 +32,9 @@ class SearchAlgorithmModel:
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.RESIGN,
                 hint                            = '',
-                move_list                       = [])
+                move_list                       = [],
+                cap_list                        = [],
+                list_of_accumulate_exchange_value_on_earth  = [])
 
 
     def create_backwards_plot_model_at_mate_move_in_1_ply(self, mate_move):
@@ -46,7 +48,9 @@ class SearchAlgorithmModel:
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.RESIGN,
                 hint                            = '',
-                move_list                       = [])
+                move_list                       = [],
+                cap_list                        = [],
+                list_of_accumulate_exchange_value_on_earth  = [])
     
         # 今回の手を付け加える。
         if self._search_context_model.gymnasium.is_mars:
@@ -69,7 +73,9 @@ class SearchAlgorithmModel:
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.NYUGYOKU_WIN,
                 hint                            = '',
-                move_list                       = [])
+                move_list                       = [],
+                cap_list                        = [],
+                list_of_accumulate_exchange_value_on_earth  = [])
 
 
     def create_backwards_plot_model_at_horizon(self, depth_qs):
@@ -79,7 +85,9 @@ class SearchAlgorithmModel:
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.MAX_DEPTH_BY_THINK,
                 hint                            = '',
-                move_list                       = [])
+                move_list                       = [],
+                cap_list                        = [],
+                list_of_accumulate_exchange_value_on_earth  = [])
 
 
     def create_backwards_plot_model_at_quiescence(self, depth_qs):
@@ -89,7 +97,9 @@ class SearchAlgorithmModel:
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.QUIESCENCE,
                 hint                            = '',
-                move_list                       = [])
+                move_list                       = [],
+                cap_list                        = [],
+                list_of_accumulate_exchange_value_on_earth  = [])
 
 
     def create_backwards_plot_model_at_no_candidates(self, depth_qs):
@@ -99,7 +109,9 @@ class SearchAlgorithmModel:
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.NO_CANDIDATES,
                 hint                            = '',
-                move_list                       = [])
+                move_list                       = [],
+                cap_list                        = [],
+                list_of_accumulate_exchange_value_on_earth  = [])
 
 
     def remove_drop_moves(self, remaining_moves):
