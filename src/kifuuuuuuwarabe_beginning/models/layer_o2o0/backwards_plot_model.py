@@ -1,7 +1,6 @@
 import cshogi
 
 from ..layer_o1o_9o0 import PieceValuesModel
-from ..layer_o1o0o_9o0_table_helper import TableHelper
 from ..layer_o1o0 import constants, OutOfTerminationModel, Mars, PieceTypeModel, PlanetPieceTypeModel, SquareModel
 from ..layer_o1o0o1o0_japanese import JapaneseMoveModel
 
@@ -287,17 +286,20 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         len_of_move_list = len(self._move_list)
         for layer_no in reversed(range(0, len_of_move_list)):  # 逆順。
             move        = self._move_list[layer_no]
-            moving_pt   = TableHelper.get_moving_pt_from_move(move=move)  # 動かした駒の種類。盤上の移動元の駒か、打った駒。
             cap_pt      = self._cap_list[layer_no]
 
             if not isinstance(move, int):   # FIXME バグがあるよう
                 raise ValueError(f"move は int 型である必要があります。 {layer_no=} {type(move)=} {move=} {self._move_list=}")
 
             # 指し手のUSI表記を独自形式に変更。
-            move_str = JapaneseMoveModel.from_move(move=move, moving_pt=moving_pt, cap_pt=cap_pt, is_mars=is_mars, is_gote=is_gote).stringify()
+            move_jp_str = JapaneseMoveModel.from_move(
+                    move    = move,
+                    cap_pt  = cap_pt,
+                    is_mars = is_mars,
+                    is_gote = is_gote).stringify()
 
             piece_exchange_value_on_earth   = self._list_of_accumulate_exchange_value_on_earth[layer_no]
-            tokens.append(f"({len_of_move_list - layer_no}){move_str}[{piece_exchange_value_on_earth}]")
+            tokens.append(f"({len_of_move_list - layer_no}){move_jp_str}[{piece_exchange_value_on_earth}]")
 
             # 手番交代
             is_mars = not is_mars

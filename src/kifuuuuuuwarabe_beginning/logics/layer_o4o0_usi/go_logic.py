@@ -1,8 +1,8 @@
 import cshogi
 import random
-import sys
 
 from ...models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateModel
+from ...models.layer_o1o0o1o0_japanese import JapaneseMoveModel
 from ...models.layer_o5o0_search import RootSearchAlgorithmModel, SearchContextModel
 from ...views import TableView
 from ..layer_o3o0 import MovesPickupFilterLogics, MovesReductionFilterLogics
@@ -204,7 +204,15 @@ class _Go2nd():
                 move    = best_move,
                 name    = 'BM_bestmove',
                 value   =  True)
-        self._gymnasium.thinking_logger_module.append_message(f"Best move={cshogi.move_to_usi(best_move)}")
+        
+        # 指し手のUSI表記に、独自形式を併記。
+        move_jp_str = JapaneseMoveModel.from_move(
+                move    = best_move,
+                cap_pt  = self._gymnasium.table.piece_type(sq=cshogi.move_to(best_move)),
+                is_mars = False,
+                is_gote = self._gymnasium.table.is_gote).stringify()
+
+        self._gymnasium.thinking_logger_module.append_message(f"Best move={cshogi.move_to_usi(best_move)} {move_jp_str}")
 
         # ログ
         message = f"""\

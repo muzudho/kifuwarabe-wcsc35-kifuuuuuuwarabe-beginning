@@ -1,6 +1,7 @@
 import cshogi
 
 from ..layer_o1o_8o0_str import StringResourcesModel
+from ..layer_o1o0o_9o0_table_helper import TableHelper
 from ..layer_o1o0 import PlanetPieceTypeModel, SquareModel
 
 
@@ -10,14 +11,12 @@ class JapaneseMoveModel:
 
 
     @staticmethod
-    def from_move(move, moving_pt, cap_pt, is_mars, is_gote):
+    def from_move(move, cap_pt, is_mars, is_gote):
         """
         Parameters
         ----------
         move : int
             シーショーギの指し手。
-        moving_pt : int
-            駒種類。盤上の移動元の駒か、打った駒。
         cap_pt : int
             取った駒種類。
         is_mars : bool
@@ -28,6 +27,8 @@ class JapaneseMoveModel:
         src_sq_obj  = SquareModel(cshogi.move_from(move))       # ［移動元マス］
         dst_sq_obj  = SquareModel(cshogi.move_to(move))         # ［移動先マス］
         is_drop     = cshogi.move_is_drop(move)                 # ［打］
+
+        moving_pt = TableHelper.get_moving_pt_from_move(move)   # 駒種類。盤上の移動元の駒か、打った駒。
 
         moving_pt_str = PlanetPieceTypeModel.kanji_on_text(
                 piece_type  = moving_pt,

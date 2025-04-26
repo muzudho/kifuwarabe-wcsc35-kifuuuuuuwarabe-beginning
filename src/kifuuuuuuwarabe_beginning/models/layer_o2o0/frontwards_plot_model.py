@@ -1,6 +1,5 @@
 import cshogi
 
-from ..layer_o1o0o_9o0_table_helper import TableHelper
 from ..layer_o1o0o1o0_japanese import JapaneseMoveModel
 
 
@@ -69,14 +68,16 @@ class FrontwardsPlotModel(): # TODO Rename PathFromRoot
         len_of_move_list = len(self._move_list)
         for layer_no in range(0, len_of_move_list):
             move = self._move_list[layer_no]
-            moving_pt = TableHelper.get_moving_pt_from_move(move)
             cap_pt = self._cap_list[layer_no]
 
-            #move_str = cshogi.move_to_usi(move)
             # 指し手のUSI表記を独自形式に変更。
-            move_str = JapaneseMoveModel.from_move(move=move, moving_pt=moving_pt, cap_pt=cap_pt, is_mars=is_mars, is_gote=is_gote).stringify()
+            move_jp_str = JapaneseMoveModel.from_move(
+                    move    = move,
+                    cap_pt  = cap_pt,
+                    is_mars = is_mars,
+                    is_gote = is_gote).stringify()
 
-            tokens.append(move_str)
+            tokens.append(move_jp_str)
 
             # 手番交代
             is_mars = not is_mars
