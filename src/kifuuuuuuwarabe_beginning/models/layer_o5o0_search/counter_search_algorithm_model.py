@@ -152,6 +152,11 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             my_move = pv.vertical_list_of_move_pv[-1]
             cap_pt  = pv.vertical_list_of_cap_pt_pv[-1]
 
+            # NOTE `earth` - 自分。 `mars` - 対戦相手。
+            piece_exchange_value_on_earth = PieceValuesModel.get_piece_exchange_value_on_earth(      # 交換値に変換。正の数とする。
+                    pt          = cap_pt,
+                    is_mars     = self._search_context_model.gymnasium.is_mars)
+
             ##############################
             # MARK: 履歴の最後の一手を指す
             ##############################
@@ -161,11 +166,6 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             ##################################
             # MARK: 履歴の最後の一手を指した後
             ##################################
-
-            # # NOTE `earth` - 自分。 `mars` - 対戦相手。
-            # piece_exchange_value_on_earth = PieceValuesModel.get_piece_exchange_value_on_earth(      # 交換値に変換。正の数とする。
-            #         pt          = cap_pt,
-            #         is_mars     = self._search_context_model.gymnasium.is_mars)
 
             self._search_context_model.number_of_visited_nodes  += 1
             self._search_context_model.frontwards_plot_model.append_move_from_front(
@@ -204,10 +204,10 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
             its_update_best = False
 
-            # NOTE `earth` - 自分。 `mars` - 対戦相手。
-            piece_exchange_value_on_earth = PieceValuesModel.get_piece_exchange_value_on_earth(      # 交換値に変換。正の数とする。
-                    pt          = cap_pt,
-                    is_mars     = self._search_context_model.gymnasium.is_mars)
+            # # NOTE `earth` - 自分。 `mars` - 対戦相手。
+            # piece_exchange_value_on_earth = PieceValuesModel.get_piece_exchange_value_on_earth(      # 交換値に変換。正の数とする。
+            #         pt          = cap_pt,
+            #         is_mars     = self._search_context_model.gymnasium.is_mars)
 
             # この枝の点（将来の点＋取った駒の点）
             this_branch_value_on_earth = child_plot_model.get_exchange_value_on_earth() + piece_exchange_value_on_earth
