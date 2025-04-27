@@ -3,10 +3,10 @@ import time
 
 from ...models.layer_o1o0 import SquareModel
 from .search_routines import SearchRoutines
-from .counter_search_routines import CounterSearchRoutines
+from .o2_counter_search_routines import O2CounterSearchRoutines
 
 
-class RootSearchRoutines(SearchRoutines):
+class O1RootSearchRoutines(SearchRoutines):
     """１階の全てのリーガル・ムーブについて静止探索。
     """
 
@@ -38,7 +38,7 @@ class RootSearchRoutines(SearchRoutines):
         # MARK: ノード訪問時
         ####################
 
-        RootSearchRoutines._set_controls(pv_list=pv_list, search_context_model=search_context_model)
+        O1RootSearchRoutines._set_controls(pv_list=pv_list, search_context_model=search_context_model)
 
         ################################
         # MARK: PVリスト探索（応手除く）
@@ -63,7 +63,7 @@ class RootSearchRoutines(SearchRoutines):
             ####################
 
             # PV を更新。
-            (pv.backwards_plot_model, pv.is_terminate) = RootSearchRoutines._search_before_entering_counter_node(pv=pv, search_context_model=search_context_model)
+            (pv.backwards_plot_model, pv.is_terminate) = O1RootSearchRoutines._search_before_entering_counter_node(pv=pv, search_context_model=search_context_model)
 
             ######################
             # MARK: 履歴を全部戻す
@@ -118,7 +118,7 @@ class RootSearchRoutines(SearchRoutines):
             # FIXME この処理は、幅優先探索に変えたい。
 
             if not pv.is_terminate:
-                child_pv_list = CounterSearchRoutines.cleaning_horizontal_edges_counter(parent_pv=pv, search_context_model=search_context_model)
+                child_pv_list = O2CounterSearchRoutines.cleaning_horizontal_edges_counter(parent_pv=pv, search_context_model=search_context_model)
 
                 for child_pv in reversed(child_pv_list):
                     if child_pv.is_terminate:           # ［読み筋］の探索が終了していれば。
@@ -126,7 +126,7 @@ class RootSearchRoutines(SearchRoutines):
                         child_pv_list.remove(child_pv)
 
                 # TODO 再帰しないようにしてほしい。
-                pv.backwards_plot_model = CounterSearchRoutines.search_as_counter(pv_list=child_pv_list, search_context_model=search_context_model)       # 再帰呼出
+                pv.backwards_plot_model = O2CounterSearchRoutines.search_as_counter(pv_list=child_pv_list, search_context_model=search_context_model)       # 再帰呼出
 
             ######################
             # MARK: 履歴を全部戻す

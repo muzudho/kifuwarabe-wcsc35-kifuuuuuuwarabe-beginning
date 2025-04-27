@@ -7,7 +7,7 @@ from .search_routines import SearchRoutines
 from .o3_quiescence_search_routines import O3QuiescenceSearchRoutines
 
 
-class CounterSearchRoutines(SearchRoutines):
+class O2CounterSearchRoutines(SearchRoutines):
     """２階の探索。
     """
 
@@ -34,8 +34,8 @@ class CounterSearchRoutines(SearchRoutines):
         
         remaining_moves = list(search_context_model.gymnasium.table.legal_moves)      # 全合法手。
         remaining_moves = SearchRoutines.remove_depromoted_moves(remaining_moves=remaining_moves, search_context_model=search_context_model)     # ［成れるのに成らない手］は除外
-        aigoma_move_list = CounterSearchRoutines._choice_aigoma_move_list(remaining_moves=remaining_moves, search_context_model=search_context_model)   # ［間駒］（相手の利きの上に置く手）を抽出。
-        remaining_moves = CounterSearchRoutines._remove_drop_except_aigoma(remaining_moves)  # ［間駒］以外の［打］は（多すぎるので）除外。
+        aigoma_move_list = O2CounterSearchRoutines._choice_aigoma_move_list(remaining_moves=remaining_moves, search_context_model=search_context_model)   # ［間駒］（相手の利きの上に置く手）を抽出。
+        remaining_moves = O2CounterSearchRoutines._remove_drop_except_aigoma(remaining_moves)  # ［間駒］以外の［打］は（多すぎるので）除外。
         (remaining_moves, rolled_back) = SearchRoutines.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=True, search_context_model=search_context_model)    # ［カウンター探索］では、駒を取る手と、王手のみ残す。［駒を取る手、王手］が無ければ、（巻き戻して）それ以外の手を指します。
         remaining_moves.extend(aigoma_move_list)
 

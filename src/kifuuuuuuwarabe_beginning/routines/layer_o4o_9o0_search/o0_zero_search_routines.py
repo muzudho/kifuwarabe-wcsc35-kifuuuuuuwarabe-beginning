@@ -3,7 +3,7 @@ import time
 from .search_routines import SearchRoutines
 
 
-class ZeroSearchRoutines(SearchRoutines):
+class O0ZeroSearchRoutines(SearchRoutines):
 
 
     @staticmethod
