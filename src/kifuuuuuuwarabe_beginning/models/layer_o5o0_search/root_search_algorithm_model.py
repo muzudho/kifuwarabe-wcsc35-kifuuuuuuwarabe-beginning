@@ -66,22 +66,32 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
 
     def search_after_entry_node_counter(self, parent_pv):
-        pass
+        """
+        Returns
+        -------
+        pv_list : list<PrincipalVariationModel>
+            読み筋のリスト。
+        """
+        ##########################
+        # MARK: 合法手クリーニング
+        ##########################
 
+        # 最善手は探さなくていい。全部返すから。
+        remaining_moves = list(self._search_context_model.gymnasium.table.legal_moves)      # 全合法手。
+        remaining_moves = self.remove_depromoted_moves(remaining_moves=remaining_moves)       # ［成れるのに成らない手］は除外
+        pv_list = RootSearchAlgorithmModel._make_pv_list(remaining_moves=remaining_moves, search_context_model=self._search_context_model)
+        return pv_list
+    
 
     def search_as_root(
             self,
-            remaining_moves):
-        """静止探索の開始。
-
-        大まかにいって、１手目は全ての合法手を探索し、
-        ２手目以降は、駒を取る手を中心に探索します。
-        TODO できれば２手目も全ての合法手を探索したい。指した後取られる手があるから。
+            pv_list):
+        """通常探索の開始。
 
         Parameters
         ----------
-        remaining_moves : list<int>
-            指し手のリスト。
+        pv_list : list<PrincipalVariationModel>
+            ［読み筋］のリスト。
 
         Returns
         -------
@@ -92,27 +102,11 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
         # まだ深く読む場合。
 
-        ##########################
-        # MARK: 合法手クリーニング
-        ##########################
-
-        # 最善手は探さなくていい。全部返すから。
-
-        remaining_moves = self.remove_depromoted_moves(remaining_moves=remaining_moves)       # ［成れるのに成らない手］は除外
-
-        # ［駒を取る手］がないことを、［静止］と呼ぶ。
-        if len(remaining_moves) == 0:
-            self._search_context_model.end_time = time.time()    # 計測終了時間
-            backwards_plot_model=self.create_backwards_plot_model_at_quiescence(depth_qs=-1)
-            return [PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
-
         ####################
         # MARK: ノード訪問時
         ####################
 
-        RootSearchAlgorithmModel._set_controls(remaining_moves=remaining_moves, search_context_model=self._search_context_model)
-
-        pv_list = RootSearchAlgorithmModel._make_pv_list(remaining_moves=remaining_moves, search_context_model=self._search_context_model)
+        RootSearchAlgorithmModel._set_controls(pv_list=pv_list, search_context_model=self._search_context_model)
 
         ####################
         # MARK: PVリスト探索
@@ -237,12 +231,13 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         return pv_list
 
 
-    def _set_controls(remaining_moves, search_context_model):
+    def _set_controls(pv_list, search_context_model):
         """利きを記録
         """
         search_context_model.clear_root_searched_control_map()
 
-        for my_move in remaining_moves:
+        for pv in pv_list:
+            my_move = pv.vertical_list_of_move_pv[-1]
             if cshogi.move_is_drop(my_move):
                 continue
             dst_sq_obj = SquareModel(cshogi.move_to(my_move))       # ［移動先マス］

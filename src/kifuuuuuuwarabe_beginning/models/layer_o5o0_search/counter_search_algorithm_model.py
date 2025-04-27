@@ -66,6 +66,11 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
     def search_after_entry_node_counter(self, parent_pv):
         """
+        Parameters
+        ----------
+        parent_pv : PrincipalVariationModel
+            親手。
+
         Returns
         -------
         pv_list : list<PrincipalVariationModel>

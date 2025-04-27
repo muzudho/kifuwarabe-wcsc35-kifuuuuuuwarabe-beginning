@@ -287,10 +287,17 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
     (root_pv.backwards_plot_model, root_pv.is_terminate) = root_search_algorithum_model.search_before_entry_node(pv=root_pv)
 
     if not root_pv.is_terminate:
-        root_search_algorithum_model.search_after_entry_node_counter(parent_pv=root_pv)
+        pv_list = root_search_algorithum_model.search_after_entry_node_counter(parent_pv=root_pv)
 
+        # ［駒を取る手］がないことを、［静止］と呼ぶ。
+        if len(pv_list) == 0:
+            #TODO self._search_context_model.end_time = time.time()    # 計測終了時間
+            root_pv.backwards_plot_model = root_search_algorithum_model.create_backwards_plot_model_at_quiescence(depth_qs=-1)
+            root_pv.is_terminate = True
+
+    if not root_pv.is_terminate:
         pv_list = root_search_algorithum_model.search_as_root(
-                remaining_moves = remaining_moves)
+                pv_list = pv_list)
 
         number_of_visited_nodes = root_search_algorithum_model.search_context_model.number_of_visited_nodes
     else:
