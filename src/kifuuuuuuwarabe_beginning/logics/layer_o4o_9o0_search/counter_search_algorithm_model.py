@@ -1,11 +1,10 @@
 import cshogi
 import time
 
-from ..layer_o1o_9o0 import PieceValuesModel
-from ..layer_o1o0 import constants, Mars, PtolemaicTheoryModel, SquareModel
-from .quiescence_search_algorithm_model import QuiescenceSearchAlgorithmModel
-from .search_algorithm_model import SearchAlgorithmModel
-from .principal_variation_model import PrincipalVariationModel
+from ...models.layer_o1o_9o0 import PieceValuesModel
+from ...models.layer_o1o0 import constants, SquareModel
+from ...models.layer_o5o0_search.quiescence_search_algorithm_model import QuiescenceSearchAlgorithmModel
+from ...models.layer_o5o0_search.search_algorithm_model import SearchAlgorithmModel
 
 
 class CounterSearchAlgorithmModel(SearchAlgorithmModel):
@@ -97,7 +96,8 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         return pv_list
 
 
-    def search_as_counter(self, pv_list):
+    @staticmethod
+    def search_as_counter(pv_list, search_context_model):
         """応手の開始。
 
         Parameters
@@ -119,7 +119,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         best_move           = None
         best_move_cap_pt    = None
 
-        if self._search_context_model.gymnasium.is_mars:
+        if search_context_model.gymnasium.is_mars:
             best_value = constants.value.BIG_VALUE
         else:
             best_value = constants.value.SMALL_VALUE
@@ -136,23 +136,23 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             # NOTE `earth` - 自分。 `mars` - 対戦相手。
             piece_exchange_value_on_earth = PieceValuesModel.get_piece_exchange_value_on_earth(      # 交換値に変換。正の数とする。
                     pt          = cap_pt,
-                    is_mars     = self._search_context_model.gymnasium.is_mars)
+                    is_mars     = search_context_model.gymnasium.is_mars)
 
             ##############################
             # MARK: 履歴の最後の一手を指す
             ##############################
 
-            self._search_context_model.gymnasium.do_move_o1x(move = my_move)
+            search_context_model.gymnasium.do_move_o1x(move = my_move)
 
             ##################################
             # MARK: 履歴の最後の一手を指した後
             ##################################
 
-            self._search_context_model.number_of_visited_nodes  += 1
-            self._search_context_model.frontwards_plot_model.append_move_from_front(
+            search_context_model.number_of_visited_nodes  += 1
+            search_context_model.frontwards_plot_model.append_move_from_front(
                     move    = my_move,
                     cap_pt  = cap_pt)
-            self._search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=my_move, hint='')
+            search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=my_move, hint='')
 
             ####################
             # MARK: 相手番の処理
@@ -161,10 +161,10 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             # TODO 静止探索は後回しにしたい。
 
             quiescence_search_algorithum_model = QuiescenceSearchAlgorithmModel(    # 静止探索。
-                    search_context_model    = self._search_context_model)
+                    search_context_model    = search_context_model)
             
             (pv.backwards_plot_model, pv.is_terminate) = quiescence_search_algorithum_model.search_before_entry_node_qs(
-                    depth_qs    = self._search_context_model.max_depth_qs,
+                    depth_qs    = search_context_model.max_depth_qs,
                     pv          = pv,
                     parent_move = my_move)
             
@@ -173,12 +173,12 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
                 # ［駒を取る手］がないことを、［静止］と呼ぶ。
                 if len(pv_list) == 0:
-                    pv.backwards_plot_model = SearchAlgorithmModel.create_backwards_plot_model_at_quiescence(depth_qs=-1, search_context_model=self._search_context_model)
+                    pv.backwards_plot_model = SearchAlgorithmModel.create_backwards_plot_model_at_quiescence(depth_qs=-1, search_context_model=search_context_model)
                     pv.is_terminate = True
 
             if not pv.is_terminate:
                 child_plot_model = quiescence_search_algorithum_model.search_as_quiescence(      # 再帰呼出
-                        depth_qs    = self._search_context_model.max_depth_qs,
+                        depth_qs    = search_context_model.max_depth_qs,
                         pv_list     = child_pv_list)
             else:
                 child_plot_model = pv.backwards_plot_model
@@ -187,20 +187,20 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 履歴の最後の一手を戻す
             ##############################
 
-            self._search_context_model.gymnasium.undo_move_o1x()
+            search_context_model.gymnasium.undo_move_o1x()
 
             ##################################
             # MARK: 履歴の最後の一手を戻した後
             ##################################
 
-            self._search_context_model.frontwards_plot_model.pop_move()
-            self._search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
+            search_context_model.frontwards_plot_model.pop_move()
+            search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
 
             ##################
             # MARK: 手番の処理
             ##################
 
-            (this_branch_value_on_earth, is_update_best) = SearchAlgorithmModel.is_update_best(best_pv=best_pv, child_plot_model=child_plot_model, piece_exchange_value_on_earth=piece_exchange_value_on_earth, search_context_model=self._search_context_model)
+            (this_branch_value_on_earth, is_update_best) = SearchAlgorithmModel.is_update_best(best_pv=best_pv, child_plot_model=child_plot_model, piece_exchange_value_on_earth=piece_exchange_value_on_earth, search_context_model=search_context_model)
 
             # 最善手の更新
             if is_update_best:
@@ -218,7 +218,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
         # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
         if best_pv is None:
-            return SearchAlgorithmModel.create_backwards_plot_model_at_no_candidates(depth_qs=-1, search_context_model=self._search_context_model)
+            return SearchAlgorithmModel.create_backwards_plot_model_at_no_candidates(depth_qs=-1, search_context_model=search_context_model)
 
         # 今回の手を付け加える。
         best_pv.backwards_plot_model.append_move_from_back(
@@ -227,11 +227,12 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
                 best_value          = best_value,
                 hint                = '')
 
-        self._search_context_model.end_time = time.time()    # 計測終了時間
+        search_context_model.end_time = time.time()    # 計測終了時間
 
         return best_pv.backwards_plot_model
 
 
+    @staticmethod
     def _choice_aigoma_move_list(remaining_moves, search_context_model):
         # TODO ［間駒］（相手の利きの上に置く手）を抽出。
         aigoma_move_list = []
@@ -243,6 +244,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         return aigoma_move_list
 
 
+    @staticmethod
     def _remove_drop_except_aigoma(remaining_moves):
         # ［間駒］以外の［打］は（多すぎるので）除外。
         for my_move in reversed(remaining_moves):

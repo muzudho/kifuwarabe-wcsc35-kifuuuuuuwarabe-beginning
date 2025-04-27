@@ -1,11 +1,11 @@
 import cshogi
 import time
 
+from ...logics.layer_o4o_9o0_search.counter_search_algorithm_model import CounterSearchAlgorithmModel
 from ..layer_o1o_9o0 import PieceValuesModel
 from ..layer_o1o0 import constants, Mars, SquareModel
-from .search_algorithm_model import SearchAlgorithmModel
-from .counter_search_algorithm_model import CounterSearchAlgorithmModel
 from .principal_variation_model import PrincipalVariationModel
+from .search_algorithm_model import SearchAlgorithmModel
 
 
 class RootSearchAlgorithmModel(SearchAlgorithmModel):
@@ -126,9 +126,6 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
             # FIXME この処理は、幅優先探索に変えたい。
 
-            counter_search_algorithm_model = CounterSearchAlgorithmModel(            # 応手サーチ。
-                    search_context_model = self._search_context_model)
-
             if not pv.is_terminate:
                 child_pv_list = CounterSearchAlgorithmModel.search_after_entry_node_counter(parent_pv=pv, search_context_model=self._search_context_model)
 
@@ -138,7 +135,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
                         child_pv_list.remove(child_pv)
 
                 # TODO 再帰しないようにしてほしい。
-                pv.backwards_plot_model = counter_search_algorithm_model.search_as_counter(pv_list=child_pv_list)       # 再帰呼出
+                pv.backwards_plot_model = CounterSearchAlgorithmModel.search_as_counter(pv_list=child_pv_list, search_context_model=self._search_context_model)       # 再帰呼出
 
             ######################
             # MARK: 履歴を全部戻す
