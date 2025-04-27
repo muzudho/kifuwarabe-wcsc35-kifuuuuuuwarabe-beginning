@@ -126,7 +126,8 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         # MARK: ノード訪問時
         ####################
 
-        best_plot_model     = None
+        best_plot_model     = None  # TODO best_pv に変更したい。
+        #best_pv             = None  # ベストな子
         best_move           = None
         best_move_cap_pt    = None
         if self._search_context_model.gymnasium.is_mars:
@@ -214,24 +215,27 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 手番の処理
             ##################
 
-            its_update_best = False
-
             # この枝の点（将来の点＋取った駒の点）
             this_branch_value_on_earth = child_plot_model.get_exchange_value_on_earth() + piece_exchange_value_on_earth
 
             # この枝が長兄なら。
             if best_plot_model is None:
+            #if best_pv is None:
                 old_sibling_value = 0
             else:
                 # 兄枝のベスト評価値
                 old_sibling_value = best_plot_model.get_exchange_value_on_earth()     # とりあえず最善の読み筋の点数。
+                #old_sibling_value = best_pv.backwards_plot_model.get_exchange_value_on_earth()     # とりあえず最善の読み筋の点数。
 
+            # TODO この比較、合っているか？
             (a, b) = self._search_context_model.gymnasium.ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
             its_update_best = (a < b)
                         
             # 最善手の更新（１つに絞る）
             if its_update_best:
                 best_plot_model     = child_plot_model
+                # best_pv             = pv
+                # best_pv.backwards_plot_model    = child_plot_model
                 best_move           = my_move
                 best_move_cap_pt    = cap_pt
                 best_value          = this_branch_value_on_earth
@@ -242,16 +246,19 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
 
         # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
         if best_plot_model is None:
+        #if best_pv is None:
             return self.create_backwards_plot_model_at_no_candidates(depth_qs=depth_qs)
 
         # 読み筋に今回の手を付け加える。（ TODO 駒得点も付けたい）
         best_plot_model.append_move_from_back(
+        #best_pv.backwards_plot_model.append_move_from_back(
                 move                = best_move,
                 capture_piece_type  = best_move_cap_pt,
                 best_value          = best_value,
                 hint                = '')
 
         return best_plot_model
+        #return best_pv.backwards_plot_model
 
 
     def filtering_same_destination_move_list(parent_move, remaining_moves, rollback_if_empty):

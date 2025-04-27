@@ -193,8 +193,6 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 手番の処理
             ##################
 
-            its_update_best = False
-
             # この枝の点（将来の点＋取った駒の点）
             this_branch_value_on_earth = child_plot_model.get_exchange_value_on_earth() + piece_exchange_value_on_earth
 
@@ -205,6 +203,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
                 # 兄枝のベスト評価値
                 old_sibling_value = best_pv.backwards_plot_model.get_exchange_value_on_earth()     # とりあえず最善の読み筋の点数。
 
+            # TODO この比較、合っているか？
             (a, b) = self._search_context_model.gymnasium.ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
             its_update_best = (a < b)
 
