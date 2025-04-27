@@ -79,14 +79,6 @@ class PrincipalVariationModel:
         self._is_terminate = value
 
 
-    def pop_vertical_list_of_move_pv(self):
-        """指し手の履歴をポップします。
-        """
-        work = list(self._vertical_list_of_move_pv)
-        self._vertical_list_of_move_pv = []
-        return work
-
-
     def copy_pv(self):
         """コピー。
         """

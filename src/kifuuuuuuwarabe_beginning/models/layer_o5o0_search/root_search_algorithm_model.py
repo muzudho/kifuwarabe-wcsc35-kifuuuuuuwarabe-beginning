@@ -116,20 +116,13 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         next_pv_list = []
 
         for pv in pv_list:
-            vertical_list_of_move_pv = pv.pop_vertical_list_of_move_pv()      # 指し手の履歴をポップします。
-
-            ########################
-            # MARK: 履歴を全部指す前
-            ########################
-
-            # TODO 駒を取った計算はパス。
 
             ######################
             # MARK: 履歴を全部指す
             ######################
 
             last_child_move = None
-            for my_move in vertical_list_of_move_pv:
+            for my_move in pv.vertical_list_of_move_pv:
                 self._search_context_model.gymnasium.do_move_o1x(move = my_move)
                 last_child_move = my_move
 
@@ -164,7 +157,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 履歴を全部戻す
             ######################
 
-            for i in range(0, len(vertical_list_of_move_pv)):
+            for i in range(0, len(pv.vertical_list_of_move_pv)):
                 self._search_context_model.gymnasium.undo_move_o1x()
 
             ##########################
