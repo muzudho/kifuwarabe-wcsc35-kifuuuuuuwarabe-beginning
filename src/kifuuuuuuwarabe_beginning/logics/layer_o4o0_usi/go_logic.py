@@ -3,7 +3,7 @@ import random
 
 from ...models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateModel
 from ...models.layer_o1o0o1o0_japanese import JapaneseMoveModel
-from ...models.layer_o5o0_search import PrincipalVariationModel, RootSearchAlgorithmModel, SearchContextModel
+from ...models.layer_o5o0_search import PrincipalVariationModel, RootSearchAlgorithmModel, SearchContextModel, ZeroSearchAlgorithumModel
 from ...views import TableView
 from ..layer_o3o0 import MovesPickupFilterLogics, MovesReductionFilterLogics
 
@@ -278,30 +278,32 @@ def _main_search_at_first(remaining_moves, gymnasium):
             max_depth_qs = max_depth_qs,
             gymnasium = gymnasium)
 
+    # ゼロ・ノード。
+    zero_pv = PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], value_pv=0, backwards_plot_model=None)
+
+    # ルート・ノードに入る前に探索。
+    (zero_pv.backwards_plot_model, zero_pv.is_terminate) = ZeroSearchAlgorithumModel.search_before_entering_root_node(pv=zero_pv, search_context_model=search_context_model)
+
     # １階の探索（特殊）
     root_search_algorithum_model = RootSearchAlgorithmModel(
             search_context_model = search_context_model)
 
-    root_pv = PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], value_pv=0, backwards_plot_model=None)
-
-    (root_pv.backwards_plot_model, root_pv.is_terminate) = root_search_algorithum_model.search_before_entry_node(pv=root_pv)
-
-    if not root_pv.is_terminate:
-        pv_list = root_search_algorithum_model.search_after_entry_node_counter(remaining_moves=remaining_moves, parent_pv=root_pv)
+    if not zero_pv.is_terminate:
+        pv_list = root_search_algorithum_model.search_after_entry_node_root(remaining_moves=remaining_moves, parent_pv=zero_pv)
 
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(pv_list) == 0:
             #TODO self._search_context_model.end_time = time.time()    # 計測終了時間
-            root_pv.backwards_plot_model = SearchContextModel.create_backwards_plot_model_at_quiescence(depth_qs=-1, search_context_model=root_search_algorithum_model.search_context_model)
-            root_pv.is_terminate = True
+            zero_pv.backwards_plot_model = SearchContextModel.create_backwards_plot_model_at_quiescence(depth_qs=-1, search_context_model=root_search_algorithum_model.search_context_model)
+            zero_pv.is_terminate = True
 
-    if not root_pv.is_terminate:
+    if not zero_pv.is_terminate:
         pv_list = root_search_algorithum_model.search_as_root(
                 pv_list = pv_list)
 
         number_of_visited_nodes = root_search_algorithum_model.search_context_model.number_of_visited_nodes
     else:
-        pv_list = [PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], value_pv=root_pv.backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=root_pv.backwards_plot_model)]
+        pv_list = [PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], value_pv=zero_pv.backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=zero_pv.backwards_plot_model)]
 
 
     def _eliminate_not_capture_not_positive(pv_list, gymnasium):

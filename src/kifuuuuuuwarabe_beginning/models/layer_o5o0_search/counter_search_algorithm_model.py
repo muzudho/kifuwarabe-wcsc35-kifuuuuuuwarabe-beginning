@@ -24,7 +24,8 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
                 search_context_model=search_context_model)
 
 
-    def search_before_entry_node_counter(self, pv, search_context_model):
+    @staticmethod
+    def search_before_entry_node_counter(pv, search_context_model):
         """ノードに入る前に。
 
         Returns
@@ -46,7 +47,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         if search_context_model.gymnasium.table.is_game_over():
             """手番の投了局面時。
             """
-            return SearchAlgorithmModel.create_backwards_plot_model_at_game_over(search_context_model=self._search_context_model), True
+            return SearchAlgorithmModel.create_backwards_plot_model_at_game_over(search_context_model=search_context_model), True
 
         # 一手詰めを詰める
         if not search_context_model.gymnasium.table.is_check():
@@ -54,12 +55,12 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
             if (mate_move := search_context_model.gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
-                return SearchAlgorithmModel.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move, search_context_model=self._search_context_model), True
+                return SearchAlgorithmModel.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move, search_context_model=search_context_model), True
 
         if search_context_model.gymnasium.table.is_nyugyoku():
             """手番の入玉宣言勝ち局面時。
             """
-            return SearchAlgorithmModel.create_backwards_plot_model_at_nyugyoku_win(search_context_model=self._search_context_model), True
+            return SearchAlgorithmModel.create_backwards_plot_model_at_nyugyoku_win(search_context_model=search_context_model), True
 
         return pv.backwards_plot_model, pv.is_terminate
 

@@ -24,48 +24,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
                 search_context_model=search_context_model)
 
 
-    def search_before_entry_node(self, pv):
-        """ノードに入る前に。
-
-        Returns
-        -------
-        backwards_plot_model : BackwardsPlotModel
-            読み筋。
-        is_terminate : bool
-            読み終わり。
-        """
-
-        ########################
-        # MARK: 指す前にやること
-        ########################
-
-        self._search_context_model.start_time = time.time()          # 探索開始時間
-        self._search_context_model.restart_time = self._search_context_model.start_time   # 前回の計測開始時間
-
-        # 指さなくても分かること（ライブラリー使用）
-
-        if self._search_context_model.gymnasium.table.is_game_over():
-            """手番の投了局面時。
-            """
-            return SearchAlgorithmModel.create_backwards_plot_model_at_game_over(search_context_model=self._search_context_model), True
-
-        # 一手詰めを詰める
-        if not self._search_context_model.gymnasium.table.is_check():
-            """手番玉に王手がかかっていない時で"""
-
-            if (mate_move := self._search_context_model.gymnasium.table.mate_move_in_1ply()):
-                """一手詰めの指し手があれば、それを取得"""
-                return SearchAlgorithmModel.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move, search_context_model=self._search_context_model), True
-
-        if self._search_context_model.gymnasium.table.is_nyugyoku():
-            """手番の入玉宣言勝ち局面時。
-            """
-            return SearchAlgorithmModel.create_backwards_plot_model_at_nyugyoku_win(search_context_model=self._search_context_model), True
-
-        return pv.backwards_plot_model, False
-
-
-    def search_after_entry_node_counter(self, remaining_moves, parent_pv):
+    def search_after_entry_node_root(self, remaining_moves, parent_pv):
         """
         Returns
         -------
@@ -131,7 +90,8 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 相手番の処理
             ####################
 
-            # TODO
+            # PV を更新。
+            (pv.backwards_plot_model, pv.is_terminate) = CounterSearchAlgorithmModel.search_before_entry_node_counter(pv=pv, search_context_model=self._search_context_model)
 
             ######################
             # MARK: 履歴を全部戻す
@@ -168,7 +128,6 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
             counter_search_algorithm_model = CounterSearchAlgorithmModel(            # 応手サーチ。
                     search_context_model = self._search_context_model)
-            (pv.backwards_plot_model, pv.is_terminate) = counter_search_algorithm_model.search_before_entry_node_counter(pv=pv, search_context_model=self._search_context_model)
 
             if not pv.is_terminate:
                 child_pv_list = counter_search_algorithm_model.search_after_entry_node_counter(parent_pv=pv)
