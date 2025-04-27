@@ -29,6 +29,8 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
         best_prot_model : BackwardsPlotModel
             最善の読み筋。
             これは駒得評価値も算出できる。
+
+        TODO BPMより、最善のPV（PVを延長したもの）を１つ返す方が自然？
         """
 
         ####################
@@ -71,8 +73,8 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
             ####################
 
             (pv.backwards_plot_model, pv.is_terminate) = SearchRoutines.look_in_0_moves(
-                    info_depth      = INFO_DEPTH,
-                    pv              = pv,
+                    info_depth              = INFO_DEPTH,
+                    pv                      = pv,
                     search_context_model    = search_context_model)
 
             if pv.is_terminate:
@@ -101,11 +103,11 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
                         
             # 最善手の更新（１つに絞る）
             if is_update_best:
-                best_pv             = pv
+                best_pv                         = pv
                 best_pv.backwards_plot_model    = child_plot_model
-                best_move           = my_move
-                best_move_cap_pt    = cap_pt
-                best_value          = this_branch_value_on_earth
+                best_move                       = my_move
+                best_move_cap_pt                = cap_pt
+                best_value                      = this_branch_value_on_earth
 
         ########################
         # MARK: 合法手スキャン後
