@@ -54,7 +54,7 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         if self._search_context_model.gymnasium.table.is_game_over():
             """手番の投了局面時。
             """
-            return self.create_backwards_plot_model_at_game_over(), True
+            return SearchAlgorithmModel.create_backwards_plot_model_at_game_over(search_context_model=self._search_context_model), True
 
         # 一手詰めを詰める
         if not self._search_context_model.gymnasium.table.is_check():
@@ -62,16 +62,16 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
 
             if (mate_move := self._search_context_model.gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
-                return self.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move), True
+                return SearchAlgorithmModel.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move, search_context_model=self._search_context_model), True
 
         if self._search_context_model.gymnasium.table.is_nyugyoku():
             """手番の入玉宣言勝ち局面時。
             """
-            return self.create_backwards_plot_model_at_nyugyoku_win(), True
+            return SearchAlgorithmModel.create_backwards_plot_model_at_nyugyoku_win(search_context_model=self._search_context_model), True
 
         # これ以上深く読まない場合。
         if depth_qs < 1:
-            return self.create_backwards_plot_model_at_horizon(depth_qs), True
+            return SearchAlgorithmModel.create_backwards_plot_model_at_horizon(depth_qs, search_context_model=self._search_context_model), True
 
         return pv.backwards_plot_model, pv.is_terminate
 
@@ -186,7 +186,7 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
 
                 # ［駒を取る手］がないことを、［静止］と呼ぶ。
                 if len(pv_list) == 0:
-                    pv.backwards_plot_model = self.create_backwards_plot_model_at_quiescence(depth_qs=-1)
+                    pv.backwards_plot_model = SearchAlgorithmModel.create_backwards_plot_model_at_quiescence(depth_qs=-1, search_context_model=self._search_context_model)
                     pv.is_terminate = True
 
             if not pv.is_terminate:
@@ -230,7 +230,7 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
 
         # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
         if best_pv is None:
-            return self.create_backwards_plot_model_at_no_candidates(depth_qs=depth_qs)
+            return SearchAlgorithmModel.create_backwards_plot_model_at_no_candidates(depth_qs=depth_qs, search_context_model=self._search_context_model)
 
         # 読み筋に今回の手を付け加える。（ TODO 駒得点も付けたい）
         best_pv.backwards_plot_model.append_move_from_back(

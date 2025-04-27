@@ -47,7 +47,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         if self._search_context_model.gymnasium.table.is_game_over():
             """手番の投了局面時。
             """
-            return self.create_backwards_plot_model_at_game_over(), True
+            return SearchAlgorithmModel.create_backwards_plot_model_at_game_over(search_context_model=self._search_context_model), True
 
         # 一手詰めを詰める
         if not self._search_context_model.gymnasium.table.is_check():
@@ -55,12 +55,12 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
             if (mate_move := self._search_context_model.gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
-                return self.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move), True
+                return SearchAlgorithmModel.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move, search_context_model=self._search_context_model), True
 
         if self._search_context_model.gymnasium.table.is_nyugyoku():
             """手番の入玉宣言勝ち局面時。
             """
-            return self.create_backwards_plot_model_at_nyugyoku_win(), True
+            return SearchAlgorithmModel.create_backwards_plot_model_at_nyugyoku_win(search_context_model=self._search_context_model), True
 
         return pv.backwards_plot_model, False
 
@@ -109,9 +109,46 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
         RootSearchAlgorithmModel._set_controls(pv_list=pv_list, search_context_model=self._search_context_model)
 
-        ####################
-        # MARK: PVリスト探索
-        ####################
+        ################################
+        # MARK: PVリスト探索（応手除く）
+        ################################
+
+        for pv in pv_list:
+            ######################
+            # MARK: 履歴を全部指す
+            ######################
+
+            SearchAlgorithmModel.do_move_vertical_all(pv=pv, search_context_model=self._search_context_model)
+
+            ##########################
+            # MARK: 履歴を全部指した後
+            ##########################
+
+            self._search_context_model.number_of_visited_nodes  += 1    # 開示情報
+            self._search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=pv.vertical_list_of_move_pv[-1], hint='')    # ログ
+
+            ####################
+            # MARK: 相手番の処理
+            ####################
+
+            # TODO
+
+            ######################
+            # MARK: 履歴を全部戻す
+            ######################
+
+            SearchAlgorithmModel.undo_move_vertical_all(pv=pv, search_context_model=self._search_context_model)
+
+            ##########################
+            # MARK: 履歴を全部戻した後
+            ##########################
+
+            self._search_context_model.frontwards_plot_model.pop_move()
+            self._search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
+
+        ################################
+        # MARK: PVリスト探索（応手）
+        ################################
 
         next_pv_list = []
 
@@ -121,17 +158,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 履歴を全部指す
             ######################
 
-            last_child_move = None
-            for my_move in pv.vertical_list_of_move_pv:
-                self._search_context_model.gymnasium.do_move_o1x(move = my_move)
-                last_child_move = my_move
-
-            ##########################
-            # MARK: 履歴を全部指した後
-            ##########################
-
-            self._search_context_model.number_of_visited_nodes  += 1
-            self._search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=last_child_move, hint='')
+            SearchAlgorithmModel.do_move_vertical_all(pv=pv, search_context_model=self._search_context_model)
 
             ####################
             # MARK: 相手番の処理
@@ -141,7 +168,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
             counter_search_algorithm_model = CounterSearchAlgorithmModel(            # 応手サーチ。
                     search_context_model = self._search_context_model)
-            (pv.backwards_plot_model, pv.is_terminate) = counter_search_algorithm_model.search_before_entry_node(pv=pv)
+            (pv.backwards_plot_model, pv.is_terminate) = counter_search_algorithm_model.search_before_entry_node_counter(pv=pv, search_context_model=self._search_context_model)
 
             if not pv.is_terminate:
                 child_pv_list = counter_search_algorithm_model.search_after_entry_node_counter(parent_pv=pv)
@@ -151,21 +178,14 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
                         next_pv_list.append(child_pv)        # 別のリストへ［読み筋］を退避します。
                         child_pv_list.remove(child_pv)
 
+                # TODO 再帰しないようにしてほしい。
                 pv.backwards_plot_model = counter_search_algorithm_model.search_as_counter(pv_list=child_pv_list)       # 再帰呼出
 
             ######################
             # MARK: 履歴を全部戻す
             ######################
 
-            for i in range(0, len(pv.vertical_list_of_move_pv)):
-                self._search_context_model.gymnasium.undo_move_o1x()
-
-            ##########################
-            # MARK: 履歴を全部戻した後
-            ##########################
-
-            self._search_context_model.frontwards_plot_model.pop_move()
-            self._search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
+            SearchAlgorithmModel.undo_move_vertical_all(pv=pv, search_context_model=self._search_context_model)
 
             ##################
             # MARK: 手番の処理
@@ -173,7 +193,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
             # １階の手は、全ての手の読み筋を記憶します。最善手は選びません。
             pv.backwards_plot_model.append_move_from_back(
-                    move                = last_child_move,
+                    move                = pv.vertical_list_of_move_pv[-1],
                     capture_piece_type  = pv.vertical_list_of_cap_pt_pv[-1],
                     best_value          = pv.backwards_plot_model.get_exchange_value_on_earth(),
                     hint                = '')
@@ -182,14 +202,17 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             pv.value_pv += pv.backwards_plot_model.get_exchange_value_on_earth()
             next_pv_list.append(pv.copy_pv())
 
-        ########################
-        # MARK: 合法手スキャン後
-        ########################
+        ######################
+        # MARK: PVリスト探索後
+        ######################
 
         # 指し手が無いということはない。ゲームオーバー判定を先にしているから。
 
+        pv_list = next_pv_list      # 入れ替え
+        next_pv_list = []
+
         self._search_context_model.end_time = time.time()    # 計測終了時間
-        return next_pv_list
+        return pv_list
 
 
     def _set_controls(pv_list, search_context_model):

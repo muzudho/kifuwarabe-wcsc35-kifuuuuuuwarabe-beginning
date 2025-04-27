@@ -12,6 +12,18 @@ class SearchAlgorithmModel:
 
 
     @staticmethod
+    def do_move_vertical_all(pv, search_context_model):
+        for my_move in pv.vertical_list_of_move_pv:
+            search_context_model.gymnasium.do_move_o1x(move = my_move)
+
+
+    @staticmethod
+    def undo_move_vertical_all(pv, search_context_model):
+        for i in range(0, len(pv.vertical_list_of_move_pv)):
+            search_context_model.gymnasium.undo_move_o1x()
+
+
+    @staticmethod
     def convert_remaining_moves_to_pv_list(parent_pv, remaining_moves, search_context_model):
         """PVリスト作成。
         """
@@ -72,26 +84,12 @@ class SearchAlgorithmModel:
         return this_branch_value_on_earth, (a > b)
 
 
-    def __init__(self, search_context_model):
-        """
-        Parameters
-        ----------
-        search_context_model : SearchContextModel
-            探索モデル。
-        """
-        self._search_context_model = search_context_model
-
-
-    @property
-    def search_context_model(self):
-        return self._search_context_model
-
-
-    def create_backwards_plot_model_at_game_over(self):
-        self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
+    @staticmethod
+    def create_backwards_plot_model_at_game_over(search_context_model):
+        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
         return BackwardsPlotModel(
-                is_mars_at_out_of_termination   = self._search_context_model.gymnasium.is_mars,
-                is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
+                is_mars_at_out_of_termination   = search_context_model.gymnasium.is_mars,
+                is_gote_at_out_of_termination   = search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.RESIGN,
                 hint_list                       = [],
                 move_list                       = [],
@@ -99,17 +97,18 @@ class SearchAlgorithmModel:
                 list_of_accumulate_exchange_value_on_earth  = [])
 
 
-    def create_backwards_plot_model_at_mate_move_in_1_ply(self, mate_move):
-        self._search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=mate_move, hint='＜一手詰め＞')
-        self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
+    @staticmethod
+    def create_backwards_plot_model_at_mate_move_in_1_ply(mate_move, search_context_model):
+        search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=mate_move, hint='＜一手詰め＞')
+        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
         dst_sq_obj = SquareModel(cshogi.move_to(mate_move))           # ［移動先マス］
-        cap_pt = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
+        cap_pt = search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
 
-        is_mars_at_out_of_termination = not self._search_context_model.gymnasium.is_mars    # ［詰む］のは、もう１手先だから not する。
+        is_mars_at_out_of_termination = not search_context_model.gymnasium.is_mars    # ［詰む］のは、もう１手先だから not する。
 
         best_plot_model = BackwardsPlotModel(
                 is_mars_at_out_of_termination   = is_mars_at_out_of_termination,     
-                is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
+                is_gote_at_out_of_termination   = search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.RESIGN,
                 hint_list                       = [],
                 move_list                       = [],
@@ -130,11 +129,12 @@ class SearchAlgorithmModel:
         return best_plot_model
 
 
-    def create_backwards_plot_model_at_nyugyoku_win(self):
-        self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜入玉宣言勝ち＞')
+    @staticmethod
+    def create_backwards_plot_model_at_nyugyoku_win(search_context_model):
+        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜入玉宣言勝ち＞')
         return BackwardsPlotModel(
-                is_mars_at_out_of_termination   = self._search_context_model.gymnasium.is_mars,
-                is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
+                is_mars_at_out_of_termination   = search_context_model.gymnasium.is_mars,
+                is_gote_at_out_of_termination   = search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.NYUGYOKU_WIN,
                 hint_list                       = [],
                 move_list                       = [],
@@ -142,11 +142,12 @@ class SearchAlgorithmModel:
                 list_of_accumulate_exchange_value_on_earth  = [])
 
 
-    def create_backwards_plot_model_at_horizon(self, depth_qs):
-        self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜水平線[深QS={depth_qs}]＞")
+    @staticmethod
+    def create_backwards_plot_model_at_horizon(depth_qs, search_context_model):
+        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜水平線[深QS={depth_qs}]＞")
         return BackwardsPlotModel(
-                is_mars_at_out_of_termination   = self._search_context_model.gymnasium.is_mars,
-                is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
+                is_mars_at_out_of_termination   = search_context_model.gymnasium.is_mars,
+                is_gote_at_out_of_termination   = search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.MAX_DEPTH_BY_THINK,
                 hint_list                       = [],
                 move_list                       = [],
@@ -154,11 +155,12 @@ class SearchAlgorithmModel:
                 list_of_accumulate_exchange_value_on_earth  = [])
 
 
-    def create_backwards_plot_model_at_quiescence(self, depth_qs):
-        self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜静止[深QS={depth_qs}]＞")
+    @staticmethod
+    def create_backwards_plot_model_at_quiescence(depth_qs, search_context_model):
+        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜静止[深QS={depth_qs}]＞")
         return BackwardsPlotModel(
-                is_mars_at_out_of_termination   = self._search_context_model.gymnasium.is_mars,
-                is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
+                is_mars_at_out_of_termination   = search_context_model.gymnasium.is_mars,
+                is_gote_at_out_of_termination   = search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.QUIESCENCE,
                 hint_list                       = [],
                 move_list                       = [],
@@ -166,16 +168,32 @@ class SearchAlgorithmModel:
                 list_of_accumulate_exchange_value_on_earth  = [])
 
 
-    def create_backwards_plot_model_at_no_candidates(self, depth_qs):
-        self._search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜候補手無し[深QS={depth_qs}]＞")
+    @staticmethod
+    def create_backwards_plot_model_at_no_candidates(depth_qs, search_context_model):
+        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜候補手無し[深QS={depth_qs}]＞")
         return BackwardsPlotModel(
-                is_mars_at_out_of_termination   = self._search_context_model.gymnasium.is_mars,
-                is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
+                is_mars_at_out_of_termination   = search_context_model.gymnasium.is_mars,
+                is_gote_at_out_of_termination   = search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.NO_CANDIDATES,
                 hint_list                       = [],
                 move_list                       = [],
                 cap_list                        = [],
                 list_of_accumulate_exchange_value_on_earth  = [])
+
+
+    def __init__(self, search_context_model):
+        """
+        Parameters
+        ----------
+        search_context_model : SearchContextModel
+            探索モデル。
+        """
+        self._search_context_model = search_context_model
+
+
+    @property
+    def search_context_model(self):
+        return self._search_context_model
 
 
     def remove_drop_moves(self, remaining_moves):

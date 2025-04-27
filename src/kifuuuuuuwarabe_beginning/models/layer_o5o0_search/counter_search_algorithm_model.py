@@ -24,7 +24,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
                 search_context_model=search_context_model)
 
 
-    def search_before_entry_node(self, pv):
+    def search_before_entry_node_counter(self, pv, search_context_model):
         """ノードに入る前に。
 
         Returns
@@ -34,8 +34,8 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         is_terminate : bool
             読み終わり。
         """
-        self._search_context_model.start_time = time.time()          # 探索開始時間
-        self._search_context_model.restart_time = self._search_context_model.start_time   # 前回の計測開始時間
+        search_context_model.start_time = time.time()          # 探索開始時間
+        search_context_model.restart_time = search_context_model.start_time   # 前回の計測開始時間
 
         ########################
         # MARK: 指す前にやること
@@ -43,23 +43,23 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
         # 指さなくても分かること（ライブラリー使用）
 
-        if self._search_context_model.gymnasium.table.is_game_over():
+        if search_context_model.gymnasium.table.is_game_over():
             """手番の投了局面時。
             """
-            return self.create_backwards_plot_model_at_game_over(), True
+            return SearchAlgorithmModel.create_backwards_plot_model_at_game_over(search_context_model=self._search_context_model), True
 
         # 一手詰めを詰める
-        if not self._search_context_model.gymnasium.table.is_check():
+        if not search_context_model.gymnasium.table.is_check():
             """手番玉に王手がかかっていない時で"""
 
-            if (mate_move := self._search_context_model.gymnasium.table.mate_move_in_1ply()):
+            if (mate_move := search_context_model.gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
-                return self.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move), True
+                return SearchAlgorithmModel.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move, search_context_model=self._search_context_model), True
 
-        if self._search_context_model.gymnasium.table.is_nyugyoku():
+        if search_context_model.gymnasium.table.is_nyugyoku():
             """手番の入玉宣言勝ち局面時。
             """
-            return self.create_backwards_plot_model_at_nyugyoku_win(), True
+            return SearchAlgorithmModel.create_backwards_plot_model_at_nyugyoku_win(search_context_model=self._search_context_model), True
 
         return pv.backwards_plot_model, pv.is_terminate
 
@@ -171,7 +171,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
                 # ［駒を取る手］がないことを、［静止］と呼ぶ。
                 if len(pv_list) == 0:
-                    pv.backwards_plot_model = self.create_backwards_plot_model_at_quiescence(depth_qs=-1)
+                    pv.backwards_plot_model = SearchAlgorithmModel.create_backwards_plot_model_at_quiescence(depth_qs=-1, search_context_model=self._search_context_model)
                     pv.is_terminate = True
 
             if not pv.is_terminate:
@@ -216,7 +216,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
         # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
         if best_pv is None:
-            return self.create_backwards_plot_model_at_no_candidates(depth_qs=-1)
+            return SearchAlgorithmModel.create_backwards_plot_model_at_no_candidates(depth_qs=-1, search_context_model=self._search_context_model)
 
         # 今回の手を付け加える。
         best_pv.backwards_plot_model.append_move_from_back(
