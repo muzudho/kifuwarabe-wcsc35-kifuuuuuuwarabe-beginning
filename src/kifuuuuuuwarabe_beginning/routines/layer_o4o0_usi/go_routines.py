@@ -293,9 +293,10 @@ def _main_search_at_first(remaining_moves, gymnasium):
             zero_pv.is_terminate = True
 
     if not zero_pv.is_terminate:
-        pv_list = RootSearchRoutines.search_as_root(pv_list = pv_list, search_context_model=search_context_model)
-
+        RootSearchRoutines.check_control_from_root(pv_list = pv_list, search_context_model=search_context_model)
+        pv_list = RootSearchRoutines.visit_counter_from_root(pv_list = pv_list, search_context_model=search_context_model)
         number_of_visited_nodes = search_context_model.number_of_visited_nodes
+
     else:
         pv_list = [PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], value_pv=zero_pv.backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=zero_pv.backwards_plot_model)]
 

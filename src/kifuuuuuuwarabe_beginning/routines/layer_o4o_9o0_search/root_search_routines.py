@@ -29,25 +29,10 @@ class RootSearchRoutines(SearchRoutines):
         remaining_moves = SearchRoutines.remove_depromoted_moves(remaining_moves=remaining_moves, search_context_model=search_context_model)       # ［成れるのに成らない手］は除外
         pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
         return pv_list
-    
+
 
     @staticmethod
-    def search_as_root(pv_list, search_context_model):
-        """通常探索の開始。
-
-        Parameters
-        ----------
-        pv_list : list<PrincipalVariationModel>
-            ［読み筋］のリスト。
-
-        Returns
-        -------
-        pv_list : list<PrincipalVariationModel>
-            有力な読み筋。棋譜のようなもの。
-            枝が増えて、合法手の数より多くなることがあることに注意。
-        """
-
-        # まだ深く読む場合。
+    def check_control_from_root(pv_list, search_context_model):
 
         ####################
         # MARK: ノード訪問時
@@ -78,7 +63,7 @@ class RootSearchRoutines(SearchRoutines):
             ####################
 
             # PV を更新。
-            (pv.backwards_plot_model, pv.is_terminate) = CounterSearchRoutines.search_before_entry_node_counter(pv=pv, search_context_model=search_context_model)
+            (pv.backwards_plot_model, pv.is_terminate) = RootSearchRoutines._search_before_entering_counter_node(pv=pv, search_context_model=search_context_model)
 
             ######################
             # MARK: 履歴を全部戻す
@@ -92,6 +77,25 @@ class RootSearchRoutines(SearchRoutines):
 
             search_context_model.frontwards_plot_model.pop_move()
             search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
+
+
+    @staticmethod
+    def visit_counter_from_root(pv_list, search_context_model):
+        """通常探索の開始。
+
+        Parameters
+        ----------
+        pv_list : list<PrincipalVariationModel>
+            ［読み筋］のリスト。
+
+        Returns
+        -------
+        pv_list : list<PrincipalVariationModel>
+            有力な読み筋。棋譜のようなもの。
+            枝が増えて、合法手の数より多くなることがあることに注意。
+        """
+
+        # まだ深く読む場合。
 
         ################################
         # MARK: PVリスト探索（応手）
@@ -156,6 +160,46 @@ class RootSearchRoutines(SearchRoutines):
 
         search_context_model.end_time = time.time()    # 計測終了時間
         return pv_list
+
+
+    @staticmethod
+    def _search_before_entering_counter_node(pv, search_context_model):
+        """ノードに入る前に。
+
+        Returns
+        -------
+        backwards_plot_model : BackwardsPlotModel
+            読み筋。
+        is_terminate : bool
+            読み終わり。
+        """
+
+        ########################
+        # MARK: 指す前にやること
+        ########################
+
+        search_context_model.start_time = time.time()          # 探索開始時間
+        search_context_model.restart_time = search_context_model.start_time   # 前回の計測開始時間
+
+        if search_context_model.gymnasium.table.is_game_over():
+            """手番の投了局面時。
+            """
+            return SearchRoutines.create_backwards_plot_model_at_game_over(search_context_model=search_context_model), True
+
+        # 一手詰めを詰める
+        if not search_context_model.gymnasium.table.is_check():
+            """手番玉に王手がかかっていない時で"""
+
+            if (mate_move := search_context_model.gymnasium.table.mate_move_in_1ply()):
+                """一手詰めの指し手があれば、それを取得"""
+                return SearchRoutines.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move, search_context_model=search_context_model), True
+
+        if search_context_model.gymnasium.table.is_nyugyoku():
+            """手番の入玉宣言勝ち局面時。
+            """
+            return SearchRoutines.create_backwards_plot_model_at_nyugyoku_win(search_context_model=search_context_model), True
+
+        return pv.backwards_plot_model, pv.is_terminate
 
 
     @staticmethod

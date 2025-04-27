@@ -45,4 +45,4 @@ class ZeroSearchRoutines(SearchRoutines):
             """
             return SearchRoutines.create_backwards_plot_model_at_nyugyoku_win(search_context_model=search_context_model), True
 
-        return pv.backwards_plot_model, False
+        return pv.backwards_plot_model, pv.is_terminate
