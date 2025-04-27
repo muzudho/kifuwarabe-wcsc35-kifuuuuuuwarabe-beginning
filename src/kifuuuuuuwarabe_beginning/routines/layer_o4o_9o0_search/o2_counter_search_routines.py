@@ -108,10 +108,9 @@ class O2CounterSearchRoutines(SearchRoutines):
 
             # TODO 静止探索は後回しにしたい。
             
-            (pv.backwards_plot_model, pv.is_terminate) = O3QuiescenceSearchRoutines.search_before_entering_quiescence_node(
-                    depth_qs    = search_context_model.max_depth_qs,
+            (pv.backwards_plot_model, pv.is_terminate) = SearchRoutines.look_in_0_moves(
+                    depth       = 2,
                     pv          = pv,
-                    parent_move = my_move,
                     search_context_model    = search_context_model)
             
             if pv.is_terminate:
