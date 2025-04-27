@@ -196,7 +196,8 @@ class SearchAlgorithmModel:
         return self._search_context_model
 
 
-    def remove_drop_moves(self, remaining_moves):
+    @staticmethod
+    def remove_drop_moves(remaining_moves):
         """［打］は除外。
         """
         for my_move in reversed(remaining_moves):   # 指し手を全部調べる。

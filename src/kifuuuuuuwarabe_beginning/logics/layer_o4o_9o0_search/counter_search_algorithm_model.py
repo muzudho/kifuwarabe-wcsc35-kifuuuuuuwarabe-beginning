@@ -3,8 +3,8 @@ import time
 
 from ...models.layer_o1o_9o0 import PieceValuesModel
 from ...models.layer_o1o0 import constants, SquareModel
-from ...models.layer_o5o0_search.quiescence_search_algorithm_model import QuiescenceSearchAlgorithmModel
 from ...models.layer_o5o0_search.search_algorithm_model import SearchAlgorithmModel
+from .quiescence_search_algorithm_model import QuiescenceSearchAlgorithmModel
 
 
 class CounterSearchAlgorithmModel(SearchAlgorithmModel):
@@ -159,17 +159,15 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             ####################
 
             # TODO 静止探索は後回しにしたい。
-
-            quiescence_search_algorithum_model = QuiescenceSearchAlgorithmModel(    # 静止探索。
-                    search_context_model    = search_context_model)
             
-            (pv.backwards_plot_model, pv.is_terminate) = quiescence_search_algorithum_model.search_before_entry_node_qs(
+            (pv.backwards_plot_model, pv.is_terminate) = QuiescenceSearchAlgorithmModel.search_before_entry_node_qs(
                     depth_qs    = search_context_model.max_depth_qs,
                     pv          = pv,
-                    parent_move = my_move)
+                    parent_move = my_move,
+                    search_context_model    = search_context_model)
             
             if not pv.is_terminate:
-                child_pv_list = quiescence_search_algorithum_model.search_after_entry_node_quiescence(parent_pv=pv)
+                child_pv_list = QuiescenceSearchAlgorithmModel.search_after_entry_node_quiescence(parent_pv=pv, search_context_model=search_context_model)
 
                 # ［駒を取る手］がないことを、［静止］と呼ぶ。
                 if len(pv_list) == 0:
@@ -177,9 +175,10 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
                     pv.is_terminate = True
 
             if not pv.is_terminate:
-                child_plot_model = quiescence_search_algorithum_model.search_as_quiescence(      # 再帰呼出
+                child_plot_model = QuiescenceSearchAlgorithmModel.search_as_quiescence(      # 再帰呼出
                         depth_qs    = search_context_model.max_depth_qs,
-                        pv_list     = child_pv_list)
+                        pv_list     = child_pv_list,
+                        search_context_model    = search_context_model)
             else:
                 child_plot_model = pv.backwards_plot_model
 

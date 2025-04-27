@@ -1,3 +1,4 @@
 from .counter_search_algorithm_model import CounterSearchAlgorithmModel
+from .quiescence_search_algorithm_model import QuiescenceSearchAlgorithmModel
 from .root_search_algorithm_model import RootSearchAlgorithmModel
 from .zero_search_algorithm_model import ZeroSearchAlgorithumModel
