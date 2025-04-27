@@ -1,6 +1,6 @@
 import time
 
-from .search_algorithm_model import SearchAlgorithmModel
+from ...models.layer_o5o0_search.search_algorithm_model import SearchAlgorithmModel
 
 
 class ZeroSearchAlgorithumModel(SearchAlgorithmModel):

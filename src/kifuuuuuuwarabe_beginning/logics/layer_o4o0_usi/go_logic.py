@@ -1,10 +1,10 @@
 import cshogi
 import random
 
-from ...logics.layer_o4o_9o0_search import RootSearchAlgorithmModel
+from ...logics.layer_o4o_9o0_search import RootSearchAlgorithmModel, ZeroSearchAlgorithumModel
 from ...models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateModel
 from ...models.layer_o1o0o1o0_japanese import JapaneseMoveModel
-from ...models.layer_o5o0_search import PrincipalVariationModel, SearchContextModel, ZeroSearchAlgorithumModel
+from ...models.layer_o5o0_search import PrincipalVariationModel, SearchContextModel
 from ...views import TableView
 from ..layer_o3o0 import MovesPickupFilterLogics, MovesReductionFilterLogics
 
