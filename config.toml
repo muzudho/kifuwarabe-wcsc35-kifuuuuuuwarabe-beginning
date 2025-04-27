@@ -74,6 +74,9 @@
     # 号令［頭が丸い駒の頭のヒヨコを突くな］
     do_not_peck_at_chick_on_roundheaded_piece = true
 
+    # 号令［犬を６段目に登らせるな］
+    do_not_let_dog_climb_6_rank = true
+
     # 以下、古い実装
     # --------------
 
