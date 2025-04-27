@@ -61,17 +61,6 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
             return SearchRoutines.create_backwards_plot_model_at_horizon(depth_qs, search_context_model=search_context_model), True
 
         return pv.backwards_plot_model, pv.is_terminate
-
-
-    def __init__(self, search_context_model):
-        """
-        Parameters
-        ----------
-        search_context_model : SearchContextModel
-            探索モデル。
-        """
-        super().__init__(
-                search_context_model=search_context_model)
     
 
     @staticmethod
@@ -93,8 +82,8 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
         remaining_moves = legal_move_list
         remaining_moves = SearchRoutines.remove_drop_moves(remaining_moves=remaining_moves)           # 打の手を全部除外したい。
         remaining_moves = SearchRoutines.remove_depromoted_moves(remaining_moves=remaining_moves, search_context_model=search_context_model)     # ［成れるのに成らない手］は除外
-        (remaining_moves, rolled_back) = O4QuiescenceSearchRoutines.filtering_same_destination_move_list(parent_move=parent_pv.vertical_list_of_move_pv[-1], remaining_moves=remaining_moves, rollback_if_empty=True) # できれば［同］の手を残す。
-        remaining_moves = O4QuiescenceSearchRoutines.get_cheapest_move_list(remaining_moves=remaining_moves)
+        (remaining_moves, rolled_back) = SearchRoutines.filtering_same_destination_move_list(parent_move=parent_pv.vertical_list_of_move_pv[-1], remaining_moves=remaining_moves, rollback_if_empty=True) # できれば［同］の手を残す。
+        remaining_moves = SearchRoutines.get_cheapest_move_list(remaining_moves=remaining_moves)
         (remaining_moves, rolled_back) = SearchRoutines.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=False, search_context_model=search_context_model)       # 駒を取る手と、王手のみ残す
 
         # remaining_moves から pv へ変換。
@@ -240,48 +229,3 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
                 hint                = '')
 
         return best_pv.backwards_plot_model
-
-
-    @staticmethod
-    def filtering_same_destination_move_list(parent_move, remaining_moves, rollback_if_empty):
-        """［同］（１つ前の手の移動先に移動する手）を優先的に選ぶ。
-
-        Returns
-        -------
-        move_list : list
-            指し手のリスト。
-        rolled_back : bool
-            ロールバックされた。
-        """
-        dst_sq_of_parent_move_obj = SquareModel(cshogi.move_to(parent_move))      # ［１つ親の手］の［移動先マス］
-        same_destination_move_list = []
-
-        for my_move in remaining_moves:
-            dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
-            if dst_sq_obj.sq == dst_sq_of_parent_move_obj.sq:
-                same_destination_move_list.append(my_move)
-        
-        if 0 < len(same_destination_move_list):
-            return same_destination_move_list, False
-        
-        if rollback_if_empty:
-            return remaining_moves, True
-        return [], False
-
-
-    @staticmethod
-    def get_cheapest_move_list(remaining_moves):
-        """TODO 一番安い駒の指し手だけを選ぶ。
-        TODO 打はどう扱う？
-        """
-        cheapest_value = constants.value.BIG_VALUE
-        cheapest_move_list = []
-        for my_move in remaining_moves:
-            moving_pt = TableHelper.get_moving_pt_from_move(my_move)
-            value = PieceValuesModel.by_piece_type(moving_pt)
-            if value == cheapest_move_list:
-                cheapest_move_list.append(my_move)
-            elif value < cheapest_value:
-                cheapest_value = value
-                cheapest_move_list = [my_move]            
-        return cheapest_move_list

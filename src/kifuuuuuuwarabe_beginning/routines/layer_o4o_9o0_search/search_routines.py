@@ -1,6 +1,7 @@
 import cshogi
 
 from ...models.layer_o1o_9o0 import PieceValuesModel
+from ...models.layer_o1o0o_9o0_table_helper import TableHelper
 from ...models.layer_o1o0 import constants, Mars, SquareModel
 from ...models.layer_o2o0 import BackwardsPlotModel
 from ...models.layer_o4o0_rules.negative import DoNotDepromotionModel
@@ -253,3 +254,48 @@ class SearchRoutines:
             rolled_back     = True
 
         return remaining_moves, rolled_back
+
+
+    @staticmethod
+    def filtering_same_destination_move_list(parent_move, remaining_moves, rollback_if_empty):
+        """［同］（１つ前の手の移動先に移動する手）を優先的に選ぶ。
+
+        Returns
+        -------
+        move_list : list
+            指し手のリスト。
+        rolled_back : bool
+            ロールバックされた。
+        """
+        dst_sq_of_parent_move_obj = SquareModel(cshogi.move_to(parent_move))      # ［１つ親の手］の［移動先マス］
+        same_destination_move_list = []
+
+        for my_move in remaining_moves:
+            dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
+            if dst_sq_obj.sq == dst_sq_of_parent_move_obj.sq:
+                same_destination_move_list.append(my_move)
+        
+        if 0 < len(same_destination_move_list):
+            return same_destination_move_list, False
+        
+        if rollback_if_empty:
+            return remaining_moves, True
+        return [], False
+
+
+    @staticmethod
+    def get_cheapest_move_list(remaining_moves):
+        """TODO 一番安い駒の指し手だけを選ぶ。
+        TODO 打はどう扱う？
+        """
+        cheapest_value = constants.value.BIG_VALUE
+        cheapest_move_list = []
+        for my_move in remaining_moves:
+            moving_pt = TableHelper.get_moving_pt_from_move(my_move)
+            value = PieceValuesModel.by_piece_type(moving_pt)
+            if value == cheapest_move_list:
+                cheapest_move_list.append(my_move)
+            elif value < cheapest_value:
+                cheapest_value = value
+                cheapest_move_list = [my_move]            
+        return cheapest_move_list
