@@ -13,6 +13,8 @@ class SearchAlgorithmModel:
 
     @staticmethod
     def convert_remaining_moves_to_pv_list(parent_pv, remaining_moves, search_context_model):
+        """PVリスト作成。
+        """
         pv_list = []
 
         # 残った指し手について
@@ -21,7 +23,7 @@ class SearchAlgorithmModel:
             # MARK: 一手指す前
             ##################
 
-            # 打の場合、取った駒無し。空マス。
+            # （あれば）駒を取る。
             dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
             cap_pt      = search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # ［移動先マス］にある［駒種類］。つまりそれは取った駒。打の［移動先マス］は常に空きマス。
 
@@ -35,6 +37,11 @@ class SearchAlgorithmModel:
                     replace_is_terminate            = False)
             pv_list.append(pv)
         
+            # FIXME 読み筋に格納するのは、指した後であるべきでは？
+            search_context_model.frontwards_plot_model.append_move_from_front(
+                    move    = my_move,
+                    cap_pt  = cap_pt)
+
         return pv_list
 
 
