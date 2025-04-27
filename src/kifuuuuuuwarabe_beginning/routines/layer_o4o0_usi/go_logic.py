@@ -1,12 +1,12 @@
 import cshogi
 import random
 
-from ...logics.layer_o4o_9o0_search import RootSearchAlgorithmModel, ZeroSearchAlgorithumModel
+from ...routines.layer_o4o_9o0_search import RootSearchRoutines, ZeroSearchRoutines
 from ...models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateModel
 from ...models.layer_o1o0o1o0_japanese import JapaneseMoveModel
 from ...models.layer_o5o0_search import PrincipalVariationModel, SearchContextModel
 from ...views import TableView
-from ..layer_o3o0 import MovesPickupFilterLogics, MovesReductionFilterLogics
+from ..layer_o3o0 import MovesPickupFilterRoutines, MovesReductionFilterRoutines
 
 
 class GoLogic:
@@ -157,7 +157,7 @@ class _Go2nd():
         old_remaining_moves_qs = remaining_moves_qs.copy()
 
         # 枝の前でポジティブ・ルール
-        remaining_moves_pr = MovesPickupFilterLogics.on_node_entry_positive_main(
+        remaining_moves_pr = MovesPickupFilterRoutines.on_node_entry_positive_main(
                 remaining_moves = remaining_moves_qs,
                 gymnasium       = self._gymnasium)
         
@@ -178,7 +178,7 @@ class _Go2nd():
             # ［指前］
             #       制約：
             #           指し手は必ず１つ以上残っています。
-            remaining_moves_nr = MovesReductionFilterLogics.on_node_entry_negative(
+            remaining_moves_nr = MovesReductionFilterRoutines.on_node_entry_negative(
                     remaining_moves = remaining_moves_qs,
                     gymnasium       = self._gymnasium)
             length_by_kifuwarabe = len(remaining_moves_nr)
@@ -249,7 +249,7 @@ GOREI COLLECTION
         # NOTE これを書くと、将棋ホームでフリーズ： print(message, file=sys.stderr)
 
         # ［指後］
-        MovesReductionFilterLogics.after_best_moving_o1o0(
+        MovesReductionFilterRoutines.after_best_moving_o1o0(
                 move        = best_move,
                 gymnasium   = self._gymnasium)
 
@@ -263,6 +263,7 @@ GOREI COLLECTION
                 number_of_visited_nodes     = number_of_visited_nodes)
 
 
+@staticmethod
 def _main_search_at_first(remaining_moves, gymnasium):
     """探索。
     
@@ -283,11 +284,11 @@ def _main_search_at_first(remaining_moves, gymnasium):
     zero_pv = PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], value_pv=0, backwards_plot_model=None)
 
     # ルート・ノードに入る前に探索。
-    (zero_pv.backwards_plot_model, zero_pv.is_terminate) = ZeroSearchAlgorithumModel.search_before_entering_root_node(pv=zero_pv, search_context_model=search_context_model)
+    (zero_pv.backwards_plot_model, zero_pv.is_terminate) = ZeroSearchRoutines.search_before_entering_root_node(pv=zero_pv, search_context_model=search_context_model)
 
     # １階の探索
     if not zero_pv.is_terminate:
-        pv_list = RootSearchAlgorithmModel.search_after_entry_node_root(remaining_moves=remaining_moves, parent_pv=zero_pv, search_context_model=search_context_model)
+        pv_list = RootSearchRoutines.search_after_entry_node_root(remaining_moves=remaining_moves, parent_pv=zero_pv, search_context_model=search_context_model)
 
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(pv_list) == 0:
@@ -296,7 +297,7 @@ def _main_search_at_first(remaining_moves, gymnasium):
             zero_pv.is_terminate = True
 
     if not zero_pv.is_terminate:
-        pv_list = RootSearchAlgorithmModel.search_as_root(pv_list = pv_list, search_context_model=search_context_model)
+        pv_list = RootSearchRoutines.search_as_root(pv_list = pv_list, search_context_model=search_context_model)
 
         number_of_visited_nodes = search_context_model.number_of_visited_nodes
     else:

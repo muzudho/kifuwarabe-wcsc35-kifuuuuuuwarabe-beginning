@@ -1,4 +1,4 @@
-class MovesReductionFilterLogics():
+class MovesReductionFilterRoutines():
     """［合法手削減濾］
     合法手を減らすフィルターです。
     """

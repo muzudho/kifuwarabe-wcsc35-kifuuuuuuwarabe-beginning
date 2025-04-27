@@ -6,7 +6,7 @@ from ...models.layer_o2o0 import BackwardsPlotModel
 from ...models.layer_o4o0_rules.negative import DoNotDepromotionModel
 
 
-class SearchAlgorithmModel:
+class SearchRoutines:
     """検索アルゴリズム。
     """
 

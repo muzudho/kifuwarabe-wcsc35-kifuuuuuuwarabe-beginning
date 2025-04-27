@@ -4,8 +4,8 @@ import exshell as xs
 import sys
 
 from pathlib import Path
-from .logics.layer_o3o0 import MovesReductionFilterLogics
-from .logics.layer_o4o0_usi import GoLogic
+from .routines.layer_o3o0 import MovesReductionFilterRoutines
+from .routines.layer_o4o0_usi import GoLogic
 from .models.layer_o1o0 import SearchResultStateModel
 from .modules.exshell_mod.views import XsBoardView
 from .views import HistoryView, TableView
@@ -360,7 +360,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 
         print(f'★ go: ［３七の歩を突かない］意志を残してるか尋ねる前の指し手数={len(remaining_moves)}', file=sys.stderr)
-        remaining_moves = MovesReductionFilterLogics.get_will_not_to_move_37_pawn(
+        remaining_moves = MovesReductionFilterRoutines.get_will_not_to_move_37_pawn(
                 config_doc      = self._gymnasium.config_doc,
                 table           = self._gymnasium.table,
                 remaining_moves = remaining_moves)
@@ -369,7 +369,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 
         print(f'★ go: ［右壁を作らない］意志を残してるか尋ねる前の指し手数={len(remaining_moves)}', file=sys.stderr)
-        remaining_moves = MovesReductionFilterLogics.get_do_not_build_right_wall(
+        remaining_moves = MovesReductionFilterRoutines.get_do_not_build_right_wall(
                 config_do       =self._gymnasium.config_doc,
                 table           =self._gymnasium.table,
                 remaining_moves =remaining_moves)
@@ -378,7 +378,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 
         print(f'★ go: ［振り飛車をする］意志を残してるか尋ねる前の指し手数={len(remaining_moves)}', file=sys.stderr)
-        remaining_moves = MovesReductionFilterLogics.get_will_swinging_rook(
+        remaining_moves = MovesReductionFilterRoutines.get_will_swinging_rook(
                 config_doc      = self._gymnasium.config_doc,
                 table           = self._gymnasium.table,
                 remaining_moves = remaining_moves)
@@ -387,7 +387,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 
         print(f'★ go: ［８八の角を素抜かれない］意志を残してるか尋ねる前の指し手数={len(remaining_moves)}', file=sys.stderr)
-        remaining_moves = MovesReductionFilterLogics.get_will_not_to_be_cut_88_bishop(
+        remaining_moves = MovesReductionFilterRoutines.get_will_not_to_be_cut_88_bishop(
                 config_doc      = self._gymnasium.config_doc,
                 table           = self._gymnasium.table,
                 remaining_moves = remaining_moves)

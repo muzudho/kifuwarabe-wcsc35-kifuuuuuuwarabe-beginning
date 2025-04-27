@@ -1,4 +1,4 @@
-class MovesPickupFilterLogics():
+class MovesPickupFilterRoutines():
     """［合法手ピックアップ］
     合法手のリストから１つを選ぶフィルターです。
     """

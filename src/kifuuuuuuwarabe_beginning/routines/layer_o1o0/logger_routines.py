@@ -1,4 +1,4 @@
-class LoggerLogics():
+class LoggerRoutines():
 
 
     @staticmethod

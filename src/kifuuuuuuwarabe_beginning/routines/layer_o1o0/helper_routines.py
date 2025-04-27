@@ -1,4 +1,4 @@
-class Helper():
+class HelperRoutines():
     """ヘルパー関数集
     """
 
@@ -53,7 +53,7 @@ class Helper():
 
     @staticmethod
     def sq_to_masu(sq):
-        return Helper.sq_to_suji(sq) * 10 + Helper.sq_to_dan(sq)
+        return HelperRoutines.sq_to_suji(sq) * 10 + HelperRoutines.sq_to_dan(sq)
 
 
     @staticmethod

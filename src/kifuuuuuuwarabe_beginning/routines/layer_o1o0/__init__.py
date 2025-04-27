@@ -1,3 +1,3 @@
-from .helper import Helper
-from .logger_logics import LoggerLogics
-from .move_list_logics import MoveListLogics
+from .helper_routines import HelperRoutines
+from .logger_routines import LoggerRoutines
+from .move_list_routines import MoveListRoutines

@@ -1,9 +1,9 @@
 import time
 
-from .search_algorithm_model import SearchAlgorithmModel
+from .search_routines import SearchRoutines
 
 
-class ZeroSearchAlgorithumModel(SearchAlgorithmModel):
+class ZeroSearchRoutines(SearchRoutines):
 
 
     @staticmethod
@@ -30,7 +30,7 @@ class ZeroSearchAlgorithumModel(SearchAlgorithmModel):
         if search_context_model.gymnasium.table.is_game_over():
             """手番の投了局面時。
             """
-            return SearchAlgorithmModel.create_backwards_plot_model_at_game_over(search_context_model=search_context_model), True
+            return SearchRoutines.create_backwards_plot_model_at_game_over(search_context_model=search_context_model), True
 
         # 一手詰めを詰める
         if not search_context_model.gymnasium.table.is_check():
@@ -38,11 +38,11 @@ class ZeroSearchAlgorithumModel(SearchAlgorithmModel):
 
             if (mate_move := search_context_model.gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
-                return SearchAlgorithmModel.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move, search_context_model=search_context_model), True
+                return SearchRoutines.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move, search_context_model=search_context_model), True
 
         if search_context_model.gymnasium.table.is_nyugyoku():
             """手番の入玉宣言勝ち局面時。
             """
-            return SearchAlgorithmModel.create_backwards_plot_model_at_nyugyoku_win(search_context_model=search_context_model), True
+            return SearchRoutines.create_backwards_plot_model_at_nyugyoku_win(search_context_model=search_context_model), True
 
         return pv.backwards_plot_model, False

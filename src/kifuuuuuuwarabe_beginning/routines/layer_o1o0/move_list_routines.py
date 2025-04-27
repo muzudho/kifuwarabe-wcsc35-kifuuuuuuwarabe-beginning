@@ -1,13 +1,13 @@
 import cshogi
 
-from ...logics.layer_o1o0 import Helper
-from ...logics.layer_o1o1o0_move_list import SplitEatingBeforeMoveLogic
+from . import HelperRoutines
+from ..layer_o1o1o0_move_list import SplitEatingBeforeMoveRoutines
 from ...models.layer_o1o_9o0 import PieceValuesModel, PlanetPieceModel
 from ...models.layer_o1o0 import PieceTypeModel, SquareModel
 from ...models.layer_o1o1o0_move_list import SplitEatingBeforeMoveModel
 
 
-class MoveListLogics():
+class MoveListRoutines():
 
 
     @staticmethod

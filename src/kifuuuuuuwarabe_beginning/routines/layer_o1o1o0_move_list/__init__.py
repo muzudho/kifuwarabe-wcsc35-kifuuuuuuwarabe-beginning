@@ -1,1 +1,1 @@
-from .split_eating_before_move_logic import SplitEatingBeforeMoveLogic
+from .split_eating_before_move_routines import SplitEatingBeforeMoveRoutines

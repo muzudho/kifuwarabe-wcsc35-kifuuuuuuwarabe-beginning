@@ -5,7 +5,7 @@ from ...models.layer_o1o0 import PieceTypeModel, SquareModel
 from ...models.layer_o1o1o0_move_list import SplitEatingBeforeMoveModel
 
 
-class SplitEatingBeforeMoveLogic():
+class SplitEatingBeforeMoveRoutines():
     
 
     @staticmethod

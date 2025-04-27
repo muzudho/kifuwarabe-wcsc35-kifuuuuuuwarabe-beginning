@@ -4,10 +4,10 @@ import time
 from ...models.layer_o1o_9o0 import PieceValuesModel
 from ...models.layer_o1o0 import constants, Mars, PtolemaicTheoryModel, SquareModel
 from ...models.layer_o1o0o_9o0_table_helper import TableHelper
-from .search_algorithm_model import SearchAlgorithmModel
+from .search_routines import SearchRoutines
 
 
-class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
+class QuiescenceSearchRoutines(SearchRoutines):
     """駒の取り合いのための静止探索。
     駒の取り合いが終わるまで、駒の取り合いを探索します。
     """
@@ -51,7 +51,7 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         if search_context_model.gymnasium.table.is_game_over():
             """手番の投了局面時。
             """
-            return SearchAlgorithmModel.create_backwards_plot_model_at_game_over(search_context_model=search_context_model), True
+            return SearchRoutines.create_backwards_plot_model_at_game_over(search_context_model=search_context_model), True
 
         # 一手詰めを詰める
         if not search_context_model.gymnasium.table.is_check():
@@ -59,16 +59,16 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
 
             if (mate_move := search_context_model.gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
-                return SearchAlgorithmModel.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move, search_context_model=search_context_model), True
+                return SearchRoutines.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move, search_context_model=search_context_model), True
 
         if search_context_model.gymnasium.table.is_nyugyoku():
             """手番の入玉宣言勝ち局面時。
             """
-            return SearchAlgorithmModel.create_backwards_plot_model_at_nyugyoku_win(search_context_model=search_context_model), True
+            return SearchRoutines.create_backwards_plot_model_at_nyugyoku_win(search_context_model=search_context_model), True
 
         # これ以上深く読まない場合。
         if depth_qs < 1:
-            return SearchAlgorithmModel.create_backwards_plot_model_at_horizon(depth_qs, search_context_model=search_context_model), True
+            return SearchRoutines.create_backwards_plot_model_at_horizon(depth_qs, search_context_model=search_context_model), True
 
         return pv.backwards_plot_model, pv.is_terminate
 
@@ -90,14 +90,14 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
 
         legal_move_list = list(search_context_model.gymnasium.table.legal_moves)
         remaining_moves = legal_move_list
-        remaining_moves = SearchAlgorithmModel.remove_drop_moves(remaining_moves=remaining_moves)           # 打の手を全部除外したい。
-        remaining_moves = SearchAlgorithmModel.remove_depromoted_moves(remaining_moves=remaining_moves, search_context_model=search_context_model)     # ［成れるのに成らない手］は除外
-        (remaining_moves, rolled_back) = QuiescenceSearchAlgorithmModel.filtering_same_destination_move_list(parent_move=parent_pv.vertical_list_of_move_pv[-1], remaining_moves=remaining_moves, rollback_if_empty=True) # できれば［同］の手を残す。
-        remaining_moves = QuiescenceSearchAlgorithmModel.get_cheapest_move_list(remaining_moves=remaining_moves)
-        (remaining_moves, rolled_back) = SearchAlgorithmModel.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=False, search_context_model=search_context_model)       # 駒を取る手と、王手のみ残す
+        remaining_moves = SearchRoutines.remove_drop_moves(remaining_moves=remaining_moves)           # 打の手を全部除外したい。
+        remaining_moves = SearchRoutines.remove_depromoted_moves(remaining_moves=remaining_moves, search_context_model=search_context_model)     # ［成れるのに成らない手］は除外
+        (remaining_moves, rolled_back) = QuiescenceSearchRoutines.filtering_same_destination_move_list(parent_move=parent_pv.vertical_list_of_move_pv[-1], remaining_moves=remaining_moves, rollback_if_empty=True) # できれば［同］の手を残す。
+        remaining_moves = QuiescenceSearchRoutines.get_cheapest_move_list(remaining_moves=remaining_moves)
+        (remaining_moves, rolled_back) = SearchRoutines.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=False, search_context_model=search_context_model)       # 駒を取る手と、王手のみ残す
 
         # remaining_moves から pv へ変換。
-        pv_list = SearchAlgorithmModel.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
+        pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
         return pv_list
 
 
@@ -172,22 +172,22 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             ####################
 
             # NOTE ネガ・マックスではないので、評価値の正負を反転させなくていい。
-            (pv.backwards_plot_model, pv.is_terminate) = QuiescenceSearchAlgorithmModel.search_before_entry_node_qs(
+            (pv.backwards_plot_model, pv.is_terminate) = QuiescenceSearchRoutines.search_before_entry_node_qs(
                     depth_qs        = depth_qs + depth_qs_extend,
                     pv              = pv,
                     parent_move     = my_move,
                     search_context_model    = search_context_model)
 
             if not pv.is_terminate:
-                child_pv_list = QuiescenceSearchAlgorithmModel.search_after_entry_node_quiescence(parent_pv=pv, search_context_model=search_context_model)
+                child_pv_list = QuiescenceSearchRoutines.search_after_entry_node_quiescence(parent_pv=pv, search_context_model=search_context_model)
 
                 # ［駒を取る手］がないことを、［静止］と呼ぶ。
                 if len(pv_list) == 0:
-                    pv.backwards_plot_model = SearchAlgorithmModel.create_backwards_plot_model_at_quiescence(depth_qs=-1, search_context_model=search_context_model)
+                    pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_quiescence(depth_qs=-1, search_context_model=search_context_model)
                     pv.is_terminate = True
 
             if not pv.is_terminate:
-                child_plot_model = QuiescenceSearchAlgorithmModel.search_as_quiescence(      # 再帰呼出
+                child_plot_model = QuiescenceSearchRoutines.search_as_quiescence(      # 再帰呼出
                         depth_qs    = depth_qs + depth_qs_extend,
                         pv_list     = child_pv_list,
                         search_context_model    = search_context_model)
@@ -212,7 +212,7 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 手番の処理
             ##################
 
-            (this_branch_value_on_earth, is_update_best) = SearchAlgorithmModel.is_update_best(best_pv=best_pv, child_plot_model=child_plot_model, piece_exchange_value_on_earth=piece_exchange_value_on_earth, search_context_model=search_context_model)
+            (this_branch_value_on_earth, is_update_best) = SearchRoutines.is_update_best(best_pv=best_pv, child_plot_model=child_plot_model, piece_exchange_value_on_earth=piece_exchange_value_on_earth, search_context_model=search_context_model)
                         
             # 最善手の更新（１つに絞る）
             if is_update_best:
@@ -228,7 +228,7 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
 
         # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
         if best_pv is None:
-            return SearchAlgorithmModel.create_backwards_plot_model_at_no_candidates(depth_qs=depth_qs, search_context_model=search_context_model)
+            return SearchRoutines.create_backwards_plot_model_at_no_candidates(depth_qs=depth_qs, search_context_model=search_context_model)
 
         # 読み筋に今回の手を付け加える。（ TODO 駒得点も付けたい）
         best_pv.backwards_plot_model.append_move_from_back(

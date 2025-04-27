@@ -1,6 +1,6 @@
 import cshogi
 
-from ....logics.layer_o1o0.helper import Helper
+from ....routines.layer_o1o0.helper_routines import HelperRoutines
 from ...layer_o1o0 import constants, SquareModel
 from ...layer_o2o0.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
 from ..negative_rule_model import NegativeRuleModel
@@ -41,7 +41,7 @@ class WillForThreeGoldAndSilverCoinsToGatherToTheRightModel(NegativeRuleModel):
             return constants.mind.NOT_IN_THIS_CASE
 
         # 36マスをスキャンする
-        left_from_6_suji = [Helper.file_rank_to_sq(file, rank) for file in np.suji_range(6, 10)
+        left_from_6_suji = [HelperRoutines.file_rank_to_sq(file, rank) for file in np.suji_range(6, 10)
             for rank in np.dan_range(1, 10)]
         #print(f'{len(left_from_6_suji)=} {left_from_6_suji=}')
 

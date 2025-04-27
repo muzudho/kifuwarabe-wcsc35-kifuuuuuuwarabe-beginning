@@ -1,2 +1,2 @@
-from .moves_pickup_filter_logics import MovesPickupFilterLogics
-from .moves_reduction_filter_logics import MovesReductionFilterLogics
+from .moves_pickup_filter_routines import MovesPickupFilterRoutines
+from .moves_reduction_filter_routines import MovesReductionFilterRoutines

@@ -3,24 +3,13 @@ import time
 
 from ...models.layer_o1o_9o0 import PieceValuesModel
 from ...models.layer_o1o0 import constants, SquareModel
-from .search_algorithm_model import SearchAlgorithmModel
-from .quiescence_search_algorithm_model import QuiescenceSearchAlgorithmModel
+from .search_routines import SearchRoutines
+from .quiescence_search_routines import QuiescenceSearchRoutines
 
 
-class CounterSearchAlgorithmModel(SearchAlgorithmModel):
+class CounterSearchRoutines(SearchRoutines):
     """２階の探索。
     """
-
-
-    def __init__(self, search_context_model):
-        """
-        Parameters
-        ----------
-        search_context_model : SearchContextModel
-            探索モデル。
-        """
-        super().__init__(
-                search_context_model=search_context_model)
 
 
     @staticmethod
@@ -46,7 +35,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         if search_context_model.gymnasium.table.is_game_over():
             """手番の投了局面時。
             """
-            return SearchAlgorithmModel.create_backwards_plot_model_at_game_over(search_context_model=search_context_model), True
+            return SearchRoutines.create_backwards_plot_model_at_game_over(search_context_model=search_context_model), True
 
         # 一手詰めを詰める
         if not search_context_model.gymnasium.table.is_check():
@@ -54,12 +43,12 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
             if (mate_move := search_context_model.gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
-                return SearchAlgorithmModel.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move, search_context_model=search_context_model), True
+                return SearchRoutines.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move, search_context_model=search_context_model), True
 
         if search_context_model.gymnasium.table.is_nyugyoku():
             """手番の入玉宣言勝ち局面時。
             """
-            return SearchAlgorithmModel.create_backwards_plot_model_at_nyugyoku_win(search_context_model=search_context_model), True
+            return SearchRoutines.create_backwards_plot_model_at_nyugyoku_win(search_context_model=search_context_model), True
 
         return pv.backwards_plot_model, pv.is_terminate
 
@@ -85,14 +74,14 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         ##########################
         
         remaining_moves = list(search_context_model.gymnasium.table.legal_moves)      # 全合法手。
-        remaining_moves = SearchAlgorithmModel.remove_depromoted_moves(remaining_moves=remaining_moves, search_context_model=search_context_model)     # ［成れるのに成らない手］は除外
-        aigoma_move_list = CounterSearchAlgorithmModel._choice_aigoma_move_list(remaining_moves=remaining_moves, search_context_model=search_context_model)   # ［間駒］（相手の利きの上に置く手）を抽出。
-        remaining_moves = CounterSearchAlgorithmModel._remove_drop_except_aigoma(remaining_moves)  # ［間駒］以外の［打］は（多すぎるので）除外。
-        (remaining_moves, rolled_back) = SearchAlgorithmModel.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=True, search_context_model=search_context_model)    # ［カウンター探索］では、駒を取る手と、王手のみ残す。［駒を取る手、王手］が無ければ、（巻き戻して）それ以外の手を指します。
+        remaining_moves = SearchRoutines.remove_depromoted_moves(remaining_moves=remaining_moves, search_context_model=search_context_model)     # ［成れるのに成らない手］は除外
+        aigoma_move_list = CounterSearchRoutines._choice_aigoma_move_list(remaining_moves=remaining_moves, search_context_model=search_context_model)   # ［間駒］（相手の利きの上に置く手）を抽出。
+        remaining_moves = CounterSearchRoutines._remove_drop_except_aigoma(remaining_moves)  # ［間駒］以外の［打］は（多すぎるので）除外。
+        (remaining_moves, rolled_back) = SearchRoutines.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=True, search_context_model=search_context_model)    # ［カウンター探索］では、駒を取る手と、王手のみ残す。［駒を取る手、王手］が無ければ、（巻き戻して）それ以外の手を指します。
         remaining_moves.extend(aigoma_move_list)
 
         # remaining_moves から pv へ変換。
-        pv_list = SearchAlgorithmModel.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
+        pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
         return pv_list
 
 
@@ -160,22 +149,22 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
             # TODO 静止探索は後回しにしたい。
             
-            (pv.backwards_plot_model, pv.is_terminate) = QuiescenceSearchAlgorithmModel.search_before_entry_node_qs(
+            (pv.backwards_plot_model, pv.is_terminate) = QuiescenceSearchRoutines.search_before_entry_node_qs(
                     depth_qs    = search_context_model.max_depth_qs,
                     pv          = pv,
                     parent_move = my_move,
                     search_context_model    = search_context_model)
             
             if not pv.is_terminate:
-                child_pv_list = QuiescenceSearchAlgorithmModel.search_after_entry_node_quiescence(parent_pv=pv, search_context_model=search_context_model)
+                child_pv_list = QuiescenceSearchRoutines.search_after_entry_node_quiescence(parent_pv=pv, search_context_model=search_context_model)
 
                 # ［駒を取る手］がないことを、［静止］と呼ぶ。
                 if len(pv_list) == 0:
-                    pv.backwards_plot_model = SearchAlgorithmModel.create_backwards_plot_model_at_quiescence(depth_qs=-1, search_context_model=search_context_model)
+                    pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_quiescence(depth_qs=-1, search_context_model=search_context_model)
                     pv.is_terminate = True
 
             if not pv.is_terminate:
-                child_plot_model = QuiescenceSearchAlgorithmModel.search_as_quiescence(      # 再帰呼出
+                child_plot_model = QuiescenceSearchRoutines.search_as_quiescence(      # 再帰呼出
                         depth_qs    = search_context_model.max_depth_qs,
                         pv_list     = child_pv_list,
                         search_context_model    = search_context_model)
@@ -199,7 +188,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 手番の処理
             ##################
 
-            (this_branch_value_on_earth, is_update_best) = SearchAlgorithmModel.is_update_best(best_pv=best_pv, child_plot_model=child_plot_model, piece_exchange_value_on_earth=piece_exchange_value_on_earth, search_context_model=search_context_model)
+            (this_branch_value_on_earth, is_update_best) = SearchRoutines.is_update_best(best_pv=best_pv, child_plot_model=child_plot_model, piece_exchange_value_on_earth=piece_exchange_value_on_earth, search_context_model=search_context_model)
 
             # 最善手の更新
             if is_update_best:
@@ -217,7 +206,7 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
 
         # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
         if best_pv is None:
-            return SearchAlgorithmModel.create_backwards_plot_model_at_no_candidates(depth_qs=-1, search_context_model=search_context_model)
+            return SearchRoutines.create_backwards_plot_model_at_no_candidates(depth_qs=-1, search_context_model=search_context_model)
 
         # 今回の手を付け加える。
         best_pv.backwards_plot_model.append_move_from_back(

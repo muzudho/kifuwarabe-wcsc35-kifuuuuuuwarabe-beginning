@@ -1,6 +1,6 @@
 import cshogi
 
-from ....logics.layer_o1o0.helper import Helper
+from ....routines.layer_o1o0.helper_routines import HelperRoutines
 from ...layer_o1o0 import constants, PieceModel, SquareModel
 from ...layer_o1o0o_9o0_table_helper import TableHelper
 from ...layer_o2o0.nine_rank_side_perspective_model import NineRankSidePerspectiveModel

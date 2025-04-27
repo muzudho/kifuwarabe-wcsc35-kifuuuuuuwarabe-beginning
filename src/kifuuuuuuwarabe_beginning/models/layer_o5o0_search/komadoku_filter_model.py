@@ -1,6 +1,6 @@
 import cshogi
 
-from ...logics.layer_o1o0.logger_logics import LoggerLogics
+from ...routines.layer_o1o0.logger_routines import LoggerRoutines
 from ..layer_o2o0 import NineRankSidePerspectiveModel
 
 
@@ -55,7 +55,7 @@ class KomadokuFilterModel():
             dump_2 = self._gymnasium.dump()
             if self._dump_1 != dump_2:
 
-                LoggerLogics.DumpDiffError(
+                LoggerRoutines.DumpDiffError(
                         dump_1  = self._dump_1,
                         dump_2  = dump_2)
 

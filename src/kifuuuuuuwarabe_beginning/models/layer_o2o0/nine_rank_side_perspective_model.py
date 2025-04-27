@@ -3,7 +3,7 @@
 import cshogi
 
 from ..layer_o1o0 import MasuModel, SquareModel
-from ...logics.layer_o1o0.helper import Helper
+from ...routines.layer_o1o0.helper_routines import HelperRoutines
 
 
 class NineRankSidePerspectiveModel():
@@ -43,10 +43,10 @@ class NineRankSidePerspectiveModel():
         """
         if self.is_opponent_turn():
             return self.suji_dan(
-                    suji=Helper.masu_to_suji(masu),
-                    dan=Helper.masu_to_dan(masu))
+                    suji=HelperRoutines.masu_to_suji(masu),
+                    dan=HelperRoutines.masu_to_dan(masu))
 
-        return Helper.masu_to_file(masu) * 9 + Helper.masu_to_rank(masu)
+        return HelperRoutines.masu_to_file(masu) * 9 + HelperRoutines.masu_to_rank(masu)
 
 
     def file_rank(self, file, rank):

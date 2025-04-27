@@ -1,6 +1,6 @@
 import cshogi
 
-from ....logics.layer_o1o0.helper import Helper
+from ....routines.layer_o1o0.helper_routines import HelperRoutines
 from ...layer_o1o0 import constants, SquareModel
 from ...layer_o1o0o_9o0_table_helper import TableHelper
 from ...layer_o2o0.nine_rank_side_perspective_model import NineRankSidePerspectiveModel
@@ -88,7 +88,7 @@ class DoNotBuildRightWallModel(NegativeRuleModel):
 
         # 八段目、九段目
         for rank in [np.dan(8), np.dan(9)]:
-            sq = Helper.file_rank_to_sq(dst_sq_obj.file, rank)
+            sq = HelperRoutines.file_rank_to_sq(dst_sq_obj.file, rank)
             #print(f'D: {rank=} {sq=}')
             right_side_of_k.append(sq)
 
