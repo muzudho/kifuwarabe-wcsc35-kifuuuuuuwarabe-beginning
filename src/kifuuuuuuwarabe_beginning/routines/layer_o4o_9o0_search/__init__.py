@@ -1,4 +1,4 @@
 from .counter_search_routines import CounterSearchRoutines
-from .quiescence_search_routines import QuiescenceSearchRoutines
+from .o3_quiescence_search_routines import O3QuiescenceSearchRoutines
 from .root_search_routines import RootSearchRoutines
 from .zero_search_routines import ZeroSearchRoutines

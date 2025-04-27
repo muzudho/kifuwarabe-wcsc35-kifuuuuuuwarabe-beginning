@@ -4,10 +4,11 @@ import time
 from ...models.layer_o1o_9o0 import PieceValuesModel
 from ...models.layer_o1o0 import constants, SquareModel
 from ...models.layer_o1o0o_9o0_table_helper import TableHelper
+from .o5z_quiescence_search_routines import O5zQuiescenceSearchRoutines
 from .search_routines import SearchRoutines
 
 
-class QuiescenceSearchRoutines(SearchRoutines):
+class O4QuiescenceSearchRoutines(SearchRoutines):
     """駒の取り合いのための静止探索。
     駒の取り合いが終わるまで、駒の取り合いを探索します。
     """
@@ -92,8 +93,8 @@ class QuiescenceSearchRoutines(SearchRoutines):
         remaining_moves = legal_move_list
         remaining_moves = SearchRoutines.remove_drop_moves(remaining_moves=remaining_moves)           # 打の手を全部除外したい。
         remaining_moves = SearchRoutines.remove_depromoted_moves(remaining_moves=remaining_moves, search_context_model=search_context_model)     # ［成れるのに成らない手］は除外
-        (remaining_moves, rolled_back) = QuiescenceSearchRoutines.filtering_same_destination_move_list(parent_move=parent_pv.vertical_list_of_move_pv[-1], remaining_moves=remaining_moves, rollback_if_empty=True) # できれば［同］の手を残す。
-        remaining_moves = QuiescenceSearchRoutines.get_cheapest_move_list(remaining_moves=remaining_moves)
+        (remaining_moves, rolled_back) = O4QuiescenceSearchRoutines.filtering_same_destination_move_list(parent_move=parent_pv.vertical_list_of_move_pv[-1], remaining_moves=remaining_moves, rollback_if_empty=True) # できれば［同］の手を残す。
+        remaining_moves = O4QuiescenceSearchRoutines.get_cheapest_move_list(remaining_moves=remaining_moves)
         (remaining_moves, rolled_back) = SearchRoutines.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=False, search_context_model=search_context_model)       # 駒を取る手と、王手のみ残す
 
         # remaining_moves から pv へ変換。
@@ -172,22 +173,23 @@ class QuiescenceSearchRoutines(SearchRoutines):
             ####################
 
             # NOTE ネガ・マックスではないので、評価値の正負を反転させなくていい。
-            (pv.backwards_plot_model, pv.is_terminate) = QuiescenceSearchRoutines.search_before_entering_quiescence_node(
+            (pv.backwards_plot_model, pv.is_terminate) = O4QuiescenceSearchRoutines.search_before_entering_quiescence_node(
                     depth_qs        = depth_qs + depth_qs_extend,
                     pv              = pv,
                     parent_move     = my_move,
                     search_context_model    = search_context_model)
 
             if not pv.is_terminate:
-                child_pv_list = QuiescenceSearchRoutines.search_after_entry_node_quiescence(parent_pv=pv, search_context_model=search_context_model)
+                child_pv_list = O4QuiescenceSearchRoutines.search_after_entry_node_quiescence(parent_pv=pv, search_context_model=search_context_model)
 
                 # ［駒を取る手］がないことを、［静止］と呼ぶ。
                 if len(pv_list) == 0:
                     pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_quiescence(depth_qs=-1, search_context_model=search_context_model)
                     pv.is_terminate = True
 
+            # NOTE 再帰は廃止。デバッグ作れないから。
             if not pv.is_terminate:
-                child_plot_model = QuiescenceSearchRoutines.search_as_quiescence(      # 再帰呼出
+                child_plot_model = O5zQuiescenceSearchRoutines.search_as_quiescence(      # 再帰呼出
                         depth_qs    = depth_qs + depth_qs_extend,
                         pv_list     = child_pv_list,
                         search_context_model    = search_context_model)

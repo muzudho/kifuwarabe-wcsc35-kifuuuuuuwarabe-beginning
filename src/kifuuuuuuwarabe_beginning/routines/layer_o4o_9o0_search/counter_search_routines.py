@@ -4,7 +4,7 @@ import time
 from ...models.layer_o1o_9o0 import PieceValuesModel
 from ...models.layer_o1o0 import constants, SquareModel
 from .search_routines import SearchRoutines
-from .quiescence_search_routines import QuiescenceSearchRoutines
+from .o3_quiescence_search_routines import O3QuiescenceSearchRoutines
 
 
 class CounterSearchRoutines(SearchRoutines):
@@ -108,14 +108,14 @@ class CounterSearchRoutines(SearchRoutines):
 
             # TODO 静止探索は後回しにしたい。
             
-            (pv.backwards_plot_model, pv.is_terminate) = QuiescenceSearchRoutines.search_before_entering_quiescence_node(
+            (pv.backwards_plot_model, pv.is_terminate) = O3QuiescenceSearchRoutines.search_before_entering_quiescence_node(
                     depth_qs    = search_context_model.max_depth_qs,
                     pv          = pv,
                     parent_move = my_move,
                     search_context_model    = search_context_model)
             
             if not pv.is_terminate:
-                child_pv_list = QuiescenceSearchRoutines.search_after_entry_node_quiescence(parent_pv=pv, search_context_model=search_context_model)
+                child_pv_list = O3QuiescenceSearchRoutines.search_after_entry_node_quiescence(parent_pv=pv, search_context_model=search_context_model)
 
                 # ［駒を取る手］がないことを、［静止］と呼ぶ。
                 if len(pv_list) == 0:
@@ -123,7 +123,7 @@ class CounterSearchRoutines(SearchRoutines):
                     pv.is_terminate = True
 
             if not pv.is_terminate:
-                child_plot_model = QuiescenceSearchRoutines.search_as_quiescence(      # 再帰呼出
+                child_plot_model = O3QuiescenceSearchRoutines.search_as_quiescence(      # 再帰呼出
                         depth_qs    = search_context_model.max_depth_qs,
                         pv_list     = child_pv_list,
                         search_context_model    = search_context_model)
