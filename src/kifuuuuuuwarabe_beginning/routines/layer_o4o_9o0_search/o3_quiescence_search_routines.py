@@ -64,15 +64,13 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
     
 
     @staticmethod
-    def search_after_entry_node_quiescence(parent_pv, search_context_model):
+    def cleaning_horizontal_edges_quiescence(parent_pv, search_context_model):
         """
         Returns
         -------
         pv_list : list<PrincipalVariationModel>
             読み筋のリスト。
         """
-        if parent_pv.is_terminate:
-            return []
 
         ##########################
         # MARK: 合法手クリーニング
@@ -168,22 +166,25 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
                     parent_move     = my_move,
                     search_context_model    = search_context_model)
 
-            if not pv.is_terminate:
-                child_pv_list = O3QuiescenceSearchRoutines.search_after_entry_node_quiescence(parent_pv=pv, search_context_model=search_context_model)
-
-                # ［駒を取る手］がないことを、［静止］と呼ぶ。
-                if len(pv_list) == 0:
-                    pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_quiescence(depth_qs=-1, search_context_model=search_context_model)
-                    pv.is_terminate = True
-
-            # NOTE 再帰は廃止。デバッグ作れないから。
-            if not pv.is_terminate:
-                child_plot_model = O4QuiescenceSearchRoutines.search_as_quiescence(      # 再帰呼出
-                        depth_qs    = depth_qs + depth_qs_extend,
-                        pv_list     = child_pv_list,
-                        search_context_model    = search_context_model)
-            else:
+            if pv.is_terminate:
                 child_plot_model = pv.backwards_plot_model
+            else:
+                if not pv.is_terminate:
+                    child_pv_list = O3QuiescenceSearchRoutines.cleaning_horizontal_edges_quiescence(parent_pv=pv, search_context_model=search_context_model)
+
+                    # ［駒を取る手］がないことを、［静止］と呼ぶ。
+                    if len(child_pv_list) == 0:
+                        pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_quiescence(depth_qs=-1, search_context_model=search_context_model)
+                        pv.is_terminate = True
+
+                # NOTE 再帰は廃止。デバッグ作れないから。
+                if not pv.is_terminate:
+                    child_plot_model = O4QuiescenceSearchRoutines.search_as_quiescence(      # 再帰呼出
+                            depth_qs    = depth_qs + depth_qs_extend,
+                            pv_list     = child_pv_list,
+                            search_context_model    = search_context_model)
+                else:
+                    child_plot_model = pv.backwards_plot_model
 
             ################
             # MARK: 一手戻す

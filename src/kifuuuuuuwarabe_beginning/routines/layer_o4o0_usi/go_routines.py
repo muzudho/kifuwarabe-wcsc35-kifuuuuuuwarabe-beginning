@@ -284,7 +284,7 @@ def _main_search_at_first(remaining_moves, gymnasium):
 
     # １階の探索
     if not zero_pv.is_terminate:
-        pv_list = RootSearchRoutines.search_after_entry_node_root(remaining_moves=remaining_moves, parent_pv=zero_pv, search_context_model=search_context_model)
+        pv_list = RootSearchRoutines.cleaning_horizontal_edges_root(remaining_moves=remaining_moves, parent_pv=zero_pv, search_context_model=search_context_model)
 
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(pv_list) == 0:

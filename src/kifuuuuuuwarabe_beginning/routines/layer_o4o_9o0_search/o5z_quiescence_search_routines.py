@@ -60,34 +60,6 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
             return SearchRoutines.create_backwards_plot_model_at_horizon(depth_qs, search_context_model=search_context_model), True
 
         return pv.backwards_plot_model, pv.is_terminate
-    
-
-    @staticmethod
-    def search_after_entry_node_quiescence(parent_pv, search_context_model):
-        """
-        Returns
-        -------
-        pv_list : list<PrincipalVariationModel>
-            読み筋のリスト。
-        """
-        if parent_pv.is_terminate:
-            return []
-
-        ##########################
-        # MARK: 合法手クリーニング
-        ##########################
-
-        legal_move_list = list(search_context_model.gymnasium.table.legal_moves)
-        remaining_moves = legal_move_list
-        remaining_moves = SearchRoutines.remove_drop_moves(remaining_moves=remaining_moves)           # 打の手を全部除外したい。
-        remaining_moves = SearchRoutines.remove_depromoted_moves(remaining_moves=remaining_moves, search_context_model=search_context_model)     # ［成れるのに成らない手］は除外
-        (remaining_moves, rolled_back) = SearchRoutines.filtering_same_destination_move_list(parent_move=parent_pv.vertical_list_of_move_pv[-1], remaining_moves=remaining_moves, rollback_if_empty=True) # できれば［同］の手を残す。
-        remaining_moves = SearchRoutines.get_cheapest_move_list(remaining_moves=remaining_moves)
-        (remaining_moves, rolled_back) = SearchRoutines.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=False, search_context_model=search_context_model)       # 駒を取る手と、王手のみ残す
-
-        # remaining_moves から pv へ変換。
-        pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
-        return pv_list
 
 
     @staticmethod
@@ -167,16 +139,11 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
                     parent_move     = my_move,
                     search_context_model    = search_context_model)
 
-            if not pv.is_terminate:
-                child_pv_list = O5zQuiescenceSearchRoutines.search_after_entry_node_quiescence(parent_pv=pv, search_context_model=search_context_model)
-
-                # ［駒を取る手］がないことを、［静止］と呼ぶ。
-                if len(pv_list) == 0:
-                    pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_quiescence(depth_qs=-1, search_context_model=search_context_model)
-                    pv.is_terminate = True
-
-            # NOTE 再帰は廃止。デバッグ作れないから。ここで＜水平線＞。
-            child_plot_model = SearchRoutines.create_backwards_plot_model_at_horizon(depth_qs, search_context_model=search_context_model)
+            if pv.is_terminate:
+                child_plot_model = pv.backwards_plot_model
+            else:
+                # NOTE 再帰は廃止。デバッグ作れないから。ここで＜水平線＞。
+                child_plot_model = SearchRoutines.create_backwards_plot_model_at_horizon(depth_qs, search_context_model=search_context_model)
 
             ################
             # MARK: 一手戻す

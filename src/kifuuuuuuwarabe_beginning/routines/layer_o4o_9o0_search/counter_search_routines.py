@@ -13,7 +13,7 @@ class CounterSearchRoutines(SearchRoutines):
 
 
     @staticmethod
-    def search_after_entry_node_counter(parent_pv, search_context_model):
+    def cleaning_horizontal_edges_counter(parent_pv, search_context_model):
         """
         Parameters
         ----------
@@ -114,21 +114,24 @@ class CounterSearchRoutines(SearchRoutines):
                     parent_move = my_move,
                     search_context_model    = search_context_model)
             
-            if not pv.is_terminate:
-                child_pv_list = O3QuiescenceSearchRoutines.search_after_entry_node_quiescence(parent_pv=pv, search_context_model=search_context_model)
-
-                # ［駒を取る手］がないことを、［静止］と呼ぶ。
-                if len(pv_list) == 0:
-                    pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_quiescence(depth_qs=-1, search_context_model=search_context_model)
-                    pv.is_terminate = True
-
-            if not pv.is_terminate:
-                child_plot_model = O3QuiescenceSearchRoutines.search_as_quiescence(      # 再帰呼出
-                        depth_qs    = search_context_model.max_depth_qs,
-                        pv_list     = child_pv_list,
-                        search_context_model    = search_context_model)
-            else:
+            if pv.is_terminate:
                 child_plot_model = pv.backwards_plot_model
+            else:
+                if not pv.is_terminate:
+                    child_pv_list = O3QuiescenceSearchRoutines.cleaning_horizontal_edges_quiescence(parent_pv=pv, search_context_model=search_context_model)
+
+                    # ［駒を取る手］がないことを、［静止］と呼ぶ。
+                    if len(child_pv_list) == 0:
+                        pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_quiescence(depth_qs=-1, search_context_model=search_context_model)
+                        pv.is_terminate = True
+
+                if not pv.is_terminate:
+                    child_plot_model = O3QuiescenceSearchRoutines.search_as_quiescence(      # 再帰呼出
+                            depth_qs    = search_context_model.max_depth_qs,
+                            pv_list     = child_pv_list,
+                            search_context_model    = search_context_model)
+                else:
+                    child_plot_model = pv.backwards_plot_model
 
             ##############################
             # MARK: 履歴の最後の一手を戻す

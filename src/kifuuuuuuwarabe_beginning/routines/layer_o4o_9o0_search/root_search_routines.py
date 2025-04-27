@@ -12,7 +12,7 @@ class RootSearchRoutines(SearchRoutines):
 
 
     @staticmethod
-    def search_after_entry_node_root(remaining_moves, parent_pv, search_context_model):
+    def cleaning_horizontal_edges_root(remaining_moves, parent_pv, search_context_model):
         """
         Returns
         -------
@@ -118,7 +118,7 @@ class RootSearchRoutines(SearchRoutines):
             # FIXME この処理は、幅優先探索に変えたい。
 
             if not pv.is_terminate:
-                child_pv_list = CounterSearchRoutines.search_after_entry_node_counter(parent_pv=pv, search_context_model=search_context_model)
+                child_pv_list = CounterSearchRoutines.cleaning_horizontal_edges_counter(parent_pv=pv, search_context_model=search_context_model)
 
                 for child_pv in reversed(child_pv_list):
                     if child_pv.is_terminate:           # ［読み筋］の探索が終了していれば。
