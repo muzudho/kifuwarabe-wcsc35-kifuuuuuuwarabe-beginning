@@ -80,11 +80,7 @@ class O2CounterSearchRoutines(SearchRoutines):
 
             my_move = pv.vertical_list_of_move_pv[-1]
             cap_pt  = pv.vertical_list_of_cap_pt_pv[-1]
-
-            # NOTE `earth` - 自分。 `mars` - 対戦相手。
-            piece_exchange_value_on_earth = PieceValuesModel.get_piece_exchange_value_on_earth(      # 交換値に変換。正の数とする。
-                    pt          = cap_pt,
-                    is_mars     = search_context_model.gymnasium.is_mars)
+            piece_exchange_value_on_earth = pv.last_value_pv
 
             ##############################
             # MARK: 履歴の最後の一手を指す
