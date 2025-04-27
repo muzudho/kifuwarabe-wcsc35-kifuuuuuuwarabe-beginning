@@ -3,7 +3,7 @@ import time
 
 from ...models.layer_o1o_9o0 import PieceValuesModel
 from ...models.layer_o1o0 import constants, SquareModel
-from ...models.layer_o5o0_search.search_algorithm_model import SearchAlgorithmModel
+from .search_algorithm_model import SearchAlgorithmModel
 from .quiescence_search_algorithm_model import QuiescenceSearchAlgorithmModel
 
 

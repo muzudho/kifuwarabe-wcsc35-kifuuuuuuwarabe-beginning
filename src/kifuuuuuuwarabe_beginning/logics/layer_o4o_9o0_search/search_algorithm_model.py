@@ -1,9 +1,9 @@
 import cshogi
 
-from ..layer_o1o_9o0 import PieceValuesModel
-from ..layer_o1o0 import constants, Mars, SquareModel
-from ..layer_o2o0 import BackwardsPlotModel
-from ..layer_o4o0_rules.negative import DoNotDepromotionModel
+from ...models.layer_o1o_9o0 import PieceValuesModel
+from ...models.layer_o1o0 import constants, Mars, SquareModel
+from ...models.layer_o2o0 import BackwardsPlotModel
+from ...models.layer_o4o0_rules.negative import DoNotDepromotionModel
 
 
 class SearchAlgorithmModel:
@@ -179,21 +179,6 @@ class SearchAlgorithmModel:
                 move_list                       = [],
                 cap_list                        = [],
                 list_of_accumulate_exchange_value_on_earth  = [])
-
-
-    def __init__(self, search_context_model):
-        """
-        Parameters
-        ----------
-        search_context_model : SearchContextModel
-            探索モデル。
-        """
-        self._search_context_model = search_context_model
-
-
-    @property
-    def search_context_model(self):
-        return self._search_context_model
 
 
     @staticmethod

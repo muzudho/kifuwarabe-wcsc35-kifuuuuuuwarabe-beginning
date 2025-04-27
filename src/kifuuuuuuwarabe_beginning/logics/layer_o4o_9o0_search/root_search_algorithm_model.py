@@ -1,9 +1,9 @@
 import cshogi
 import time
 
-from .counter_search_algorithm_model import CounterSearchAlgorithmModel
 from ...models.layer_o1o0 import SquareModel
-from ...models.layer_o5o0_search.search_algorithm_model import SearchAlgorithmModel
+from .search_algorithm_model import SearchAlgorithmModel
+from .counter_search_algorithm_model import CounterSearchAlgorithmModel
 
 
 class RootSearchAlgorithmModel(SearchAlgorithmModel):

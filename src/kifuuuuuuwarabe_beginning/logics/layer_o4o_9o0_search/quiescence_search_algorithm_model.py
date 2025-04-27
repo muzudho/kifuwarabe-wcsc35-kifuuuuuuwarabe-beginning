@@ -4,7 +4,7 @@ import time
 from ...models.layer_o1o_9o0 import PieceValuesModel
 from ...models.layer_o1o0 import constants, Mars, PtolemaicTheoryModel, SquareModel
 from ...models.layer_o1o0o_9o0_table_helper import TableHelper
-from ...models.layer_o5o0_search.search_algorithm_model import SearchAlgorithmModel
+from .search_algorithm_model import SearchAlgorithmModel
 
 
 class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
