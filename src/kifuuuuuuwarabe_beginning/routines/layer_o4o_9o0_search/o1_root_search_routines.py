@@ -150,7 +150,7 @@ class O1RootSearchRoutines(SearchRoutines):
                     hint                = '')
 
             # ベータカットもしません。全部返すから。
-            pv.value_pv += pv.backwards_plot_model.get_exchange_value_on_earth()
+            #pv.value_pv += pv.backwards_plot_model.get_exchange_value_on_earth()
             next_pv_list.append(pv.copy_pv())
 
         ######################

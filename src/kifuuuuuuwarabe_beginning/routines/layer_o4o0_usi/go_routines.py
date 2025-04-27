@@ -277,7 +277,7 @@ def _main_search_at_first(remaining_moves, gymnasium):
             gymnasium = gymnasium)
 
     # ゼロ・ノード。
-    zero_pv = PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], value_pv=0, backwards_plot_model=None)
+    zero_pv = PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], vertical_list_of_value_pv=[], backwards_plot_model=None)
 
     # ルート・ノードに入る前に探索。
     (zero_pv.backwards_plot_model, zero_pv.is_terminate) = O0ZeroSearchRoutines.search_before_entering_root_node(pv=zero_pv, search_context_model=search_context_model)
@@ -298,7 +298,7 @@ def _main_search_at_first(remaining_moves, gymnasium):
         number_of_visited_nodes = search_context_model.number_of_visited_nodes
 
     else:
-        pv_list = [PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], value_pv=zero_pv.backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=zero_pv.backwards_plot_model)]
+        pv_list = [PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], vertical_list_of_value_pv=[], backwards_plot_model=zero_pv.backwards_plot_model)]
 
 
     def _eliminate_not_capture_not_positive(pv_list, gymnasium):
@@ -320,7 +320,7 @@ def _main_search_at_first(remaining_moves, gymnasium):
         # まず、水平枝の中の最高点を調べます。
         best_exchange_value = constants.value.NOTHING_CAPTURE_MOVE
         for pv in pv_list:
-            value_on_earth = pv.value_pv
+            value_on_earth = pv.last_value_pv
             if best_exchange_value < value_on_earth:
                 best_exchange_value = value_on_earth
 
@@ -336,7 +336,7 @@ def _main_search_at_first(remaining_moves, gymnasium):
                     value   = pv)
 
             # （１）駒を取らない手で非正の手（最高点のケースを除く）。
-            value_on_earth = pv.value_pv
+            value_on_earth = pv.last_value_pv
             if not pv.backwards_plot_model.is_capture_at_last and value_on_earth < 1 and value_on_earth != best_exchange_value:
                 if value_on_earth == 0:
                     exists_zero_value_move = True

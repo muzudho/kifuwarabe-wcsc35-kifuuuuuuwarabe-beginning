@@ -1,7 +1,7 @@
 #import cshogi
 
 #from ..layer_o1o0o1o0_japanese import JapaneseMoveModel
-
+from ..layer_o1o0 import constants
 
 class PrincipalVariationModel:
     """読み筋モデル。
@@ -9,7 +9,7 @@ class PrincipalVariationModel:
     """
 
 
-    def __init__(self, vertical_list_of_move_pv, vertical_list_of_cap_pt_pv, value_pv, backwards_plot_model, is_terminate=False):
+    def __init__(self, vertical_list_of_move_pv, vertical_list_of_cap_pt_pv, vertical_list_of_value_pv, backwards_plot_model, is_terminate=False):
         """
         Parameters
         ----------
@@ -17,14 +17,14 @@ class PrincipalVariationModel:
             シーショーギの指し手のリスト。
         vertical_list_of_cap_pt_pv : list<int>
             取った駒の種類のリスト。
-        value_pv : int
-            評価値。
+        vertical_list_of_value_pv : list<int>
+            取った駒の点数。地球視点。
         backwards_plot_model : BackwardsPlotModel
             後ろ向き探索の読み筋。
         """
         self._vertical_list_of_move_pv = vertical_list_of_move_pv
         self._vertical_list_of_cap_pt_pv = vertical_list_of_cap_pt_pv
-        self._value_pv = value_pv   # FIXME 空配列のとき０点にしたい。
+        self._vertical_list_of_value_pv = vertical_list_of_value_pv
         self._backwards_plot_model = backwards_plot_model
         self._is_terminate = is_terminate
 
@@ -44,15 +44,12 @@ class PrincipalVariationModel:
 
 
     @property
-    def value_pv(self):
+    def last_value_pv(self):
         """評価値。
         """
-        return self._value_pv
-
-
-    @value_pv.setter
-    def value_pv(self, value):
-        self._value_pv = value
+        if len(self._vertical_list_of_value_pv) == 0:
+            return constants.value.ZERO
+        return self._vertical_list_of_value_pv[-1]
 
 
     @property
@@ -97,21 +94,23 @@ class PrincipalVariationModel:
         return PrincipalVariationModel(
                 vertical_list_of_move_pv    = list(self._vertical_list_of_move_pv),
                 vertical_list_of_cap_pt_pv  = list(self._vertical_list_of_cap_pt_pv),
-                value_pv                    = self._value_pv,
+                vertical_list_of_value_pv   = list(self._vertical_list_of_value_pv),
                 backwards_plot_model        = copy_backwards_plot_model,
                 is_terminate                = self._is_terminate)
 
 
     def new_and_append_pv(self, move_pv, cap_pt_pv, value_pv, replace_backwards_plot_model, replace_is_terminate):
-        vertical_list_of_move_pv = list(self._vertical_list_of_move_pv)
-        vertical_list_of_move_pv.append(move_pv)
-        vertical_list_of_cap_pt_pv = list(self._vertical_list_of_cap_pt_pv)
-        vertical_list_of_cap_pt_pv.append(cap_pt_pv)
+        copied_vertical_list_of_move_pv = list(self._vertical_list_of_move_pv)
+        copied_vertical_list_of_move_pv.append(move_pv)
+        copied_vertical_list_of_cap_pt_pv = list(self._vertical_list_of_cap_pt_pv)
+        copied_vertical_list_of_cap_pt_pv.append(cap_pt_pv)
+        copied_vertical_list_of_value_pv = list(self._vertical_list_of_value_pv)
+        copied_vertical_list_of_value_pv.append(value_pv)
 
         return PrincipalVariationModel(
-                vertical_list_of_move_pv    = vertical_list_of_move_pv,
-                vertical_list_of_cap_pt_pv  = vertical_list_of_cap_pt_pv,
-                value_pv                    = self._value_pv + value_pv,
+                vertical_list_of_move_pv    = copied_vertical_list_of_move_pv,
+                vertical_list_of_cap_pt_pv  = copied_vertical_list_of_cap_pt_pv,
+                vertical_list_of_value_pv   = copied_vertical_list_of_value_pv,
                 backwards_plot_model        = replace_backwards_plot_model,
                 is_terminate                = replace_is_terminate)
 
