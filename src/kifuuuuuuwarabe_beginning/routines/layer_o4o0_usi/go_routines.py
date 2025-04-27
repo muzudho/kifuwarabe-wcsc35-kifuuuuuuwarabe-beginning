@@ -1,15 +1,15 @@
 import cshogi
 import random
 
-from ...routines.layer_o4o_9o0_search import RootSearchRoutines, ZeroSearchRoutines
 from ...models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateModel
 from ...models.layer_o1o0o1o0_japanese import JapaneseMoveModel
 from ...models.layer_o5o0_search import PrincipalVariationModel, SearchContextModel
 from ...views import TableView
+from ..layer_o4o_9o0_search import RootSearchRoutines, ZeroSearchRoutines
 from ..layer_o3o0 import MovesPickupFilterRoutines, MovesReductionFilterRoutines
 
 
-class GoLogic:
+class GoRoutines:
 
 
     @staticmethod
@@ -30,10 +30,9 @@ class GoLogic:
         """
         gymnasium.health_check_go_model.on_go_started()
 
-        go_2nd = _Go2nd(
+        result_of_go_model = _Go2nd.start_all_phases(
+                move_list=move_list,
                 gymnasium=gymnasium)
-        result_of_go_model = go_2nd.start_all_phases(
-                move_list=move_list)
 
         gymnasium.health_check_go_model.on_go_finished()
 
@@ -43,11 +42,8 @@ class GoLogic:
 class _Go2nd():
 
 
-    def __init__(self, gymnasium):
-        self._gymnasium = gymnasium
-
-
-    def start_all_phases(self, move_list):
+    @staticmethod
+    def start_all_phases(move_list, gymnasium):
         """盤面が与えられるので、次の１手を返します。
 
         最初の１手だけの処理です。
@@ -67,11 +63,11 @@ class _Go2nd():
             # 指し手のUSI表記に、独自形式を併記。
             move_jp_str = JapaneseMoveModel.from_move(
                     move    = move,
-                    cap_pt  = self._gymnasium.table.piece_type(sq=cshogi.move_to(move)),
+                    cap_pt  = gymnasium.table.piece_type(sq=cshogi.move_to(move)),
                     is_mars = False,
-                    is_gote = self._gymnasium.table.is_gote).stringify()
+                    is_gote = gymnasium.table.is_gote).stringify()
 
-            self._gymnasium.health_check_go_model.append_health(
+            gymnasium.health_check_go_model.append_health(
                     move    = move,
                     name    = 'GO_move_jp',
                     value   = move_jp_str)
@@ -81,10 +77,10 @@ class _Go2nd():
         length_by_kifuwarabe                        = length_by_cshogi  # きふわらべ が最終的に絞り込んだ指し手の数
         #print(f"D-74: {len(all_regal_moves)=}")
 
-        if self._gymnasium.table.is_game_over():
+        if gymnasium.table.is_game_over():
             """投了局面時。
             """
-            self._gymnasium.thinking_logger_module.append_message(f"Game over.")
+            gymnasium.thinking_logger_module.append_message(f"Game over.")
             return ResultOfGoModel(
                     search_result_state_model   = SearchResultStateModel.RESIGN,
                     alice_s_profit              = 0,
@@ -94,10 +90,10 @@ class _Go2nd():
                     length_by_kifuwarabe        = length_by_kifuwarabe,
                     number_of_visited_nodes     = 0)
 
-        if self._gymnasium.table.is_nyugyoku():
+        if gymnasium.table.is_nyugyoku():
             """入玉宣言勝ち局面時。
             """
-            self._gymnasium.thinking_logger_module.append_message(f"Nyugyoku win.")
+            gymnasium.thinking_logger_module.append_message(f"Nyugyoku win.")
             return ResultOfGoModel(
                     search_result_state_model   = SearchResultStateModel.NYUGYOKU_WIN,
                     alice_s_profit              = 0,
@@ -108,12 +104,12 @@ class _Go2nd():
                     number_of_visited_nodes     = 0)
 
         # 一手詰めを詰める
-        if not self._gymnasium.table.is_check():
+        if not gymnasium.table.is_check():
             """自玉に王手がかかっていない時で"""
 
-            if (matemove := self._gymnasium.table.mate_move_in_1ply()):
+            if (matemove := gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
-                self._gymnasium.thinking_logger_module.append_message(f"Ittedume.")
+                gymnasium.thinking_logger_module.append_message(f"Ittedume.")
                 return ResultOfGoModel(
                         search_result_state_model   = SearchResultStateModel.MATE_IN_1_MOVE,
                         alice_s_profit              = 0,
@@ -134,22 +130,22 @@ class _Go2nd():
             number_of_visited_nodes
         ) = _main_search_at_first(
                 remaining_moves = move_list,
-                gymnasium       = self._gymnasium)
+                gymnasium       = gymnasium)
         length_of_quiescence_search_by_kifuwarabe   = len(remaining_moves_qs)
-        self._gymnasium.thinking_logger_module.append_message(f"QS_select_length={length_of_quiescence_search_by_kifuwarabe}")
+        gymnasium.thinking_logger_module.append_message(f"QS_select_length={length_of_quiescence_search_by_kifuwarabe}")
 
         if len(remaining_moves_qs) == 0:
             remaining_moves_qs = old_all_legal_moves
-            self._gymnasium.thinking_logger_module.append_message(f"QS is 0. Rollback to old_all_legal_moves. len={len(remaining_moves_qs)}.")
+            gymnasium.thinking_logger_module.append_message(f"QS is 0. Rollback to old_all_legal_moves. len={len(remaining_moves_qs)}.")
             for move in remaining_moves_qs:
-                self._gymnasium.health_check_go_model.append_health(
+                gymnasium.health_check_go_model.append_health(
                         move    = move,
                         name    = 'QS_select',
                         value   = 'QS_cancel')
 
         else:
             for move in remaining_moves_qs:
-                self._gymnasium.health_check_go_model.append_health(
+                gymnasium.health_check_go_model.append_health(
                         move    = move,
                         name    = 'QS_select',
                         value   = 'QS_select')
@@ -159,11 +155,11 @@ class _Go2nd():
         # 枝の前でポジティブ・ルール
         remaining_moves_pr = MovesPickupFilterRoutines.on_node_entry_positive_main(
                 remaining_moves = remaining_moves_qs,
-                gymnasium       = self._gymnasium)
+                gymnasium       = gymnasium)
         
         if 0 < len(remaining_moves_pr):
             for move in remaining_moves_pr:
-                self._gymnasium.health_check_go_model.append_health(
+                gymnasium.health_check_go_model.append_health(
                         move    = move,
                         name    = 'PR_remaining',
                         value   = 'PR_remaining')
@@ -180,22 +176,22 @@ class _Go2nd():
             #           指し手は必ず１つ以上残っています。
             remaining_moves_nr = MovesReductionFilterRoutines.on_node_entry_negative(
                     remaining_moves = remaining_moves_qs,
-                    gymnasium       = self._gymnasium)
+                    gymnasium       = gymnasium)
             length_by_kifuwarabe = len(remaining_moves_nr)
-            self._gymnasium.thinking_logger_module.append_message(f"{length_by_kifuwarabe=}")
+            gymnasium.thinking_logger_module.append_message(f"{length_by_kifuwarabe=}")
 
             if len(remaining_moves_nr) == 0:
                 remaining_moves_nr = old_remaining_moves_qs
-                self._gymnasium.thinking_logger_module.append_message(f"NR is 0. Rollback to QS. len={len(remaining_moves_nr)}.")
+                gymnasium.thinking_logger_module.append_message(f"NR is 0. Rollback to QS. len={len(remaining_moves_nr)}.")
 
                 for move in remaining_moves_nr:
-                    self._gymnasium.health_check_go_model.append_health(
+                    gymnasium.health_check_go_model.append_health(
                             move    = move,
                             name    = 'NR_remaining',
                             value   = 'NR_cancel')
             else:
                 for move in remaining_moves_nr:
-                    self._gymnasium.health_check_go_model.append_health(
+                    gymnasium.health_check_go_model.append_health(
                             move    = move,
                             name    = 'NR_remaining',
                             value   = 'NR_remaining')
@@ -203,12 +199,12 @@ class _Go2nd():
             remaining_moves_r = remaining_moves_nr
 
         # １手に絞り込む
-        if self._gymnasium.config_doc['search']['there_is_randomness']:
+        if gymnasium.config_doc['search']['there_is_randomness']:
             best_move = random.choice(remaining_moves_r)
         else:
             best_move = remaining_moves_r[0]
         
-        self._gymnasium.health_check_go_model.append_health(
+        gymnasium.health_check_go_model.append_health(
                 move    = best_move,
                 name    = 'BM_bestmove',
                 value   =  True)
@@ -216,24 +212,24 @@ class _Go2nd():
         # 指し手のUSI表記に、独自形式を併記。
         move_jp_str = JapaneseMoveModel.from_move(
                 move    = best_move,
-                cap_pt  = self._gymnasium.table.piece_type(sq=cshogi.move_to(best_move)),
+                cap_pt  = gymnasium.table.piece_type(sq=cshogi.move_to(best_move)),
                 is_mars = False,
-                is_gote = self._gymnasium.table.is_gote).stringify()
+                is_gote = gymnasium.table.is_gote).stringify()
 
-        self._gymnasium.thinking_logger_module.append_message(f"Best move={cshogi.move_to_usi(best_move)} {move_jp_str}")
+        gymnasium.thinking_logger_module.append_message(f"Best move={cshogi.move_to_usi(best_move)} {move_jp_str}")
 
         # ログ
         message = f"""\
-{TableView(gymnasium=self._gymnasium).stringify()}
+{TableView(gymnasium=gymnasium).stringify()}
 
-{self._gymnasium.health_check_go_model.stringify()}
+{gymnasium.health_check_go_model.stringify()}
 """
         
-        if self._gymnasium.health_check_qs_model.enabled:
+        if gymnasium.health_check_qs_model.enabled:
             message = f"""\
 {message}
 
-{self._gymnasium.health_check_qs_model.stringify()}
+{gymnasium.health_check_qs_model.stringify()}
 """
 
         message = f"""\
@@ -241,17 +237,17 @@ class _Go2nd():
 
 GOREI COLLECTION
 ----------------
-{self._gymnasium.gourei_collection_model.stringify()}
+{gymnasium.gourei_collection_model.stringify()}
 """
 
         # TODO ネガティブ・ルールの一覧も表示したい。
-        self._gymnasium.thinking_logger_module.append_message(message)
+        gymnasium.thinking_logger_module.append_message(message)
         # NOTE これを書くと、将棋ホームでフリーズ： print(message, file=sys.stderr)
 
         # ［指後］
         MovesReductionFilterRoutines.after_best_moving_o1o0(
                 move        = best_move,
-                gymnasium   = self._gymnasium)
+                gymnasium   = gymnasium)
 
         return ResultOfGoModel(
                 search_result_state_model   = SearchResultStateModel.BEST_MOVE,

@@ -5,7 +5,7 @@ import sys
 
 from pathlib import Path
 from .routines.layer_o3o0 import MovesReductionFilterRoutines
-from .routines.layer_o4o0_usi import GoLogic
+from .routines.layer_o4o0_usi import GoRoutines
 from .models.layer_o1o0 import SearchResultStateModel
 from .modules.exshell_mod.views import XsBoardView
 from .views import HistoryView, TableView
@@ -188,7 +188,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
         """思考開始～最善手返却
         """
 
-        result_of_go = GoLogic.start_with_health_check(
+        result_of_go = GoRoutines.start_with_health_check(
                 move_list   = list(self._gymnasium.table.legal_moves),
                 gymnasium   = self._gymnasium)
 
@@ -307,7 +307,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
         self._gymnasium.health_check_qs_model.start_monitor()
 
-        result_of_go = GoLogic.start_with_health_check(
+        result_of_go = GoRoutines.start_with_health_check(
                 move_list   = move_list,
                 gymnasium   = self._gymnasium)
 
