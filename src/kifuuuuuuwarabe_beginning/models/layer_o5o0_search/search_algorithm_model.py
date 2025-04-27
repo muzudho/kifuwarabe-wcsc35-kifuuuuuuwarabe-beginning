@@ -71,8 +71,10 @@ class SearchAlgorithmModel:
         dst_sq_obj = SquareModel(cshogi.move_to(mate_move))           # ［移動先マス］
         cap_pt = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
 
+        is_mars_at_out_of_termination = not self._search_context_model.gymnasium.is_mars    # ［詰む］のは、もう１手先だから not する。
+
         best_plot_model = BackwardsPlotModel(
-                is_mars_at_out_of_termination   = not self._search_context_model.gymnasium.is_mars,     # ［詰む］のは、もう１手先だから。
+                is_mars_at_out_of_termination   = is_mars_at_out_of_termination,     
                 is_gote_at_out_of_termination   = self._search_context_model.gymnasium.table.is_gote,
                 out_of_termination              = constants.out_of_termination.RESIGN,
                 hint_list                       = [],
@@ -81,7 +83,7 @@ class SearchAlgorithmModel:
                 list_of_accumulate_exchange_value_on_earth  = [])
     
         # 今回の手を付け加える。
-        if not self._search_context_model.gymnasium.is_mars:
+        if is_mars_at_out_of_termination:
             best_value = constants.value.BIG_VALUE        # 火星の負け
         else:
             best_value = constants.value.SMALL_VALUE      # 地球の負け
@@ -90,7 +92,7 @@ class SearchAlgorithmModel:
                 move                = mate_move,
                 capture_piece_type  = cap_pt,
                 best_value          = best_value,
-                hint                = f"{Mars.japanese(not self._search_context_model.gymnasium.is_mars)}は一手詰まされ")
+                hint                = f"{Mars.japanese(is_mars_at_out_of_termination)}は一手詰まされ")
         return best_plot_model
 
 
