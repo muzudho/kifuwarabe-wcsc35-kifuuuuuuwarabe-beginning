@@ -65,7 +65,8 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         return pv.backwards_plot_model, pv.is_terminate
 
 
-    def search_after_entry_node_counter(self, parent_pv):
+    @staticmethod
+    def search_after_entry_node_counter(parent_pv, search_context_model):
         """
         Parameters
         ----------
@@ -84,15 +85,15 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         # MARK: 合法手クリーニング
         ##########################
         
-        remaining_moves = list(self._search_context_model.gymnasium.table.legal_moves)      # 全合法手。
-        remaining_moves = self.remove_depromoted_moves(remaining_moves=remaining_moves)     # ［成れるのに成らない手］は除外
-        aigoma_move_list = self._choice_aigoma_move_list(remaining_moves=remaining_moves)   # ［間駒］（相手の利きの上に置く手）を抽出。
+        remaining_moves = list(search_context_model.gymnasium.table.legal_moves)      # 全合法手。
+        remaining_moves = SearchAlgorithmModel.remove_depromoted_moves(remaining_moves=remaining_moves, search_context_model=search_context_model)     # ［成れるのに成らない手］は除外
+        aigoma_move_list = CounterSearchAlgorithmModel._choice_aigoma_move_list(remaining_moves=remaining_moves, search_context_model=search_context_model)   # ［間駒］（相手の利きの上に置く手）を抽出。
         remaining_moves = CounterSearchAlgorithmModel._remove_drop_except_aigoma(remaining_moves)  # ［間駒］以外の［打］は（多すぎるので）除外。
-        (remaining_moves, rolled_back) = self.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=True)    # ［カウンター探索］では、駒を取る手と、王手のみ残す。［駒を取る手、王手］が無ければ、（巻き戻して）それ以外の手を指します。
+        (remaining_moves, rolled_back) = SearchAlgorithmModel.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=True, search_context_model=search_context_model)    # ［カウンター探索］では、駒を取る手と、王手のみ残す。［駒を取る手、王手］が無ければ、（巻き戻して）それ以外の手を指します。
         remaining_moves.extend(aigoma_move_list)
 
         # remaining_moves から pv へ変換。
-        pv_list = SearchAlgorithmModel.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=self._search_context_model)
+        pv_list = SearchAlgorithmModel.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
         return pv_list
 
 
@@ -231,12 +232,12 @@ class CounterSearchAlgorithmModel(SearchAlgorithmModel):
         return best_pv.backwards_plot_model
 
 
-    def _choice_aigoma_move_list(self, remaining_moves):
+    def _choice_aigoma_move_list(remaining_moves, search_context_model):
         # TODO ［間駒］（相手の利きの上に置く手）を抽出。
         aigoma_move_list = []
         for my_move in remaining_moves:
             dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
-            is_aigoma = self._search_context_model.get_root_searched_control_map(sq=dst_sq_obj.sq)
+            is_aigoma = search_context_model.get_root_searched_control_map(sq=dst_sq_obj.sq)
             if is_aigoma:
                 aigoma_move_list.append(my_move)
         return aigoma_move_list

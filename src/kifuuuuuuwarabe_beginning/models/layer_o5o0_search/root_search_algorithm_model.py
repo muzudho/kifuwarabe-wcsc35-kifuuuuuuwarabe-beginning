@@ -38,7 +38,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         ##########################
 
         # 最善手は探さなくていい。全部返すから。
-        remaining_moves = self.remove_depromoted_moves(remaining_moves=remaining_moves)       # ［成れるのに成らない手］は除外
+        remaining_moves = SearchAlgorithmModel.remove_depromoted_moves(remaining_moves=remaining_moves, search_context_model=self._search_context_model)       # ［成れるのに成らない手］は除外
         pv_list = SearchAlgorithmModel.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=self._search_context_model)
         return pv_list
     
@@ -130,7 +130,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
                     search_context_model = self._search_context_model)
 
             if not pv.is_terminate:
-                child_pv_list = counter_search_algorithm_model.search_after_entry_node_counter(parent_pv=pv)
+                child_pv_list = CounterSearchAlgorithmModel.search_after_entry_node_counter(parent_pv=pv, search_context_model=self._search_context_model)
 
                 for child_pv in reversed(child_pv_list):
                     if child_pv.is_terminate:           # ［読み筋］の探索が終了していれば。

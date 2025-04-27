@@ -93,10 +93,10 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
         legal_move_list = list(self._search_context_model.gymnasium.table.legal_moves)
         remaining_moves = legal_move_list
         remaining_moves = self.remove_drop_moves(remaining_moves=remaining_moves)           # 打の手を全部除外したい。
-        remaining_moves = self.remove_depromoted_moves(remaining_moves=remaining_moves)     # ［成れるのに成らない手］は除外
+        remaining_moves = SearchAlgorithmModel.remove_depromoted_moves(remaining_moves=remaining_moves, search_context_model=self._search_context_model)     # ［成れるのに成らない手］は除外
         (remaining_moves, rolled_back) = QuiescenceSearchAlgorithmModel.filtering_same_destination_move_list(parent_move=parent_pv.vertical_list_of_move_pv[-1], remaining_moves=remaining_moves, rollback_if_empty=True) # できれば［同］の手を残す。
         remaining_moves = QuiescenceSearchAlgorithmModel.get_cheapest_move_list(remaining_moves=remaining_moves)
-        (remaining_moves, rolled_back) = self.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=False)       # 駒を取る手と、王手のみ残す
+        (remaining_moves, rolled_back) = SearchAlgorithmModel.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=False, search_context_model=self._search_context_model)       # 駒を取る手と、王手のみ残す
 
         # remaining_moves から pv へ変換。
         pv_list = SearchAlgorithmModel.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=self._search_context_model)

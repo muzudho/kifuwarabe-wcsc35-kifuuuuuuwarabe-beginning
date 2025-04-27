@@ -206,29 +206,31 @@ class SearchAlgorithmModel:
         return remaining_moves
 
 
-    def remove_depromoted_moves(self, remaining_moves):
+    @staticmethod
+    def remove_depromoted_moves(remaining_moves, search_context_model):
         """［成れるのに成らない手］は除外。
         """
 
         do_not_depromotion_model = DoNotDepromotionModel(                                               # 号令［成らないということをするな］を利用。
-                basketball_court_model=self._search_context_model.gymnasium.basketball_court_model)
+                basketball_court_model=search_context_model.gymnasium.basketball_court_model)
 
         do_not_depromotion_model._on_node_entry_negative(               # ノード来訪時。
                 remaining_moves = remaining_moves,
-                table           = self._search_context_model.gymnasium.table)
+                table           = search_context_model.gymnasium.table)
 
         for my_move in reversed(remaining_moves):   # 指し手を全部調べる。
             # ［成れるのに成らない手］は除外
             mind = do_not_depromotion_model._on_node_exit_negative(
                     move    = my_move,
-                    table   = self._search_context_model.gymnasium.table)
+                    table   = search_context_model.gymnasium.table)
             if mind == constants.mind.WILL_NOT:
                 remaining_moves.remove(my_move)
 
         return remaining_moves
 
 
-    def filtering_capture_or_mate(self, remaining_moves, rollback_if_empty):
+    @staticmethod
+    def filtering_capture_or_mate(remaining_moves, rollback_if_empty, search_context_model):
         """駒を取る手と、王手のみ残す。
 
         Returns
@@ -246,13 +248,13 @@ class SearchAlgorithmModel:
 
         for my_move in reversed(remaining_moves):
             dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
-            cap_pt      = self._search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
+            cap_pt      = search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
             is_capture  = (cap_pt != cshogi.NONE)
 
             # ２階以降の呼出時は、駒を取る手でなければ無視。
             if not is_capture:
                 # ＜📚原則２＞ 王手は（駒を取らない手であっても）探索を続け、深さを１手延長する。
-                if self._search_context_model.gymnasium.table.is_check():
+                if search_context_model.gymnasium.table.is_check():
                     #depth_extend += 1  # FIXME 探索が終わらないくなる。
                     pass
 
