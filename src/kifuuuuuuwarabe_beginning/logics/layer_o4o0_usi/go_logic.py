@@ -3,7 +3,7 @@ import random
 
 from ...models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateModel
 from ...models.layer_o1o0o1o0_japanese import JapaneseMoveModel
-from ...models.layer_o5o0_search import RootSearchAlgorithmModel, SearchContextModel
+from ...models.layer_o5o0_search import PrincipalVariationModel, RootSearchAlgorithmModel, SearchContextModel
 from ...views import TableView
 from ..layer_o3o0 import MovesPickupFilterLogics, MovesReductionFilterLogics
 
@@ -282,10 +282,20 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
     root_search_algorithum_model = RootSearchAlgorithmModel(
             search_context_model = search_context_model)
 
-    pv_list = root_search_algorithum_model.search_as_root(
-            remaining_moves = remaining_moves)
+    root_pv = PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], value_pv=0, backwards_plot_model=None)
 
-    number_of_visited_nodes = root_search_algorithum_model.search_context_model.number_of_visited_nodes
+    (root_pv.backwards_plot_model, root_pv.is_terminate) = root_search_algorithum_model.search_before_entry_node(pv=root_pv)
+
+    if not root_pv.is_terminate:
+        root_search_algorithum_model.search_after_entry_node_counter(parent_pv=root_pv)
+
+        pv_list = root_search_algorithum_model.search_as_root(
+                remaining_moves = remaining_moves)
+
+        number_of_visited_nodes = root_search_algorithum_model.search_context_model.number_of_visited_nodes
+    else:
+        pv_list = [PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], value_pv=root_pv.backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=root_pv.backwards_plot_model)]
+
 
     def _eliminate_not_capture_not_positive(pv_list, gymnasium):
         """次の１つの手は、候補に挙げる必要がないので除去します。

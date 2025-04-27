@@ -24,6 +24,51 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
                 search_context_model=search_context_model)
 
 
+    def search_before_entry_node(self, pv):
+        """ノードに入る前に。
+
+        Returns
+        -------
+        backwards_plot_model : BackwardsPlotModel
+            読み筋。
+        is_terminate : bool
+            読み終わり。
+        """
+
+        ########################
+        # MARK: 指す前にやること
+        ########################
+
+        self._search_context_model.start_time = time.time()          # 探索開始時間
+        self._search_context_model.restart_time = self._search_context_model.start_time   # 前回の計測開始時間
+
+        # 指さなくても分かること（ライブラリー使用）
+
+        if self._search_context_model.gymnasium.table.is_game_over():
+            """手番の投了局面時。
+            """
+            return self.create_backwards_plot_model_at_game_over(), True
+
+        # 一手詰めを詰める
+        if not self._search_context_model.gymnasium.table.is_check():
+            """手番玉に王手がかかっていない時で"""
+
+            if (mate_move := self._search_context_model.gymnasium.table.mate_move_in_1ply()):
+                """一手詰めの指し手があれば、それを取得"""
+                return self.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move), True
+
+        if self._search_context_model.gymnasium.table.is_nyugyoku():
+            """手番の入玉宣言勝ち局面時。
+            """
+            return self.create_backwards_plot_model_at_nyugyoku_win(), True
+
+        return pv.backwards_plot_model, False
+
+
+    def search_after_entry_node_counter(self, parent_pv):
+        pass
+
+
     def search_as_root(
             self,
             remaining_moves):
@@ -45,52 +90,13 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             枝が増えて、合法手の数より多くなることがあることに注意。
         """
 
-        self._search_context_model.start_time = time.time()          # 探索開始時間
-        self._search_context_model.restart_time = self._search_context_model.start_time   # 前回の計測開始時間
-
-        ########################
-        # MARK: 指す前にやること
-        ########################
-
-        # 指さなくても分かること（ライブラリー使用）
-
-        if self._search_context_model.gymnasium.table.is_game_over():
-            """手番の投了局面時。
-            """
-            backwards_plot_model=self.create_backwards_plot_model_at_game_over()
-            return [PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
-
-        # 一手詰めを詰める
-        if not self._search_context_model.gymnasium.table.is_check():
-            """手番玉に王手がかかっていない時で"""
-
-            if (mate_move := self._search_context_model.gymnasium.table.mate_move_in_1ply()):
-                """一手詰めの指し手があれば、それを取得"""
-                backwards_plot_model=self.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move)
-                return [PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
-
-        if self._search_context_model.gymnasium.table.is_nyugyoku():
-            """手番の入玉宣言勝ち局面時。
-            """
-            backwards_plot_model=self.create_backwards_plot_model_at_nyugyoku_win()
-            return [PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
-
-        # # これ以上深く読まない場合。
-        # if depth_qs < 1:
-        #     backwards_plot_model=self.create_backwards_plot_model_at_horizon(depth_qs)
-        #     return [PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], value_pv=backwards_plot_model.get_exchange_value_on_earth(), backwards_plot_model=backwards_plot_model)]
-
         # まだ深く読む場合。
 
-        ######################
-        # MARK: 合法手スキャン
-        ######################
+        ##########################
+        # MARK: 合法手クリーニング
+        ##########################
 
         # 最善手は探さなくていい。全部返すから。
-
-        ############################
-        # MARK: データ・クリーニング
-        ############################
 
         remaining_moves = self.remove_depromoted_moves(remaining_moves=remaining_moves)       # ［成れるのに成らない手］は除外
 
@@ -104,19 +110,9 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         # MARK: ノード訪問時
         ####################
 
-        def set_controls(remaining_moves):
-            """利きを記録
-            """
-            self._search_context_model.clear_root_searched_control_map()
+        RootSearchAlgorithmModel._set_controls(remaining_moves=remaining_moves, search_context_model=self._search_context_model)
 
-            for my_move in remaining_moves:
-                if cshogi.move_is_drop(my_move):
-                    continue
-                dst_sq_obj = SquareModel(cshogi.move_to(my_move))       # ［移動先マス］
-                self._search_context_model.set_root_searched_control_map(sq=dst_sq_obj.sq, value=True)
-
-
-        set_controls(remaining_moves=remaining_moves)
+        pv_list = RootSearchAlgorithmModel._make_pv_list(remaining_moves=remaining_moves, search_context_model=self._search_context_model)
 
         ####################
         # MARK: PVリスト探索
@@ -124,7 +120,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
 
         next_pv_list = []
 
-        for pv in RootSearchAlgorithmModel._make_pv_list(remaining_moves=remaining_moves, search_context_model=self._search_context_model):
+        for pv in pv_list:
             vertical_list_of_move_pv = pv.pop_vertical_list_of_move_pv()      # 指し手の履歴をポップします。
 
             ########################
@@ -239,3 +235,15 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
                     cap_pt  = cap_pt)
 
         return pv_list
+
+
+    def _set_controls(remaining_moves, search_context_model):
+        """利きを記録
+        """
+        search_context_model.clear_root_searched_control_map()
+
+        for my_move in remaining_moves:
+            if cshogi.move_is_drop(my_move):
+                continue
+            dst_sq_obj = SquareModel(cshogi.move_to(my_move))       # ［移動先マス］
+            search_context_model.set_root_searched_control_map(sq=dst_sq_obj.sq, value=True)
