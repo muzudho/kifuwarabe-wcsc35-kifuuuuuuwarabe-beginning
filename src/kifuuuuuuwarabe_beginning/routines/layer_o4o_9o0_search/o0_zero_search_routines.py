@@ -1,5 +1,8 @@
+import cshogi
 import time
 
+from ...models.layer_o1o_9o0 import PieceValuesModel
+from ...models.layer_o1o0 import SquareModel
 from .search_routines import SearchRoutines
 
 
@@ -38,6 +41,11 @@ class O0ZeroSearchRoutines(SearchRoutines):
 
             if (mate_move := search_context_model.gymnasium.table.mate_move_in_1ply()):
                 """一手詰めの指し手があれば、それを取得"""
+                dst_sq_obj  = SquareModel(cshogi.move_to(mate_move))      # ［移動先マス］
+                cap_pt      = search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # ［移動先マス］にある［駒種類］。つまりそれは取った駒。打の［移動先マス］は常に空きマス。
+                value_pt    = PieceValuesModel.get_piece_exchange_value_on_earth(
+                        pt          = cap_pt,
+                        is_mars     = search_context_model.gymnasium.is_mars)
                 return SearchRoutines.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move, search_context_model=search_context_model), True
 
         if search_context_model.gymnasium.table.is_nyugyoku():

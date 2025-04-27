@@ -48,6 +48,15 @@ class O1RootSearchRoutines(SearchRoutines):
         ################################
 
         for pv in pv_list:
+
+            ########################
+            # MARK: 履歴を全部指す前
+            ########################
+
+            my_move = pv.vertical_list_of_move_pv[-1]
+            cap_pt  = pv.vertical_list_of_cap_pt_pv[-1]
+            piece_exchange_value_on_earth = pv.last_value_pv
+
             ######################
             # MARK: 履歴を全部指す
             ######################
@@ -59,7 +68,7 @@ class O1RootSearchRoutines(SearchRoutines):
             ##########################
 
             search_context_model.number_of_visited_nodes  += 1    # 開示情報
-            search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=pv.vertical_list_of_move_pv[-1], hint='')    # ログ
+            search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=my_move, comment='')    # ログ
 
             ####################
             # MARK: 相手番の処理
