@@ -81,7 +81,7 @@ class SearchAlgorithmModel:
                 list_of_accumulate_exchange_value_on_earth  = [])
     
         # 今回の手を付け加える。
-        if self._search_context_model.gymnasium.is_mars:
+        if not self._search_context_model.gymnasium.is_mars:
             best_value = constants.value.BIG_VALUE        # 火星の負け
         else:
             best_value = constants.value.SMALL_VALUE      # 地球の負け
@@ -90,7 +90,7 @@ class SearchAlgorithmModel:
                 move                = mate_move,
                 capture_piece_type  = cap_pt,
                 best_value          = best_value,
-                hint                = f"{Mars.japanese(self._search_context_model.gymnasium.is_mars)}は一手詰まされ")
+                hint                = f"{Mars.japanese(not self._search_context_model.gymnasium.is_mars)}は一手詰まされ")
         return best_plot_model
 
 
