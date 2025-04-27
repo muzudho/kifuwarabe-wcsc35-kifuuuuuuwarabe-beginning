@@ -18,36 +18,19 @@ class GymnasiumModel():
     def __init__(self, config_doc):
         """初期化します。
         """
-
-        # 設定
-        self._config_doc = config_doc
-
-        # 思考のログ・ファイル
-        self._thinking_logger_module = None
-
-        # 盤
-        self._table = TableModel.create_table()
-
-        # エクシェル
-        self._exshell = None
-
-        # この将棋エンジンの手番
-        self._earth_turn = None
-
-        # 盤へアクセスする関連のオブジェクト
-        self._piece_value_tao = PieceValueTAO(table = self._table)
-
-        # ９段目に近い方の対局者から見た駒得評価値。
-        self._np_value = 0
-
-        self._basketball_court_model = None
-        self._gourei_collection_model = None
-
-        self._health_check_go_model = None   # 健康診断
-        self._health_check_qs_model = None   # 健康診断
-
-        # ［天動説］
-        self._ptolemaic_theory_model  = PtolemaicTheoryModel(gymnasium=self)
+        
+        self._config_doc = config_doc           # 設定
+        self._thinking_logger_module = None     # 思考のログ・ファイル
+        self._table = TableModel.create_table() # 盤
+        self._exshell = None                    # エクシェル
+        self._earth_turn = None                 # この将棋エンジンの手番
+        self._piece_value_tao = PieceValueTAO(table = self._table)  # 盤へアクセスする関連のオブジェクト
+        self._np_value = 0                      # ９段目に近い方の対局者から見た駒得評価値。
+        self._basketball_court_model = None     # バスケットボール・コート
+        self._gourei_collection_model = None    # 号令
+        self._health_check_go_model = None      # 健康診断
+        self._health_check_qs_model = None      # 健康診断
+        self._ptolemaic_theory_model  = PtolemaicTheoryModel(gymnasium=self)    # ［天動説］
 
 
     @property
