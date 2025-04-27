@@ -108,7 +108,7 @@ class CounterSearchRoutines(SearchRoutines):
 
             # TODO 静止探索は後回しにしたい。
             
-            (pv.backwards_plot_model, pv.is_terminate) = QuiescenceSearchRoutines.search_before_entry_node_qs(
+            (pv.backwards_plot_model, pv.is_terminate) = QuiescenceSearchRoutines.search_before_entering_quiescence_node(
                     depth_qs    = search_context_model.max_depth_qs,
                     pv          = pv,
                     parent_move = my_move,

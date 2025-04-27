@@ -2,7 +2,7 @@ import cshogi
 import time
 
 from ...models.layer_o1o_9o0 import PieceValuesModel
-from ...models.layer_o1o0 import constants, Mars, PtolemaicTheoryModel, SquareModel
+from ...models.layer_o1o0 import constants, SquareModel
 from ...models.layer_o1o0o_9o0_table_helper import TableHelper
 from .search_routines import SearchRoutines
 
@@ -13,19 +13,8 @@ class QuiescenceSearchRoutines(SearchRoutines):
     """
 
 
-    def __init__(self, search_context_model):
-        """
-        Parameters
-        ----------
-        search_context_model : SearchContextModel
-            探索モデル。
-        """
-        super().__init__(
-                search_context_model=search_context_model)
-    
-
     @staticmethod
-    def search_before_entry_node_qs(depth_qs, pv, parent_move, search_context_model):
+    def search_before_entering_quiescence_node(depth_qs, pv, parent_move, search_context_model):
         """
         Returns
         -------
@@ -72,6 +61,17 @@ class QuiescenceSearchRoutines(SearchRoutines):
 
         return pv.backwards_plot_model, pv.is_terminate
 
+
+    def __init__(self, search_context_model):
+        """
+        Parameters
+        ----------
+        search_context_model : SearchContextModel
+            探索モデル。
+        """
+        super().__init__(
+                search_context_model=search_context_model)
+    
 
     @staticmethod
     def search_after_entry_node_quiescence(parent_pv, search_context_model):
@@ -172,7 +172,7 @@ class QuiescenceSearchRoutines(SearchRoutines):
             ####################
 
             # NOTE ネガ・マックスではないので、評価値の正負を反転させなくていい。
-            (pv.backwards_plot_model, pv.is_terminate) = QuiescenceSearchRoutines.search_before_entry_node_qs(
+            (pv.backwards_plot_model, pv.is_terminate) = QuiescenceSearchRoutines.search_before_entering_quiescence_node(
                     depth_qs        = depth_qs + depth_qs_extend,
                     pv              = pv,
                     parent_move     = my_move,
