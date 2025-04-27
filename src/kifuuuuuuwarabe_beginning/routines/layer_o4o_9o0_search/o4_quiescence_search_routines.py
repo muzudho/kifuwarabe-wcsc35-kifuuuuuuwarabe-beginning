@@ -101,9 +101,6 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
 
             search_context_model.number_of_visited_nodes += 1
             depth_qs -= 1     # 深さを１下げる。
-            search_context_model.frontwards_plot_model.append_move_from_front(
-                    move    = my_move,
-                    cap_pt  = cap_pt)
             search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=my_move, hint='')
 
             ####################
@@ -147,7 +144,6 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
             ####################
 
             depth_qs += 1                 # 深さを１上げる。
-            search_context_model.frontwards_plot_model.pop_move()
             search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
 
             ##################

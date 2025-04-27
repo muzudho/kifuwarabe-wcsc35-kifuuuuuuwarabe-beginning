@@ -51,11 +51,6 @@ class SearchRoutines:
                     replace_is_terminate            = False)
             pv_list.append(pv)
         
-            # FIXME 読み筋に格納するのは、指した後であるべきでは？
-            search_context_model.frontwards_plot_model.append_move_from_front(
-                    move    = my_move,
-                    cap_pt  = cap_pt)
-
         return pv_list
 
 

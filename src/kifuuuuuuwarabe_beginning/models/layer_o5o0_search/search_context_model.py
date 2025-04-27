@@ -1,6 +1,3 @@
-from ..layer_o2o0 import FrontwardsPlotModel
-
-
 class SearchContextModel():
 
 
@@ -19,8 +16,6 @@ class SearchContextModel():
         self._start_time    = None
         self._restart_time  = None
         self._end_time      = None
-        self._frontwards_plot_model = FrontwardsPlotModel(
-                is_gote_at_first=gymnasium.table.is_gote)
         self.clear_root_searched_control_map()
 
 
@@ -72,11 +67,6 @@ class SearchContextModel():
     @end_time.setter
     def end_time(self, value):
         self._end_time = value
-
-
-    @property
-    def frontwards_plot_model(self):
-        return self._frontwards_plot_model
 
 
     def clear_root_searched_control_map(self):

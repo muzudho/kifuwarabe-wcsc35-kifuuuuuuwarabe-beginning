@@ -80,7 +80,6 @@ class O1RootSearchRoutines(SearchRoutines):
             # MARK: 履歴を全部戻した後
             ##########################
 
-            search_context_model.frontwards_plot_model.pop_move()
             search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
 
 

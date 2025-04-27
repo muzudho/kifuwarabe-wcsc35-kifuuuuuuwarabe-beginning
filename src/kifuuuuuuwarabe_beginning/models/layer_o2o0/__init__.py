@@ -1,4 +1,3 @@
 from .backwards_plot_model import BackwardsPlotModel
 from .basketball_court_model import BasketballCourtModel
-from .frontwards_plot_model import FrontwardsPlotModel
 from .nine_rank_side_perspective_model import NineRankSidePerspectiveModel

@@ -97,9 +97,6 @@ class O2CounterSearchRoutines(SearchRoutines):
             ##################################
 
             search_context_model.number_of_visited_nodes  += 1
-            search_context_model.frontwards_plot_model.append_move_from_front(
-                    move    = my_move,
-                    cap_pt  = cap_pt)
             search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=my_move, hint='')
 
             ####################
@@ -142,7 +139,6 @@ class O2CounterSearchRoutines(SearchRoutines):
             # MARK: 履歴の最後の一手を戻した後
             ##################################
 
-            search_context_model.frontwards_plot_model.pop_move()
             search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
 
             ##################
