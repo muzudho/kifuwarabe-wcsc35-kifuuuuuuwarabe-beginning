@@ -9,6 +9,8 @@ class IfOpponentRollbackMoveMeToo(PositiveRuleModel):
     """号令［相手が手を戻したら自分も戻せ］
 
     相手だけ得させないように。
+
+    FIXME 号令［相手が手を戻したら自分も戻せ］で戻したときの動きは、号令［戻るな］の対象外にしたい。指し手履歴にフラグ辞書を持たせるか？
     """
 
 

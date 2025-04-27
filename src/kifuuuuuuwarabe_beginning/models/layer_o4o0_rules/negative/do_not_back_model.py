@@ -72,6 +72,10 @@ class DoNotBackModel(NegativeRuleModel):
         dst_sq_obj = SquareModel(cshogi.move_to(move))
         is_drop = cshogi.move_is_drop(move)
 
+        # FIXME 暫定で玉は対象外。玉は右へ進みたいから、号令［相手が手を戻したら自分も戻せ］で戻したときは、戻り直してもよいようにしたい。
+        if TableHelper.get_moving_pt_from_move(move) == cshogi.KING:
+            return
+        
         # 戻れない駒は対象外。
         if TableHelper.get_moving_pt_from_move(move) in [cshogi.KNIGHT, cshogi.LANCE, cshogi.PAWN]:
             return
