@@ -68,8 +68,8 @@ class SearchAlgorithmModel:
 
         (a, b) = search_context_model.gymnasium.ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
         # TODO この比較、合っているか？
-        return this_branch_value_on_earth, (a < b)
-        #return this_branch_value_on_earth, (a > b)
+        #return this_branch_value_on_earth, (a < b)
+        return this_branch_value_on_earth, (a > b)
 
 
     def __init__(self, search_context_model):
