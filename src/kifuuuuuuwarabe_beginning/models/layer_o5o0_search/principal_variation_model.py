@@ -4,7 +4,9 @@
 
 
 class PrincipalVariationModel:
-    """読み筋モデル"""
+    """読み筋モデル。
+    前向き探索。
+    """
 
 
     def __init__(self, vertical_list_of_move_pv, vertical_list_of_cap_pt_pv, value_pv, backwards_plot_model, is_terminate=False):
@@ -22,7 +24,7 @@ class PrincipalVariationModel:
         """
         self._vertical_list_of_move_pv = vertical_list_of_move_pv
         self._vertical_list_of_cap_pt_pv = vertical_list_of_cap_pt_pv
-        self._value_pv = value_pv
+        self._value_pv = value_pv   # FIXME 空配列のとき０点にしたい。
         self._backwards_plot_model = backwards_plot_model
         self._is_terminate = is_terminate
 
@@ -100,7 +102,7 @@ class PrincipalVariationModel:
                 is_terminate                = self._is_terminate)
 
 
-    def new_and_append(self, move_pv, cap_pt_pv, value_pv, replace_backwards_plot_model, replace_is_terminate):
+    def new_and_append_pv(self, move_pv, cap_pt_pv, value_pv, replace_backwards_plot_model, replace_is_terminate):
         vertical_list_of_move_pv = list(self._vertical_list_of_move_pv)
         vertical_list_of_move_pv.append(move_pv)
         vertical_list_of_cap_pt_pv = list(self._vertical_list_of_cap_pt_pv)

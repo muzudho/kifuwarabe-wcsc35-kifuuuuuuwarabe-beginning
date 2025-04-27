@@ -41,7 +41,7 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
 
 
     @staticmethod
-    def search_as_quiescence(depth_qs, pv_list, search_context_model):
+    def search_as_quiescence_o4(depth_qs, pv_list, search_context_model):
         """
         Parameters
         ----------
@@ -126,7 +126,7 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
 
                 # NOTE 再帰は廃止。デバッグ作れないから。
                 if not pv.is_terminate:
-                    child_plot_model = O5zQuiescenceSearchRoutines.search_as_quiescence(      # 再帰呼出
+                    child_plot_model = O5zQuiescenceSearchRoutines.search_as_quiescence_o5(
                             depth_qs    = depth_qs + depth_qs_extend,
                             pv_list     = child_pv_list,
                             search_context_model    = search_context_model)

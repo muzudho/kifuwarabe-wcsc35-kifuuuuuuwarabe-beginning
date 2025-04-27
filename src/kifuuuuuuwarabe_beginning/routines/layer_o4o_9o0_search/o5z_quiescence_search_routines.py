@@ -14,7 +14,7 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
 
 
     @staticmethod
-    def search_as_quiescence(depth_qs, pv_list, search_context_model):
+    def search_as_quiescence_o5(depth_qs, pv_list, search_context_model):
         """
         Parameters
         ----------
@@ -51,11 +51,6 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
 
             my_move = pv.vertical_list_of_move_pv[-1]
             cap_pt  = pv.vertical_list_of_cap_pt_pv[-1]
-
-            #     # ＜📚原則２＞ 王手は（駒を取らない手であっても）探索を続け、深さを１手延長する。
-            #     if search_context_model.gymnasium.table.is_check():
-            #         #depth_extend += 1  # FIXME 探索が終わらないくなる。
-            #         pass
 
             # NOTE `earth` - 自分。 `mars` - 対戦相手。
             piece_exchange_value_on_earth = PieceValuesModel.get_piece_exchange_value_on_earth(      # 交換値に変換。正の数とする。

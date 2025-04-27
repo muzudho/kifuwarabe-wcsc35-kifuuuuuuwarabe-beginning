@@ -122,7 +122,7 @@ class O2CounterSearchRoutines(SearchRoutines):
                         pv.is_terminate = True
 
                 if not pv.is_terminate:
-                    child_plot_model = O3QuiescenceSearchRoutines.search_as_quiescence(      # 再帰呼出
+                    child_plot_model = O3QuiescenceSearchRoutines.search_as_quiescence_o3(
                             depth_qs    = search_context_model.max_depth_qs,
                             pv_list     = child_pv_list,
                             search_context_model    = search_context_model)
