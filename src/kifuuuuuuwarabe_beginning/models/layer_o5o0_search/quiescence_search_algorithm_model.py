@@ -214,22 +214,10 @@ class QuiescenceSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 手番の処理
             ##################
 
-            # この枝の点（将来の点＋取った駒の点）
-            this_branch_value_on_earth = child_plot_model.get_exchange_value_on_earth() + piece_exchange_value_on_earth
-
-            # この枝が長兄なら。
-            if best_pv is None:
-                old_sibling_value = 0
-            else:
-                # 兄枝のベスト評価値
-                old_sibling_value = best_pv.backwards_plot_model.get_exchange_value_on_earth()     # とりあえず最善の読み筋の点数。
-
-            # TODO この比較、合っているか？
-            (a, b) = self._search_context_model.gymnasium.ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
-            its_update_best = (a < b)
+            (this_branch_value_on_earth, is_update_best) = SearchAlgorithmModel.is_update_best(best_pv=best_pv, child_plot_model=child_plot_model, piece_exchange_value_on_earth=piece_exchange_value_on_earth, search_context_model=self._search_context_model)
                         
             # 最善手の更新（１つに絞る）
-            if its_update_best:
+            if is_update_best:
                 best_pv             = pv
                 best_pv.backwards_plot_model    = child_plot_model
                 best_move           = my_move

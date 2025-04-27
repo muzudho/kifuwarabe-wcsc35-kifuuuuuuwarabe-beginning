@@ -123,6 +123,7 @@ board
 
 ```
 実戦譜：
+後手：きふわらべ　先手：人
 
 position startpos moves 2g2f 3c3d 2f2e 2b3c 3i3h 8b3b 3h2g 4a4b 2g2f 3a2b 1g1f 7a7b 2f1e 5a6b 2e2d
 all_backwards_plot_models_at_first len=26
