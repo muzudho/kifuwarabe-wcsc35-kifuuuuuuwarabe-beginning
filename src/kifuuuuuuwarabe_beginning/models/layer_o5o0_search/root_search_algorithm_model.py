@@ -65,10 +65,12 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         return pv.backwards_plot_model, False
 
 
-    def search_after_entry_node_counter(self, parent_pv):
+    def search_after_entry_node_counter(self, remaining_moves, parent_pv):
         """
         Returns
         -------
+        remaining_moves : list<int>
+            デバッグの都合。シーショーギの指し手のリスト。
         pv_list : list<PrincipalVariationModel>
             読み筋のリスト。
         """
@@ -77,7 +79,6 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         ##########################
 
         # 最善手は探さなくていい。全部返すから。
-        remaining_moves = list(self._search_context_model.gymnasium.table.legal_moves)      # 全合法手。
         remaining_moves = self.remove_depromoted_moves(remaining_moves=remaining_moves)       # ［成れるのに成らない手］は除外
         pv_list = RootSearchAlgorithmModel._make_pv_list(remaining_moves=remaining_moves, search_context_model=self._search_context_model)
         return pv_list

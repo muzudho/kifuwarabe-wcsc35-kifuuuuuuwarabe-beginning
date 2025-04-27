@@ -131,7 +131,7 @@ class _Go2nd():
         (
             remaining_moves_qs,
             number_of_visited_nodes
-        ) = _quiescence_search_at_first(
+        ) = _main_search_at_first(
                 remaining_moves = move_list,
                 gymnasium       = self._gymnasium)
         length_of_quiescence_search_by_kifuwarabe   = len(remaining_moves_qs)
@@ -262,8 +262,8 @@ GOREI COLLECTION
                 number_of_visited_nodes     = number_of_visited_nodes)
 
 
-def _quiescence_search_at_first(remaining_moves, gymnasium):
-    """静止探索。
+def _main_search_at_first(remaining_moves, gymnasium):
+    """探索。
     
     Returns
     -------
@@ -287,7 +287,7 @@ def _quiescence_search_at_first(remaining_moves, gymnasium):
     (root_pv.backwards_plot_model, root_pv.is_terminate) = root_search_algorithum_model.search_before_entry_node(pv=root_pv)
 
     if not root_pv.is_terminate:
-        pv_list = root_search_algorithum_model.search_after_entry_node_counter(parent_pv=root_pv)
+        pv_list = root_search_algorithum_model.search_after_entry_node_counter(remaining_moves=remaining_moves, parent_pv=root_pv)
 
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(pv_list) == 0:
