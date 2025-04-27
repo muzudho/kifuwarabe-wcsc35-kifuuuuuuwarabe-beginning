@@ -6,6 +6,9 @@ from .search_routines import SearchRoutines
 from .o2_counter_search_routines import O2CounterSearchRoutines
 
 
+INFO_DEPTH = 1
+
+
 class O1RootSearchRoutines(SearchRoutines):
     """１階の全てのリーガル・ムーブについて静止探索。
     """
@@ -67,8 +70,9 @@ class O1RootSearchRoutines(SearchRoutines):
 
             # PV を更新。
             (pv.backwards_plot_model, pv.is_terminate) = SearchRoutines.look_in_0_moves(
-                    depth=1,
-                    pv=pv, search_context_model=search_context_model)
+                    info_depth = INFO_DEPTH,
+                    pv=pv,
+                    search_context_model=search_context_model)
 
             ######################
             # MARK: 履歴を全部戻す

@@ -289,7 +289,7 @@ def _main_search_at_first(remaining_moves, gymnasium):
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(pv_list) == 0:
             #TODO self._search_context_model.end_time = time.time()    # 計測終了時間
-            zero_pv.backwards_plot_model = SearchContextModel.create_backwards_plot_model_at_quiescence(depth_qs=-1, search_context_model=search_context_model)
+            zero_pv.backwards_plot_model = SearchContextModel.create_backwards_plot_model_at_quiescence(info_depth=O1RootSearchRoutines.INFO_DEPTH, search_context_model=search_context_model)
             zero_pv.is_terminate = True
 
     if not zero_pv.is_terminate:

@@ -8,6 +8,9 @@ from .o4_quiescence_search_routines import O4QuiescenceSearchRoutines
 from .search_routines import SearchRoutines
 
 
+INFO_DEPTH = 3
+
+
 class O3QuiescenceSearchRoutines(SearchRoutines):
     """駒の取り合いのための静止探索。
     駒の取り合いが終わるまで、駒の取り合いを探索します。
@@ -41,12 +44,10 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
 
 
     @staticmethod
-    def search_as_quiescence_o3(depth_qs, pv_list, search_context_model):
+    def search_as_quiescence_o3(pv_list, search_context_model):
         """
         Parameters
         ----------
-        depth : int
-            あと何手深く読むか。
         parent_move : int
             １手前の手。
 
@@ -68,7 +69,6 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
             best_value = constants.value.BIG_VALUE
         else:
             best_value = constants.value.SMALL_VALUE
-        depth_qs_extend     = 0
 
         for pv in pv_list:
 
@@ -91,7 +91,6 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
             ####################
 
             search_context_model.number_of_visited_nodes += 1
-            depth_qs -= 1     # 深さを１下げる。
             search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=my_move, hint='')
 
             ####################
@@ -100,7 +99,7 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
 
             # NOTE ネガ・マックスではないので、評価値の正負を反転させなくていい。
             (pv.backwards_plot_model, pv.is_terminate) = SearchRoutines.look_in_0_moves(
-                    depth           = 3,
+                    info_depth      = INFO_DEPTH,
                     pv              = pv,
                     search_context_model    = search_context_model)
 
@@ -112,13 +111,12 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
 
                     # ［駒を取る手］がないことを、［静止］と呼ぶ。
                     if len(child_pv_list) == 0:
-                        pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_quiescence(depth_qs=-1, search_context_model=search_context_model)
+                        pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model)
                         pv.is_terminate = True
 
                 # NOTE 再帰は廃止。デバッグ作れないから。
                 if not pv.is_terminate:
                     child_plot_model = O4QuiescenceSearchRoutines.search_as_quiescence_o4(
-                            depth_qs    = depth_qs + depth_qs_extend,
                             pv_list     = child_pv_list,
                             search_context_model    = search_context_model)
                 else:
@@ -134,7 +132,6 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
             # MARK: 一手戻した後
             ####################
 
-            depth_qs += 1                 # 深さを１上げる。
             search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
 
             ##################
@@ -157,7 +154,7 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
 
         # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
         if best_pv is None:
-            return SearchRoutines.create_backwards_plot_model_at_no_candidates(depth_qs=depth_qs, search_context_model=search_context_model)
+            return SearchRoutines.create_backwards_plot_model_at_no_candidates(info_depth=INFO_DEPTH, search_context_model=search_context_model)
 
         # 読み筋に今回の手を付け加える。（ TODO 駒得点も付けたい）
         best_pv.backwards_plot_model.append_move_from_back(

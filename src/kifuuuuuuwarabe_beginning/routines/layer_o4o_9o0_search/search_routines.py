@@ -140,8 +140,8 @@ class SearchRoutines:
 
 
     @staticmethod
-    def create_backwards_plot_model_at_horizon(depth_qs, search_context_model):
-        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜水平線[深QS={depth_qs}]＞")
+    def create_backwards_plot_model_at_horizon(info_depth, search_context_model):
+        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜水平線[深={info_depth}]＞")
         return BackwardsPlotModel(
                 is_mars_at_out_of_termination   = search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = search_context_model.gymnasium.table.is_gote,
@@ -153,8 +153,8 @@ class SearchRoutines:
 
 
     @staticmethod
-    def create_backwards_plot_model_at_quiescence(depth_qs, search_context_model):
-        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜静止[深QS={depth_qs}]＞")
+    def create_backwards_plot_model_at_quiescence(info_depth, search_context_model):
+        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜静止[深={info_depth}]＞")
         return BackwardsPlotModel(
                 is_mars_at_out_of_termination   = search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = search_context_model.gymnasium.table.is_gote,
@@ -166,8 +166,8 @@ class SearchRoutines:
 
 
     @staticmethod
-    def create_backwards_plot_model_at_no_candidates(depth_qs, search_context_model):
-        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜候補手無し[深QS={depth_qs}]＞")
+    def create_backwards_plot_model_at_no_candidates(info_depth, search_context_model):
+        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜候補手無し[深={info_depth}]＞")
         return BackwardsPlotModel(
                 is_mars_at_out_of_termination   = search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = search_context_model.gymnasium.table.is_gote,
@@ -298,7 +298,7 @@ class SearchRoutines:
 
 
     @staticmethod
-    def look_in_0_moves(depth, pv, search_context_model):
+    def look_in_0_moves(info_depth, pv, search_context_model):
         """ノードに入る前に。
 
         Returns
@@ -317,7 +317,7 @@ class SearchRoutines:
         erapsed_seconds = cur_time - search_context_model.restart_time    # 経過秒
         if 4 <= erapsed_seconds:                                        # 4秒以上経過してたら、情報出力
             # ［ルート探索］、［カウンター探索］の２を足している。
-            print(f"info depth {depth} seldepth 0 time 1 nodes {search_context_model.number_of_visited_nodes} score cp 0 string thinking")
+            print(f"info depth {info_depth} seldepth 0 time 1 nodes {search_context_model.number_of_visited_nodes} score cp 0 string thinking")
             search_context_model.restart_time = cur_time                   # 前回の計測時間を更新
 
         # 指さなくても分かること（ライブラリー使用）
@@ -341,7 +341,7 @@ class SearchRoutines:
             return SearchRoutines.create_backwards_plot_model_at_nyugyoku_win(search_context_model=search_context_model), True
 
         # # これ以上深く読まない場合。
-        # if depth < 1:
-        #     return SearchRoutines.create_backwards_plot_model_at_horizon(depth, search_context_model=search_context_model), True
+        # if info_depth < 1:
+        #     return SearchRoutines.create_backwards_plot_model_at_horizon(info_depth, search_context_model=search_context_model), True
 
         return pv.backwards_plot_model, pv.is_terminate

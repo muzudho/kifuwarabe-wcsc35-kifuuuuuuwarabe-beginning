@@ -7,6 +7,9 @@ from .search_routines import SearchRoutines
 from .o3_quiescence_search_routines import O3QuiescenceSearchRoutines
 
 
+INFO_DEPTH = 2
+
+
 class O2CounterSearchRoutines(SearchRoutines):
     """２階の探索。
     """
@@ -102,7 +105,7 @@ class O2CounterSearchRoutines(SearchRoutines):
             # TODO 静止探索は後回しにしたい。
             
             (pv.backwards_plot_model, pv.is_terminate) = SearchRoutines.look_in_0_moves(
-                    depth       = 2,
+                    info_depth  = INFO_DEPTH,
                     pv          = pv,
                     search_context_model    = search_context_model)
             
@@ -114,12 +117,11 @@ class O2CounterSearchRoutines(SearchRoutines):
 
                     # ［駒を取る手］がないことを、［静止］と呼ぶ。
                     if len(child_pv_list) == 0:
-                        pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_quiescence(depth_qs=-1, search_context_model=search_context_model)
+                        pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model)
                         pv.is_terminate = True
 
                 if not pv.is_terminate:
                     child_plot_model = O3QuiescenceSearchRoutines.search_as_quiescence_o3(
-                            depth_qs    = search_context_model.max_depth_qs,
                             pv_list     = child_pv_list,
                             search_context_model    = search_context_model)
                 else:
@@ -159,7 +161,7 @@ class O2CounterSearchRoutines(SearchRoutines):
 
         # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
         if best_pv is None:
-            return SearchRoutines.create_backwards_plot_model_at_no_candidates(depth_qs=-1, search_context_model=search_context_model)
+            return SearchRoutines.create_backwards_plot_model_at_no_candidates(info_depth=INFO_DEPTH, search_context_model=search_context_model)
 
         # 今回の手を付け加える。
         best_pv.backwards_plot_model.append_move_from_back(

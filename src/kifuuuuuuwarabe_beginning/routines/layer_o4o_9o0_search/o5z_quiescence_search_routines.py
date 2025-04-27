@@ -7,6 +7,9 @@ from ...models.layer_o1o0o_9o0_table_helper import TableHelper
 from .search_routines import SearchRoutines
 
 
+INFO_DEPTH = 5
+
+
 class O5zQuiescenceSearchRoutines(SearchRoutines):
     """駒の取り合いのための静止探索。
     駒の取り合いが終わるまで、駒の取り合いを探索します。
@@ -14,12 +17,10 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
 
 
     @staticmethod
-    def search_as_quiescence_o5(depth_qs, pv_list, search_context_model):
+    def search_as_quiescence_o5(pv_list, search_context_model):
         """
         Parameters
         ----------
-        depth : int
-            あと何手深く読むか。
         parent_move : int
             １手前の手。
 
@@ -41,7 +42,6 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
             best_value = constants.value.BIG_VALUE
         else:
             best_value = constants.value.SMALL_VALUE
-        depth_qs_extend     = 0
 
         for pv in pv_list:
 
@@ -64,7 +64,6 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
             ####################
 
             search_context_model.number_of_visited_nodes += 1
-            depth_qs -= 1     # 深さを１下げる。
             search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=my_move, hint='')
 
             ####################
@@ -72,7 +71,7 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
             ####################
 
             (pv.backwards_plot_model, pv.is_terminate) = SearchRoutines.look_in_0_moves(
-                    depth           = 5,
+                    info_depth      = INFO_DEPTH,
                     pv              = pv,
                     search_context_model    = search_context_model)
 
@@ -80,7 +79,7 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
                 child_plot_model = pv.backwards_plot_model
             else:
                 # NOTE 再帰は廃止。デバッグ作れないから。ここで＜水平線＞。
-                child_plot_model = SearchRoutines.create_backwards_plot_model_at_horizon(depth_qs, search_context_model=search_context_model)
+                child_plot_model = SearchRoutines.create_backwards_plot_model_at_horizon(info_depth=INFO_DEPTH, search_context_model=search_context_model)
 
             ################
             # MARK: 一手戻す
@@ -92,7 +91,6 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
             # MARK: 一手戻した後
             ####################
 
-            depth_qs += 1                 # 深さを１上げる。
             search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
 
             ##################
@@ -115,7 +113,7 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
 
         # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
         if best_pv is None:
-            return SearchRoutines.create_backwards_plot_model_at_no_candidates(depth_qs=depth_qs, search_context_model=search_context_model)
+            return SearchRoutines.create_backwards_plot_model_at_no_candidates(info_depth=INFO_DEPTH, search_context_model=search_context_model)
 
         # 読み筋に今回の手を付け加える。（ TODO 駒得点も付けたい）
         best_pv.backwards_plot_model.append_move_from_back(
