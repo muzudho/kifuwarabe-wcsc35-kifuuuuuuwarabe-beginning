@@ -1,6 +1,5 @@
 from .komadoku_filter_model import KomadokuFilterModel
 from .principal_variation_model import PrincipalVariationModel
-from .root_search_algorithm_model import RootSearchAlgorithmModel
 from .quiescence_search_algorithm_model import QuiescenceSearchAlgorithmModel
 from .search_context_model import SearchContextModel
 from .zero_search_algorithm_model import ZeroSearchAlgorithumModel

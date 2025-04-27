@@ -1,11 +1,9 @@
 import cshogi
 import time
 
-from ...logics.layer_o4o_9o0_search.counter_search_algorithm_model import CounterSearchAlgorithmModel
-from ..layer_o1o_9o0 import PieceValuesModel
-from ..layer_o1o0 import constants, Mars, SquareModel
-from .principal_variation_model import PrincipalVariationModel
-from .search_algorithm_model import SearchAlgorithmModel
+from .counter_search_algorithm_model import CounterSearchAlgorithmModel
+from ...models.layer_o1o0 import SquareModel
+from ...models.layer_o5o0_search.search_algorithm_model import SearchAlgorithmModel
 
 
 class RootSearchAlgorithmModel(SearchAlgorithmModel):
@@ -13,18 +11,8 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
     """
 
 
-    def __init__(self, search_context_model):
-        """
-        Parameters
-        ----------
-        search_context_model : SearchContextModel
-            探索モデル。
-        """
-        super().__init__(
-                search_context_model=search_context_model)
-
-
-    def search_after_entry_node_root(self, remaining_moves, parent_pv):
+    @staticmethod
+    def search_after_entry_node_root(remaining_moves, parent_pv, search_context_model):
         """
         Returns
         -------
@@ -38,14 +26,13 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         ##########################
 
         # 最善手は探さなくていい。全部返すから。
-        remaining_moves = SearchAlgorithmModel.remove_depromoted_moves(remaining_moves=remaining_moves, search_context_model=self._search_context_model)       # ［成れるのに成らない手］は除外
-        pv_list = SearchAlgorithmModel.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=self._search_context_model)
+        remaining_moves = SearchAlgorithmModel.remove_depromoted_moves(remaining_moves=remaining_moves, search_context_model=search_context_model)       # ［成れるのに成らない手］は除外
+        pv_list = SearchAlgorithmModel.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
         return pv_list
     
 
-    def search_as_root(
-            self,
-            pv_list):
+    @staticmethod
+    def search_as_root(pv_list, search_context_model):
         """通常探索の開始。
 
         Parameters
@@ -66,7 +53,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         # MARK: ノード訪問時
         ####################
 
-        RootSearchAlgorithmModel._set_controls(pv_list=pv_list, search_context_model=self._search_context_model)
+        RootSearchAlgorithmModel._set_controls(pv_list=pv_list, search_context_model=search_context_model)
 
         ################################
         # MARK: PVリスト探索（応手除く）
@@ -77,34 +64,34 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 履歴を全部指す
             ######################
 
-            SearchAlgorithmModel.do_move_vertical_all(pv=pv, search_context_model=self._search_context_model)
+            SearchAlgorithmModel.do_move_vertical_all(pv=pv, search_context_model=search_context_model)
 
             ##########################
             # MARK: 履歴を全部指した後
             ##########################
 
-            self._search_context_model.number_of_visited_nodes  += 1    # 開示情報
-            self._search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=pv.vertical_list_of_move_pv[-1], hint='')    # ログ
+            search_context_model.number_of_visited_nodes  += 1    # 開示情報
+            search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=pv.vertical_list_of_move_pv[-1], hint='')    # ログ
 
             ####################
             # MARK: 相手番の処理
             ####################
 
             # PV を更新。
-            (pv.backwards_plot_model, pv.is_terminate) = CounterSearchAlgorithmModel.search_before_entry_node_counter(pv=pv, search_context_model=self._search_context_model)
+            (pv.backwards_plot_model, pv.is_terminate) = CounterSearchAlgorithmModel.search_before_entry_node_counter(pv=pv, search_context_model=search_context_model)
 
             ######################
             # MARK: 履歴を全部戻す
             ######################
 
-            SearchAlgorithmModel.undo_move_vertical_all(pv=pv, search_context_model=self._search_context_model)
+            SearchAlgorithmModel.undo_move_vertical_all(pv=pv, search_context_model=search_context_model)
 
             ##########################
             # MARK: 履歴を全部戻した後
             ##########################
 
-            self._search_context_model.frontwards_plot_model.pop_move()
-            self._search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
+            search_context_model.frontwards_plot_model.pop_move()
+            search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
 
         ################################
         # MARK: PVリスト探索（応手）
@@ -118,7 +105,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             # MARK: 履歴を全部指す
             ######################
 
-            SearchAlgorithmModel.do_move_vertical_all(pv=pv, search_context_model=self._search_context_model)
+            SearchAlgorithmModel.do_move_vertical_all(pv=pv, search_context_model=search_context_model)
 
             ####################
             # MARK: 相手番の処理
@@ -127,7 +114,7 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
             # FIXME この処理は、幅優先探索に変えたい。
 
             if not pv.is_terminate:
-                child_pv_list = CounterSearchAlgorithmModel.search_after_entry_node_counter(parent_pv=pv, search_context_model=self._search_context_model)
+                child_pv_list = CounterSearchAlgorithmModel.search_after_entry_node_counter(parent_pv=pv, search_context_model=search_context_model)
 
                 for child_pv in reversed(child_pv_list):
                     if child_pv.is_terminate:           # ［読み筋］の探索が終了していれば。
@@ -135,13 +122,13 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
                         child_pv_list.remove(child_pv)
 
                 # TODO 再帰しないようにしてほしい。
-                pv.backwards_plot_model = CounterSearchAlgorithmModel.search_as_counter(pv_list=child_pv_list, search_context_model=self._search_context_model)       # 再帰呼出
+                pv.backwards_plot_model = CounterSearchAlgorithmModel.search_as_counter(pv_list=child_pv_list, search_context_model=search_context_model)       # 再帰呼出
 
             ######################
             # MARK: 履歴を全部戻す
             ######################
 
-            SearchAlgorithmModel.undo_move_vertical_all(pv=pv, search_context_model=self._search_context_model)
+            SearchAlgorithmModel.undo_move_vertical_all(pv=pv, search_context_model=search_context_model)
 
             ##################
             # MARK: 手番の処理
@@ -167,10 +154,11 @@ class RootSearchAlgorithmModel(SearchAlgorithmModel):
         pv_list = next_pv_list      # 入れ替え
         next_pv_list = []
 
-        self._search_context_model.end_time = time.time()    # 計測終了時間
+        search_context_model.end_time = time.time()    # 計測終了時間
         return pv_list
 
 
+    @staticmethod
     def _set_controls(pv_list, search_context_model):
         """利きを記録
         """
