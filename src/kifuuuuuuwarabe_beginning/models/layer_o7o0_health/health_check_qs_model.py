@@ -6,13 +6,17 @@ class HealthCheckQsItemModel:
     """
 
 
-    def __init__(self, vertical_edges_move=[], vertical_edges_comment=[]):
+    def __init__(self, vertical_edges_move=[], vertical_edges_cap_pt=[], vertical_edges_value=[], vertical_edges_comment=[]):
         self._vertical_edges_move = vertical_edges_move     # 指し手
+        self._vertical_edges_cap_pt = vertical_edges_cap_pt     # 取った駒
+        self._vertical_edges_value = vertical_edges_value     # 取った駒の交換値（地球視点）
         self._vertical_edges_comment = vertical_edges_comment     # 指し手へのコメント
 
 
-    def append_edge(self, move, comment):
+    def append_edge(self, move, cap_pt, value, comment):
         self._vertical_edges_move.append(move)
+        self._vertical_edges_cap_pt.append(cap_pt)
+        self._vertical_edges_value.append(value)
         self._vertical_edges_comment.append(comment)
     
 
@@ -24,6 +28,8 @@ class HealthCheckQsItemModel:
     def copy(self):
         return HealthCheckQsItemModel(
                 vertical_edges_move=list(self._vertical_edges_move),
+                vertical_edges_cap_pt=list(self._vertical_edges_cap_pt),
+                vertical_edges_value=list(self._vertical_edges_value),
                 vertical_edges_comment=list(self._vertical_edges_comment))
 
 
@@ -83,11 +89,11 @@ class HealthCheckQsModel:
         self._enabled = False
 
 
-    def append_edge_qs(self, move, comment):
+    def append_edge_qs(self, move, cap_pt, value, comment):
         if not self._enabled:
             return
         
-        self._current_item.append_edge(move=move, comment=comment)
+        self._current_item.append_edge(move=move, cap_pt=cap_pt, value=value, comment=comment)
 
 
     def on_out_of_termination(self, text):
@@ -96,7 +102,12 @@ class HealthCheckQsModel:
         if not self._enabled:
             return
 
-        self._current_item.append_edge(move=None, comment=text)
+        # ［終端外］なので、コメントを付けるだけ。
+        self._current_item.append_edge(
+            move    = None,
+            cap_pt  = 0,
+            value   = 0,
+            comment = text)
         self._item_list.append(self._current_item.copy())   # 単調増加していく。
         self._current_item.pop_node()
 

@@ -91,7 +91,7 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
             ####################
 
             search_context_model.number_of_visited_nodes += 1
-            search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=my_move, comment='')
+            search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=my_move, cap_pt=cap_pt, value=piece_exchange_value_on_earth, comment='')
 
             ####################
             # MARK: 相手番の処理

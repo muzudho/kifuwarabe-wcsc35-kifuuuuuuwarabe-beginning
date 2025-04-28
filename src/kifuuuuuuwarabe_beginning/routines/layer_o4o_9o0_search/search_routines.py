@@ -96,10 +96,14 @@ class SearchRoutines:
 
     @staticmethod
     def create_backwards_plot_model_at_mate_move_in_1_ply(mate_move, search_context_model):
-        search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=mate_move, comment='＜一手詰め＞')
-        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
         dst_sq_obj = SquareModel(cshogi.move_to(mate_move))           # ［移動先マス］
         cap_pt = search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
+        piece_exchange_value_on_earth = PieceValuesModel.get_piece_exchange_value_on_earth(
+                pt          = cap_pt,
+                is_mars     = search_context_model.gymnasium.is_mars)
+        
+        search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=mate_move, cap_pt=cap_pt, value=piece_exchange_value_on_earth, comment='＜一手詰め＞')
+        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
 
         is_mars_at_out_of_termination = not search_context_model.gymnasium.is_mars    # ［詰む］のは、もう１手先だから not する。
 

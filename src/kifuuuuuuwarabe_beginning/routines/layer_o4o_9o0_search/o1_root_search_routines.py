@@ -68,7 +68,7 @@ class O1RootSearchRoutines(SearchRoutines):
             ##########################
 
             search_context_model.number_of_visited_nodes  += 1    # 開示情報
-            search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=my_move, comment='')    # ログ
+            search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=my_move, cap_pt=cap_pt, value=piece_exchange_value_on_earth, comment='')    # ログ
 
             ####################
             # MARK: 相手番の処理
