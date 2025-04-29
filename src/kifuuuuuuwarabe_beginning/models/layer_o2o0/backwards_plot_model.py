@@ -1,6 +1,6 @@
 import cshogi
 
-from ..layer_o1o0 import constants, OutOfTerminationModel, Mars
+from ..layer_o1o0 import constants, OutOfTerminationStateModel, Mars
 from ..layer_o1o0o1o0_japanese import JapaneseMoveModel
 
 
@@ -243,7 +243,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             is_mars = not is_mars
             is_gote = not is_gote
 
-        tokens.append(f"(終端外){Mars.japanese(is_mars)}の{OutOfTerminationModel.japanese(self.out_of_termination)}")   # ［終端外］
+        tokens.append(f"(終端外){Mars.japanese(is_mars)}の{OutOfTerminationStateModel.japanese(self.out_of_termination)}")   # ［終端外］
 
         # ヒント・リスト
         tokens.append(' '.join(self._hint_list))

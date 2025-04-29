@@ -1,4 +1,4 @@
-from .constants_model import constants, OutOfTerminationModel
+from .constants_model import constants, OutOfTerminationStateModel
 from .mars import Mars
 from .masu_model import MasuModel
 from .move_on_scramble_model import MoveOnScrambleModel

@@ -4,7 +4,7 @@ class ConstantsModel():
     def __init__(self):
         self._mind = _Mind()
         self._value = _Value()
-        self._out_of_termination = OutOfTerminationModel()
+        self._out_of_termination = OutOfTerminationStateModel.NONE
 
 
     @property
@@ -133,12 +133,13 @@ class _Value():
         return -100000
 
 
-class OutOfTerminationModel():
+class OutOfTerminationStateModel():
     """［終端外］。
     """
 
 
     _japanese_dict = {
+        0 : '未設定',
         1 : '投了',
         2 : '入玉宣言勝ち',
         3 : '水平線',           # 読みの最大深さ
@@ -152,6 +153,13 @@ class OutOfTerminationModel():
         if number in clazz._japanese_dict:
             return clazz._japanese_dict[number]
         return f"＜未定義の終端外[{number}]＞"
+
+
+    @property
+    def NONE(self):
+        """未設定。
+        """
+        return 0
 
 
     @property
