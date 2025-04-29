@@ -15,6 +15,14 @@ class O1RootSearchRoutines(SearchRoutines):
 
 
     @staticmethod
+    def before_search_for_o1(parent_pv, search_context_model):
+        (parent_pv.backwards_plot_model, parent_pv.is_terminate) = SearchRoutines.look_in_0_moves(
+            info_depth              = INFO_DEPTH,
+            parent_pv               = parent_pv,
+            search_context_model    = search_context_model)
+
+
+    @staticmethod
     def cleaning_horizontal_edges_root(remaining_moves, parent_pv, search_context_model):
         """
         Returns
@@ -78,10 +86,7 @@ class O1RootSearchRoutines(SearchRoutines):
             search_context_model.restart_time = search_context_model.start_time   # 前回の計測開始時間
 
             # PV を更新。
-            (pv.backwards_plot_model, pv.is_terminate) = SearchRoutines.look_in_0_moves(
-                    info_depth = INFO_DEPTH,
-                    pv=pv,
-                    search_context_model=search_context_model)
+            O2CounterSearchRoutines.before_search_for_o2(parent_pv=pv, search_context_model=search_context_model)
 
             ######################
             # MARK: 履歴を全部戻す
@@ -142,8 +147,7 @@ class O1RootSearchRoutines(SearchRoutines):
                         next_pv_list.append(child_pv)        # 別のリストへ［読み筋］を退避します。
                         child_pv_list.remove(child_pv)
 
-                # TODO 再帰しないようにしてほしい。
-                pv.backwards_plot_model = O2CounterSearchRoutines.search_as_counter(pv_list=child_pv_list, search_context_model=search_context_model)       # 再帰呼出
+                pv.backwards_plot_model = O2CounterSearchRoutines.search_as_o2(pv_list=child_pv_list, search_context_model=search_context_model)
 
             ######################
             # MARK: 履歴を全部戻す

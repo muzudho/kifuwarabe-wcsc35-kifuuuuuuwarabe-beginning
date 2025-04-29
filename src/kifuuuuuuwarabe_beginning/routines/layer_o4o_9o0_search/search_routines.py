@@ -95,7 +95,7 @@ class SearchRoutines:
 
 
     @staticmethod
-    def create_backwards_plot_model_at_mate_move_in_1_ply(mate_move, search_context_model):
+    def create_backwards_plot_model_at_mate_move_in_1_ply(info_depth, mate_move, search_context_model):
         """一手詰まされ。
         """
         dst_sq_obj = SquareModel(cshogi.move_to(mate_move))           # ［移動先マス］
@@ -128,7 +128,7 @@ class SearchRoutines:
                 move                = mate_move,
                 capture_piece_type  = cap_pt,
                 best_value          = best_value,
-                hint                = f"{Mars.japanese(is_mars_at_out_of_termination)}は一手詰まされ")
+                hint                = f"{info_depth}階で{Mars.japanese(is_mars_at_out_of_termination)}は一手詰まされ")
         return best_plot_model
 
 
@@ -304,7 +304,7 @@ class SearchRoutines:
 
 
     @staticmethod
-    def look_in_0_moves(info_depth, pv, search_context_model):
+    def look_in_0_moves(info_depth, parent_pv, search_context_model):
         """ノードに入る前に。
 
         Returns
@@ -344,7 +344,7 @@ class SearchRoutines:
                 value_pt    = PieceValuesModel.get_piece_exchange_value_on_earth(
                         pt          = cap_pt,
                         is_mars     = search_context_model.gymnasium.is_mars)
-                return SearchRoutines.create_backwards_plot_model_at_mate_move_in_1_ply(mate_move=mate_move, search_context_model=search_context_model), True
+                return SearchRoutines.create_backwards_plot_model_at_mate_move_in_1_ply(info_depth=info_depth, mate_move=mate_move, search_context_model=search_context_model), True
 
         if search_context_model.gymnasium.table.is_nyugyoku():
             """手番の入玉宣言勝ち局面時。
@@ -355,4 +355,4 @@ class SearchRoutines:
         # if info_depth < 1:
         #     return SearchRoutines.create_backwards_plot_model_at_horizon(info_depth, search_context_model=search_context_model), True
 
-        return pv.backwards_plot_model, pv.is_terminate
+        return parent_pv.backwards_plot_model, parent_pv.is_terminate

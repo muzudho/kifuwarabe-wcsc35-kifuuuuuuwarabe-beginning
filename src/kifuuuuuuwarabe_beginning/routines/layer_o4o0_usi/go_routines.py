@@ -287,7 +287,7 @@ def _main_search_at_first(remaining_moves, gymnasium):
     search_context_model.restart_time = search_context_model.start_time   # 前回の計測開始時間
 
     # ルート・ノードに入る前に探索。
-    (zero_pv.backwards_plot_model, zero_pv.is_terminate) = SearchRoutines.look_in_0_moves(info_depth=INFO_DEPTH_0, pv=zero_pv, search_context_model=search_context_model)
+    O1RootSearchRoutines.before_search_for_o1(parent_pv=zero_pv, search_context_model=search_context_model)
 
     # １階の探索
     if not zero_pv.is_terminate:

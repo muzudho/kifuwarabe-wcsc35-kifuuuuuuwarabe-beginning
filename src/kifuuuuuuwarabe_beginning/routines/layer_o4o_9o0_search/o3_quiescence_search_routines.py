@@ -15,7 +15,15 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
     """駒の取り合いのための静止探索。
     駒の取り合いが終わるまで、駒の取り合いを探索します。
     """
-    
+
+
+    @staticmethod
+    def before_search_for_o3(parent_pv, search_context_model):
+        (parent_pv.backwards_plot_model, parent_pv.is_terminate) = SearchRoutines.look_in_0_moves(
+                info_depth              = INFO_DEPTH,
+                parent_pv               = parent_pv,
+                search_context_model    = search_context_model)
+
 
     @staticmethod
     def cleaning_horizontal_edges_quiescence(parent_pv, search_context_model):
@@ -98,10 +106,7 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
             ####################
 
             # NOTE ネガ・マックスではないので、評価値の正負を反転させなくていい。
-            (pv.backwards_plot_model, pv.is_terminate) = SearchRoutines.look_in_0_moves(
-                    info_depth      = INFO_DEPTH,
-                    pv              = pv,
-                    search_context_model    = search_context_model)
+            O4QuiescenceSearchRoutines.before_search_for_o4(parent_pv=pv, search_context_model=search_context_model)
 
             if pv.is_terminate:
                 child_plot_model = pv.backwards_plot_model

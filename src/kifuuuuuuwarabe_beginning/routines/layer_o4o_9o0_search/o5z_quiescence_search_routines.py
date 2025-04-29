@@ -4,6 +4,7 @@ import time
 from ...models.layer_o1o_9o0 import PieceValuesModel
 from ...models.layer_o1o0 import constants, SquareModel
 from ...models.layer_o1o0o_9o0_table_helper import TableHelper
+from .o6_no_search_routines import O6NoSearchRoutines
 from .search_routines import SearchRoutines
 
 
@@ -14,6 +15,14 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
     """駒の取り合いのための静止探索。
     駒の取り合いが終わるまで、駒の取り合いを探索します。
     """
+
+
+    @staticmethod
+    def before_search_for_o5(parent_pv, search_context_model):
+        (parent_pv.backwards_plot_model, parent_pv.is_terminate) = SearchRoutines.look_in_0_moves(
+                info_depth              = INFO_DEPTH,
+                parent_pv               = parent_pv,
+                search_context_model    = search_context_model)
 
 
     @staticmethod
@@ -72,10 +81,7 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
             # MARK: 相手番の処理
             ####################
 
-            (pv.backwards_plot_model, pv.is_terminate) = SearchRoutines.look_in_0_moves(
-                    info_depth              = INFO_DEPTH,
-                    pv                      = pv,
-                    search_context_model    = search_context_model)
+            O6NoSearchRoutines.before_search_for_o6(parent_pv=pv, search_context_model=search_context_model)
 
             if pv.is_terminate:
                 child_plot_model = pv.backwards_plot_model

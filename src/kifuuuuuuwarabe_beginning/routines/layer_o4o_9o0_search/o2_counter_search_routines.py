@@ -16,6 +16,14 @@ class O2CounterSearchRoutines(SearchRoutines):
 
 
     @staticmethod
+    def before_search_for_o2(parent_pv, search_context_model):
+        (parent_pv.backwards_plot_model, parent_pv.is_terminate) = SearchRoutines.look_in_0_moves(
+                info_depth              = INFO_DEPTH,
+                parent_pv               = parent_pv,
+                search_context_model    = search_context_model)
+
+
+    @staticmethod
     def cleaning_horizontal_edges_counter(parent_pv, search_context_model):
         """
         Parameters
@@ -48,7 +56,7 @@ class O2CounterSearchRoutines(SearchRoutines):
 
 
     @staticmethod
-    def search_as_counter(pv_list, search_context_model):
+    def search_as_o2(pv_list, search_context_model):
         """応手の開始。
 
         Parameters
@@ -102,13 +110,8 @@ class O2CounterSearchRoutines(SearchRoutines):
             # MARK: 相手番の処理
             ####################
 
-            # TODO 静止探索は後回しにしたい。
-            
-            (pv.backwards_plot_model, pv.is_terminate) = SearchRoutines.look_in_0_moves(
-                    info_depth  = INFO_DEPTH,
-                    pv          = pv,
-                    search_context_model    = search_context_model)
-            
+            O3QuiescenceSearchRoutines.before_search_for_o3(parent_pv=pv, search_context_model=search_context_model)
+                        
             if pv.is_terminate:
                 child_plot_model = pv.backwards_plot_model
             else:
