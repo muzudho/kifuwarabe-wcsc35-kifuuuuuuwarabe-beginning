@@ -1,12 +1,16 @@
 import cshogi
 import random
+import time
 
 from ...models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateModel
 from ...models.layer_o1o0o1o0_japanese import JapaneseMoveModel
 from ...models.layer_o5o0_search import PrincipalVariationModel, SearchContextModel
 from ...views import TableView
-from ..layer_o4o_9o0_search import O1RootSearchRoutines, O0ZeroSearchRoutines
+from ..layer_o4o_9o0_search import O1RootSearchRoutines, SearchRoutines
 from ..layer_o3o0 import MovesPickupFilterRoutines, MovesReductionFilterRoutines
+
+
+INFO_DEPTH_0 = 0
 
 
 class GoRoutines:
@@ -279,8 +283,11 @@ def _main_search_at_first(remaining_moves, gymnasium):
     # ゼロ・ノード。
     zero_pv = PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], vertical_list_of_value_pv=[], backwards_plot_model=None)
 
+    search_context_model.start_time = time.time()          # 探索開始時間
+    search_context_model.restart_time = search_context_model.start_time   # 前回の計測開始時間
+
     # ルート・ノードに入る前に探索。
-    (zero_pv.backwards_plot_model, zero_pv.is_terminate) = O0ZeroSearchRoutines.search_before_entering_root_node(pv=zero_pv, search_context_model=search_context_model)
+    (zero_pv.backwards_plot_model, zero_pv.is_terminate) = SearchRoutines.look_in_0_moves(info_depth=INFO_DEPTH_0, pv=zero_pv, search_context_model=search_context_model)
 
     # １階の探索
     if not zero_pv.is_terminate:

@@ -96,6 +96,8 @@ class SearchRoutines:
 
     @staticmethod
     def create_backwards_plot_model_at_mate_move_in_1_ply(mate_move, search_context_model):
+        """一手詰まされ。
+        """
         dst_sq_obj = SquareModel(cshogi.move_to(mate_move))           # ［移動先マス］
         cap_pt = search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
         piece_exchange_value_on_earth = PieceValuesModel.get_piece_exchange_value_on_earth(
