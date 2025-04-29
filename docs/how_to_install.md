@@ -11,9 +11,14 @@ Power Shell ではなく、 Command Prompt を使う。
 
 以下のフォルダーに Python がインストールされる。  
 
-* 📁 `C:\Users\muzud\AppData\Local\Programs\Python`
-    * 📁 `Python312`
-    * 📁 `Python313`
+* 📁 `C:\Users\muzud\`
+    * 📁 `anaconda3`
+    * 📁 `AppData\Local\Programs\Python`
+        * 📁 `Python312`
+        * 📁 `Python313`
+
+これらのフォルダーにビルドパスが通されることにより、混線してしまう。  
+分からなくなったら、思い切って Python をアンインストールして、Python はマシンに１つだけにしてください。  
 
 また、以下のフォルダーには様々な一時ファイルが置かれる。  
 
@@ -24,7 +29,7 @@ Power Shell ではなく、 Command Prompt を使う。
 # Python にパスを通す必要があれば使う。
 # rem set PATH=%%PATH%%;C:\Users\muzud\anaconda3
 
-# Python のバージョン確認。
+# ビルドパスが通っている Python のバージョン確認。
 python -V
 # Python 3.11.7 🌟これで開発。Anaconda3 に入ってるやつ。
 # Python 3.12.3

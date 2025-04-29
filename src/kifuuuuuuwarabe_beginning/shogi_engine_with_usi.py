@@ -128,7 +128,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
     def usi(self):
         """USIエンジン握手
         """
-        print(f'id name {self._gymnasium.config_doc['engine']['name']}')
+        print(f"id name {self._gymnasium.config_doc['engine']['name']}")
         print('usiok', flush=True)
 
 

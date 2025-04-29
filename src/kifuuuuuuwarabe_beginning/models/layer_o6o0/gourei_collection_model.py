@@ -83,16 +83,20 @@ class GoureiCollectionModel():
         for rule in self.negative_rule_list_of_active:
             labels_of_active_negative_rule.append(rule.label)
 
+        list_of_active_positive_rule = '\n'.join(labels_of_active_positive_rule)
+        list_of_idle_negative_rule = '\n'.join(labels_of_idle_negative_rule)
+        list_of_active_negative_rule = '\n'.join(labels_of_active_negative_rule)
+
         return f"""\
 ACTIVE POSITIVE RULES ({len(self.positive_rule_list_of_active)})
 ---------------------
-{'\n'.join(labels_of_active_positive_rule)}
+{list_of_active_positive_rule}
 
 IDLE NEGATIVE RULES ({len(self.negative_rule_list_of_idle)})
 -------------------
-{'\n'.join(labels_of_idle_negative_rule)}
+{list_of_idle_negative_rule}
 
 ACTIVE NEGATIVE RULES ({len(self.negative_rule_list_of_active)})
 ---------------------
-{'\n'.join(labels_of_active_negative_rule)}
+{list_of_active_negative_rule}
 """
