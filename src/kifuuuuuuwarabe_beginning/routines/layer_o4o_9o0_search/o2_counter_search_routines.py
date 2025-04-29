@@ -85,15 +85,15 @@ class O2CounterSearchRoutines(SearchRoutines):
             cap_pt  = pv.vertical_list_of_cap_pt_pv[-1]
             piece_exchange_value_on_earth = pv.last_value_pv
 
-            ##############################
-            # MARK: 履歴の最後の一手を指す
-            ##############################
+            ######################
+            # MARK: 履歴を全部指す
+            ######################
 
-            search_context_model.gymnasium.do_move_o1x(move = my_move)
+            SearchRoutines.do_move_vertical_all(pv=pv, search_context_model=search_context_model)
 
-            ##################################
-            # MARK: 履歴の最後の一手を指した後
-            ##################################
+            ##########################
+            # MARK: 履歴を全部指した後
+            ##########################
 
             search_context_model.number_of_visited_nodes  += 1
             search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=my_move, cap_pt=cap_pt, value=piece_exchange_value_on_earth, comment='')
@@ -127,15 +127,15 @@ class O2CounterSearchRoutines(SearchRoutines):
                 else:
                     child_plot_model = pv.backwards_plot_model
 
-            ##############################
-            # MARK: 履歴の最後の一手を戻す
-            ##############################
+            ######################
+            # MARK: 履歴を全部戻す
+            ######################
 
-            search_context_model.gymnasium.undo_move_o1x()
+            SearchRoutines.undo_move_vertical_all(pv=pv, search_context_model=search_context_model)
 
-            ##################################
-            # MARK: 履歴の最後の一手を戻した後
-            ##################################
+            ##########################
+            # MARK: 履歴を全部戻した後
+            ##########################
 
             search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
 

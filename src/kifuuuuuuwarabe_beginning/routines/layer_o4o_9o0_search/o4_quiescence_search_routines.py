@@ -80,15 +80,15 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
             cap_pt  = pv.vertical_list_of_cap_pt_pv[-1]
             piece_exchange_value_on_earth = pv.last_value_pv
 
-            ################
-            # MARK: 一手指す
-            ################
+            ######################
+            # MARK: 履歴を全部指す
+            ######################
 
-            search_context_model.gymnasium.do_move_o1x(move = my_move)
+            SearchRoutines.do_move_vertical_all(pv=pv, search_context_model=search_context_model)
 
-            ####################
-            # MARK: 一手指した後
-            ####################
+            ##########################
+            # MARK: 履歴を全部指した後
+            ##########################
 
             search_context_model.number_of_visited_nodes += 1
             search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=my_move, cap_pt=cap_pt, value=piece_exchange_value_on_earth, comment='')
@@ -122,15 +122,15 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
                 else:
                     child_plot_model = pv.backwards_plot_model
 
-            ################
-            # MARK: 一手戻す
-            ################
+            ######################
+            # MARK: 履歴を全部戻す
+            ######################
 
-            search_context_model.gymnasium.undo_move_o1x()
+            SearchRoutines.undo_move_vertical_all(pv=pv, search_context_model=search_context_model)
 
-            ####################
-            # MARK: 一手戻した後
-            ####################
+            ##########################
+            # MARK: 履歴を全部戻した後
+            ##########################
 
             search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
 
