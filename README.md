@@ -8,3 +8,4 @@
     * 📖 [インストール手順](./docs/how_to_install.md)
     * 📖 [実行手順](./docs/how_to_start.md)
 * 📖 [開発メモ](./docs/developers_note.md)
+* 📖 [バグ・パレード](./docs/bug_parade.md)
