@@ -87,7 +87,7 @@ class SearchRoutines:
         return BackwardsPlotModel(
                 is_mars_at_out_of_termination   = search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = search_context_model.gymnasium.table.is_gote,
-                out_of_termination              = constants.out_of_termination.RESIGN,
+                out_of_termination_state              = constants.out_of_termination_state.RESIGN,
                 hint_list                       = [],
                 move_list                       = [],
                 cap_list                        = [],
@@ -112,7 +112,7 @@ class SearchRoutines:
         best_plot_model = BackwardsPlotModel(
                 is_mars_at_out_of_termination   = is_mars_at_out_of_termination,     
                 is_gote_at_out_of_termination   = search_context_model.gymnasium.table.is_gote,
-                out_of_termination              = constants.out_of_termination.RESIGN,
+                out_of_termination_state              = constants.out_of_termination_state.RESIGN,
                 hint_list                       = [],
                 move_list                       = [],
                 cap_list                        = [],
@@ -138,7 +138,7 @@ class SearchRoutines:
         return BackwardsPlotModel(
                 is_mars_at_out_of_termination   = search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = search_context_model.gymnasium.table.is_gote,
-                out_of_termination              = constants.out_of_termination.NYUGYOKU_WIN,
+                out_of_termination_state              = constants.out_of_termination_state.NYUGYOKU_WIN,
                 hint_list                       = [],
                 move_list                       = [],
                 cap_list                        = [],
@@ -151,7 +151,7 @@ class SearchRoutines:
         return BackwardsPlotModel(
                 is_mars_at_out_of_termination   = search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = search_context_model.gymnasium.table.is_gote,
-                out_of_termination              = constants.out_of_termination.MAX_DEPTH_BY_THINK,
+                out_of_termination_state              = constants.out_of_termination_state.MAX_DEPTH_BY_THINK,
                 hint_list                       = [],
                 move_list                       = [],
                 cap_list                        = [],
@@ -164,7 +164,7 @@ class SearchRoutines:
         return BackwardsPlotModel(
                 is_mars_at_out_of_termination   = search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = search_context_model.gymnasium.table.is_gote,
-                out_of_termination              = constants.out_of_termination.QUIESCENCE,
+                out_of_termination_state        = constants.out_of_termination_state.QUIESCENCE,
                 hint_list                       = [],
                 move_list                       = [],
                 cap_list                        = [],
@@ -177,7 +177,7 @@ class SearchRoutines:
         return BackwardsPlotModel(
                 is_mars_at_out_of_termination   = search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = search_context_model.gymnasium.table.is_gote,
-                out_of_termination              = constants.out_of_termination.NO_CANDIDATES,
+                out_of_termination_state              = constants.out_of_termination_state.NO_CANDIDATES,
                 hint_list                       = [],
                 move_list                       = [],
                 cap_list                        = [],

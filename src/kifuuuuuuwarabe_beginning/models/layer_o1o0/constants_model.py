@@ -4,7 +4,7 @@ class ConstantsModel():
     def __init__(self):
         self._mind = _Mind()
         self._value = _Value()
-        self._out_of_termination = OutOfTerminationStateModel.NONE
+        self._out_of_termination_state = OutOfTerminationStateModel()
 
 
     @property
@@ -22,10 +22,10 @@ class ConstantsModel():
 
 
     @property
-    def out_of_termination(self):
+    def out_of_termination_state(self):
         """［終端外］です。
         """
-        return self._out_of_termination
+        return self._out_of_termination_state
 
 
     @property
