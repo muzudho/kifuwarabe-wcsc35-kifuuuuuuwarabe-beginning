@@ -53,9 +53,9 @@ class O1RootSearchRoutines(SearchRoutines):
             # MARK: 履歴を全部指す前
             ########################
 
-            my_move = pv.vertical_list_of_move_pv[-1]
-            cap_pt  = pv.vertical_list_of_cap_pt_pv[-1]
-            piece_exchange_value_on_earth = pv.last_value_pv
+            my_move                         = pv.last_move_pv
+            cap_pt                          = pv.last_cap_pt_pv
+            piece_exchange_value_on_earth   = pv.last_value_pv
 
             ######################
             # MARK: 履歴を全部指す
@@ -157,8 +157,8 @@ class O1RootSearchRoutines(SearchRoutines):
 
             # １階の手は、全ての手の読み筋を記憶します。最善手は選びません。
             pv.backwards_plot_model.append_move_from_back(
-                    move                = pv.vertical_list_of_move_pv[-1],
-                    capture_piece_type  = pv.vertical_list_of_cap_pt_pv[-1],
+                    move                = pv.last_move_pv,
+                    capture_piece_type  = pv.last_cap_pt_pv,
                     best_value          = pv.backwards_plot_model.get_exchange_value_on_earth(),
                     hint                = '')
 
@@ -186,7 +186,7 @@ class O1RootSearchRoutines(SearchRoutines):
         search_context_model.clear_root_searched_control_map()
 
         for pv in pv_list:
-            my_move = pv.vertical_list_of_move_pv[-1]
+            my_move = pv.last_move_pv
             if cshogi.move_is_drop(my_move):
                 continue
             dst_sq_obj = SquareModel(cshogi.move_to(my_move))       # ［移動先マス］

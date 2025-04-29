@@ -29,18 +29,22 @@ class PrincipalVariationModel:
         self._is_terminate = is_terminate
 
 
-    @property
-    def vertical_list_of_move_pv(self):
-        """指し手の履歴。
-        """
-        return self._vertical_list_of_move_pv
-
+    ####################
+    # MARK: 最後の指し手
+    ####################
 
     @property
-    def last_child_move_pv(self):
+    def last_move_pv(self):
         """最終の子の指し手。
         """
         return self._vertical_list_of_move_pv[-1]
+
+
+    @property
+    def last_cap_pt_pv(self):
+        """最後の取った駒。
+        """
+        return self._vertical_list_of_cap_pt_pv[-1]
 
 
     @property
@@ -50,6 +54,13 @@ class PrincipalVariationModel:
         if len(self._vertical_list_of_value_pv) == 0:
             return constants.value.ZERO
         return self._vertical_list_of_value_pv[-1]
+
+
+    @property
+    def vertical_list_of_move_pv(self):
+        """指し手の履歴。
+        """
+        return self._vertical_list_of_move_pv
 
 
     @property

@@ -81,9 +81,9 @@ class O2CounterSearchRoutines(SearchRoutines):
             # MARK: 履歴の最後の一手を指す前
             ################################
 
-            my_move = pv.vertical_list_of_move_pv[-1]
-            cap_pt  = pv.vertical_list_of_cap_pt_pv[-1]
-            piece_exchange_value_on_earth = pv.last_value_pv
+            my_move                         = pv.last_move_pv
+            cap_pt                          = pv.last_cap_pt_pv
+            piece_exchange_value_on_earth   = pv.last_value_pv
 
             ######################
             # MARK: 履歴を全部指す
