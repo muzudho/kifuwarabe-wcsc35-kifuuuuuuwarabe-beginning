@@ -9,3 +9,4 @@
     * 📖 [実行手順](./docs/how_to_start.md)
 * 📖 [開発メモ](./docs/developers_note.md)
 * 📖 [バグ・パレード](./docs/bug_parade.md)
+* 📖 [TODOリスト](./docs/todo_list.md)
