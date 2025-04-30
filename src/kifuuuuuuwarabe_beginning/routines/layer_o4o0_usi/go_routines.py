@@ -288,8 +288,8 @@ def _main_search_at_first(remaining_moves, gymnasium):
     search_context_model.start_time = time.time()          # 探索開始時間
     search_context_model.restart_time = search_context_model.start_time   # 前回の計測開始時間
 
-    # ０回について無探索。
-    O0NoSearchRoutines.before_search_for_o0(parent_pv=pv, search_context_model=search_context_model)
+    # 一手も指さずに局面を見て、終局なら終局外を付加。
+    O0NoSearchRoutines.set_termination_if_it_o0(parent_pv=pv, search_context_model=search_context_model)
 
     # ０階で探索不要なら。
     if pv.is_terminate:

@@ -14,6 +14,20 @@ class O1RootSearchRoutines(SearchRoutines):
     """１階の探索。
     """
 
+    ######################################################
+    # MARK: 一手も指さずに局面を見て、終局なら終局外を付加
+    ######################################################
+
+    @staticmethod
+    def set_termination_if_it_o1(parent_pv, search_context_model):
+        """一手も指さずに局面を見て、終局なら終局外を付加。
+        手番が回ってきてから、終局が成立するものとする。（何も指さない手番）
+        """
+        (parent_pv.backwards_plot_model, parent_pv.is_terminate) = SearchRoutines.look_in_0_moves(
+                info_depth              = INFO_DEPTH,
+                parent_pv               = parent_pv,
+                search_context_model    = search_context_model)
+
 
     @staticmethod
     def cleaning_horizontal_edges_o1(remaining_moves, parent_pv, search_context_model):
@@ -76,8 +90,8 @@ class O1RootSearchRoutines(SearchRoutines):
             # MARK: 相手番の処理
             ####################
 
-            # PV を更新。
-            O1RootSearchRoutines.before_search_for_o1(parent_pv=pv, search_context_model=search_context_model)
+            # 一手も指さずに局面を見て、終局なら終局外を付加。
+            O1RootSearchRoutines.set_termination_if_it_o1(parent_pv=pv, search_context_model=search_context_model)
 
             ######################
             # MARK: 履歴を全部戻す
@@ -90,14 +104,6 @@ class O1RootSearchRoutines(SearchRoutines):
             ##########################
 
             search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
-
-
-    @staticmethod
-    def before_search_for_o1(parent_pv, search_context_model):
-        (parent_pv.backwards_plot_model, parent_pv.is_terminate) = SearchRoutines.look_in_0_moves(
-                info_depth              = INFO_DEPTH,
-                parent_pv               = parent_pv,
-                search_context_model    = search_context_model)
 
 
     @staticmethod
