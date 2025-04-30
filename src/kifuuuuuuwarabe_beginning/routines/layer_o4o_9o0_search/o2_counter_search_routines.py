@@ -16,14 +16,6 @@ class O2CounterSearchRoutines(SearchRoutines):
 
 
     @staticmethod
-    def before_search_for_o2(parent_pv, search_context_model):
-        (parent_pv.backwards_plot_model, parent_pv.is_terminate) = SearchRoutines.look_in_0_moves(
-                info_depth              = INFO_DEPTH,
-                parent_pv               = parent_pv,
-                search_context_model    = search_context_model)
-
-
-    @staticmethod
     def cleaning_horizontal_edges_o2(parent_pv, search_context_model):
         """
         Parameters

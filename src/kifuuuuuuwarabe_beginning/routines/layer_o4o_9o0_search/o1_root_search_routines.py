@@ -32,7 +32,9 @@ class O1RootSearchRoutines(SearchRoutines):
 
 
     @staticmethod
-    def check_control_from_root(pv_list, search_context_model):
+    def extend_vertical_edges_o1(pv_list, search_context_model):
+        """縦の辺を伸ばす。
+        """
 
         ####################
         # MARK: ノード訪問時
@@ -40,9 +42,9 @@ class O1RootSearchRoutines(SearchRoutines):
 
         O1RootSearchRoutines._set_controls(pv_list=pv_list, search_context_model=search_context_model)
 
-        ################################
-        # MARK: PVリスト探索（応手除く）
-        ################################
+        ####################
+        # MARK: PVリスト探索
+        ####################
 
         for pv in pv_list:
 
@@ -75,7 +77,7 @@ class O1RootSearchRoutines(SearchRoutines):
             search_context_model.restart_time = search_context_model.start_time   # 前回の計測開始時間
 
             # PV を更新。
-            O2CounterSearchRoutines.before_search_for_o2(parent_pv=pv, search_context_model=search_context_model)
+            O1RootSearchRoutines.before_search_for_o1(parent_pv=pv, search_context_model=search_context_model)
 
             ######################
             # MARK: 履歴を全部戻す
@@ -91,7 +93,15 @@ class O1RootSearchRoutines(SearchRoutines):
 
 
     @staticmethod
-    def visit_counter_from_root(pv_list, search_context_model):
+    def before_search_for_o1(parent_pv, search_context_model):
+        (parent_pv.backwards_plot_model, parent_pv.is_terminate) = SearchRoutines.look_in_0_moves(
+                info_depth              = INFO_DEPTH,
+                parent_pv               = parent_pv,
+                search_context_model    = search_context_model)
+
+
+    @staticmethod
+    def move_all_pv_o1(pv_list, search_context_model):
         """通常探索の開始。
 
         Parameters
@@ -126,9 +136,12 @@ class O1RootSearchRoutines(SearchRoutines):
             # MARK: 相手番の処理
             ####################
 
-            # FIXME この処理は、幅優先探索に変えたい。
-
-            if not pv.is_terminate:
+            # １階で探索不要なら。
+            if pv.is_terminate:
+                next_pv_list = [pv]
+            
+            else:
+                # ［水平指し手一覧］をクリーニング。
                 child_pv_list = O2CounterSearchRoutines.cleaning_horizontal_edges_o2(parent_pv=pv, search_context_model=search_context_model)
 
                 for child_pv in reversed(child_pv_list):
@@ -167,11 +180,8 @@ class O1RootSearchRoutines(SearchRoutines):
 
         # 指し手が無いということはない。ゲームオーバー判定を先にしているから。
 
-        pv_list = next_pv_list      # 入れ替え
-        next_pv_list = []
-
         search_context_model.end_time = time.time()    # 計測終了時間
-        return pv_list
+        return next_pv_list
 
 
     @staticmethod

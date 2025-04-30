@@ -281,35 +281,35 @@ def _main_search_at_first(remaining_moves, gymnasium):
             gymnasium = gymnasium)
 
     # ［ゼロPV］。［指し手］が追加されなければ、［終端外］がセットされるだけのものです。
-    zero_pv = PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], vertical_list_of_value_pv=[], backwards_plot_model=None)
+    pv = PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], vertical_list_of_value_pv=[], backwards_plot_model=None)
 
     search_context_model.start_time = time.time()          # 探索開始時間
     search_context_model.restart_time = search_context_model.start_time   # 前回の計測開始時間
 
     # ０回について無探索。
-    O0NoSearchRoutines.before_search_for_o0(parent_pv=zero_pv, search_context_model=search_context_model)
+    O0NoSearchRoutines.before_search_for_o0(parent_pv=pv, search_context_model=search_context_model)
 
     # ０階で探索不要なら。
-    if zero_pv.is_terminate:
-        pv_list = [zero_pv]
+    if pv.is_terminate:
+        next_pv_list = [pv]
 
     else:
         # ［水平指し手一覧］をクリーニング。
-        remaining_moves = O1RootSearchRoutines.cleaning_horizontal_edges_o1(remaining_moves=remaining_moves, parent_pv=zero_pv, search_context_model=search_context_model)
+        remaining_moves = O1RootSearchRoutines.cleaning_horizontal_edges_o1(remaining_moves=remaining_moves, parent_pv=pv, search_context_model=search_context_model)
 
         # ［水平指し手一覧］を［PV］へ変換。
-        pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=zero_pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
+        next_pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
 
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
-        if len(pv_list) == 0:
+        if len(next_pv_list) == 0:
             #TODO self._search_context_model.end_time = time.time()    # 計測終了時間
-            zero_pv.backwards_plot_model = SearchContextModel.create_backwards_plot_model_at_quiescence(info_depth=O1RootSearchRoutines.INFO_DEPTH, search_context_model=search_context_model)
-            zero_pv.is_terminate = True
-            pv_list = [zero_pv]
+            pv.backwards_plot_model = SearchContextModel.create_backwards_plot_model_at_quiescence(info_depth=O1RootSearchRoutines.INFO_DEPTH, search_context_model=search_context_model)
+            pv.is_terminate = True
+            next_pv_list = [pv]
         
         else:
-            O1RootSearchRoutines.check_control_from_root(pv_list = pv_list, search_context_model=search_context_model)
-            pv_list = O1RootSearchRoutines.visit_counter_from_root(pv_list = pv_list, search_context_model=search_context_model)
+            O1RootSearchRoutines.extend_vertical_edges_o1(pv_list = next_pv_list, search_context_model=search_context_model)
+            next_pv_list = O1RootSearchRoutines.move_all_pv_o1(pv_list = next_pv_list, search_context_model=search_context_model)
             number_of_visited_nodes = search_context_model.number_of_visited_nodes
 
 
@@ -385,7 +385,7 @@ def _main_search_at_first(remaining_moves, gymnasium):
 
     return (
         _eliminate_not_capture_not_positive(
-                pv_list     = pv_list,
+                pv_list     = next_pv_list,
                 gymnasium   = gymnasium),
         number_of_visited_nodes
     )
