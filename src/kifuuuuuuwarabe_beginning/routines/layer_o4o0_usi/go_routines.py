@@ -274,10 +274,7 @@ def _main_search_at_first(remaining_moves, gymnasium):
     number_of_visited_nodes : int
         ［訪問ノード数］
     """
-    max_depth_qs = gymnasium.config_doc['search']['capture_depth']   # 静止探索の深さ
-
     search_context_model = SearchContextModel(
-            max_depth_qs = max_depth_qs,
             gymnasium = gymnasium)
 
     # ［ゼロPV］。［指し手］が追加されなければ、［終端外］がセットされるだけのものです。

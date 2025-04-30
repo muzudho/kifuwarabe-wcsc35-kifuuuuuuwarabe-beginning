@@ -1,27 +1,19 @@
 class SearchContextModel():
 
 
-    def __init__(self, max_depth_qs, gymnasium):
+    def __init__(self, gymnasium):
         """
         Parameters
         ----------
-        max_depth_qs : int
-            最大深さ。
         gymnasium : GymnasiumModel
             体育館。        
         """
-        self._max_depth_qs     = max_depth_qs
         self._gymnasium     = gymnasium
         self._number_of_visited_nodes = 0
         self._start_time    = None
         self._restart_time  = None
         self._end_time      = None
         self.clear_root_searched_control_map()
-
-
-    @property
-    def max_depth_qs(self):
-        return self._max_depth_qs
 
 
     @property
