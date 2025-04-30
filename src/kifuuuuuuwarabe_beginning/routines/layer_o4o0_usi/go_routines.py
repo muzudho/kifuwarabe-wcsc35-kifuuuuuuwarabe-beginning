@@ -301,7 +301,7 @@ def _main_search_at_first(remaining_moves, gymnasium):
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(remaining_moves) == 0:
             #TODO self._search_context_model.end_time = time.time()    # 計測終了時間
-            pv.backwards_plot_model = SearchContextModel.create_backwards_plot_model_at_quiescence(info_depth=O1RootSearchRoutines.INFO_DEPTH, search_context_model=search_context_model)
+            pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=O1RootSearchRoutines.INFO_DEPTH, search_context_model=search_context_model)
             pv.is_terminate = True
             next_pv_list = [pv]
         
@@ -310,7 +310,9 @@ def _main_search_at_first(remaining_moves, gymnasium):
             next_pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
 
             O1RootSearchRoutines.extend_vertical_edges_o1(pv_list = next_pv_list, search_context_model=search_context_model)
-            terminated_pv_list, live_pv_list = O1RootSearchRoutines.move_all_pv_o1(pv_list = next_pv_list, search_context_model=search_context_model)
+            (terminated_pv_list, live_pv_list) = O1RootSearchRoutines.move_all_pv_o1(
+                    pv_list             = next_pv_list,
+                    search_context_model= search_context_model)
 
             next_pv_list = []
 

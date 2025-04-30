@@ -11,7 +11,7 @@ INFO_DEPTH = 1
 
 
 class O1RootSearchRoutines(SearchRoutines):
-    """１階の全てのリーガル・ムーブについて静止探索。
+    """１階の探索。
     """
 
 
@@ -19,15 +19,17 @@ class O1RootSearchRoutines(SearchRoutines):
     def cleaning_horizontal_edges_o1(remaining_moves, parent_pv, search_context_model):
         """水平指し手をクリーニング。
 
+        Parameters
+        ----------
+        parent_pv : PrincipalVariationModel
+            親手。
+
         Returns
         -------
         remaining_moves : list<int>
             デバッグの都合。シーショーギの指し手のリスト。
-        pv_list : list<PrincipalVariationModel>
-            読み筋のリスト。
         """
 
-        # 最善手は探さなくていい。全部返すから。
         remaining_moves = SearchRoutines.remove_depromoted_moves(remaining_moves=remaining_moves, search_context_model=search_context_model)       # ［成れるのに成らない手］は除外
         return remaining_moves
 
@@ -74,9 +76,6 @@ class O1RootSearchRoutines(SearchRoutines):
             # MARK: 相手番の処理
             ####################
 
-            search_context_model.start_time = time.time()          # 探索開始時間
-            search_context_model.restart_time = search_context_model.start_time   # 前回の計測開始時間
-
             # PV を更新。
             O1RootSearchRoutines.before_search_for_o1(parent_pv=pv, search_context_model=search_context_model)
 
@@ -117,11 +116,9 @@ class O1RootSearchRoutines(SearchRoutines):
             枝が増えて、合法手の数より多くなることがあることに注意。
         """
 
-        # まだ深く読む場合。
-
-        ################################
-        # MARK: PVリスト探索（応手）
-        ################################
+        ####################
+        # MARK: ノード訪問時
+        ####################
 
         terminated_pv_list = []
         live_pv_list = []
@@ -134,9 +131,9 @@ class O1RootSearchRoutines(SearchRoutines):
 
             SearchRoutines.do_move_vertical_all(pv=pv, search_context_model=search_context_model)
 
-            ####################
-            # MARK: 相手番の処理
-            ####################
+            ##################
+            # MARK: 手番の処理
+            ##################
 
             # １階で探索不要なら。
             if pv.is_terminate:
@@ -149,7 +146,7 @@ class O1RootSearchRoutines(SearchRoutines):
                 # ［駒を取る手］がないことを、［静止］と呼ぶ。
                 if len(remaining_moves) == 0:
                     #TODO self._search_context_model.end_time = time.time()    # 計測終了時間
-                    pv.backwards_plot_model = SearchContextModel.create_backwards_plot_model_at_quiescence(info_depth=O1RootSearchRoutines.INFO_DEPTH, search_context_model=search_context_model)
+                    pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model)
                     pv.is_terminate = True
                     terminated_pv_list.append(pv)
                 
@@ -157,20 +154,32 @@ class O1RootSearchRoutines(SearchRoutines):
                     # remaining_moves から pv へ変換。
                     next_pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
 
-                    for next_pv in reversed(next_pv_list):
-                        # TODO ２手目
-                        #next_pv.backwards_plot_model = O2CounterSearchRoutines.search_as_o2(pv_list=live_pv_list, search_context_model=search_context_model)
+                    # TODO ２手目
+                    # O2CounterSearchRoutines.extend_vertical_edges_o2(pv_list=next_pv_list, search_context_model=search_context_model)
+                    # (terminated_pv_list, live_pv_list) = O2CounterSearchRoutines.move_all_pv_o2(
+                    #         pv_list             = live_pv_list,
+                    #         search_context_model= search_context_model)
 
-                        if next_pv.is_terminate:                    # ［読み筋］の探索が終了していれば。
-                            terminated_pv_list.append(next_pv)      # 別のリストへ［読み筋］を退避します。
-                        else:
-                            live_pv_list.append(next_pv)
+                    # # 火星が嫌な手は削除。
+                    # for terminated_pv in reversed(terminated_pv_list):
+                    #     if 0 < terminated_pv.last_value_pv:
+                    #         terminated_pv_list.remove(terminated_pv)
+                    
+                    # for live_pv in reversed(live_pv_list):
+                    #     if 0 < live_pv.last_value_pv:
+                    #         live_pv_list.remove(live_pv)
 
             ######################
             # MARK: 履歴を全部戻す
             ######################
 
             SearchRoutines.undo_move_vertical_all(pv=pv, search_context_model=search_context_model)
+
+            ##########################
+            # MARK: 履歴を全部戻した後
+            ##########################
+
+            search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
 
             ##################
             # MARK: 手番の処理
