@@ -107,8 +107,6 @@ class HealthCheckGoModel():
 
         lines = []
 
-        lines.append(f"* {self._gymnasium.config_doc['search']['capture_depth']} 手読み")
-        lines.append('')
         lines.append('HEALTH CHECK GO WORKSHEET')
         lines.append('-------------------------')
 
