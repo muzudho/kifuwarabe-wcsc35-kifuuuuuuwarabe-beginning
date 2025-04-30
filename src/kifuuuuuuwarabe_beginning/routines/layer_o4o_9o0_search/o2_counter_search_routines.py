@@ -17,7 +17,8 @@ class O2CounterSearchRoutines(SearchRoutines):
 
     @staticmethod
     def cleaning_horizontal_edges_o2(parent_pv, search_context_model):
-        """
+        """水平指し手一覧］をクリーニング。
+        
         Parameters
         ----------
         parent_pv : PrincipalVariationModel
@@ -42,9 +43,7 @@ class O2CounterSearchRoutines(SearchRoutines):
         (remaining_moves, rolled_back) = SearchRoutines.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=True, search_context_model=search_context_model)    # ［カウンター探索］では、駒を取る手と、王手のみ残す。［駒を取る手、王手］が無ければ、（巻き戻して）それ以外の手を指します。
         remaining_moves.extend(aigoma_move_list)
 
-        # remaining_moves から pv へ変換。
-        pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
-        return pv_list
+        return remaining_moves
 
 
     @staticmethod

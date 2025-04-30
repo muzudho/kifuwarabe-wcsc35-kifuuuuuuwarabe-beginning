@@ -282,6 +282,7 @@ def _main_search_at_first(remaining_moves, gymnasium):
 
     # ［ゼロPV］。［指し手］が追加されなければ、［終端外］がセットされるだけのものです。
     pv = PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], vertical_list_of_value_pv=[], backwards_plot_model=None)
+    pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_horizon(info_depth=INFO_DEPTH_0, search_context_model=search_context_model)
 
     search_context_model.start_time = time.time()          # 探索開始時間
     search_context_model.restart_time = search_context_model.start_time   # 前回の計測開始時間
@@ -297,21 +298,30 @@ def _main_search_at_first(remaining_moves, gymnasium):
         # ［水平指し手一覧］をクリーニング。
         remaining_moves = O1RootSearchRoutines.cleaning_horizontal_edges_o1(remaining_moves=remaining_moves, parent_pv=pv, search_context_model=search_context_model)
 
-        # ［水平指し手一覧］を［PV］へ変換。
-        next_pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
-
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
-        if len(next_pv_list) == 0:
+        if len(remaining_moves) == 0:
             #TODO self._search_context_model.end_time = time.time()    # 計測終了時間
             pv.backwards_plot_model = SearchContextModel.create_backwards_plot_model_at_quiescence(info_depth=O1RootSearchRoutines.INFO_DEPTH, search_context_model=search_context_model)
             pv.is_terminate = True
             next_pv_list = [pv]
         
         else:
-            O1RootSearchRoutines.extend_vertical_edges_o1(pv_list = next_pv_list, search_context_model=search_context_model)
-            next_pv_list = O1RootSearchRoutines.move_all_pv_o1(pv_list = next_pv_list, search_context_model=search_context_model)
-            number_of_visited_nodes = search_context_model.number_of_visited_nodes
+            # ［水平指し手一覧］を［PV］へ変換。
+            next_pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
 
+            O1RootSearchRoutines.extend_vertical_edges_o1(pv_list = next_pv_list, search_context_model=search_context_model)
+            terminated_pv_list, live_pv_list = O1RootSearchRoutines.move_all_pv_o1(pv_list = next_pv_list, search_context_model=search_context_model)
+
+            next_pv_list = []
+
+            for terminated_pv in terminated_pv_list:
+                if constants.value.MAYBE_EARTH_WIN_VALUE <= terminated_pv.last_value_pv:
+                    next_pv_list.append(terminated_pv)
+            
+            if len(next_pv_list) == 0:
+                for live_pv in live_pv_list:
+                    if constants.value.MAYBE_EARTH_WIN_VALUE <= live_pv.last_value_pv:
+                        next_pv_list.append(live_pv)
 
     def _eliminate_not_capture_not_positive(pv_list, gymnasium):
         """次の１つの手は、候補に挙げる必要がないので除去します。
@@ -387,5 +397,5 @@ def _main_search_at_first(remaining_moves, gymnasium):
         _eliminate_not_capture_not_positive(
                 pv_list     = next_pv_list,
                 gymnasium   = gymnasium),
-        number_of_visited_nodes
+        search_context_model.number_of_visited_nodes
     )

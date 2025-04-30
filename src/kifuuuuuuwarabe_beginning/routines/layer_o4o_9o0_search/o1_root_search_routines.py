@@ -2,6 +2,7 @@ import cshogi
 import time
 
 from ...models.layer_o1o0 import SquareModel
+from ...models.layer_o5o0_search import SearchContextModel
 from .search_routines import SearchRoutines
 from .o2_counter_search_routines import O2CounterSearchRoutines
 
@@ -122,7 +123,8 @@ class O1RootSearchRoutines(SearchRoutines):
         # MARK: PVリスト探索（応手）
         ################################
 
-        next_pv_list = []
+        terminated_pv_list = []
+        live_pv_list = []
 
         for pv in pv_list:
 
@@ -138,20 +140,32 @@ class O1RootSearchRoutines(SearchRoutines):
 
             # １階で探索不要なら。
             if pv.is_terminate:
-                next_pv_list = [pv]
+                terminated_pv_list.append(pv)
             
             else:
                 # ［水平指し手一覧］をクリーニング。
-                child_pv_list = O2CounterSearchRoutines.cleaning_horizontal_edges_o2(parent_pv=pv, search_context_model=search_context_model)
+                remaining_moves = O2CounterSearchRoutines.cleaning_horizontal_edges_o2(parent_pv=pv, search_context_model=search_context_model)
 
-                for child_pv in reversed(child_pv_list):
-                    if child_pv.is_terminate:           # ［読み筋］の探索が終了していれば。
-                        next_pv_list.append(child_pv)        # 別のリストへ［読み筋］を退避します。
-                        child_pv_list.remove(child_pv)
+                # ［駒を取る手］がないことを、［静止］と呼ぶ。
+                if len(remaining_moves) == 0:
+                    #TODO self._search_context_model.end_time = time.time()    # 計測終了時間
+                    pv.backwards_plot_model = SearchContextModel.create_backwards_plot_model_at_quiescence(info_depth=O1RootSearchRoutines.INFO_DEPTH, search_context_model=search_context_model)
+                    pv.is_terminate = True
+                    terminated_pv_list.append(pv)
+                
+                else:
+                    # remaining_moves から pv へ変換。
+                    next_pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
 
-                # FIXME
-                #pv.backwards_plot_model = O2CounterSearchRoutines.search_as_o2(pv_list=child_pv_list, search_context_model=search_context_model)
-                pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_horizon(info_depth=INFO_DEPTH, search_context_model=search_context_model)
+                    for next_pv in reversed(next_pv_list):
+                        # FIXME
+                        #next_pv.backwards_plot_model = O2CounterSearchRoutines.search_as_o2(pv_list=live_pv_list, search_context_model=search_context_model)
+                        next_pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_horizon(info_depth=INFO_DEPTH, search_context_model=search_context_model)
+
+                        if next_pv.is_terminate:                    # ［読み筋］の探索が終了していれば。
+                            terminated_pv_list.append(next_pv)      # 別のリストへ［読み筋］を退避します。
+                        else:
+                            live_pv_list.append(next_pv)
 
             ######################
             # MARK: 履歴を全部戻す
@@ -172,7 +186,7 @@ class O1RootSearchRoutines(SearchRoutines):
 
             # ベータカットもしません。全部返すから。
             #pv.value_pv += pv.backwards_plot_model.get_exchange_value_on_earth()
-            next_pv_list.append(pv.copy_pv())
+            #terminated_pv_list.append(pv.copy_pv())
 
         ######################
         # MARK: PVリスト探索後
@@ -181,7 +195,7 @@ class O1RootSearchRoutines(SearchRoutines):
         # 指し手が無いということはない。ゲームオーバー判定を先にしているから。
 
         search_context_model.end_time = time.time()    # 計測終了時間
-        return next_pv_list
+        return terminated_pv_list, live_pv_list
 
 
     @staticmethod

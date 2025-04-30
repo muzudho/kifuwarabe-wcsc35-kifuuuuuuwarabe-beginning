@@ -133,6 +133,13 @@ class _Value():
         return -100000
 
 
+    @property
+    def MAYBE_EARTH_WIN_VALUE(self):
+        """多分、地球勝ちの数。
+        """
+        return 9000
+
+
 class OutOfTerminationStateModel():
     """［終端外］。
     """
