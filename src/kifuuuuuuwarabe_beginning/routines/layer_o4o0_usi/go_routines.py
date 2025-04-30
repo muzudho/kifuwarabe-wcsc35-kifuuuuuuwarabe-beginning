@@ -281,8 +281,11 @@ def _main_search_at_first(remaining_moves, gymnasium):
             gymnasium = gymnasium)
 
     # ［ゼロPV］。［指し手］が追加されなければ、［終端外］がセットされるだけのものです。
-    pv = PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], vertical_list_of_value_pv=[], backwards_plot_model=None)
-    pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_horizon(info_depth=INFO_DEPTH_0, search_context_model=search_context_model)
+    pv = PrincipalVariationModel(
+            vertical_list_of_move_pv=[],
+            vertical_list_of_cap_pt_pv=[],
+            vertical_list_of_value_pv=[],
+            backwards_plot_model=SearchRoutines.create_backwards_plot_model_at_horizon(search_context_model=search_context_model))  # ＜水平線＞がデフォルト値。
 
     search_context_model.start_time = time.time()          # 探索開始時間
     search_context_model.restart_time = search_context_model.start_time   # 前回の計測開始時間

@@ -1,7 +1,5 @@
-#import cshogi
-
-#from ..layer_o1o0o1o0_japanese import JapaneseMoveModel
 from ..layer_o1o0 import constants
+
 
 class PrincipalVariationModel:
     """読み筋モデル。

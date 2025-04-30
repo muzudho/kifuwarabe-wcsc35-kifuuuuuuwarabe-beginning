@@ -87,7 +87,7 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
                 child_plot_model = pv.backwards_plot_model
             else:
                 # NOTE 再帰は廃止。デバッグ作れないから。ここで＜水平線＞。
-                child_plot_model = SearchRoutines.create_backwards_plot_model_at_horizon(info_depth=INFO_DEPTH, search_context_model=search_context_model)
+                child_plot_model = SearchRoutines.create_backwards_plot_model_at_horizon(search_context_model=search_context_model)
 
             ######################
             # MARK: 履歴を全部戻す
