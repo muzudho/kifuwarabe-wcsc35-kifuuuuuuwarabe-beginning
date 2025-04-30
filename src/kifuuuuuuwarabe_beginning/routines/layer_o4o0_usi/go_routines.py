@@ -138,6 +138,7 @@ class _Go2nd():
         length_of_quiescence_search_by_kifuwarabe   = len(remaining_moves_qs)
         gymnasium.thinking_logger_module.append_message(f"QS_select_length={length_of_quiescence_search_by_kifuwarabe}")
 
+        # 指し手が全部消えたとき。ロールバックします。
         if len(remaining_moves_qs) == 0:
             remaining_moves_qs = old_all_legal_moves
             gymnasium.thinking_logger_module.append_message(f"QS is 0. Rollback to old_all_legal_moves. len={len(remaining_moves_qs)}.")
@@ -145,7 +146,7 @@ class _Go2nd():
                 gymnasium.health_check_go_model.append_health(
                         move    = move,
                         name    = 'QS_select',
-                        value   = 'QS_cancel')
+                        value   = 'QS_annihilation')
 
         else:
             for move in remaining_moves_qs:
