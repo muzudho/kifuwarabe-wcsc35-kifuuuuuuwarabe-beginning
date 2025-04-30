@@ -158,9 +158,8 @@ class O1RootSearchRoutines(SearchRoutines):
                     next_pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
 
                     for next_pv in reversed(next_pv_list):
-                        # FIXME
+                        # TODO ２手目
                         #next_pv.backwards_plot_model = O2CounterSearchRoutines.search_as_o2(pv_list=live_pv_list, search_context_model=search_context_model)
-                        next_pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_horizon(search_context_model=search_context_model)
 
                         if next_pv.is_terminate:                    # ［読み筋］の探索が終了していれば。
                             terminated_pv_list.append(next_pv)      # 別のリストへ［読み筋］を退避します。

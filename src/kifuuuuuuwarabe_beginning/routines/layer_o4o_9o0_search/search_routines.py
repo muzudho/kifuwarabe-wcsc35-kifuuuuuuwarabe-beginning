@@ -354,8 +354,4 @@ class SearchRoutines:
             """
             return SearchRoutines.create_backwards_plot_model_at_nyugyoku_win(search_context_model=search_context_model), True
 
-        # # これ以上深く読まない場合。
-        # if info_depth < 1:
-        #     return SearchRoutines.create_backwards_plot_model_at_horizon(search_context_model=search_context_model), True
-
         return parent_pv.backwards_plot_model, parent_pv.is_terminate
