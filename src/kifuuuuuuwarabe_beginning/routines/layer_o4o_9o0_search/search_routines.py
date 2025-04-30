@@ -27,7 +27,7 @@ class SearchRoutines:
 
     @staticmethod
     def convert_remaining_moves_to_pv_list(parent_pv, remaining_moves, search_context_model):
-        """PVリスト作成。
+        """［水平指し手一覧］を［PV一覧］へ変換。
         """
         pv_list = []
 

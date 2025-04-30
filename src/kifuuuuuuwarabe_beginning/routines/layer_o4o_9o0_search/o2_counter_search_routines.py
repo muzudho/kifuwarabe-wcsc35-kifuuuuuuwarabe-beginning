@@ -24,7 +24,7 @@ class O2CounterSearchRoutines(SearchRoutines):
 
 
     @staticmethod
-    def cleaning_horizontal_edges_counter(parent_pv, search_context_model):
+    def cleaning_horizontal_edges_o2(parent_pv, search_context_model):
         """
         Parameters
         ----------
@@ -116,7 +116,7 @@ class O2CounterSearchRoutines(SearchRoutines):
                 child_plot_model = pv.backwards_plot_model
             else:
                 if not pv.is_terminate:
-                    child_pv_list = O3QuiescenceSearchRoutines.cleaning_horizontal_edges_quiescence(parent_pv=pv, search_context_model=search_context_model)
+                    child_pv_list = O3QuiescenceSearchRoutines.cleaning_horizontal_edges_o3(parent_pv=pv, search_context_model=search_context_model)
 
                     # ［駒を取る手］がないことを、［静止］と呼ぶ。
                     if len(child_pv_list) == 0:

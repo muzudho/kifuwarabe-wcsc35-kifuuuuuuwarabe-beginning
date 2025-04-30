@@ -6,7 +6,7 @@ from ...models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateMo
 from ...models.layer_o1o0o1o0_japanese import JapaneseMoveModel
 from ...models.layer_o5o0_search import PrincipalVariationModel, SearchContextModel
 from ...views import TableView
-from ..layer_o4o_9o0_search import O1RootSearchRoutines, SearchRoutines
+from ..layer_o4o_9o0_search import O0NoSearchRoutines, O1RootSearchRoutines, SearchRoutines
 from ..layer_o3o0 import MovesPickupFilterRoutines, MovesReductionFilterRoutines
 
 
@@ -280,32 +280,37 @@ def _main_search_at_first(remaining_moves, gymnasium):
             max_depth_qs = max_depth_qs,
             gymnasium = gymnasium)
 
-    # ゼロ・ノード。
+    # ［ゼロPV］。［指し手］が追加されなければ、［終端外］がセットされるだけのものです。
     zero_pv = PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], vertical_list_of_value_pv=[], backwards_plot_model=None)
 
     search_context_model.start_time = time.time()          # 探索開始時間
     search_context_model.restart_time = search_context_model.start_time   # 前回の計測開始時間
 
-    # ルート・ノードに入る前に探索。
-    O1RootSearchRoutines.before_search_for_o1(parent_pv=zero_pv, search_context_model=search_context_model)
+    # ０回について無探索。
+    O0NoSearchRoutines.before_search_for_o0(parent_pv=zero_pv, search_context_model=search_context_model)
 
-    # １階の探索
-    if not zero_pv.is_terminate:
-        pv_list = O1RootSearchRoutines.cleaning_horizontal_edges_root(remaining_moves=remaining_moves, parent_pv=zero_pv, search_context_model=search_context_model)
+    # ０階で探索不要なら。
+    if zero_pv.is_terminate:
+        pv_list = [zero_pv]
+
+    else:
+        # ［水平指し手一覧］をクリーニング。
+        remaining_moves = O1RootSearchRoutines.cleaning_horizontal_edges_o1(remaining_moves=remaining_moves, parent_pv=zero_pv, search_context_model=search_context_model)
+
+        # ［水平指し手一覧］を［PV］へ変換。
+        pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=zero_pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
 
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(pv_list) == 0:
             #TODO self._search_context_model.end_time = time.time()    # 計測終了時間
             zero_pv.backwards_plot_model = SearchContextModel.create_backwards_plot_model_at_quiescence(info_depth=O1RootSearchRoutines.INFO_DEPTH, search_context_model=search_context_model)
             zero_pv.is_terminate = True
-
-    if not zero_pv.is_terminate:
-        O1RootSearchRoutines.check_control_from_root(pv_list = pv_list, search_context_model=search_context_model)
-        pv_list = O1RootSearchRoutines.visit_counter_from_root(pv_list = pv_list, search_context_model=search_context_model)
-        number_of_visited_nodes = search_context_model.number_of_visited_nodes
-
-    else:
-        pv_list = [PrincipalVariationModel(vertical_list_of_move_pv=[], vertical_list_of_cap_pt_pv=[], vertical_list_of_value_pv=[], backwards_plot_model=zero_pv.backwards_plot_model)]
+            pv_list = [zero_pv]
+        
+        else:
+            O1RootSearchRoutines.check_control_from_root(pv_list = pv_list, search_context_model=search_context_model)
+            pv_list = O1RootSearchRoutines.visit_counter_from_root(pv_list = pv_list, search_context_model=search_context_model)
+            number_of_visited_nodes = search_context_model.number_of_visited_nodes
 
 
     def _eliminate_not_capture_not_positive(pv_list, gymnasium):

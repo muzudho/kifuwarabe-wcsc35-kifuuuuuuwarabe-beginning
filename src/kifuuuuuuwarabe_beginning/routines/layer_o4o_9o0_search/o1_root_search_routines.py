@@ -15,16 +15,9 @@ class O1RootSearchRoutines(SearchRoutines):
 
 
     @staticmethod
-    def before_search_for_o1(parent_pv, search_context_model):
-        (parent_pv.backwards_plot_model, parent_pv.is_terminate) = SearchRoutines.look_in_0_moves(
-            info_depth              = INFO_DEPTH,
-            parent_pv               = parent_pv,
-            search_context_model    = search_context_model)
+    def cleaning_horizontal_edges_o1(remaining_moves, parent_pv, search_context_model):
+        """水平指し手をクリーニング。
 
-
-    @staticmethod
-    def cleaning_horizontal_edges_root(remaining_moves, parent_pv, search_context_model):
-        """
         Returns
         -------
         remaining_moves : list<int>
@@ -32,14 +25,10 @@ class O1RootSearchRoutines(SearchRoutines):
         pv_list : list<PrincipalVariationModel>
             読み筋のリスト。
         """
-        ##########################
-        # MARK: 合法手クリーニング
-        ##########################
 
         # 最善手は探さなくていい。全部返すから。
         remaining_moves = SearchRoutines.remove_depromoted_moves(remaining_moves=remaining_moves, search_context_model=search_context_model)       # ［成れるのに成らない手］は除外
-        pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
-        return pv_list
+        return remaining_moves
 
 
     @staticmethod
@@ -140,14 +129,16 @@ class O1RootSearchRoutines(SearchRoutines):
             # FIXME この処理は、幅優先探索に変えたい。
 
             if not pv.is_terminate:
-                child_pv_list = O2CounterSearchRoutines.cleaning_horizontal_edges_counter(parent_pv=pv, search_context_model=search_context_model)
+                child_pv_list = O2CounterSearchRoutines.cleaning_horizontal_edges_o2(parent_pv=pv, search_context_model=search_context_model)
 
                 for child_pv in reversed(child_pv_list):
                     if child_pv.is_terminate:           # ［読み筋］の探索が終了していれば。
                         next_pv_list.append(child_pv)        # 別のリストへ［読み筋］を退避します。
                         child_pv_list.remove(child_pv)
 
-                pv.backwards_plot_model = O2CounterSearchRoutines.search_as_o2(pv_list=child_pv_list, search_context_model=search_context_model)
+                # FIXME
+                #pv.backwards_plot_model = O2CounterSearchRoutines.search_as_o2(pv_list=child_pv_list, search_context_model=search_context_model)
+                pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_horizon(info_depth=INFO_DEPTH, search_context_model=search_context_model)
 
             ######################
             # MARK: 履歴を全部戻す
