@@ -32,6 +32,10 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
                 search_context_model    = search_context_model)
 
 
+    ################################
+    # MARK: 水平指し手をクリーニング
+    ################################
+
     @staticmethod
     def cleaning_horizontal_edges_o3a(parent_pv, search_context_model):
         """水平指し手をクリーニング。
@@ -51,6 +55,10 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
         (remaining_moves, rolled_back) = SearchRoutines.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=False, search_context_model=search_context_model)       # 駒を取る手と、王手のみ残す
         return remaining_moves
 
+
+    ################################
+    # MARK: 水平指し手をクリーニング
+    ################################
 
     @staticmethod
     def cleaning_horizontal_edges_o3b(parent_pv, search_context_model):

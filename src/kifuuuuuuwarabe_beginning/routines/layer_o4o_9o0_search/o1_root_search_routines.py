@@ -77,6 +77,10 @@ class O1RootSearchRoutines(SearchRoutines):
                 search_context_model    = search_context_model)
 
 
+    ################################
+    # MARK: 水平指し手をクリーニング
+    ################################
+
     @staticmethod
     def cleaning_horizontal_edges_o1(remaining_moves, parent_pv, search_context_model):
         """水平指し手をクリーニング。
@@ -151,6 +155,7 @@ class O1RootSearchRoutines(SearchRoutines):
                     next_pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
 
                     # TODO ２手目
+                    # 縦の辺を伸ばす。
                     # O2CounterSearchRoutines.extend_vertical_edges_o2(pv_list=next_pv_list, search_context_model=search_context_model)
                     # (terminated_pv_list, live_pv_list) = O2CounterSearchRoutines.move_all_pv_o2(
                     #         pv_list             = live_pv_list,

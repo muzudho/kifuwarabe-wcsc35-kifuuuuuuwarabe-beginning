@@ -32,6 +32,10 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
                 search_context_model    = search_context_model)
 
 
+    ################################
+    # MARK: 水平指し手をクリーニング
+    ################################
+
     @staticmethod
     def cleaning_horizontal_edges_o4(parent_pv, search_context_model):
         """

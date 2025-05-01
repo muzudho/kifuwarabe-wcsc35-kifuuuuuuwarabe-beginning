@@ -71,6 +71,10 @@ class O2CounterSearchRoutines(SearchRoutines):
                 search_context_model    = search_context_model)
 
 
+    ################################
+    # MARK: 水平指し手をクリーニング
+    ################################
+
     @staticmethod
     def cleaning_horizontal_edges_o2(parent_pv, search_context_model):
         """水平指し手一覧］をクリーニング。
