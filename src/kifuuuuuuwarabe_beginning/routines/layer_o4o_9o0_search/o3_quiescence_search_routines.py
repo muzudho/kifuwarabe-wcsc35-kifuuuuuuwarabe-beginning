@@ -80,7 +80,7 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
     ################################
 
     @staticmethod
-    def cleaning_horizontal_edges_o3a(parent_pv, search_context_model):
+    def cleaning_horizontal_edges_o3(parent_pv, search_context_model):
         """水平指し手をクリーニング。
 
         Returns
@@ -97,32 +97,6 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
         remaining_moves = SearchRoutines.get_cheapest_move_list(remaining_moves=remaining_moves)
         (remaining_moves, rolled_back) = SearchRoutines.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=False, search_context_model=search_context_model)       # 駒を取る手と、王手のみ残す
         return remaining_moves
-
-
-    ################################
-    # MARK: 水平指し手をクリーニング
-    ################################
-
-    @staticmethod
-    def cleaning_horizontal_edges_o3b(parent_pv, search_context_model):
-        """
-        Returns
-        -------
-        pv_list : list<PrincipalVariationModel>
-            読み筋のリスト。
-        """
-
-        legal_move_list = list(search_context_model.gymnasium.table.legal_moves)
-        remaining_moves = legal_move_list
-        remaining_moves = SearchRoutines.remove_drop_moves(remaining_moves=remaining_moves)           # 打の手を全部除外したい。
-        remaining_moves = SearchRoutines.remove_depromoted_moves(remaining_moves=remaining_moves, search_context_model=search_context_model)     # ［成れるのに成らない手］は除外
-        (remaining_moves, rolled_back) = SearchRoutines.filtering_same_destination_move_list(parent_move=parent_pv.last_move_pv, remaining_moves=remaining_moves, rollback_if_empty=True) # できれば［同］の手を残す。
-        remaining_moves = SearchRoutines.get_cheapest_move_list(remaining_moves=remaining_moves)
-        (remaining_moves, rolled_back) = SearchRoutines.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=False, search_context_model=search_context_model)       # 駒を取る手と、王手のみ残す
-
-        # remaining_moves から pv へ変換。
-        pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
-        return pv_list
 
 
     ################
@@ -178,7 +152,7 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
 
             else:
                 # ［水平指し手一覧］をクリーニング。
-                child_pv_list = O3QuiescenceSearchRoutines.cleaning_horizontal_edges_o3b(parent_pv=pv, search_context_model=search_context_model)
+                child_pv_list = O4QuiescenceSearchRoutines.cleaning_horizontal_edges_o4(parent_pv=pv, search_context_model=search_context_model)
 
                 if not pv.is_terminate:
                     # ［駒を取る手］がないことを、［静止］と呼ぶ。

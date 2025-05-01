@@ -141,7 +141,7 @@ class O2CounterSearchRoutines(SearchRoutines):
 
             else:
                 # ［水平指し手一覧］をクリーニング。
-                remaining_moves = O3QuiescenceSearchRoutines.cleaning_horizontal_edges_o3a(parent_pv=pv, search_context_model=search_context_model)
+                remaining_moves = O3QuiescenceSearchRoutines.cleaning_horizontal_edges_o3(parent_pv=pv, search_context_model=search_context_model)
 
                 # ［駒を取る手］がないことを、［静止］と呼ぶ。
                 if len(remaining_moves) == 0:
