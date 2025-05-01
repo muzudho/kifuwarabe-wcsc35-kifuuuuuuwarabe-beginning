@@ -275,8 +275,20 @@ def _main_search_at_first(remaining_moves, gymnasium):
     number_of_visited_nodes : int
         ［訪問ノード数］
     """
+
+    # 初期化
+    # ------
     search_context_model = SearchContextModel(
             gymnasium = gymnasium)
+
+    search_context_model.start_time = time.time()          # 探索開始時間
+    search_context_model.restart_time = search_context_model.start_time   # 前回の計測開始時間
+
+    # ノード訪問時
+    # ------------
+
+    # 各PV
+    # ----
 
     # ［ゼロPV］。［指し手］が追加されなければ、［終端外］がセットされるだけのものです。
     pv = PrincipalVariationModel(
@@ -285,11 +297,26 @@ def _main_search_at_first(remaining_moves, gymnasium):
             vertical_list_of_value_pv=[],
             backwards_plot_model=SearchRoutines.create_backwards_plot_model_at_horizon(search_context_model=search_context_model))  # ＜水平線＞がデフォルト値。
 
-    search_context_model.start_time = time.time()          # 探索開始時間
-    search_context_model.restart_time = search_context_model.start_time   # 前回の計測開始時間
+    # 履歴を全部指す
+    # --------------
+
+    # 手番の処理
+    # ----------
+
+    # （無し）探索不要なら。
+
+    # （無し）［水平指し手一覧］をクリーニング。
+
+    # （無し）［駒を取る手］がないことを、［静止］と呼ぶ。
+
+    # （無し）［水平指し手一覧］を［PV］へ変換。
 
     # 縦の辺を伸ばす。
     O0NoSearchRoutines.extend_vertical_edges_o0(pv_list=[pv], search_context_model=search_context_model)
+
+    # TODO 残りのPVリストを集める
+
+    # TODO （奇数＋１階なら火星、偶数＋１階なら地球）が嫌な手は削除。
 
     # 探索不要なら。
     if pv.is_terminate:
@@ -315,6 +342,7 @@ def _main_search_at_first(remaining_moves, gymnasium):
                     pv_list             = next_pv_list,
                     search_context_model= search_context_model)
 
+            # 残りのPVリストを集める
             next_pv_list = []
 
             for terminated_pv in terminated_pv_list:

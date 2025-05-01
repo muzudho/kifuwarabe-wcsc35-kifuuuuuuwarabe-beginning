@@ -116,26 +116,24 @@ class O1RootSearchRoutines(SearchRoutines):
             枝が増えて、合法手の数より多くなることがあることに注意。
         """
 
-        ####################
-        # MARK: ノード訪問時
-        ####################
-
+        # ノード訪問時
+        # ------------
         terminated_pv_list = []
         live_pv_list = []
 
+        # 各PV
+        # ----
+
         for pv in pv_list:
 
-            ######################
-            # MARK: 履歴を全部指す
-            ######################
-
+            # 履歴を全部指す
+            # --------------
             SearchRoutines.do_move_vertical_all(pv=pv, search_context_model=search_context_model)
 
-            ##################
-            # MARK: 手番の処理
-            ##################
+            # 手番の処理
+            # ----------
 
-            # １階で探索不要なら。
+            # 探索不要なら。
             if pv.is_terminate:
                 terminated_pv_list.append(pv)
             
@@ -145,27 +143,37 @@ class O1RootSearchRoutines(SearchRoutines):
 
                 # ［駒を取る手］がないことを、［静止］と呼ぶ。
                 if len(remaining_moves) == 0:
-                    #TODO self._search_context_model.end_time = time.time()    # 計測終了時間
                     pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model)
                     pv.is_terminate = True
                     terminated_pv_list.append(pv)
                 
                 else:
-                    # remaining_moves から pv へ変換。
+                    # ［水平指し手一覧］を［PV］へ変換。
                     next_pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
 
-                    # TODO ２手目
-                    # 縦の辺を伸ばす。
+                    # TODO 縦の辺を伸ばす。
                     # O2CounterSearchRoutines.extend_vertical_edges_o2(pv_list=next_pv_list, search_context_model=search_context_model)
                     # (terminated_pv_list, live_pv_list) = O2CounterSearchRoutines.move_all_pv_o2(
                     #         pv_list             = live_pv_list,
                     #         search_context_model= search_context_model)
 
-                    # # 火星が嫌な手は削除。
+                    # TODO 探索不要なら
+
+                    # TODO ［水平指し手一覧］をクリーニング。
+
+                    # TODO ［駒を取る手］がないことを、［静止］と呼ぶ。
+
+                    # TODO ［水平指し手一覧］を［PV］へ変換。
+
+                    # TODO 縦の辺を伸ばす。
+
+                    # TODO 残りのPVリストを集める
+
+                    # TODO （奇数＋１階なら火星、偶数＋１階なら地球）が嫌な手は削除。
                     # for terminated_pv in reversed(terminated_pv_list):
                     #     if 0 < terminated_pv.last_value_pv:
                     #         terminated_pv_list.remove(terminated_pv)
-                    
+                    #
                     # for live_pv in reversed(live_pv_list):
                     #     if 0 < live_pv.last_value_pv:
                     #         live_pv_list.remove(live_pv)
