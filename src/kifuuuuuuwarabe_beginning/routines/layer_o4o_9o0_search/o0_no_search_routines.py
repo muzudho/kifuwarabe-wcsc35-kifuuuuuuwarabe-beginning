@@ -13,6 +13,26 @@ class O0NoSearchRoutines(SearchRoutines):
     """０階について無探索。
     """
 
+    ######################
+    # MARK: 縦の辺を伸ばす
+    ######################
+
+    @staticmethod
+    def extend_vertical_edges_o0(pv_list, search_context_model):
+        """縦の辺を伸ばす。
+        """
+
+        # PVリスト探索
+        # ------------
+        for pv in pv_list:
+
+            # 相手番の処理
+            # ------------
+
+            # 一手も指さずに局面を見て、終局なら終局外を付加。
+            O0NoSearchRoutines.set_termination_if_it_o0(parent_pv=pv, search_context_model=search_context_model)
+
+
     ######################################################
     # MARK: 一手も指さずに局面を見て、終局なら終局外を付加
     ######################################################

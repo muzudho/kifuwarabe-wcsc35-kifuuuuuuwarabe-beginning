@@ -14,6 +14,54 @@ class O1RootSearchRoutines(SearchRoutines):
     """１階の探索。
     """
 
+
+    ######################
+    # MARK: 縦の辺を伸ばす
+    ######################
+
+    @staticmethod
+    def extend_vertical_edges_o1(pv_list, search_context_model):
+        """縦の辺を伸ばす。
+        """
+
+        # ノード訪問時
+        # ------------
+        O1RootSearchRoutines._set_controls(pv_list=pv_list, search_context_model=search_context_model)
+
+        # PVリスト探索
+        # ------------
+        for pv in pv_list:
+
+            # 履歴を全部指す前
+            # ----------------
+            my_move                         = pv.last_move_pv
+            cap_pt                          = pv.last_cap_pt_pv
+            piece_exchange_value_on_earth   = pv.last_value_pv
+
+            # 履歴を全部指す
+            # --------------
+            SearchRoutines.do_move_vertical_all(pv=pv, search_context_model=search_context_model)
+
+            # 履歴を全部指した後
+            # ------------------
+            search_context_model.number_of_visited_nodes  += 1    # 開示情報
+            search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=my_move, cap_pt=cap_pt, value=piece_exchange_value_on_earth, comment='')    # ログ
+
+            # 相手番の処理
+            # ------------
+
+            # 一手も指さずに局面を見て、終局なら終局外を付加。
+            O1RootSearchRoutines.set_termination_if_it_o1(parent_pv=pv, search_context_model=search_context_model)
+
+            # 履歴を全部戻す
+            # --------------
+            SearchRoutines.undo_move_vertical_all(pv=pv, search_context_model=search_context_model)
+
+            # 履歴を全部戻した後
+            # ------------------
+            search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
+
+
     ######################################################
     # MARK: 一手も指さずに局面を見て、終局なら終局外を付加
     ######################################################
@@ -46,64 +94,6 @@ class O1RootSearchRoutines(SearchRoutines):
 
         remaining_moves = SearchRoutines.remove_depromoted_moves(remaining_moves=remaining_moves, search_context_model=search_context_model)       # ［成れるのに成らない手］は除外
         return remaining_moves
-
-
-    @staticmethod
-    def extend_vertical_edges_o1(pv_list, search_context_model):
-        """縦の辺を伸ばす。
-        """
-
-        ####################
-        # MARK: ノード訪問時
-        ####################
-
-        O1RootSearchRoutines._set_controls(pv_list=pv_list, search_context_model=search_context_model)
-
-        ####################
-        # MARK: PVリスト探索
-        ####################
-
-        for pv in pv_list:
-
-            ########################
-            # MARK: 履歴を全部指す前
-            ########################
-
-            my_move                         = pv.last_move_pv
-            cap_pt                          = pv.last_cap_pt_pv
-            piece_exchange_value_on_earth   = pv.last_value_pv
-
-            ######################
-            # MARK: 履歴を全部指す
-            ######################
-
-            SearchRoutines.do_move_vertical_all(pv=pv, search_context_model=search_context_model)
-
-            ##########################
-            # MARK: 履歴を全部指した後
-            ##########################
-
-            search_context_model.number_of_visited_nodes  += 1    # 開示情報
-            search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=my_move, cap_pt=cap_pt, value=piece_exchange_value_on_earth, comment='')    # ログ
-
-            ####################
-            # MARK: 相手番の処理
-            ####################
-
-            # 一手も指さずに局面を見て、終局なら終局外を付加。
-            O1RootSearchRoutines.set_termination_if_it_o1(parent_pv=pv, search_context_model=search_context_model)
-
-            ######################
-            # MARK: 履歴を全部戻す
-            ######################
-
-            SearchRoutines.undo_move_vertical_all(pv=pv, search_context_model=search_context_model)
-
-            ##########################
-            # MARK: 履歴を全部戻した後
-            ##########################
-
-            search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
 
 
     @staticmethod
