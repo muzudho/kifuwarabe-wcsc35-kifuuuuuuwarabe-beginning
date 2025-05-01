@@ -15,6 +15,12 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
     """駒の取り合いのための静止探索。
     駒の取り合いが終わるまで、駒の取り合いを探索します。
     """
+
+
+    ######################
+    # MARK: 縦の辺を伸ばす
+    ######################
+
     @staticmethod
     def extend_vertical_edges_o5(pv_list, search_context_model):
         """縦の辺を伸ばす。
@@ -75,8 +81,19 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
                 search_context_model    = search_context_model)
 
 
+    ################################
+    # MARK: 水平指し手をクリーニング
+    ################################
+
+    # 無し
+
+
+    ################
+    # MARK: 手を指す
+    ################
+
     @staticmethod
-    def search_as_quiescence_o5(pv_list, search_context_model):
+    def move_all_pv_o5(pv_list, search_context_model):
         """
         Parameters
         ----------

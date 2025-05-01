@@ -17,6 +17,10 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
     """
 
 
+    ######################
+    # MARK: 縦の辺を伸ばす
+    ######################
+
     @staticmethod
     def extend_vertical_edges_o3(pv_list, search_context_model):
         """縦の辺を伸ばす。
@@ -121,8 +125,12 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
         return pv_list
 
 
+    ################
+    # MARK: 手を指す
+    ################
+
     @staticmethod
-    def search_as_quiescence_o3(pv_list, search_context_model):
+    def move_all_pv_o3(pv_list, search_context_model):
         """
         Parameters
         ----------
@@ -191,7 +199,7 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
 
                 # NOTE 再帰は廃止。デバッグ作れないから。
                 if not pv.is_terminate:
-                    child_plot_model = O4QuiescenceSearchRoutines.search_as_quiescence_o4(
+                    child_plot_model = O4QuiescenceSearchRoutines.move_all_pv_o4(
                             pv_list     = child_pv_list,
                             search_context_model    = search_context_model)
                 else:

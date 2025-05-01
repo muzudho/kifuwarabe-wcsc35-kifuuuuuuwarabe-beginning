@@ -100,6 +100,10 @@ class O1RootSearchRoutines(SearchRoutines):
         return remaining_moves
 
 
+    ################
+    # MARK: 手を指す
+    ################
+
     @staticmethod
     def move_all_pv_o1(pv_list, search_context_model):
         """通常探索の開始。
@@ -214,6 +218,10 @@ class O1RootSearchRoutines(SearchRoutines):
         search_context_model.end_time = time.time()    # 計測終了時間
         return terminated_pv_list, live_pv_list
 
+
+    ####################
+    # MARK: サブルーチン
+    ####################
 
     @staticmethod
     def _set_controls(pv_list, search_context_model):

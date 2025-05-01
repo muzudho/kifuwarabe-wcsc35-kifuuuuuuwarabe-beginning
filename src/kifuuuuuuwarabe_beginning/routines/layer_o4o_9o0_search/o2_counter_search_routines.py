@@ -100,6 +100,10 @@ class O2CounterSearchRoutines(SearchRoutines):
         return remaining_moves
 
 
+    ################
+    # MARK: 手を指す
+    ################
+
     @staticmethod
     def move_all_pv_o2(pv_list, search_context_model):
         """応手の開始。
@@ -170,7 +174,7 @@ class O2CounterSearchRoutines(SearchRoutines):
                     # remaining_moves から pv へ変換。
                     next_pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
                     # TODO ３手目
-                    next_pv.backwards_plot_model = O3QuiescenceSearchRoutines.search_as_quiescence_o3(
+                    next_pv.backwards_plot_model = O3QuiescenceSearchRoutines.move_all_pv_o3(
                             pv_list     = next_pv_list,
                             search_context_model    = search_context_model)
 
@@ -232,6 +236,10 @@ class O2CounterSearchRoutines(SearchRoutines):
 
         return terminated_pv_list, live_pv_list
 
+
+    ####################
+    # MARK: サブルーチン
+    ####################
 
     @staticmethod
     def _choice_aigoma_move_list(remaining_moves, search_context_model):
