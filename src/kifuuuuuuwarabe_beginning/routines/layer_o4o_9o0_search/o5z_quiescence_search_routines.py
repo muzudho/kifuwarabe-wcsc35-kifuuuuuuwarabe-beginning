@@ -51,12 +51,6 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
             # 一手も指さずに局面を見て、終局なら終局外を付加。
             O6NoSearchRoutines.set_termination_if_it_o6(parent_pv=pv, search_context_model=search_context_model)
 
-            if pv.is_terminate:
-                child_plot_model = pv.backwards_plot_model
-            else:
-                # NOTE 再帰は廃止。デバッグ作れないから。ここで＜水平線＞（デフォルト値）。
-                child_plot_model = pv.backwards_plot_model
-
             # 履歴を全部戻す
             # --------------
             SearchRoutines.undo_move_vertical_all(pv=pv, search_context_model=search_context_model)
@@ -85,7 +79,30 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
     # MARK: 水平指し手をクリーニング
     ################################
 
-    # 無し
+    @staticmethod
+    def cleaning_horizontal_edges_o5(parent_pv, search_context_model):
+        """
+        Returns
+        -------
+        pv_list : list<PrincipalVariationModel>
+            読み筋のリスト。
+        """
+
+        ##########################
+        # MARK: 合法手クリーニング
+        ##########################
+
+        legal_move_list = list(search_context_model.gymnasium.table.legal_moves)
+        remaining_moves = legal_move_list
+        remaining_moves = SearchRoutines.remove_drop_moves(remaining_moves=remaining_moves)           # 打の手を全部除外したい。
+        remaining_moves = SearchRoutines.remove_depromoted_moves(remaining_moves=remaining_moves, search_context_model=search_context_model)     # ［成れるのに成らない手］は除外
+        (remaining_moves, rolled_back) = SearchRoutines.filtering_same_destination_move_list(parent_move=parent_pv.last_move_pv, remaining_moves=remaining_moves, rollback_if_empty=True) # できれば［同］の手を残す。
+        remaining_moves = SearchRoutines.get_cheapest_move_list(remaining_moves=remaining_moves)
+        (remaining_moves, rolled_back) = SearchRoutines.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=False, search_context_model=search_context_model)       # 駒を取る手と、王手のみ残す
+
+        # remaining_moves から pv へ変換。
+        pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
+        return pv_list
 
 
     ################

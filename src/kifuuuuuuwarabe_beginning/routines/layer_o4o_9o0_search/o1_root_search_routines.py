@@ -106,7 +106,7 @@ class O1RootSearchRoutines(SearchRoutines):
 
     @staticmethod
     def move_all_pv_o1(pv_list, search_context_model):
-        """通常探索の開始。
+        """探索の開始。
 
         Parameters
         ----------
@@ -127,7 +127,6 @@ class O1RootSearchRoutines(SearchRoutines):
 
         # 各PV
         # ----
-
         for pv in pv_list:
 
             # 履歴を全部指す
@@ -137,9 +136,8 @@ class O1RootSearchRoutines(SearchRoutines):
             # 手番の処理
             # ----------
 
-            # 探索不要なら。
-            if pv.is_terminate:
-                terminated_pv_list.append(pv)
+            if pv.is_terminate:                 # 探索不要なら。
+                terminated_pv_list.append(pv)   # 終了済みPVリストへ当PVを追加。
             
             else:
                 # ［水平指し手一覧］をクリーニング。
@@ -152,7 +150,7 @@ class O1RootSearchRoutines(SearchRoutines):
                     terminated_pv_list.append(pv)
                 
                 else:
-                    # ［水平指し手一覧］を［PV］へ変換。
+                    # remaining_moves から pv へ変換。
                     next_pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
 
                     # TODO 縦の辺を伸ばす。
@@ -182,21 +180,16 @@ class O1RootSearchRoutines(SearchRoutines):
                     #     if 0 < live_pv.last_value_pv:
                     #         live_pv_list.remove(live_pv)
 
-            ######################
             # MARK: 履歴を全部戻す
-            ######################
-
+            # --------------------
             SearchRoutines.undo_move_vertical_all(pv=pv, search_context_model=search_context_model)
 
-            ##########################
             # MARK: 履歴を全部戻した後
-            ##########################
-
+            # ------------------------
             search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
 
-            ##################
-            # MARK: 手番の処理
-            ##################
+            # MARK: TODO 全ての親手をさかのぼり、［後ろ向き探索の結果］を確定
+            # ----------------------------------------------------------
 
             # １階の手は、全ての手の読み筋を記憶します。最善手は選びません。
             pv.backwards_plot_model.append_move_from_back(
@@ -215,7 +208,6 @@ class O1RootSearchRoutines(SearchRoutines):
 
         # 指し手が無いということはない。ゲームオーバー判定を先にしているから。
 
-        search_context_model.end_time = time.time()    # 計測終了時間
         return terminated_pv_list, live_pv_list
 
 

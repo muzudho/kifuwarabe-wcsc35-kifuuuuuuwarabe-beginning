@@ -51,25 +51,6 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
             # 一手も指さずに局面を見て、終局なら終局外を付加。
             O5zQuiescenceSearchRoutines.set_termination_if_it_o5(parent_pv=pv, search_context_model=search_context_model)
 
-            if pv.is_terminate:
-                child_plot_model = pv.backwards_plot_model
-            else:
-                if not pv.is_terminate:
-                    child_pv_list = O4QuiescenceSearchRoutines.cleaning_horizontal_edges_o4(parent_pv=pv, search_context_model=search_context_model)
-
-                    # ［駒を取る手］がないことを、［静止］と呼ぶ。
-                    if len(child_pv_list) == 0:
-                        pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model)
-                        pv.is_terminate = True
-
-                # NOTE 再帰は廃止。デバッグ作れないから。
-                if not pv.is_terminate:
-                    child_plot_model = O5zQuiescenceSearchRoutines.move_all_pv_o5(
-                            pv_list     = child_pv_list,
-                            search_context_model    = search_context_model)
-                else:
-                    child_plot_model = pv.backwards_plot_model
-
             # 履歴を全部戻す
             # --------------
             SearchRoutines.undo_move_vertical_all(pv=pv, search_context_model=search_context_model)
@@ -189,7 +170,7 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
                 child_plot_model = pv.backwards_plot_model
             else:
                 if not pv.is_terminate:
-                    child_pv_list = O4QuiescenceSearchRoutines.cleaning_horizontal_edges_o4(parent_pv=pv, search_context_model=search_context_model)
+                    child_pv_list = O4QuiescenceSearchRoutines.cleaning_horizontal_edges_o5(parent_pv=pv, search_context_model=search_context_model)
 
                     # ［駒を取る手］がないことを、［静止］と呼ぶ。
                     if len(child_pv_list) == 0:

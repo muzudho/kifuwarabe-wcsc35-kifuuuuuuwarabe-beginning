@@ -106,7 +106,7 @@ class O2CounterSearchRoutines(SearchRoutines):
 
     @staticmethod
     def move_all_pv_o2(pv_list, search_context_model):
-        """応手の開始。
+        """探索の開始。
 
         Parameters
         ----------
@@ -115,50 +115,29 @@ class O2CounterSearchRoutines(SearchRoutines):
 
         Returns
         -------
-        best_prot_model : BackwardsPlotModel
-            最善の読み筋。
-            これは駒得評価値も算出できる。
+        pv_list : list<PrincipalVariationModel>
+            有力な読み筋。棋譜のようなもの。
+            枝が増えて、合法手の数より多くなることがあることに注意。
         """
 
-        ####################
-        # MARK: ノード訪問時
-        ####################
-
+        # ノード訪問時
+        # ------------
         terminated_pv_list = []
         live_pv_list = []
 
-        # best_pv             = None  # ベストな子
-        # best_move           = None
-        # best_move_cap_pt    = None
-
-        # if search_context_model.gymnasium.is_mars:
-        #     best_value = constants.value.BIG_VALUE
-        # else:
-        #     best_value = constants.value.SMALL_VALUE
-
+        # 各PV
+        # ----
         for pv in pv_list:
 
-            ################################
-            # MARK: 履歴の最後の一手を指す前
-            ################################
-
-            # my_move                         = pv.last_move_pv
-            # cap_pt                          = pv.last_cap_pt_pv
-            # piece_exchange_value_on_earth   = pv.last_value_pv
-
-            ######################
-            # MARK: 履歴を全部指す
-            ######################
-
+            # 履歴を全部指す
+            # --------------
             SearchRoutines.do_move_vertical_all(pv=pv, search_context_model=search_context_model)
 
-            ##################
-            # MARK: 手番の処理
-            ##################
+            # 手番の処理
+            # ----------
 
-            # ２階で探索不要なら。
-            if pv.is_terminate:
-                terminated_pv_list.append(pv)
+            if pv.is_terminate:                 # 探索不要なら。
+                terminated_pv_list.append(pv)   # 終了済みPVリストへ当PVを追加。
 
             else:
                 # ［水平指し手一覧］をクリーニング。
@@ -173,32 +152,28 @@ class O2CounterSearchRoutines(SearchRoutines):
                 else:
                     # remaining_moves から pv へ変換。
                     next_pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
-                    # TODO ３手目
-                    next_pv.backwards_plot_model = O3QuiescenceSearchRoutines.move_all_pv_o3(
-                            pv_list     = next_pv_list,
-                            search_context_model    = search_context_model)
 
-                    for next_pv in reversed(next_pv_list):
-                        if next_pv.is_terminate:                    # ［読み筋］の探索が終了していれば。
-                            terminated_pv_list.append(next_pv)      # 別のリストへ［読み筋］を退避します。
-                        else:
-                            live_pv_list.append(next_pv)
+                    # # TODO ３手目を指す。
+                    # next_pv.backwards_plot_model = O3QuiescenceSearchRoutines.move_all_pv_o3(
+                    #         pv_list                 = next_pv_list,
+                    #         search_context_model    = search_context_model)
 
-            ######################
+                    # for next_pv in reversed(next_pv_list):          # 各［次PV］。
+                    #     if next_pv.is_terminate:                    # 次の読み筋が終了していれば。
+                    #         terminated_pv_list.append(next_pv)      # 終了済みPVリストへ［次PV］を追加。
+                    #     else:
+                    #         live_pv_list.append(next_pv)            # 残PVリストへ［次PV］を追加。
+
             # MARK: 履歴を全部戻す
-            ######################
-
+            # --------------------
             SearchRoutines.undo_move_vertical_all(pv=pv, search_context_model=search_context_model)
 
-            ##########################
             # MARK: 履歴を全部戻した後
-            ##########################
-
+            # ------------------------
             search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
 
-            ##################
-            # MARK: 手番の処理
-            ##################
+            # MARK: TODO 全ての親手をさかのぼり、［後ろ向き探索の結果］を確定
+            # ----------------------------------------------------------
 
             # １階の手は、全ての手の読み筋を記憶します。最善手は選びません。
             pv.backwards_plot_model.append_move_from_back(

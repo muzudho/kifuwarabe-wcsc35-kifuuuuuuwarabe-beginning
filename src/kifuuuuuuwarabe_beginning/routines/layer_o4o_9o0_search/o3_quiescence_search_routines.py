@@ -131,31 +131,27 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
 
     @staticmethod
     def move_all_pv_o3(pv_list, search_context_model):
-        """
+        """探索の開始。
+
         Parameters
         ----------
-        parent_move : int
-            １手前の手。
+        pv_list : list<PrincipalVariationModel>
+            ［読み筋］のリスト。
 
         Returns
         -------
-        best_prot_model : BackwardsPlotModel
-            最善の読み筋。
-            これは駒得評価値も算出できる。
+        pv_list : list<PrincipalVariationModel>
+            有力な読み筋。棋譜のようなもの。
+            枝が増えて、合法手の数より多くなることがあることに注意。
         """
 
-        ####################
-        # MARK: ノード訪問時
-        ####################
+        # ノード訪問時
+        # ------------
+        terminated_pv_list = []
+        live_pv_list = []
 
-        best_pv             = None  # ベストな子
-        best_move           = None
-        best_move_cap_pt    = None
-        if search_context_model.gymnasium.is_mars:
-            best_value = constants.value.BIG_VALUE
-        else:
-            best_value = constants.value.SMALL_VALUE
-
+        # 各PV
+        # ----
         for pv in pv_list:
 
             ################################
@@ -166,32 +162,25 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
             cap_pt                          = pv.last_cap_pt_pv
             piece_exchange_value_on_earth   = pv.last_value_pv
 
-            ######################
-            # MARK: 履歴を全部指す
-            ######################
-
+            # 履歴を全部指す
+            # --------------
             SearchRoutines.do_move_vertical_all(pv=pv, search_context_model=search_context_model)
 
-            ##########################
-            # MARK: 履歴を全部指した後
-            ##########################
-
-            search_context_model.number_of_visited_nodes += 1
-            search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=my_move, cap_pt=cap_pt, value=piece_exchange_value_on_earth, comment='')
-
-            ####################
-            # MARK: 相手番の処理
-            ####################
+            # 手番の処理
+            # ----------
 
             # 一手も指さずに局面を見て、終局なら終局外を付加。
             O4QuiescenceSearchRoutines.set_termination_if_it_o4(parent_pv=pv, search_context_model=search_context_model)
 
-            if pv.is_terminate:
-                child_plot_model = pv.backwards_plot_model
-            else:
-                if not pv.is_terminate:
-                    child_pv_list = O3QuiescenceSearchRoutines.cleaning_horizontal_edges_o3b(parent_pv=pv, search_context_model=search_context_model)
+            if pv.is_terminate:                 # 探索不要なら。
+                terminated_pv_list.append(pv)   # 終了済みPVリストへ当PVを追加。
+                #child_plot_model = pv.backwards_plot_model
 
+            else:
+                # ［水平指し手一覧］をクリーニング。
+                child_pv_list = O3QuiescenceSearchRoutines.cleaning_horizontal_edges_o3b(parent_pv=pv, search_context_model=search_context_model)
+
+                if not pv.is_terminate:
                     # ［駒を取る手］がないことを、［静止］と呼ぶ。
                     if len(child_pv_list) == 0:
                         pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model)

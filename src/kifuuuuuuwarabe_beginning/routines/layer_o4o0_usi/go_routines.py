@@ -424,7 +424,7 @@ def _main_search_at_first(remaining_moves, gymnasium):
         return alice_s_move_list
 
 
-    #TODO self._search_context_model.end_time = time.time()    # 計測終了時間
+    search_context_model.end_time = time.time()    # 計測終了時間
 
     return (
         _eliminate_not_capture_not_positive(
