@@ -129,12 +129,25 @@ class _Go2nd():
 
         old_all_legal_moves = move_list.copy()
 
+        search_context_model = SearchContextModel(
+                gymnasium = gymnasium)
+        search_context_model.start_time = time.time()          # 探索開始時間
+        search_context_model.restart_time = search_context_model.start_time   # 前回の計測開始時間
+
         (
-            remaining_moves_qs,
+            next_pv_list,
             number_of_visited_nodes
         ) = _main_search_at_first(
-                remaining_moves = move_list,
-                gymnasium       = gymnasium)
+                remaining_moves         = move_list,
+                search_context_model    = search_context_model)
+        
+        remaining_moves_qs, = _eliminate_not_capture_not_positive(
+                pv_list     = next_pv_list,
+                gymnasium   = gymnasium),
+
+        search_context_model.end_time = time.time()    # 計測終了時間
+        
+
         length_of_quiescence_search_by_kifuwarabe   = len(remaining_moves_qs)
         gymnasium.thinking_logger_module.append_message(f"QS_select_length={length_of_quiescence_search_by_kifuwarabe}")
 
@@ -265,7 +278,7 @@ GOREI COLLECTION
 
 
 @staticmethod
-def _main_search_at_first(remaining_moves, gymnasium):
+def _main_search_at_first(remaining_moves, search_context_model):
     """探索。
     
     Returns
@@ -275,14 +288,6 @@ def _main_search_at_first(remaining_moves, gymnasium):
     number_of_visited_nodes : int
         ［訪問ノード数］
     """
-
-    # 初期化
-    # ------
-    search_context_model = SearchContextModel(
-            gymnasium = gymnasium)
-
-    search_context_model.start_time = time.time()          # 探索開始時間
-    search_context_model.restart_time = search_context_model.start_time   # 前回の計測開始時間
 
     # ノード訪問時
     # ------------
@@ -318,15 +323,16 @@ def _main_search_at_first(remaining_moves, gymnasium):
 
     # TODO （奇数＋１階なら火星、偶数＋１階なら地球）が嫌な手は削除。
 
-    # 探索不要なら。
+    # ０階で終了。
     if pv.is_terminate:
         next_pv_list = [pv]
 
     else:
         (terminated_pv_list_1, live_pv_list) = O1RootSearchRoutines.main_a_o1(remaining_moves_o1=remaining_moves, parent_pv=pv, search_context_model=search_context_model)
 
+        # O2 の操作。
         if len(live_pv_list) != 0:
-            (terminated_pv_list_2, live_pv_list) = O1RootSearchRoutines.main_b_o1(live_pv_list=live_pv_list, parent_pv=pv, search_context_model=search_context_model)
+            (terminated_pv_list_2, live_pv_list) = O1RootSearchRoutines.main_b_o1_to_o2(live_pv_list=live_pv_list, parent_pv=pv, search_context_model=search_context_model)
 
         # 次のPVリストを集める
         next_pv_list = []
@@ -346,81 +352,74 @@ def _main_search_at_first(remaining_moves, gymnasium):
                     next_pv_list.append(live_pv)
 
 
-    def _eliminate_not_capture_not_positive(pv_list, gymnasium):
-        """次の１つの手は、候補に挙げる必要がないので除去します。
-        （１）駒を取らない手で非正の手（最高点のケースを除く）。このとき、［零点の手］があるかどうか調べます。
-        次の手は、候補に挙げる必要がないので除去します。
-        （２）最高点でない手。
-        （３）［零点の手」が存在し、かつ、負の手。（リスクヘッジの手でもないから）
-        それ以外の手は選択します。
+    return next_pv_list, search_context_model.number_of_visited_nodes
 
-        Returns
-        -------
-        alice_s_move_list : list(int)
-            指し手のリスト。
-        """
-        alice_s_move_list = []
-        exists_zero_value_move = False
 
-        # まず、水平枝の中の最高点を調べます。
-        best_exchange_value = constants.value.NOTHING_CAPTURE_MOVE
-        for pv in pv_list:
-            value_on_earth = pv.last_value_pv
-            if best_exchange_value < value_on_earth:
-                best_exchange_value = value_on_earth
+def _eliminate_not_capture_not_positive(pv_list, gymnasium):
+    """次の１つの手は、候補に挙げる必要がないので除去します。
+    （１）駒を取らない手で非正の手（最高点のケースを除く）。このとき、［零点の手］があるかどうか調べます。
+    次の手は、候補に挙げる必要がないので除去します。
+    （２）最高点でない手。
+    （３）［零点の手」が存在し、かつ、負の手。（リスクヘッジの手でもないから）
+    それ以外の手は選択します。
 
-        # 最高点が 0 点のケース。 FIXME 千日手とかを何点に設定しているか？
-        if best_exchange_value == 0:
-            exists_zero_value_move = True
+    Returns
+    -------
+    alice_s_move_list : list(int)
+        指し手のリスト。
+    """
+    alice_s_move_list = []
+    exists_zero_value_move = False
 
-        for pv in pv_list:
+    # まず、水平枝の中の最高点を調べます。
+    best_exchange_value = constants.value.NOTHING_CAPTURE_MOVE
+    for pv in pv_list:
+        value_on_earth = pv.last_value_pv
+        if best_exchange_value < value_on_earth:
+            best_exchange_value = value_on_earth
 
+    # 最高点が 0 点のケース。 FIXME 千日手とかを何点に設定しているか？
+    if best_exchange_value == 0:
+        exists_zero_value_move = True
+
+    for pv in pv_list:
+
+        gymnasium.health_check_go_model.append_health(
+                move    = pv.backwards_plot_model.peek_move,
+                name    = 'QS_principal_variation',
+                value   = pv)
+
+        # （１）駒を取らない手で非正の手（最高点のケースを除く）。
+        value_on_earth = pv.last_value_pv
+        if not pv.backwards_plot_model.is_capture_at_last and value_on_earth < 1 and value_on_earth != best_exchange_value:
+            if value_on_earth == 0:
+                exists_zero_value_move = True
+            
             gymnasium.health_check_go_model.append_health(
                     move    = pv.backwards_plot_model.peek_move,
-                    name    = 'QS_principal_variation',
-                    value   = pv)
+                    name    = 'QS_eliminate171',
+                    value   = f"{pv.backwards_plot_model.stringify_2():10} not_cap_not_posite")
 
-            # （１）駒を取らない手で非正の手（最高点のケースを除く）。
-            value_on_earth = pv.last_value_pv
-            if not pv.backwards_plot_model.is_capture_at_last and value_on_earth < 1 and value_on_earth != best_exchange_value:
-                if value_on_earth == 0:
-                    exists_zero_value_move = True
-                
-                gymnasium.health_check_go_model.append_health(
-                        move    = pv.backwards_plot_model.peek_move,
-                        name    = 'QS_eliminate171',
-                        value   = f"{pv.backwards_plot_model.stringify_2():10} not_cap_not_posite")
+        # （２）最高点でない手。
+        elif value_on_earth < best_exchange_value:
+            gymnasium.health_check_go_model.append_health(
+                    move    = pv.backwards_plot_model.peek_move,
+                    name    = 'QS_eliminate171',
+                    value   = f"{pv.backwards_plot_model.stringify_2():10} not_best")
 
-            # （２）最高点でない手。
-            elif value_on_earth < best_exchange_value:
-                gymnasium.health_check_go_model.append_health(
-                        move    = pv.backwards_plot_model.peek_move,
-                        name    = 'QS_eliminate171',
-                        value   = f"{pv.backwards_plot_model.stringify_2():10} not_best")
+        # （３）リスクヘッジにならない手
+        elif exists_zero_value_move and value_on_earth < 0:
+            gymnasium.health_check_go_model.append_health(
+                    move    = pv.backwards_plot_model.peek_move,
+                    name    = 'QS_eliminate171',
+                    value   = f"{pv.backwards_plot_model.stringify_2():10} not_risk_hedge")
 
-            # （３）リスクヘッジにならない手
-            elif exists_zero_value_move and value_on_earth < 0:
-                gymnasium.health_check_go_model.append_health(
-                        move    = pv.backwards_plot_model.peek_move,
-                        name    = 'QS_eliminate171',
-                        value   = f"{pv.backwards_plot_model.stringify_2():10} not_risk_hedge")
+        # それ以外の手は選択します。
+        else:
+            alice_s_move_list.append(pv.backwards_plot_model.peek_move)
+            gymnasium.health_check_go_model.append_health(
+                    move    = pv.backwards_plot_model.peek_move,
+                    name    = 'QS_eliminate171',
+                    value   = f"{pv.backwards_plot_model.stringify_2():10} ok")
 
-            # それ以外の手は選択します。
-            else:
-                alice_s_move_list.append(pv.backwards_plot_model.peek_move)
-                gymnasium.health_check_go_model.append_health(
-                        move    = pv.backwards_plot_model.peek_move,
-                        name    = 'QS_eliminate171',
-                        value   = f"{pv.backwards_plot_model.stringify_2():10} ok")
-
-        return alice_s_move_list
-
-
-    search_context_model.end_time = time.time()    # 計測終了時間
-
-    return (
-        _eliminate_not_capture_not_positive(
-                pv_list     = next_pv_list,
-                gymnasium   = gymnasium),
-        search_context_model.number_of_visited_nodes
-    )
+    return alice_s_move_list

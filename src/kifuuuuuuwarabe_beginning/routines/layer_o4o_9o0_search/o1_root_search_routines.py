@@ -50,7 +50,7 @@ class O1RootSearchRoutines(SearchRoutines):
 
 
     @staticmethod
-    def main_b_o1(live_pv_list, parent_pv, search_context_model):
+    def main_b_o1_to_o2(live_pv_list, parent_pv, search_context_model):
         """
         Parameters
         ----------
