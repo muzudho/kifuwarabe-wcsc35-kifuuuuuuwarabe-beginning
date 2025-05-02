@@ -323,7 +323,11 @@ def _main_search_at_first(remaining_moves, gymnasium):
         next_pv_list = [pv]
 
     else:
-        next_pv_list = O1RootSearchRoutines.main_o1(remaining_moves_o1=remaining_moves, parent_pv=pv, search_context_model=search_context_model)
+        (terminated_pv_list, lib_pv_list) = O1RootSearchRoutines.main_b_o1(remaining_moves_o1=remaining_moves, parent_pv=pv, search_context_model=search_context_model)
+
+        next_pv_list = []
+        next_pv_list.extend(terminated_pv_list)
+        next_pv_list.extend(lib_pv_list)
 
 
     def _eliminate_not_capture_not_positive(pv_list, gymnasium):

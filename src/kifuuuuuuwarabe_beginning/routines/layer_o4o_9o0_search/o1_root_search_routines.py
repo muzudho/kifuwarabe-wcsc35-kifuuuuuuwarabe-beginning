@@ -20,7 +20,7 @@ class O1RootSearchRoutines(SearchRoutines):
     ######################
 
     @staticmethod
-    def main_o1(remaining_moves_o1, parent_pv, search_context_model):
+    def main_a_o1(remaining_moves_o1, parent_pv, search_context_model):
         """
         Parameters
         ----------
@@ -29,8 +29,28 @@ class O1RootSearchRoutines(SearchRoutines):
 
         Returns
         -------
-        next_pv_list : list<PrincipalVariationModel>
-            次のPV一覧。
+        terminated_pv_list : list<PrincipalVariationModel>
+            終了したPV一覧。
+        live_pv_list : list<PrincipalVariationModel>
+            残っているPV一覧。
+        """
+        pass
+
+
+    @staticmethod
+    def main_b_o1(remaining_moves_o1, parent_pv, search_context_model):
+        """
+        Parameters
+        ----------
+        remaining_moves_o1 : list
+            指し手一覧。１階だけ、利便性のために指定。
+
+        Returns
+        -------
+        terminated_pv_list : list<PrincipalVariationModel>
+            終了したPV一覧。
+        live_pv_list : list<PrincipalVariationModel>
+            残っているPV一覧。
         """
 
         # ［水平指し手一覧］をクリーニング。
@@ -40,7 +60,7 @@ class O1RootSearchRoutines(SearchRoutines):
         if len(remaining_moves) == 0:
             parent_pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model)
             parent_pv.is_terminate = True
-            next_pv_list = [parent_pv]
+            return [parent_pv], []
         
         else:
             # ［水平指し手一覧］を［PV］へ変換。
@@ -48,23 +68,25 @@ class O1RootSearchRoutines(SearchRoutines):
 
             # 縦の辺を伸ばす。
             O1RootSearchRoutines.extend_vertical_edges_o1(pv_list=next_pv_list_temp, search_context_model=search_context_model)
+
+            # FIXME この関数から、O2 の呼出を取り除きたい。
             (terminated_pv_list, live_pv_list) = O1RootSearchRoutines.move_all_pv_o1(
                     pv_list             = next_pv_list_temp,
                     search_context_model= search_context_model)
 
             # 残りのPVリストを集める
-            next_pv_list = []
+            live_pv_list = []
 
             for terminated_pv in terminated_pv_list:
                 if constants.value.MAYBE_EARTH_WIN_VALUE <= terminated_pv.last_value_pv:
-                    next_pv_list.append(terminated_pv)
+                    live_pv_list.append(terminated_pv)
             
-            if len(next_pv_list) == 0:
+            if len(live_pv_list) == 0:
                 for live_pv in live_pv_list:
                     if constants.value.MAYBE_EARTH_WIN_VALUE <= live_pv.last_value_pv:
-                        next_pv_list.append(live_pv)
+                        live_pv_list.append(live_pv)
 
-        return next_pv_list
+        return [], live_pv_list
 
 
     ######################
