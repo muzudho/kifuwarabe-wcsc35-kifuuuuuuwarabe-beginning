@@ -323,11 +323,27 @@ def _main_search_at_first(remaining_moves, gymnasium):
         next_pv_list = [pv]
 
     else:
-        (terminated_pv_list, lib_pv_list) = O1RootSearchRoutines.main_b_o1(remaining_moves_o1=remaining_moves, parent_pv=pv, search_context_model=search_context_model)
+        (terminated_pv_list_1, live_pv_list) = O1RootSearchRoutines.main_a_o1(remaining_moves_o1=remaining_moves, parent_pv=pv, search_context_model=search_context_model)
 
+        if len(live_pv_list) != 0:
+            (terminated_pv_list_2, live_pv_list) = O1RootSearchRoutines.main_b_o1(live_pv_list=live_pv_list, parent_pv=pv, search_context_model=search_context_model)
+
+        # 次のPVリストを集める
         next_pv_list = []
-        next_pv_list.extend(terminated_pv_list)
-        next_pv_list.extend(lib_pv_list)
+
+        for terminated_pv in terminated_pv_list_1:
+            if constants.value.MAYBE_EARTH_WIN_VALUE <= terminated_pv.last_value_pv:
+                next_pv_list.append(terminated_pv)
+
+        if len(next_pv_list) == 0:
+            for terminated_pv in terminated_pv_list_2:
+                if constants.value.MAYBE_EARTH_WIN_VALUE <= terminated_pv.last_value_pv:
+                    next_pv_list.append(terminated_pv)
+
+        if len(next_pv_list) == 0:
+            for live_pv in next_pv_list:
+                if constants.value.MAYBE_EARTH_WIN_VALUE <= live_pv.last_value_pv:
+                    next_pv_list.append(live_pv)
 
 
     def _eliminate_not_capture_not_positive(pv_list, gymnasium):

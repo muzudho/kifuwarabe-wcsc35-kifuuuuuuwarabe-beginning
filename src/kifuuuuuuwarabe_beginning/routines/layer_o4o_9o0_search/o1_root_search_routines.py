@@ -34,24 +34,6 @@ class O1RootSearchRoutines(SearchRoutines):
         live_pv_list : list<PrincipalVariationModel>
             残っているPV一覧。
         """
-        pass
-
-
-    @staticmethod
-    def main_b_o1(remaining_moves_o1, parent_pv, search_context_model):
-        """
-        Parameters
-        ----------
-        remaining_moves_o1 : list
-            指し手一覧。１階だけ、利便性のために指定。
-
-        Returns
-        -------
-        terminated_pv_list : list<PrincipalVariationModel>
-            終了したPV一覧。
-        live_pv_list : list<PrincipalVariationModel>
-            残っているPV一覧。
-        """
 
         # ［水平指し手一覧］をクリーニング。
         remaining_moves = O1RootSearchRoutines.cleaning_horizontal_edges_o1(remaining_moves=remaining_moves_o1, parent_pv=parent_pv, search_context_model=search_context_model)
@@ -62,31 +44,36 @@ class O1RootSearchRoutines(SearchRoutines):
             parent_pv.is_terminate = True
             return [parent_pv], []
         
-        else:
-            # ［水平指し手一覧］を［PV］へ変換。
-            next_pv_list_temp = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
+        # ［水平指し手一覧］を［PV］へ変換。
+        next_pv_list_temp = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
+        return [], next_pv_list_temp
 
-            # 縦の辺を伸ばす。
-            O1RootSearchRoutines.extend_vertical_edges_o1(pv_list=next_pv_list_temp, search_context_model=search_context_model)
 
-            # FIXME この関数から、O2 の呼出を取り除きたい。
-            (terminated_pv_list, live_pv_list) = O1RootSearchRoutines.move_all_pv_o1(
-                    pv_list             = next_pv_list_temp,
-                    search_context_model= search_context_model)
+    @staticmethod
+    def main_b_o1(live_pv_list, parent_pv, search_context_model):
+        """
+        Parameters
+        ----------
+        live_pv_list : list
+            伸ばす前のPV一覧。
 
-            # 残りのPVリストを集める
-            live_pv_list = []
+        Returns
+        -------
+        terminated_pv_list : list<PrincipalVariationModel>
+            終了したPV一覧。
+        live_pv_list : list<PrincipalVariationModel>
+            残っているPV一覧。
+        """
 
-            for terminated_pv in terminated_pv_list:
-                if constants.value.MAYBE_EARTH_WIN_VALUE <= terminated_pv.last_value_pv:
-                    live_pv_list.append(terminated_pv)
-            
-            if len(live_pv_list) == 0:
-                for live_pv in live_pv_list:
-                    if constants.value.MAYBE_EARTH_WIN_VALUE <= live_pv.last_value_pv:
-                        live_pv_list.append(live_pv)
+        # 縦の辺を伸ばす。
+        O1RootSearchRoutines.extend_vertical_edges_o1(pv_list=live_pv_list, search_context_model=search_context_model)
 
-        return [], live_pv_list
+        # FIXME この関数から、O2 の呼出を取り除きたい。
+        (terminated_pv_list, live_pv_list) = O1RootSearchRoutines.move_all_pv_o1(
+                pv_list             = live_pv_list,
+                search_context_model= search_context_model)
+
+        return terminated_pv_list, live_pv_list
 
 
     ######################
