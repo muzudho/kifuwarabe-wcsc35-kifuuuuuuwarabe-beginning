@@ -81,12 +81,17 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
 
     @staticmethod
     def cleaning_horizontal_edges_o3(parent_pv, search_context_model):
-        """水平指し手をクリーニング。
+        """［水平指し手一覧］をクリーニング。
+
+        Parameters
+        ----------
+        parent_pv : PrincipalVariationModel
+            親手。
 
         Returns
         -------
         remaining_moves : list<int>
-            デバッグの都合。シーショーギの指し手のリスト。
+            シーショーギの指し手のリスト。
         """
 
         legal_move_list = list(search_context_model.gymnasium.table.legal_moves)
@@ -152,61 +157,55 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
 
             else:
                 # ［水平指し手一覧］をクリーニング。
-                child_pv_list = O4QuiescenceSearchRoutines.cleaning_horizontal_edges_o4(parent_pv=pv, search_context_model=search_context_model)
+                remaining_moves = O4QuiescenceSearchRoutines.cleaning_horizontal_edges_o4(parent_pv=pv, search_context_model=search_context_model)
 
-                if not pv.is_terminate:
-                    # ［駒を取る手］がないことを、［静止］と呼ぶ。
-                    if len(child_pv_list) == 0:
-                        pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model)
-                        pv.is_terminate = True
+                # ［駒を取る手］がないことを、［静止］と呼ぶ。
+                if len(remaining_moves) == 0:
+                    pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model)
+                    pv.is_terminate = True
+                    terminated_pv_list.append(pv)
 
-                # NOTE 再帰は廃止。デバッグ作れないから。
-                if not pv.is_terminate:
-                    child_plot_model = O4QuiescenceSearchRoutines.move_all_pv_o4(
-                            pv_list     = child_pv_list,
-                            search_context_model    = search_context_model)
                 else:
-                    child_plot_model = pv.backwards_plot_model
+                    # remaining_moves から pv へ変換。
+                    next_pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
 
-            ######################
+                    # # NOTE 再帰は廃止。デバッグ作れないから。
+                    # if not pv.is_terminate:
+                    #     child_plot_model = O4QuiescenceSearchRoutines.move_all_pv_o4(
+                    #             pv_list     = next_pv_list,
+                    #             search_context_model    = search_context_model)
+                    # else:
+                    #     child_plot_model = pv.backwards_plot_model
+
             # MARK: 履歴を全部戻す
-            ######################
-
+            # --------------------
             SearchRoutines.undo_move_vertical_all(pv=pv, search_context_model=search_context_model)
 
-            ##########################
-            # MARK: 履歴を全部戻した後
-            ##########################
+            # MARK: TODO 全ての親手をさかのぼり、［後ろ向き探索の結果］を確定
+            # ----------------------------------------------------------
 
-            search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
-
-            ##################
-            # MARK: 手番の処理
-            ##################
-
-            (this_branch_value_on_earth, is_update_best) = SearchRoutines.is_update_best(best_pv=best_pv, child_plot_model=child_plot_model, piece_exchange_value_on_earth=piece_exchange_value_on_earth, search_context_model=search_context_model)
+            # # 手番の処理
+            # (this_branch_value_on_earth, is_update_best) = SearchRoutines.is_update_best(best_pv=best_pv, child_plot_model=child_plot_model, piece_exchange_value_on_earth=piece_exchange_value_on_earth, search_context_model=search_context_model)
                         
-            # 最善手の更新（１つに絞る）
-            if is_update_best:
-                best_pv             = pv
-                best_pv.backwards_plot_model    = child_plot_model
-                best_move           = my_move
-                best_move_cap_pt    = cap_pt
-                best_value          = this_branch_value_on_earth
+            # # 最善手の更新（１つに絞る）
+            # if is_update_best:
+            #     best_pv             = pv
+            #     best_pv.backwards_plot_model    = child_plot_model
+            #     best_move           = my_move
+            #     best_move_cap_pt    = cap_pt
+            #     best_value          = this_branch_value_on_earth
 
-        ########################
-        # MARK: 合法手スキャン後
-        ########################
+        # # 合法手スキャン後
 
-        # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
-        if best_pv is None:
-            return SearchRoutines.create_backwards_plot_model_at_no_candidates(info_depth=INFO_DEPTH, search_context_model=search_context_model)
+        # # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
+        # if best_pv is None:
+        #     return SearchRoutines.create_backwards_plot_model_at_no_candidates(info_depth=INFO_DEPTH, search_context_model=search_context_model)
 
-        # 読み筋に今回の手を付け加える。（ TODO 駒得点も付けたい）
-        best_pv.backwards_plot_model.append_move_from_back(
-                move                = best_move,
-                capture_piece_type  = best_move_cap_pt,
-                best_value          = best_value,
-                hint                = '')
+        # # 読み筋に今回の手を付け加える。（ TODO 駒得点も付けたい）
+        # best_pv.backwards_plot_model.append_move_from_back(
+        #         move                = best_move,
+        #         capture_piece_type  = best_move_cap_pt,
+        #         best_value          = best_value,
+        #         hint                = '')
 
-        return best_pv.backwards_plot_model
+        return terminated_pv_list, live_pv_list

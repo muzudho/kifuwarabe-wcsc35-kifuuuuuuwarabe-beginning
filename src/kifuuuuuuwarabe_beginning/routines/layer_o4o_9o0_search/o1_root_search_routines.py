@@ -83,7 +83,7 @@ class O1RootSearchRoutines(SearchRoutines):
 
     @staticmethod
     def cleaning_horizontal_edges_o1(remaining_moves, parent_pv, search_context_model):
-        """水平指し手をクリーニング。
+        """［水平指し手一覧］をクリーニング。
 
         Parameters
         ----------
@@ -93,7 +93,7 @@ class O1RootSearchRoutines(SearchRoutines):
         Returns
         -------
         remaining_moves : list<int>
-            デバッグの都合。シーショーギの指し手のリスト。
+            シーショーギの指し手のリスト。
         """
 
         remaining_moves = SearchRoutines.remove_depromoted_moves(remaining_moves=remaining_moves, search_context_model=search_context_model)       # ［成れるのに成らない手］は除外
@@ -183,10 +183,6 @@ class O1RootSearchRoutines(SearchRoutines):
             # MARK: 履歴を全部戻す
             # --------------------
             SearchRoutines.undo_move_vertical_all(pv=pv, search_context_model=search_context_model)
-
-            # MARK: 履歴を全部戻した後
-            # ------------------------
-            search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
 
             # MARK: TODO 全ての親手をさかのぼり、［後ろ向き探索の結果］を確定
             # ----------------------------------------------------------

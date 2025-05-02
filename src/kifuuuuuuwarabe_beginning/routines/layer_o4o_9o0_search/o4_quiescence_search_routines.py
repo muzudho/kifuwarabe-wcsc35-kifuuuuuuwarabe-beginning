@@ -81,16 +81,18 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
 
     @staticmethod
     def cleaning_horizontal_edges_o4(parent_pv, search_context_model):
-        """
+        """［水平指し手一覧］をクリーニング。
+
+        Parameters
+        ----------
+        parent_pv : PrincipalVariationModel
+            親手。
+
         Returns
         -------
-        pv_list : list<PrincipalVariationModel>
-            読み筋のリスト。
+        remaining_moves : list<int>
+            シーショーギの指し手のリスト。
         """
-
-        ##########################
-        # MARK: 合法手クリーニング
-        ##########################
 
         legal_move_list = list(search_context_model.gymnasium.table.legal_moves)
         remaining_moves = legal_move_list
@@ -99,10 +101,7 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
         (remaining_moves, rolled_back) = SearchRoutines.filtering_same_destination_move_list(parent_move=parent_pv.last_move_pv, remaining_moves=remaining_moves, rollback_if_empty=True) # できれば［同］の手を残す。
         remaining_moves = SearchRoutines.get_cheapest_move_list(remaining_moves=remaining_moves)
         (remaining_moves, rolled_back) = SearchRoutines.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=False, search_context_model=search_context_model)       # 駒を取る手と、王手のみ残す
-
-        # remaining_moves から pv へ変換。
-        pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
-        return pv_list
+        return remaining_moves
 
 
     ################
@@ -111,22 +110,24 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
 
     @staticmethod
     def move_all_pv_o4(pv_list, search_context_model):
-        """
+        """探索の開始。
+
         Parameters
         ----------
-        parent_move : int
-            １手前の手。
+        pv_list : list<PrincipalVariationModel>
+            ［読み筋］のリスト。
 
         Returns
         -------
-        best_prot_model : BackwardsPlotModel
-            最善の読み筋。
-            これは駒得評価値も算出できる。
+        pv_list : list<PrincipalVariationModel>
+            有力な読み筋。棋譜のようなもの。
+            枝が増えて、合法手の数より多くなることがあることに注意。
         """
 
-        ####################
-        # MARK: ノード訪問時
-        ####################
+        # ノード訪問時
+        # ------------
+        terminated_pv_list = []
+        live_pv_list = []
 
         best_pv             = None  # ベストな子
         best_move           = None
@@ -136,6 +137,8 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
         else:
             best_value = constants.value.SMALL_VALUE
 
+        # 各PV
+        # ----
         for pv in pv_list:
 
             ################################
@@ -146,84 +149,71 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
             cap_pt                          = pv.last_cap_pt_pv
             piece_exchange_value_on_earth   = pv.last_value_pv
 
-            ######################
-            # MARK: 履歴を全部指す
-            ######################
-
+            # 履歴を全部指す
+            # --------------
             SearchRoutines.do_move_vertical_all(pv=pv, search_context_model=search_context_model)
 
-            ##########################
-            # MARK: 履歴を全部指した後
-            ##########################
-
-            search_context_model.number_of_visited_nodes += 1
-            search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=my_move, cap_pt=cap_pt, value=piece_exchange_value_on_earth, comment='')
-
-            ####################
-            # MARK: 相手番の処理
-            ####################
+            # 手番の処理
+            # ----------
 
             # 一手も指さずに局面を見て、終局なら終局外を付加。
             O5zQuiescenceSearchRoutines.set_termination_if_it_o5(parent_pv=pv, search_context_model=search_context_model)
 
-            if pv.is_terminate:
-                child_plot_model = pv.backwards_plot_model
+            if pv.is_terminate:                 # 探索不要なら。
+                terminated_pv_list.append(pv)   # 終了済みPVリストへ当PVを追加。
+
             else:
-                if not pv.is_terminate:
-                    child_pv_list = O5zQuiescenceSearchRoutines.cleaning_horizontal_edges_o5(parent_pv=pv, search_context_model=search_context_model)
+                # ［水平指し手一覧］をクリーニング。
+                remaining_moves = O5zQuiescenceSearchRoutines.cleaning_horizontal_edges_o5(parent_pv=pv, search_context_model=search_context_model)
 
-                    # ［駒を取る手］がないことを、［静止］と呼ぶ。
-                    if len(child_pv_list) == 0:
-                        pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model)
-                        pv.is_terminate = True
+                # ［駒を取る手］がないことを、［静止］と呼ぶ。
+                if len(remaining_moves) == 0:
+                    pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model)
+                    pv.is_terminate = True
+                    terminated_pv_list.append(pv)
 
-                # NOTE 再帰は廃止。デバッグ作れないから。
-                if not pv.is_terminate:
-                    child_plot_model = O5zQuiescenceSearchRoutines.move_all_pv_o5(
-                            pv_list     = child_pv_list,
-                            search_context_model    = search_context_model)
                 else:
-                    child_plot_model = pv.backwards_plot_model
+                    # remaining_moves から pv へ変換。
+                    next_pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
 
-            ######################
+                    # # NOTE 再帰は廃止。デバッグ作れないから。
+                    # if not pv.is_terminate:
+                    #     child_plot_model = O5zQuiescenceSearchRoutines.move_all_pv_o5(
+                    #             pv_list     = next_pv_list,
+                    #             search_context_model    = search_context_model)
+                    # else:
+                    #     child_plot_model = pv.backwards_plot_model
+
             # MARK: 履歴を全部戻す
-            ######################
-
+            # --------------------
             SearchRoutines.undo_move_vertical_all(pv=pv, search_context_model=search_context_model)
 
-            ##########################
-            # MARK: 履歴を全部戻した後
-            ##########################
+            # MARK: TODO 全ての親手をさかのぼり、［後ろ向き探索の結果］を確定
+            # ----------------------------------------------------------
 
-            search_context_model.gymnasium.health_check_qs_model.pop_node_qs()
+            # # 手番の処理
 
-            ##################
-            # MARK: 手番の処理
-            ##################
-
-            (this_branch_value_on_earth, is_update_best) = SearchRoutines.is_update_best(best_pv=best_pv, child_plot_model=child_plot_model, piece_exchange_value_on_earth=piece_exchange_value_on_earth, search_context_model=search_context_model)
+            # (this_branch_value_on_earth, is_update_best) = SearchRoutines.is_update_best(best_pv=best_pv, child_plot_model=child_plot_model, piece_exchange_value_on_earth=piece_exchange_value_on_earth, search_context_model=search_context_model)
                         
-            # 最善手の更新（１つに絞る）
-            if is_update_best:
-                best_pv             = pv
-                best_pv.backwards_plot_model    = child_plot_model
-                best_move           = my_move
-                best_move_cap_pt    = cap_pt
-                best_value          = this_branch_value_on_earth
+            # # 最善手の更新（１つに絞る）
+            # if is_update_best:
+            #     best_pv             = pv
+            #     best_pv.backwards_plot_model    = child_plot_model
+            #     best_move           = my_move
+            #     best_move_cap_pt    = cap_pt
+            #     best_value          = this_branch_value_on_earth
 
-        ########################
-        # MARK: 合法手スキャン後
-        ########################
+        # # 合法手スキャン後
 
-        # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
-        if best_pv is None:
-            return SearchRoutines.create_backwards_plot_model_at_no_candidates(info_depth=INFO_DEPTH, search_context_model=search_context_model)
+        # # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
+        # if best_pv is None:
+        #     return SearchRoutines.create_backwards_plot_model_at_no_candidates(info_depth=INFO_DEPTH, search_context_model=search_context_model)
 
-        # 読み筋に今回の手を付け加える。（ TODO 駒得点も付けたい）
-        best_pv.backwards_plot_model.append_move_from_back(
-                move                = best_move,
-                capture_piece_type  = best_move_cap_pt,
-                best_value          = best_value,
-                hint                = '')
+        # # 読み筋に今回の手を付け加える。（ TODO 駒得点も付けたい）
+        # best_pv.backwards_plot_model.append_move_from_back(
+        #         move                = best_move,
+        #         capture_piece_type  = best_move_cap_pt,
+        #         best_value          = best_value,
+        #         hint                = '')
 
-        return best_pv.backwards_plot_model
+        return terminated_pv_list, live_pv_list
