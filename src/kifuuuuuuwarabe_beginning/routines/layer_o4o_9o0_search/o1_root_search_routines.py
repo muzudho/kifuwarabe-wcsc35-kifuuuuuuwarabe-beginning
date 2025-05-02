@@ -1,7 +1,7 @@
 import cshogi
 import time
 
-from ...models.layer_o1o0 import SquareModel
+from ...models.layer_o1o0 import constants, SquareModel
 from ...models.layer_o5o0_search import SearchContextModel
 from .search_routines import SearchRoutines
 from .o2_counter_search_routines import O2CounterSearchRoutines
@@ -13,6 +13,58 @@ INFO_DEPTH = 1
 class O1RootSearchRoutines(SearchRoutines):
     """１階の探索。
     """
+
+
+    ######################
+    # MARK: メインルーチン
+    ######################
+
+    @staticmethod
+    def main_o1(remaining_moves_o1, parent_pv, search_context_model):
+        """
+        Parameters
+        ----------
+        remaining_moves_o1 : list
+            指し手一覧。１階だけ、利便性のために指定。
+
+        Returns
+        -------
+        next_pv_list : list<PrincipalVariationModel>
+            次のPV一覧。
+        """
+
+        # ［水平指し手一覧］をクリーニング。
+        remaining_moves = O1RootSearchRoutines.cleaning_horizontal_edges_o1(remaining_moves=remaining_moves_o1, parent_pv=parent_pv, search_context_model=search_context_model)
+
+        # ［駒を取る手］がないことを、［静止］と呼ぶ。
+        if len(remaining_moves) == 0:
+            parent_pv.backwards_plot_model = SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model)
+            parent_pv.is_terminate = True
+            next_pv_list = [parent_pv]
+        
+        else:
+            # ［水平指し手一覧］を［PV］へ変換。
+            next_pv_list_temp = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
+
+            # 縦の辺を伸ばす。
+            O1RootSearchRoutines.extend_vertical_edges_o1(pv_list=next_pv_list_temp, search_context_model=search_context_model)
+            (terminated_pv_list, live_pv_list) = O1RootSearchRoutines.move_all_pv_o1(
+                    pv_list             = next_pv_list_temp,
+                    search_context_model= search_context_model)
+
+            # 残りのPVリストを集める
+            next_pv_list = []
+
+            for terminated_pv in terminated_pv_list:
+                if constants.value.MAYBE_EARTH_WIN_VALUE <= terminated_pv.last_value_pv:
+                    next_pv_list.append(terminated_pv)
+            
+            if len(next_pv_list) == 0:
+                for live_pv in live_pv_list:
+                    if constants.value.MAYBE_EARTH_WIN_VALUE <= live_pv.last_value_pv:
+                        next_pv_list.append(live_pv)
+
+        return next_pv_list
 
 
     ######################

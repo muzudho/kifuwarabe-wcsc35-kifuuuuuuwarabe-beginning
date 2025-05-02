@@ -129,26 +129,9 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
         terminated_pv_list = []
         live_pv_list = []
 
-        best_pv             = None  # ベストな子
-        best_move           = None
-        best_move_cap_pt    = None
-        if search_context_model.gymnasium.is_mars:
-            best_value = constants.value.BIG_VALUE
-        else:
-            best_value = constants.value.SMALL_VALUE
-
         # 各PV
         # ----
         for pv in pv_list:
-
-            ################################
-            # MARK: 履歴の最後の一手を指す前
-            ################################
-
-            my_move                         = pv.last_move_pv
-            cap_pt                          = pv.last_cap_pt_pv
-            piece_exchange_value_on_earth   = pv.last_value_pv
-
             # 履歴を全部指す
             # --------------
             SearchRoutines.do_move_vertical_all(pv=pv, search_context_model=search_context_model)
@@ -176,18 +159,6 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
 
             # MARK: TODO 全ての親手をさかのぼり、［後ろ向き探索の結果］を確定
             # ----------------------------------------------------------
-
-            # # 手番の処理
-
-            # (this_branch_value_on_earth, is_update_best) = SearchRoutines.is_update_best(best_pv=best_pv, child_plot_model=child_plot_model, piece_exchange_value_on_earth=piece_exchange_value_on_earth, search_context_model=search_context_model)
-                        
-            # # 最善手の更新（１つに絞る）
-            # if is_update_best:
-            #     best_pv                         = pv
-            #     best_pv.backwards_plot_model    = child_plot_model
-            #     best_move                       = my_move
-            #     best_move_cap_pt                = cap_pt
-            #     best_value                      = this_branch_value_on_earth
 
         # # 合法手スキャン後
 
