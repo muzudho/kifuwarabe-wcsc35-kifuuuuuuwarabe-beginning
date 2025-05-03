@@ -297,16 +297,16 @@ def _main_search_at_first(remaining_moves, search_context_model):
 
     # ［ゼロPV］。［指し手］が追加されなければ、［終端外］がセットされるだけのものです。
     pv = PrincipalVariationModel(
-            frontward_vertical_list_of_move_pv    =[],
-            frontward_vertical_list_of_cap_pt_pv  =[],
-            frontward_vertical_list_of_value_pv   =[],
+            frontward_vertical_list_of_move_arg         = [],
+            frontward_vertical_list_of_cap_pt_arg       = [],
+            frontward_vertical_list_of_value_arg        = [],
             # 終端外が有る分、他のリストより要素１個多い。＜水平線＞がデフォルト値。
-            vertical_list_of_backwards_plot_model_pv=[SearchRoutines.create_backwards_plot_model_at_horizon(search_context_model=search_context_model)],
-            frontward_vertical_list_of_comment_pv = [''],
-            backward_vertical_list_of_comment_pv = [''],
-            out_of_termination_is_mars  = False,
-            out_of_termination_is_gote  = search_context_model.gymnasium.table.turn == cshogi.WHITE,
-            out_of_termination_state    = constants.out_of_termination_state.HORIZON)
+            vertical_list_of_backwards_plot_model_arg   = [SearchRoutines.create_backwards_plot_model_at_horizon(search_context_model=search_context_model)],
+            frontward_vertical_list_of_comment_arg      = [''],
+            backward_vertical_list_of_comment_arg       = [''],
+            out_of_termination_is_mars_arg              = False,
+            out_of_termination_is_gote_arg              = search_context_model.gymnasium.table.turn == cshogi.WHITE,
+            out_of_termination_state_arg                = constants.out_of_termination_state.HORIZON)
 
     # 履歴を全部指す
     # --------------
