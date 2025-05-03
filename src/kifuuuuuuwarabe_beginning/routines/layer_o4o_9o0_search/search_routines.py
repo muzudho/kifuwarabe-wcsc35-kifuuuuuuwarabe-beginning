@@ -155,7 +155,7 @@ class SearchRoutines:
         return BackwardsPlotModel(
                 is_mars_at_out_of_termination   = search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = search_context_model.gymnasium.table.is_gote,
-                out_of_termination_state        = constants.out_of_termination_state.MAX_DEPTH_BY_THINK,
+                out_of_termination_state        = constants.out_of_termination_state.HORIZON,
                 hint_list                       = [],
                 move_list                       = [],
                 cap_list                        = [],

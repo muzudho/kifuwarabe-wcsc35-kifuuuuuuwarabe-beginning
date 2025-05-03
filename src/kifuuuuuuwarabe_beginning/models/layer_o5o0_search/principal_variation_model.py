@@ -15,6 +15,7 @@ class PrincipalVariationModel:
             vertical_list_of_comment_pv,
             out_of_termination_is_mars,
             out_of_termination_is_gote,
+            out_of_termination_state,
             is_terminate=False):
         """
         Parameters
@@ -35,6 +36,8 @@ class PrincipalVariationModel:
             ［終端外］は火星か。（後ろ向きに設定します）
         out_of_termination_is_gote : bool
             ［終端外］は後手か。（後ろ向きに設定します）
+        out_of_termination_state : int
+            ［終端外］は何か。
         """
         self._vertical_list_of_move_pv = vertical_list_of_move_pv
         self._vertical_list_of_cap_pt_pv = vertical_list_of_cap_pt_pv
@@ -44,6 +47,7 @@ class PrincipalVariationModel:
         self._vertical_list_of_comment_pv = vertical_list_of_comment_pv
         self._out_of_termination_is_mars = out_of_termination_is_mars
         self._out_of_termination_is_gote = out_of_termination_is_gote
+        self._out_of_termination_state = out_of_termination_state
         self._is_terminate = is_terminate
 
 
@@ -145,6 +149,10 @@ class PrincipalVariationModel:
         return self._out_of_termination_is_gote
 
 
+    def out_of_termination_state(self):
+        return self._out_of_termination_state
+
+
     ##############
     # MARK: その他
     ##############
@@ -183,6 +191,7 @@ class PrincipalVariationModel:
                 vertical_list_of_comment_pv                 = list(self._vertical_list_of_comment_pv),
                 out_of_termination_is_mars                  = self._out_of_termination_is_mars,
                 out_of_termination_is_gote                  = self._out_of_termination_is_gote,
+                out_of_termination_state                    = self._out_of_termination_state,
                 is_terminate                                = self._is_terminate)
 
 
@@ -214,6 +223,7 @@ class PrincipalVariationModel:
                 vertical_list_of_comment_pv                 = copied_vertical_list_of_comment_pv,
                 out_of_termination_is_mars                  = self._out_of_termination_is_mars,
                 out_of_termination_is_gote                  = self._out_of_termination_is_gote,
+                out_of_termination_state                    = self._out_of_termination_state,
                 is_terminate                                = replace_is_terminate)
 
 

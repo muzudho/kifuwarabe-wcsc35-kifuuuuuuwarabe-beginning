@@ -184,7 +184,7 @@ class OutOfTerminationStateModel():
 
 
     @property
-    def MAX_DEPTH_BY_THINK(self):
+    def HORIZON(self):
         """水平線。
         読みの最大深さ。
         """

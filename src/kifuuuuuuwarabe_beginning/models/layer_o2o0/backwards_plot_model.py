@@ -21,7 +21,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             value = constants.value.GAME_OVER
         elif out_of_termination_state == constants.out_of_termination_state.NYUGYOKU_WIN:
             value = constants.value.NYUGYOKU_WIN
-        elif out_of_termination_state == constants.out_of_termination_state.MAX_DEPTH_BY_THINK:
+        elif out_of_termination_state == constants.out_of_termination_state.HORIZON:
             value = constants.value.ZERO
         elif out_of_termination_state == constants.out_of_termination_state.NO_CANDIDATES:
             value = constants.value.ZERO
@@ -37,7 +37,15 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         return value
 
 
-    def __init__(self, is_mars_at_out_of_termination, is_gote_at_out_of_termination, out_of_termination_state, hint_list, move_list, cap_list, list_of_accumulate_exchange_value_on_earth):
+    def __init__(
+            self,
+            is_mars_at_out_of_termination,
+            is_gote_at_out_of_termination,
+            out_of_termination_state,
+            hint_list,
+            move_list,
+            cap_list,
+            list_of_accumulate_exchange_value_on_earth):
         """初期化。
 
         Parameters
@@ -53,7 +61,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         """
         self._is_mars_at_out_of_termination = is_mars_at_out_of_termination
         self._is_gote_at_out_of_termination = is_gote_at_out_of_termination
-        self._out_of_termination_state            = out_of_termination_state
+        self._out_of_termination_state      = out_of_termination_state
         self._hint_list                     = hint_list
         self._move_list                     = move_list
         self._cap_list                      = cap_list
@@ -193,7 +201,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         # # ＜📚原則１＞地球と火星のペアが完成したら、駒得点を逓減。
         # # # かつ、火星の［終端外］で終わるとき　＝　地球の［指し手］で読み終わるとき
         # # if (
-        # #         self._out_of_termination_state == constants.out_of_termination_state.MAX_DEPTH_BY_THINK     # ［終端外］が［読みの深さの最大］。
+        # #         self._out_of_termination_state == constants.out_of_termination_state.HORIZON     # ［終端外］が［読みの深さの最大］。
         # #     and len(self._list_of_accumulate_exchange_value_on_earth) == 1                      # ［読みの深さの最大］のときの末端の指し手のとき。
         # #     and not self.is_mars_at_peek                                                        # ［地球］の手番。
         # #     ):

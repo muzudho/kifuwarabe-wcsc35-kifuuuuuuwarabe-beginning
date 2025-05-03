@@ -304,7 +304,8 @@ def _main_search_at_first(remaining_moves, search_context_model):
             vertical_list_of_backwards_plot_model_pv=[SearchRoutines.create_backwards_plot_model_at_horizon(search_context_model=search_context_model)],
             vertical_list_of_comment_pv = [''],
             out_of_termination_is_mars  = False,
-            out_of_termination_is_gote  = search_context_model.gymnasium.table.turn == cshogi.WHITE)
+            out_of_termination_is_gote  = search_context_model.gymnasium.table.turn == cshogi.WHITE,
+            out_of_termination_state    = constants.out_of_termination_state.HORIZON)
 
     # 履歴を全部指す
     # --------------
