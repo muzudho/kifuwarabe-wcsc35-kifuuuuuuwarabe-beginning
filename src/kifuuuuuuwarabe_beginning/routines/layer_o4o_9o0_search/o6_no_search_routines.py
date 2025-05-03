@@ -22,7 +22,7 @@ class O6NoSearchRoutines(SearchRoutines):
         """一手も指さずに局面を見て、終局なら終局外を付加。
         手番が回ってきてから、終局が成立するものとする。（何も指さない手番）
         """
-        (parent_pv.backwards_plot_model, parent_pv.is_terminate) = SearchRoutines.look_in_0_moves(
+        (parent_pv.rooter_backwards_plot_model_pv, parent_pv.is_terminate) = SearchRoutines.look_in_0_moves(
                 info_depth              = INFO_DEPTH,
                 parent_pv               = parent_pv,
                 search_context_model    = search_context_model)

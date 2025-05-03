@@ -23,7 +23,7 @@ class PrincipalVariationModel:
         self._vertical_list_of_move_pv = vertical_list_of_move_pv
         self._vertical_list_of_cap_pt_pv = vertical_list_of_cap_pt_pv
         self._vertical_list_of_value_pv = vertical_list_of_value_pv
-        self._vertical_list_of_backwards_plot_model = vertical_list_of_backwards_plot_model_pv
+        self._vertical_list_of_backwards_plot_model_pv = vertical_list_of_backwards_plot_model_pv
         self._backwards_plot_model_pv = vertical_list_of_backwards_plot_model_pv[-1]   # TODO 廃止
         self._is_terminate = is_terminate
 
@@ -77,16 +77,15 @@ class PrincipalVariationModel:
 
 
     @property
-    def backwards_plot_model(self):
-        """後ろ向き探索の読み筋。
-        TODO 廃止
+    def rooter_backwards_plot_model_pv(self):
+        """１手目に近い方の［後ろ向き探索の読み筋モデル］。
         """
-        return self._backwards_plot_model
+        return self._vertical_list_of_backwards_plot_model_pv[-1]
 
 
-    @backwards_plot_model.setter
-    def backwards_plot_model(self, value):
-        self._backwards_plot_model = value
+    @rooter_backwards_plot_model_pv.setter
+    def rooter_backwards_plot_model_pv(self, value):
+        self._vertical_list_of_backwards_plot_model_pv[-1] = value
 
 
     @property

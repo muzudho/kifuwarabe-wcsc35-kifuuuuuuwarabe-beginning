@@ -101,7 +101,7 @@ class HealthCheckGoModel():
         def fn_qs_principal_variation(i):
             move_prop = health_list[i][1]
             if 'QS_principal_variation' in move_prop:
-                return f"{move_prop['QS_principal_variation'].backwards_plot_model.stringify()}"
+                return f"{move_prop['QS_principal_variation'].backwards_plot_model_qs.stringify()}"
             return ''
 
 

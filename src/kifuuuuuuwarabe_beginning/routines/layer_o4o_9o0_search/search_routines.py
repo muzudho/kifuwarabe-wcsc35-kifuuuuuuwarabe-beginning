@@ -47,7 +47,7 @@ class SearchRoutines:
                     value_pv                = PieceValuesModel.get_piece_exchange_value_on_earth(
                                         pt          = cap_pt,
                                         is_mars     = search_context_model.gymnasium.is_mars),
-                    backwards_plot_model_pv = parent_pv.backwards_plot_model,
+                    backwards_plot_model_pv = parent_pv.rooter_backwards_plot_model_pv,
                     replace_is_terminate    = False)
             pv_list.append(pv)
         
@@ -73,7 +73,7 @@ class SearchRoutines:
             old_sibling_value = 0
         else:
             # 兄枝のベスト評価値
-            old_sibling_value = best_pv.backwards_plot_model.get_exchange_value_on_earth()     # とりあえず最善の読み筋の点数。
+            old_sibling_value = best_pv.rooter_backwards_plot_model_pv.get_exchange_value_on_earth()     # とりあえず最善の読み筋の点数。
 
         (a, b) = search_context_model.gymnasium.ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
         # TODO この比較、合っているか？
@@ -312,7 +312,7 @@ class SearchRoutines:
 
         Returns
         -------
-        backwards_plot_model : BackwardsPlotModel
+        rooter_backwards_plot_model_pv : BackwardsPlotModel
             読み筋。
         is_terminate : bool
             読み終わり。
@@ -354,4 +354,4 @@ class SearchRoutines:
             """
             return SearchRoutines.create_backwards_plot_model_at_nyugyoku_win(search_context_model=search_context_model), True
 
-        return parent_pv.backwards_plot_model, parent_pv.is_terminate
+        return parent_pv.rooter_backwards_plot_model_pv, parent_pv.is_terminate
