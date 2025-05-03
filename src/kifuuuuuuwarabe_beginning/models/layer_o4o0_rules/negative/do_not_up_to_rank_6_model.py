@@ -44,8 +44,8 @@ class DoNotUpToRank6Model(NegativeRuleModel):
             # 意志を残している
             return constants.mind.WILL
 
-        # （角道を止める手）
-        #       ７六歩はポジティブ・ルールの方でやるから、ここではやらない。
+        # 角道を止める手はOk。
+        #       ただし、７六歩はポジティブ・ルールの方でやるから、ここではやらない。
         if (
                 dst_sq_obj.sq == np.masu(66)    # 動いた先は６六で。
             and cshogi.piece_to_piece_type(table.piece(src_sq_obj.sq)) == cshogi.PAWN   # 動いた駒は歩だ。
@@ -53,6 +53,19 @@ class DoNotUpToRank6Model(NegativeRuleModel):
             ):
             # ６六に歩を突くのはＯｋ。
             return constants.mind.WILL
+
+        # FIXME ウサギが跳ね出てしまう。
+        # #
+        # # １筋の端ヒヨコを突く手はOk。
+        # #       ただし、火星の歩が１五に位取りしているケースを除く。
+        # if (
+        #         24 <= table.move_number        # 10手を超えていて。
+        #     and dst_sq_obj.sq == np.masu(16)    # 動いた先は１六で。
+        #     and cshogi.piece_to_piece_type(table.piece(src_sq_obj.sq)) == cshogi.PAWN   # 動いた駒はヒヨコだ。
+        #     and (table.piece(np.masu(15)) != np.aite_pc(cshogi.PAWN))    # 火星の歩が１五にいない。
+        #     ):
+        #     # Ｏｋ。
+        #     return constants.mind.WILL
 
         # 意志なし
         return constants.mind.WILL_NOT
