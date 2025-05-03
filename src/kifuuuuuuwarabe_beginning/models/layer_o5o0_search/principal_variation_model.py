@@ -223,13 +223,13 @@ class PrincipalVariationModel:
             frontward_comment_pv,
             backward_comment_pv,
             replace_is_terminate):
-        copied_vertical_list_of_move_pv = list(self._frontward_vertical_list_of_move_pv)
-        copied_vertical_list_of_move_pv.append(move_pv)
-        copied_vertical_list_of_cap_pt_pv = list(self._frontward_vertical_list_of_cap_pt_pv)
-        copied_vertical_list_of_cap_pt_pv.append(cap_pt_pv)
-        copied_vertical_list_of_value_pv = list(self._frontward_vertical_list_of_value_pv)
-        copied_vertical_list_of_value_pv.append(value_pv)
-        copied_vertical_list_of_backwards_plot_model_pv = self._create_copied_bpm_list()
+        copied_frontward_vertical_list_of_move_pv = list(self._frontward_vertical_list_of_move_pv)
+        copied_frontward_vertical_list_of_move_pv.append(move_pv)
+        copied_frontward_vertical_list_of_cap_pt_pv = list(self._frontward_vertical_list_of_cap_pt_pv)
+        copied_frontward_vertical_list_of_cap_pt_pv.append(cap_pt_pv)
+        copied_frontward_vertical_list_of_value_pv = list(self._frontward_vertical_list_of_value_pv)
+        copied_frontward_vertical_list_of_value_pv.append(value_pv)
+        copied_vertical_list_of_backwards_plot_model_pv = self._create_copied_bpm_list()    # TODO 廃止方針。
         copied_vertical_list_of_backwards_plot_model_pv.append(backwards_plot_model_pv)
         copied_frontward_vertical_list_of_comment_pv = list(self._frontward_vertical_list_of_comment_pv)
         copied_frontward_vertical_list_of_comment_pv.append(frontward_comment_pv)
@@ -238,9 +238,9 @@ class PrincipalVariationModel:
 
         # NOTE リストはコピー渡し。
         return PrincipalVariationModel(
-                frontward_vertical_list_of_move_pv          = copied_vertical_list_of_move_pv,
-                frontward_vertical_list_of_cap_pt_pv        = copied_vertical_list_of_cap_pt_pv,
-                frontward_vertical_list_of_value_pv         = copied_vertical_list_of_value_pv,
+                frontward_vertical_list_of_move_pv          = copied_frontward_vertical_list_of_move_pv,
+                frontward_vertical_list_of_cap_pt_pv        = copied_frontward_vertical_list_of_cap_pt_pv,
+                frontward_vertical_list_of_value_pv         = copied_frontward_vertical_list_of_value_pv,
                 vertical_list_of_backwards_plot_model_pv    = copied_vertical_list_of_backwards_plot_model_pv,
                 frontward_vertical_list_of_comment_pv       = copied_frontward_vertical_list_of_comment_pv,
                 backward_vertical_list_of_comment_pv        = copied_backward_vertical_list_of_comment_pv,
