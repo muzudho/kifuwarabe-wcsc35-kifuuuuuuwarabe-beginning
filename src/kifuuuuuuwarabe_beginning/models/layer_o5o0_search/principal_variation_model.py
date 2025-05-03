@@ -99,8 +99,7 @@ class PrincipalVariationModel:
         self._is_terminate                              = is_terminate_arg
 
         # TODO 廃止方針の要素。
-        self._vertical_list_of_backwards_plot_model_pv  = vertical_list_of_backwards_plot_model_arg
-        self._backwards_plot_model_pv                   = vertical_list_of_backwards_plot_model_arg[-1]
+        self._deprecated_vertical_list_of_backwards_plot_model_pv  = vertical_list_of_backwards_plot_model_arg
 
 
     ############################################
@@ -186,10 +185,10 @@ class PrincipalVariationModel:
     #####################
 
     @property
-    def rooter_backwards_plot_model_pv(self):
+    def deprecated_rooter_backwards_plot_model_pv(self):
         """１手目に近い方の［後ろ向き探索の読み筋モデル］。
         """
-        return self._vertical_list_of_backwards_plot_model_pv[-1]
+        return self._deprecated_vertical_list_of_backwards_plot_model_pv[-1]
 
 
     @property
@@ -199,9 +198,13 @@ class PrincipalVariationModel:
         return self._vertical_list_of_comment_pv[-1]
 
 
-    @rooter_backwards_plot_model_pv.setter
-    def rooter_backwards_plot_model_pv(self, value):
-        self._vertical_list_of_backwards_plot_model_pv[-1] = value
+    @deprecated_rooter_backwards_plot_model_pv.setter
+    def deprecated_rooter_backwards_plot_model_pv(self, value):
+        self._deprecated_vertical_list_of_backwards_plot_model_pv[-1] = value
+
+
+    def set_deprecated_rooter_backwards_plot_model_pv(self, value):
+        self._deprecated_vertical_list_of_backwards_plot_model_pv[-1] = value
 
 
     ##############
@@ -293,7 +296,7 @@ class PrincipalVariationModel:
         """［後ろ向き探索の評価値モデル］のリストを、要素１つずつコピー。
         """
         new_bpm_list = []
-        for old_bpm in self._vertical_list_of_backwards_plot_model_pv:
+        for old_bpm in self._deprecated_vertical_list_of_backwards_plot_model_pv:
             new_bpm_list.append(old_bpm.copy_bpm())
         return new_bpm_list
     
@@ -328,7 +331,7 @@ class PrincipalVariationModel:
         ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
         TODO 廃止方針。
         """
-        return self._vertical_list_of_backwards_plot_model_pv
+        return self._deprecated_vertical_list_of_backwards_plot_model_pv
 
 
     ##############

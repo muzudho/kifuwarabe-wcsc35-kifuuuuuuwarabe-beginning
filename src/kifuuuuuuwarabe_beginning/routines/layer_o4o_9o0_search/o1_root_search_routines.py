@@ -40,7 +40,7 @@ class O1RootSearchRoutines(SearchRoutines):
 
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(remaining_moves) == 0:
-            parent_pv.rooter_backwards_plot_model_pv = SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model)
+            parent_pv.set_deprecated_rooter_backwards_plot_model_pv(SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model))
             parent_pv.is_terminate = True
             return [parent_pv], []
         
@@ -132,7 +132,7 @@ class O1RootSearchRoutines(SearchRoutines):
         """一手も指さずに局面を見て、終局なら終局外を付加。
         手番が回ってきてから、終局が成立するものとする。（何も指さない手番）
         """
-        (parent_pv.rooter_backwards_plot_model_pv, parent_pv.is_terminate) = SearchRoutines.look_in_0_moves(
+        (parent_pv.deprecated_rooter_backwards_plot_model_pv, parent_pv.is_terminate) = SearchRoutines.look_in_0_moves(
                 info_depth              = INFO_DEPTH,
                 parent_pv               = parent_pv,
                 search_context_model    = search_context_model)
@@ -206,7 +206,7 @@ class O1RootSearchRoutines(SearchRoutines):
 
                 # ［駒を取る手］がないことを、［静止］と呼ぶ。
                 if len(remaining_moves) == 0:
-                    pv.rooter_backwards_plot_model_pv = SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model)
+                    pv.set_deprecated_rooter_backwards_plot_model_pv(SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model))
                     pv.is_terminate = True
                     terminated_pv_list.append(pv)
                 
@@ -249,14 +249,14 @@ class O1RootSearchRoutines(SearchRoutines):
             # ----------------------------------------------------------
 
             # １階の手は、全ての手の読み筋を記憶します。最善手は選びません。
-            pv.rooter_backwards_plot_model_pv.append_move_from_back(
+            pv.deprecated_rooter_backwards_plot_model_pv.append_move_from_back(
                     move                = pv.leafer_move_pv,
                     capture_piece_type  = pv.leafer_cap_pt_pv,
-                    best_value          = pv.rooter_backwards_plot_model_pv.get_exchange_value_on_earth(),
+                    best_value          = pv.deprecated_rooter_backwards_plot_model_pv.get_exchange_value_on_earth(),
                     hint                = '')
 
             # ベータカットもしません。全部返すから。
-            #pv.value_pv += pv.rooter_backwards_plot_model_pv.get_exchange_value_on_earth()
+            #pv.value_pv += pv.deprecated_rooter_backwards_plot_model_pv.get_exchange_value_on_earth()
             #terminated_pv_list.append(pv.copy_pv())
 
         ######################

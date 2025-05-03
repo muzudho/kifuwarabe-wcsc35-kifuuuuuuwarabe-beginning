@@ -69,7 +69,7 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
         """一手も指さずに局面を見て、終局なら終局外を付加。
         手番が回ってきてから、終局が成立するものとする。（何も指さない手番）
         """
-        (parent_pv.rooter_backwards_plot_model_pv, parent_pv.is_terminate) = SearchRoutines.look_in_0_moves(
+        (parent_pv.deprecated_rooter_backwards_plot_model_pv, parent_pv.is_terminate) = SearchRoutines.look_in_0_moves(
                 info_depth              = INFO_DEPTH,
                 parent_pv               = parent_pv,
                 search_context_model    = search_context_model)
@@ -168,7 +168,7 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
 
                 # ［駒を取る手］がないことを、［静止］と呼ぶ。
                 if len(remaining_moves) == 0:
-                    pv.rooter_backwards_plot_model_pv = SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model)
+                    pv.set_deprecated_rooter_backwards_plot_model_pv(SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model))
                     pv.is_terminate = True
                     terminated_pv_list.append(pv)
 
@@ -182,7 +182,7 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
                     #             pv_list     = next_pv_list,
                     #             search_context_model    = search_context_model)
                     # else:
-                    #     child_plot_model = pv.rooter_backwards_plot_model_pv
+                    #     child_plot_model = pv.deprecated_rooter_backwards_plot_model_pv
 
             # MARK: 履歴を全部戻す
             # --------------------
@@ -198,7 +198,7 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
             # # 最善手の更新（１つに絞る）
             # if is_update_best:
             #     best_pv             = pv
-            #     best_pv.rooter_backwards_plot_model_pv    = child_plot_model
+            #     best_pv.set_deprecated_rooter_backwards_plot_model_pv(child_plot_model)
             #     best_move           = my_move
             #     best_move_cap_pt    = cap_pt
             #     best_value          = this_branch_value_on_earth
@@ -210,7 +210,7 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
         #     return SearchRoutines.create_backwards_plot_model_at_no_candidates(info_depth=INFO_DEPTH, search_context_model=search_context_model)
 
         # # 読み筋に今回の手を付け加える。（ TODO 駒得点も付けたい）
-        # best_pv.rooter_backwards_plot_model_pv.append_move_from_back(
+        # best_pv.deprecated_rooter_backwards_plot_model_pv.append_move_from_back(
         #         move                = best_move,
         #         capture_piece_type  = best_move_cap_pt,
         #         best_value          = best_value,

@@ -65,7 +65,7 @@ class O2CounterSearchRoutines(SearchRoutines):
         """一手も指さずに局面を見て、終局なら終局外を付加。
         手番が回ってきてから、終局が成立するものとする。（何も指さない手番）
         """
-        (parent_pv.rooter_backwards_plot_model_pv, parent_pv.is_terminate) = SearchRoutines.look_in_0_moves(
+        (parent_pv.deprecated_rooter_backwards_plot_model_pv, parent_pv.is_terminate) = SearchRoutines.look_in_0_moves(
                 info_depth              = INFO_DEPTH,
                 parent_pv               = parent_pv,
                 search_context_model    = search_context_model)
@@ -144,7 +144,7 @@ class O2CounterSearchRoutines(SearchRoutines):
 
                 # ［駒を取る手］がないことを、［静止］と呼ぶ。
                 if len(remaining_moves) == 0:
-                    pv.rooter_backwards_plot_model_pv = SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model)
+                    pv.set_deprecated_rooter_backwards_plot_model_pv(SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model))
                     pv.is_terminate = True
                     terminated_pv_list.append(pv)
 
@@ -153,9 +153,9 @@ class O2CounterSearchRoutines(SearchRoutines):
                     next_pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
 
                     # # TODO ３手目を指す。
-                    # next_pv.rooter_backwards_plot_model_pv = O3QuiescenceSearchRoutines.move_all_pv_o3(
+                    # next_pv.set_deprecated_rooter_backwards_plot_model_pv(O3QuiescenceSearchRoutines.move_all_pv_o3(
                     #         pv_list                 = next_pv_list,
-                    #         search_context_model    = search_context_model)
+                    #         search_context_model    = search_context_model))
 
                     # for next_pv in reversed(next_pv_list):          # 各［次PV］。
                     #     if next_pv.is_terminate:                    # 次の読み筋が終了していれば。
@@ -171,10 +171,10 @@ class O2CounterSearchRoutines(SearchRoutines):
             # ----------------------------------------------------------
 
             # １階の手は、全ての手の読み筋を記憶します。最善手は選びません。
-            pv.rooter_backwards_plot_model_pv.append_move_from_back(
+            pv.deprecated_rooter_backwards_plot_model_pv.append_move_from_back(
                     move                = pv.leafer_move_pv,
                     capture_piece_type  = pv.leafer_cap_pt_pv,
-                    best_value          = pv.rooter_backwards_plot_model_pv.get_exchange_value_on_earth(),
+                    best_value          = pv.deprecated_rooter_backwards_plot_model_pv.get_exchange_value_on_earth(),
                     hint                = '')
 
             #(this_branch_value_on_earth, is_update_best) = SearchRoutines.is_update_best(best_pv=best_pv, child_plot_model=child_plot_model, piece_exchange_value_on_earth=piece_exchange_value_on_earth, search_context_model=search_context_model)
@@ -182,7 +182,7 @@ class O2CounterSearchRoutines(SearchRoutines):
             # # 最善手の更新
             # if is_update_best:
             #     best_pv             = pv
-            #     best_pv.rooter_backwards_plot_model_pv    = child_plot_model
+            #     best_pv.set_deprecated_rooter_backwards_plot_model_pv(child_plot_model)
             #     best_move           = my_move
             #     best_move_cap_pt    = cap_pt
             #     best_value          = this_branch_value_on_earth
@@ -198,7 +198,7 @@ class O2CounterSearchRoutines(SearchRoutines):
         #     return SearchRoutines.create_backwards_plot_model_at_no_candidates(info_depth=INFO_DEPTH, search_context_model=search_context_model)
 
         # # 今回の手を付け加える。
-        # best_pv.rooter_backwards_plot_model_pv.append_move_from_back(
+        # best_pv.deprecated_rooter_backwards_plot_model_pv.append_move_from_back(
         #         move                = best_move,
         #         capture_piece_type  = best_move_cap_pt,
         #         best_value          = best_value,
