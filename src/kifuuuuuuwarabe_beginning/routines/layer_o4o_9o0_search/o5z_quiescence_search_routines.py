@@ -32,9 +32,9 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
 
             # 履歴を全部指す前
             # ----------------
-            my_move                         = pv.leafer_move_pv
-            cap_pt                          = pv.leafer_cap_pt_pv
-            piece_exchange_value_on_earth   = pv.leafer_value_pv
+            my_move                         = pv.leafer_move_in_frontward_pv
+            cap_pt                          = pv.leafer_cap_pt_in_frontward_pv
+            piece_exchange_value_on_earth   = pv.leafer_value_in_frontward_pv
 
             # 履歴を全部指す
             # --------------
@@ -69,10 +69,11 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
         """一手も指さずに局面を見て、終局なら終局外を付加。
         手番が回ってきてから、終局が成立するものとする。（何も指さない手番）
         """
-        (parent_pv.deprecated_rooter_backwards_plot_model_pv, parent_pv.is_terminate) = SearchRoutines.look_in_0_moves(
+        (obj_1, parent_pv.is_terminate) = SearchRoutines.look_in_0_moves(
                 info_depth              = INFO_DEPTH,
                 parent_pv               = parent_pv,
                 search_context_model    = search_context_model)
+        parent_pv.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
 
 
     ################################
@@ -98,7 +99,7 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
         remaining_moves = legal_move_list
         remaining_moves = SearchRoutines.remove_drop_moves(remaining_moves=remaining_moves)           # 打の手を全部除外したい。
         remaining_moves = SearchRoutines.remove_depromoted_moves(remaining_moves=remaining_moves, search_context_model=search_context_model)     # ［成れるのに成らない手］は除外
-        (remaining_moves, rolled_back) = SearchRoutines.filtering_same_destination_move_list(parent_move=parent_pv.leafer_move_pv, remaining_moves=remaining_moves, rollback_if_empty=True) # できれば［同］の手を残す。
+        (remaining_moves, rolled_back) = SearchRoutines.filtering_same_destination_move_list(parent_move=parent_pv.leafer_move_in_frontward_pv, remaining_moves=remaining_moves, rollback_if_empty=True) # できれば［同］の手を残す。
         remaining_moves = SearchRoutines.get_cheapest_move_list(remaining_moves=remaining_moves)
         (remaining_moves, rolled_back) = SearchRoutines.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=False, search_context_model=search_context_model)       # 駒を取る手と、王手のみ残す
         return remaining_moves
@@ -151,7 +152,7 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
                 next_pv_list = []
 
                 # # NOTE 再帰は廃止。デバッグ作れないから。ここで＜水平線＞（デフォルト値）。
-                # child_plot_model = pv.deprecated_rooter_backwards_plot_model_pv
+                # child_plot_model = pv.deprecated_rooter_backwards_plot_model_in_backward_pv
 
             # MARK: 履歴を全部戻す
             # --------------------
@@ -167,7 +168,7 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
         #     return SearchRoutines.create_backwards_plot_model_at_no_candidates(info_depth=INFO_DEPTH, search_context_model=search_context_model)
 
         # # 読み筋に今回の手を付け加える。（ TODO 駒得点も付けたい）
-        # best_pv.deprecated_rooter_backwards_plot_model_pv.append_move_from_back(
+        # best_pv.deprecated_rooter_backwards_plot_model_in_backward_pv.append_move_from_back(
         #         move                = best_move,
         #         capture_piece_type  = best_move_cap_pt,
         #         best_value          = best_value,

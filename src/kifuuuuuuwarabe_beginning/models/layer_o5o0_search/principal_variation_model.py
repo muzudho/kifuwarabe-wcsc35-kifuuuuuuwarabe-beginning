@@ -153,59 +153,61 @@ class PrincipalVariationModel:
         return self._backward_vertical_list_of_comment_pv
 
 
-    #######################
-    # MARK: 末端手目に近い方
-    #######################
+    ###########################################
+    # MARK: ［前向き探索］の方の、末端手目に近い方
+    ###########################################
 
     @property
-    def leafer_move_pv(self):
-        """末端手目に近い方の［指し手］。
+    def leafer_move_in_frontward_pv(self):
+        """［前向き探索］の方の、末端手目に近い方の［指し手］。
         """
         return self._frontward_vertical_list_of_move_pv[-1]
 
 
     @property
-    def leafer_cap_pt_pv(self):
-        """末端手目に近い方の［最後に取った駒］。
+    def leafer_cap_pt_in_frontward_pv(self):
+        """［前向き探索］の方の、末端手目に近い方の［最後に取った駒］。
         """
         return self._frontward_vertical_list_of_cap_pt_pv[-1]
 
 
     @property
-    def leafer_value_pv(self):
-        """末端手目に近い方の［局面評価値］。
+    def leafer_value_in_frontward_pv(self):
+        """［前向き探索］の方の、末端手目に近い方の［局面評価値］。
         """
         if len(self._frontward_vertical_list_of_value_pv) == 0:
             return constants.value.ZERO
         return self._frontward_vertical_list_of_value_pv[-1]
 
 
-    #####################
-    # MARK: １手目に近い方
-    #####################
+    ###########################################
+    # MARK: ［後ろ向き探索］の方の、１手目に近い方
+    ###########################################
 
     @property
-    def deprecated_rooter_backwards_plot_model_pv(self):
-        """１手目に近い方の［後ろ向き探索の読み筋モデル］。
+    def rooter_value_in_backward_pv(self):
+        """［後ろ向き探索］の方の、１手目に近い方の［局面評価値］。
         """
-        return self._deprecated_vertical_list_of_backwards_plot_model_pv[-1]
+        return self._backward_vertical_list_of_value_pv[-1]
 
 
     @property
-    def rooter_comment_pv(self):
-        """１手目に近い方の［後ろ向き探索の指し手のコメント］。
+    def rooter_comment_in_backward_pv(self):
+        """［後ろ向き探索］の方の、１手目に近い方の［指し手のコメント］。
         """
-        return self._vertical_list_of_comment_pv[-1]
+        return self._backward_vertical_list_of_comment_pv[-1]
 
 
-    @deprecated_rooter_backwards_plot_model_pv.setter
-    def deprecated_rooter_backwards_plot_model_pv(self, value):
-        self._deprecated_vertical_list_of_backwards_plot_model_pv[-1] = value
+    def get_root_value_in_backward_pv(self):
+        """TODO ［後ろ向き探索］の方の、初手の［局面評価値］。地球視点。
+        旧名: get_exchange_value_on_earth
+        """
 
-
-    def set_deprecated_rooter_backwards_plot_model_pv(self, value):
-        self._deprecated_vertical_list_of_backwards_plot_model_pv[-1] = value
-
+        # TODO 取った駒を、葉要素から点数付けして累計する。
+        # 先手、後手を正確に把握していれば、前から順に累計しても同じ。
+        #
+        # 旧方式
+        return self.deprecated_rooter_backwards_plot_model_in_backward_pv.get_exchange_value_on_earth()
 
     ##############
     # MARK: 終端外
@@ -325,13 +327,32 @@ class PrincipalVariationModel:
     # MARK: 廃止方針
     ###############
 
+    # @property
+    # def vertical_list_of_backwards_plot_model_pv(self):
+    #     """［後ろ向き探索の読み筋モデル］の履歴。
+    #     ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
+    #     TODO 廃止方針。
+    #     """
+    #     return self._deprecated_vertical_list_of_backwards_plot_model_pv
+
+
     @property
-    def vertical_list_of_backwards_plot_model_pv(self):
-        """［後ろ向き探索の読み筋モデル］の履歴。
-        ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
+    def deprecated_rooter_backwards_plot_model_in_backward_pv(self):
+        """［後ろ向き探索］の方の、１手目に近い方の［読み筋モデル］。
         TODO 廃止方針。
         """
-        return self._deprecated_vertical_list_of_backwards_plot_model_pv
+        return self._deprecated_vertical_list_of_backwards_plot_model_pv[-1]
+
+
+    # @deprecated_rooter_backwards_plot_model_in_backward_pv.setter
+    # def deprecated_rooter_backwards_plot_model_in_backward_pv(self, value):
+    #     self._deprecated_vertical_list_of_backwards_plot_model_pv[-1] = value
+
+
+    def set_deprecated_rooter_backwards_plot_model_in_backward_pv(self, value):
+        """TODO 廃止方針。
+        """
+        self._deprecated_vertical_list_of_backwards_plot_model_pv[-1] = value
 
 
     ##############
