@@ -308,7 +308,7 @@ class SearchRoutines:
 
 
     @staticmethod
-    def look_in_0_moves(info_depth, parent_pv, search_context_model):
+    def update_parent_pv_look_in_0_moves(info_depth, parent_pv, search_context_model):
         """ノードに入る前に。
 
         Returns
@@ -336,7 +336,10 @@ class SearchRoutines:
         if search_context_model.gymnasium.table.is_game_over():
             """手番の投了局面時。
             """
-            return SearchRoutines.create_backwards_plot_model_at_game_over(search_context_model=search_context_model), True
+            obj_1 = SearchRoutines.create_backwards_plot_model_at_game_over(search_context_model=search_context_model)
+            parent_pv.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
+            parent_pv.is_terminate = True
+            return
 
         # 一手詰めを詰める
         if not search_context_model.gymnasium.table.is_check():
@@ -349,13 +352,19 @@ class SearchRoutines:
                 value_pt    = PieceValuesModel.get_piece_exchange_value_on_earth(
                         pt          = cap_pt,
                         is_mars     = search_context_model.gymnasium.is_mars)
-                return SearchRoutines.create_backwards_plot_model_at_mate_move_in_1_ply(info_depth=info_depth, mate_move=mate_move, search_context_model=search_context_model), True
+                obj_1 = SearchRoutines.create_backwards_plot_model_at_mate_move_in_1_ply(info_depth=info_depth, mate_move=mate_move, search_context_model=search_context_model)
+                parent_pv.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
+                parent_pv.is_terminate = True
+                return
 
         if search_context_model.gymnasium.table.is_nyugyoku():
             """手番の入玉宣言勝ち局面時。
             """
-            return SearchRoutines.create_backwards_plot_model_at_nyugyoku_win(search_context_model=search_context_model), True
+            obj_1 = SearchRoutines.create_backwards_plot_model_at_nyugyoku_win(search_context_model=search_context_model)
+            parent_pv.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
+            parent_pv.is_terminate = True
+            return
 
-        return (
-                parent_pv.deprecated_rooter_backwards_plot_model_in_backward_pv,    # TODO 廃止方針。
-                parent_pv.is_terminate)
+        obj_1 = parent_pv.deprecated_rooter_backwards_plot_model_in_backward_pv
+        parent_pv.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
+        parent_pv.is_terminate = parent_pv.is_terminate

@@ -132,11 +132,10 @@ class O1RootSearchRoutines(SearchRoutines):
         """一手も指さずに局面を見て、終局なら終局外を付加。
         手番が回ってきてから、終局が成立するものとする。（何も指さない手番）
         """
-        (obj_1, parent_pv.is_terminate) = SearchRoutines.look_in_0_moves(
+        SearchRoutines.update_parent_pv_look_in_0_moves(
                 info_depth              = INFO_DEPTH,
                 parent_pv               = parent_pv,
                 search_context_model    = search_context_model)
-        parent_pv.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
 
 
     ################################
