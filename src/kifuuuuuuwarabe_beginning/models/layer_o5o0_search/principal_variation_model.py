@@ -6,18 +6,50 @@ class PrincipalVariationModel:
     """
 
 
+    @staticmethod
+    def create_zeroth_pv(
+            out_of_termination_is_gote_arg,
+            vertical_list_of_backwards_plot_model_arg   # TODO 廃止方針。
+    ):
+        """TODO ０手の［読み筋］。
+        Parameters
+        ----------
+        out_of_termination_is_gote_arg : bool
+            ［終端外］は後手か？
+        vertical_list_of_backwards_plot_model_arg : _
+            TODO 廃止方針。
+        """
+        return PrincipalVariationModel(
+                frontward_vertical_list_of_move_arg         = [],
+                frontward_vertical_list_of_cap_pt_arg       = [],
+                frontward_vertical_list_of_value_arg        = [],
+                frontward_vertical_list_of_comment_arg      = [],
+                backward_vertical_list_of_value_arg         = [],
+                backward_vertical_list_of_comment_arg       = [],
+                out_of_termination_is_mars_arg              = False,
+                out_of_termination_is_gote_arg              = out_of_termination_is_gote_arg,
+                out_of_termination_state_arg                = constants.out_of_termination_state.HORIZON,
+                out_of_termination_comment_arg              = '',
+                is_terminate_arg                            = False,
+                # TODO 廃止方針。
+                # 終端外が有る分、他のリストより要素１個多い。＜水平線＞がデフォルト値。
+                vertical_list_of_backwards_plot_model_arg   = vertical_list_of_backwards_plot_model_arg)
+
+
     def __init__(
             self,
             frontward_vertical_list_of_move_arg,
             frontward_vertical_list_of_cap_pt_arg,
             frontward_vertical_list_of_value_arg,
             frontward_vertical_list_of_comment_arg,
-            vertical_list_of_backwards_plot_model_arg,
+            backward_vertical_list_of_value_arg,
             backward_vertical_list_of_comment_arg,
             out_of_termination_is_mars_arg,
             out_of_termination_is_gote_arg,
             out_of_termination_state_arg,
-            is_terminate_arg=False):
+            out_of_termination_comment_arg,
+            is_terminate_arg,
+            vertical_list_of_backwards_plot_model_arg):  # TODO 廃止方針。
         """
         Parameters
         ----------
@@ -27,49 +59,53 @@ class PrincipalVariationModel:
             ［前向き探索］中に確定しながら追加していく［取った駒の種類］の履歴。
         frontward_vertical_list_of_value_arg : list<int>
             ［前向き探索］中に確定しながら追加していく［取った駒の点数］の履歴。地球視点。
-        frontward_vertical_list_of_comment_arg : list<string>
+        frontward_vertical_list_of_comment_arg : list<str>
             ［前向き探索］中に確定しながら追加していく［コメント］の履歴。地球視点。
-        vertical_list_of_backwards_plot_model_arg : list<BackwardsPlotModel>
-            ［後ろ向き探索］中に追加していく［読み筋］の履歴。
-            ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
-            TODO 廃止方針。
-        backward_vertical_list_of_comment_arg : list<string>
+        backward_vertical_list_of_value_arg : list<int>
+            ［後ろ向き探索］中に追加していく［局面評価値］の履歴。
+        backward_vertical_list_of_comment_arg : list<str>
             ［後ろ向き探索］中に追加していく［指し手のコメント］の履歴。
-            ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
         out_of_termination_is_mars_arg : bool
             ［終端外］は火星か。（後ろ向きに設定します）
         out_of_termination_is_gote_arg : bool
             ［終端外］は後手か。（後ろ向きに設定します）
         out_of_termination_state_arg : int
             ［終端外］は何か。
+        out_of_termination_comment_arg : str
+            ［終端外］へのコメント。
+        vertical_list_of_backwards_plot_model_arg : list<BackwardsPlotModel>
+            ［後ろ向き探索］中に追加していく［読み筋］の履歴。
+            ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
+            TODO 廃止方針。
         is_terminate_arg : bool
             ［読み筋］が終わっているか。
         """
 
         # ［前向き探索］しながら追加していく要素。
-        self._frontward_vertical_list_of_move_pv = frontward_vertical_list_of_move_arg
-        self._frontward_vertical_list_of_cap_pt_pv = frontward_vertical_list_of_cap_pt_arg
-        self._frontward_vertical_list_of_value_pv = frontward_vertical_list_of_value_arg
-        self._frontward_vertical_list_of_comment_pv = frontward_vertical_list_of_comment_arg
-
-        # TODO 廃止方針の要素。
-        self._vertical_list_of_backwards_plot_model_pv = vertical_list_of_backwards_plot_model_arg
-        self._backwards_plot_model_pv = vertical_list_of_backwards_plot_model_arg[-1]
+        self._frontward_vertical_list_of_move_pv        = frontward_vertical_list_of_move_arg
+        self._frontward_vertical_list_of_cap_pt_pv      = frontward_vertical_list_of_cap_pt_arg
+        self._frontward_vertical_list_of_value_pv       = frontward_vertical_list_of_value_arg
+        self._frontward_vertical_list_of_comment_pv     = frontward_vertical_list_of_comment_arg
 
         # ［後ろ向き探索］しながら追加していく要素。
-        self._backward_vertical_list_of_comment_pv = backward_vertical_list_of_comment_arg
+        self._backward_vertical_list_of_value_pv        = backward_vertical_list_of_value_arg
+        self._backward_vertical_list_of_comment_pv      = backward_vertical_list_of_comment_arg
 
         # ［終端外］で設定する要素。
-        self._out_of_termination_is_mars = out_of_termination_is_mars_arg
-        self._out_of_termination_is_gote = out_of_termination_is_gote_arg
-        self._out_of_termination_state = out_of_termination_state_arg
-        self._out_of_termination_comment = ""
-        self._is_terminate = is_terminate_arg
+        self._out_of_termination_is_mars                = out_of_termination_is_mars_arg
+        self._out_of_termination_is_gote                = out_of_termination_is_gote_arg
+        self._out_of_termination_state                  = out_of_termination_state_arg
+        self._out_of_termination_comment                = out_of_termination_comment_arg
+        self._is_terminate                              = is_terminate_arg
+
+        # TODO 廃止方針の要素。
+        self._vertical_list_of_backwards_plot_model_pv  = vertical_list_of_backwards_plot_model_arg
+        self._backwards_plot_model_pv                   = vertical_list_of_backwards_plot_model_arg[-1]
 
 
-    #######################
-    # MARK: 縦の指し手リスト
-    #######################
+    ############################################
+    # MARK: 前向き探索しながら伸ばす縦の指し手リスト
+    ############################################
 
     @property
     def frontward_vertical_list_of_move_pv(self):
@@ -100,20 +136,20 @@ class PrincipalVariationModel:
         return self._frontward_vertical_list_of_comment_pv
 
 
+    ##############################################
+    # MARK: 後ろ向き探索しながら伸ばす縦の指し手リスト
+    ##############################################
+
     @property
-    def vertical_list_of_backwards_plot_model_pv(self):
-        """［後ろ向き探索の読み筋モデル］の履歴。
-        ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
+    def backward_vertical_list_of_value_pv(self):
+        """［後ろ向き探索］しながら追加していく［局面評価値］の履歴。
         """
-        return self._vertical_list_of_backwards_plot_model_pv
+        return self._backward_vertical_list_of_value_pv
 
 
     @property
     def backward_vertical_list_of_comment_pv(self):
-        """［後ろ向き探索の指し手のコメント］の履歴。
-        ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
-
-        TODO 廃止方針。
+        """［後ろ向き探索］しながら追加していく［指し手のコメント］の履歴。
         """
         return self._backward_vertical_list_of_comment_pv
 
@@ -173,24 +209,73 @@ class PrincipalVariationModel:
     ##############
 
     def out_of_termination_is_mars(self):
+        """［終端外］は火星か？
+        """
         return self._out_of_termination_is_mars
 
 
     def out_of_termination_is_gote(self):
+        """［終端外］は後手か？
+        """
         return self._out_of_termination_is_gote
 
 
     def out_of_termination_state(self):
+        """［終端外］の状態。
+        """
         return self._out_of_termination_state
 
 
     def out_of_termination_comment(self):
+        """［終端外］の［指し手のコメント］。
+        """
         return self._out_of_termination_comment
 
 
-    ##############
-    # MARK: その他
-    ##############
+    ##################
+    # MARK: 前向き探索
+    ##################
+
+    def new_and_append_pv_in_frontward(
+            self,
+            move_arg,
+            cap_pt_arg,
+            value_arg,
+            backwards_plot_model_arg,
+            frontward_comment_arg,
+            replace_is_terminate_arg):
+        """前向き探索。
+        """
+        copied_frontward_vertical_list_of_move_pv = list(self._frontward_vertical_list_of_move_pv)
+        copied_frontward_vertical_list_of_move_pv.append(move_arg)
+        copied_frontward_vertical_list_of_cap_pt_pv = list(self._frontward_vertical_list_of_cap_pt_pv)
+        copied_frontward_vertical_list_of_cap_pt_pv.append(cap_pt_arg)
+        copied_frontward_vertical_list_of_value_pv = list(self._frontward_vertical_list_of_value_pv)
+        copied_frontward_vertical_list_of_value_pv.append(value_arg)
+        copied_vertical_list_of_backwards_plot_model_pv = self._create_copied_bpm_list()    # TODO 廃止方針。
+        copied_vertical_list_of_backwards_plot_model_pv.append(backwards_plot_model_arg)
+        copied_frontward_vertical_list_of_comment_pv = list(self._frontward_vertical_list_of_comment_pv)
+        copied_frontward_vertical_list_of_comment_pv.append(frontward_comment_arg)
+
+        # NOTE リストはコピー渡し。
+        return PrincipalVariationModel(
+                frontward_vertical_list_of_move_arg         = copied_frontward_vertical_list_of_move_pv,
+                frontward_vertical_list_of_cap_pt_arg       = copied_frontward_vertical_list_of_cap_pt_pv,
+                frontward_vertical_list_of_value_arg        = copied_frontward_vertical_list_of_value_pv,
+                frontward_vertical_list_of_comment_arg      = copied_frontward_vertical_list_of_comment_pv,
+                backward_vertical_list_of_value_arg         = self._backward_vertical_list_of_value_pv,
+                backward_vertical_list_of_comment_arg       = self._backward_vertical_list_of_comment_pv,
+                out_of_termination_is_mars_arg              = self._out_of_termination_is_mars,
+                out_of_termination_is_gote_arg              = self._out_of_termination_is_gote,
+                out_of_termination_state_arg                = self._out_of_termination_state,
+                out_of_termination_comment_arg              = '',
+                is_terminate_arg                            = replace_is_terminate_arg,
+                vertical_list_of_backwards_plot_model_arg   = copied_vertical_list_of_backwards_plot_model_pv)
+
+
+    #####################
+    # MARK: その他いろいろ
+    #####################
 
     @property
     def is_terminate(self):
@@ -223,49 +308,32 @@ class PrincipalVariationModel:
                 frontward_vertical_list_of_cap_pt_arg       = list(self._frontward_vertical_list_of_cap_pt_pv),
                 frontward_vertical_list_of_value_arg        = list(self._frontward_vertical_list_of_value_pv),
                 frontward_vertical_list_of_comment_arg      = list(self._frontward_vertical_list_of_comment_pv),
-                vertical_list_of_backwards_plot_model_arg   = self._create_copied_bpm_list(),
+                backward_vertical_list_of_value_arg         = list(self._backward_vertical_list_of_value_pv),
                 backward_vertical_list_of_comment_arg       = list(self._backward_vertical_list_of_comment_pv),
                 out_of_termination_is_mars_arg              = self._out_of_termination_is_mars,
                 out_of_termination_is_gote_arg              = self._out_of_termination_is_gote,
                 out_of_termination_state_arg                = self._out_of_termination_state,
-                is_terminate_arg                            = self._is_terminate)
+                out_of_termination_comment_arg              = self._out_of_termination_comment_arg,
+                is_terminate_arg                            = self._is_terminate,
+                vertical_list_of_backwards_plot_model_arg   = self._create_copied_bpm_list())
 
 
-    def new_and_append_pv(
-            self,
-            move_pv,
-            cap_pt_pv,
-            value_pv,
-            backwards_plot_model_pv,
-            frontward_comment_pv,
-            backward_comment_pv,
-            replace_is_terminate):
-        copied_frontward_vertical_list_of_move_pv = list(self._frontward_vertical_list_of_move_pv)
-        copied_frontward_vertical_list_of_move_pv.append(move_pv)
-        copied_frontward_vertical_list_of_cap_pt_pv = list(self._frontward_vertical_list_of_cap_pt_pv)
-        copied_frontward_vertical_list_of_cap_pt_pv.append(cap_pt_pv)
-        copied_frontward_vertical_list_of_value_pv = list(self._frontward_vertical_list_of_value_pv)
-        copied_frontward_vertical_list_of_value_pv.append(value_pv)
-        copied_vertical_list_of_backwards_plot_model_pv = self._create_copied_bpm_list()    # TODO 廃止方針。
-        copied_vertical_list_of_backwards_plot_model_pv.append(backwards_plot_model_pv)
-        copied_frontward_vertical_list_of_comment_pv = list(self._frontward_vertical_list_of_comment_pv)
-        copied_frontward_vertical_list_of_comment_pv.append(frontward_comment_pv)
-        copied_backward_vertical_list_of_comment_pv = list(self._backward_vertical_list_of_comment_pv)
-        copied_backward_vertical_list_of_comment_pv.append(backward_comment_pv)
+    ###############
+    # MARK: 廃止方針
+    ###############
 
-        # NOTE リストはコピー渡し。
-        return PrincipalVariationModel(
-                frontward_vertical_list_of_move_arg         = copied_frontward_vertical_list_of_move_pv,
-                frontward_vertical_list_of_cap_pt_arg       = copied_frontward_vertical_list_of_cap_pt_pv,
-                frontward_vertical_list_of_value_arg        = copied_frontward_vertical_list_of_value_pv,
-                vertical_list_of_backwards_plot_model_arg   = copied_vertical_list_of_backwards_plot_model_pv,
-                frontward_vertical_list_of_comment_arg      = copied_frontward_vertical_list_of_comment_pv,
-                backward_vertical_list_of_comment_arg       = copied_backward_vertical_list_of_comment_pv,
-                out_of_termination_is_mars_arg              = self._out_of_termination_is_mars,
-                out_of_termination_is_gote_arg              = self._out_of_termination_is_gote,
-                out_of_termination_state_arg                = self._out_of_termination_state,
-                is_terminate_arg                            = replace_is_terminate)
+    @property
+    def vertical_list_of_backwards_plot_model_pv(self):
+        """［後ろ向き探索の読み筋モデル］の履歴。
+        ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
+        TODO 廃止方針。
+        """
+        return self._vertical_list_of_backwards_plot_model_pv
 
+
+    ##############
+    # MARK: その他
+    ##############
 
     # @property
     # def is_mars_at_peek(self):

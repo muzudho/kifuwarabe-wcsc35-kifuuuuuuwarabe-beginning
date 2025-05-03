@@ -41,16 +41,15 @@ class SearchRoutines:
             dst_sq_obj  = SquareModel(cshogi.move_to(my_move))      # ［移動先マス］
             cap_pt      = search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # ［移動先マス］にある［駒種類］。つまりそれは取った駒。打の［移動先マス］は常に空きマス。
 
-            pv = parent_pv.new_and_append_pv(
-                    move_pv                 = my_move,
-                    cap_pt_pv               = cap_pt,
-                    value_pv                = PieceValuesModel.get_piece_exchange_value_on_earth(
-                                        pt          = cap_pt,
-                                        is_mars     = search_context_model.gymnasium.is_mars),
-                    backwards_plot_model_pv = parent_pv.rooter_backwards_plot_model_pv,
-                    frontward_comment_pv              = '',
-                    backward_comment_pv              = '',
-                    replace_is_terminate    = False)
+            pv = parent_pv.new_and_append_pv_in_frontward(
+                    move_arg                    = my_move,
+                    cap_pt_arg                  = cap_pt,
+                    value_arg                   = PieceValuesModel.get_piece_exchange_value_on_earth(
+                                                        pt          = cap_pt,
+                                                        is_mars     = search_context_model.gymnasium.is_mars),
+                    backwards_plot_model_arg    = parent_pv.rooter_backwards_plot_model_pv,     # TODO 廃止方針
+                    frontward_comment_arg       = '',
+                    replace_is_terminate_arg    = False)
             pv_list.append(pv)
         
         return pv_list

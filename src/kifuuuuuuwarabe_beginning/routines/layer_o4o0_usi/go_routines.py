@@ -268,13 +268,13 @@ GOREI COLLECTION
                 gymnasium   = gymnasium)
 
         return ResultOfGoModel(
-                search_result_state_model   = SearchResultStateModel.BEST_MOVE,
-                alice_s_profit              = 0,
-                best_move                   = best_move,
-                length_by_cshogi            = length_by_cshogi,
+                search_result_state_model                   = SearchResultStateModel.BEST_MOVE,
+                alice_s_profit                              = 0,
+                best_move                                   = best_move,
+                length_by_cshogi                            = length_by_cshogi,
                 length_of_quiescence_search_by_kifuwarabe   = length_of_quiescence_search_by_kifuwarabe,
-                length_by_kifuwarabe        = length_by_kifuwarabe,
-                number_of_visited_nodes     = number_of_visited_nodes)
+                length_by_kifuwarabe                        = length_by_kifuwarabe,
+                number_of_visited_nodes                     = number_of_visited_nodes)
 
 
 @staticmethod
@@ -296,18 +296,12 @@ def _main_search_at_first(remaining_moves, search_context_model):
     # ----
 
     # ［ゼロPV］。［指し手］が追加されなければ、［終端外］がセットされるだけのものです。
-    pv = PrincipalVariationModel(
-            frontward_vertical_list_of_move_arg         = [],
-            frontward_vertical_list_of_cap_pt_arg       = [],
-            frontward_vertical_list_of_value_arg        = [],
-            # 終端外が有る分、他のリストより要素１個多い。＜水平線＞がデフォルト値。
-            vertical_list_of_backwards_plot_model_arg   = [SearchRoutines.create_backwards_plot_model_at_horizon(search_context_model=search_context_model)],
-            frontward_vertical_list_of_comment_arg      = [''],
-            backward_vertical_list_of_comment_arg       = [''],
-            out_of_termination_is_mars_arg              = False,
+    pv = PrincipalVariationModel.create_zeroth_pv(
             out_of_termination_is_gote_arg              = search_context_model.gymnasium.table.turn == cshogi.WHITE,
-            out_of_termination_state_arg                = constants.out_of_termination_state.HORIZON)
-
+            # TODO 廃止方針。
+            # 終端外が有る分、他のリストより要素１個多い。＜水平線＞がデフォルト値。
+            vertical_list_of_backwards_plot_model_arg   = [SearchRoutines.create_backwards_plot_model_at_horizon(search_context_model=search_context_model)])
+    
     # 履歴を全部指す
     # --------------
 
