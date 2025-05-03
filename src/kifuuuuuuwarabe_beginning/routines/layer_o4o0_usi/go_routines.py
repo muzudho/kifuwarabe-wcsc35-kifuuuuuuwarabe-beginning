@@ -300,7 +300,8 @@ def _main_search_at_first(remaining_moves, search_context_model):
             vertical_list_of_move_pv=[],
             vertical_list_of_cap_pt_pv=[],
             vertical_list_of_value_pv=[],
-            backwards_plot_model=SearchRoutines.create_backwards_plot_model_at_horizon(search_context_model=search_context_model))  # ＜水平線＞がデフォルト値。
+            # 終端外が有る分、他のリストより要素１個多い。＜水平線＞がデフォルト値。
+            vertical_list_of_backwards_plot_model_pv=[SearchRoutines.create_backwards_plot_model_at_horizon(search_context_model=search_context_model)])
 
     # 履歴を全部指す
     # --------------
