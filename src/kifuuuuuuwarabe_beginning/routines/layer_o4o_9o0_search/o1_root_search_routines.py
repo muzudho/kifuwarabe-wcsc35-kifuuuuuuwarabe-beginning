@@ -95,9 +95,9 @@ class O1RootSearchRoutines(SearchRoutines):
 
             # 履歴を全部指す前
             # ----------------
-            my_move                         = pv.last_move_pv
-            cap_pt                          = pv.last_cap_pt_pv
-            piece_exchange_value_on_earth   = pv.last_value_pv
+            my_move                         = pv.leafer_move_pv
+            cap_pt                          = pv.leafer_cap_pt_pv
+            piece_exchange_value_on_earth   = pv.leafer_value_pv
 
             # 履歴を全部指す
             # --------------
@@ -234,11 +234,11 @@ class O1RootSearchRoutines(SearchRoutines):
 
                     # TODO （奇数＋１階なら火星、偶数＋１階なら地球）が嫌な手は削除。
                     # for terminated_pv in reversed(terminated_pv_list):
-                    #     if 0 < terminated_pv.last_value_pv:
+                    #     if 0 < terminated_pv.leafer_value_pv:
                     #         terminated_pv_list.remove(terminated_pv)
                     #
                     # for live_pv in reversed(live_pv_list):
-                    #     if 0 < live_pv.last_value_pv:
+                    #     if 0 < live_pv.leafer_value_pv:
                     #         live_pv_list.remove(live_pv)
 
             # MARK: 履歴を全部戻す
@@ -250,8 +250,8 @@ class O1RootSearchRoutines(SearchRoutines):
 
             # １階の手は、全ての手の読み筋を記憶します。最善手は選びません。
             pv.rooter_backwards_plot_model_pv.append_move_from_back(
-                    move                = pv.last_move_pv,
-                    capture_piece_type  = pv.last_cap_pt_pv,
+                    move                = pv.leafer_move_pv,
+                    capture_piece_type  = pv.leafer_cap_pt_pv,
                     best_value          = pv.rooter_backwards_plot_model_pv.get_exchange_value_on_earth(),
                     hint                = '')
 
@@ -279,7 +279,7 @@ class O1RootSearchRoutines(SearchRoutines):
         search_context_model.clear_root_searched_control_map()
 
         for pv in pv_list:
-            my_move = pv.last_move_pv
+            my_move = pv.leafer_move_pv
             if cshogi.move_is_drop(my_move):
                 continue
             dst_sq_obj = SquareModel(cshogi.move_to(my_move))       # ［移動先マス］

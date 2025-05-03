@@ -32,9 +32,9 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
 
             # 履歴を全部指す前
             # ----------------
-            my_move                         = pv.last_move_pv
-            cap_pt                          = pv.last_cap_pt_pv
-            piece_exchange_value_on_earth   = pv.last_value_pv
+            my_move                         = pv.leafer_move_pv
+            cap_pt                          = pv.leafer_cap_pt_pv
+            piece_exchange_value_on_earth   = pv.leafer_value_pv
 
             # 履歴を全部指す
             # --------------
@@ -98,7 +98,7 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
         remaining_moves = legal_move_list
         remaining_moves = SearchRoutines.remove_drop_moves(remaining_moves=remaining_moves)           # 打の手を全部除外したい。
         remaining_moves = SearchRoutines.remove_depromoted_moves(remaining_moves=remaining_moves, search_context_model=search_context_model)     # ［成れるのに成らない手］は除外
-        (remaining_moves, rolled_back) = SearchRoutines.filtering_same_destination_move_list(parent_move=parent_pv.last_move_pv, remaining_moves=remaining_moves, rollback_if_empty=True) # できれば［同］の手を残す。
+        (remaining_moves, rolled_back) = SearchRoutines.filtering_same_destination_move_list(parent_move=parent_pv.leafer_move_pv, remaining_moves=remaining_moves, rollback_if_empty=True) # できれば［同］の手を残す。
         remaining_moves = SearchRoutines.get_cheapest_move_list(remaining_moves=remaining_moves)
         (remaining_moves, rolled_back) = SearchRoutines.filtering_capture_or_mate(remaining_moves=remaining_moves, rollback_if_empty=False, search_context_model=search_context_model)       # 駒を取る手と、王手のみ残す
         return remaining_moves

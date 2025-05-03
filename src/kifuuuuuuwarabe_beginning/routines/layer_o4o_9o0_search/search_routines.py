@@ -15,13 +15,13 @@ class SearchRoutines:
 
     @staticmethod
     def do_move_vertical_all(pv, search_context_model):
-        for my_move in pv.vertical_list_of_move_pv:
+        for my_move in pv.frontward_vertical_list_of_move_pv:
             search_context_model.gymnasium.do_move_o1x(move = my_move)
 
 
     @staticmethod
     def undo_move_vertical_all(pv, search_context_model):
-        for i in range(0, len(pv.vertical_list_of_move_pv)):
+        for i in range(0, len(pv.frontward_vertical_list_of_move_pv)):
             search_context_model.gymnasium.undo_move_o1x()
 
 
@@ -48,7 +48,8 @@ class SearchRoutines:
                                         pt          = cap_pt,
                                         is_mars     = search_context_model.gymnasium.is_mars),
                     backwards_plot_model_pv = parent_pv.rooter_backwards_plot_model_pv,
-                    comment_pv              = '',
+                    frontward_comment_pv              = '',
+                    backward_comment_pv              = '',
                     replace_is_terminate    = False)
             pv_list.append(pv)
         

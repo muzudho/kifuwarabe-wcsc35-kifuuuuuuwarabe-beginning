@@ -8,11 +8,12 @@ class PrincipalVariationModel:
 
     def __init__(
             self,
-            vertical_list_of_move_pv,
-            vertical_list_of_cap_pt_pv,
-            vertical_list_of_value_pv,
+            frontward_vertical_list_of_move_pv,
+            frontward_vertical_list_of_cap_pt_pv,
+            frontward_vertical_list_of_value_pv,
+            frontward_vertical_list_of_comment_pv,
             vertical_list_of_backwards_plot_model_pv,
-            vertical_list_of_comment_pv,
+            backward_vertical_list_of_comment_pv,
             out_of_termination_is_mars,
             out_of_termination_is_gote,
             out_of_termination_state,
@@ -20,17 +21,20 @@ class PrincipalVariationModel:
         """
         Parameters
         ----------
-        vertical_list_of_move_pv : list<int>
-            ［シーショーギの指し手］の履歴。
-        vertical_list_of_cap_pt_pv : list<int>
-            ［取った駒の種類］の履歴。
-        vertical_list_of_value_pv : list<int>
-            ［取った駒の点数］の履歴。地球視点。
+        frontward_vertical_list_of_move_pv : list<int>
+            ［前向き探索］中に確定しながら追加していく［シーショーギの指し手］の履歴。
+        frontward_vertical_list_of_cap_pt_pv : list<int>
+            ［前向き探索］中に確定しながら追加していく［取った駒の種類］の履歴。
+        frontward_vertical_list_of_value_pv : list<int>
+            ［前向き探索］中に確定しながら追加していく［取った駒の点数］の履歴。地球視点。
+        frontward_vertical_list_of_comment_pv : list<string>
+            ［前向き探索］中に確定しながら追加していく［コメント］の履歴。地球視点。
         vertical_list_of_backwards_plot_model_pv : list<BackwardsPlotModel>
-            ［後ろ向き探索の読み筋］の履歴。
+            ［後ろ向き探索］中に追加していく［読み筋］の履歴。
             ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
-        vertical_list_of_comment_pv : list<string>
-            ［後ろ向き探索の指し手のコメント］の履歴。
+            TODO 廃止方針。
+        backward_vertical_list_of_comment_pv : list<string>
+            ［後ろ向き探索］中に追加していく［指し手のコメント］の履歴。
             ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
         out_of_termination_is_mars : bool
             ［終端外］は火星か。（後ろ向きに設定します）
@@ -39,12 +43,13 @@ class PrincipalVariationModel:
         out_of_termination_state : int
             ［終端外］は何か。
         """
-        self._vertical_list_of_move_pv = vertical_list_of_move_pv
-        self._vertical_list_of_cap_pt_pv = vertical_list_of_cap_pt_pv
-        self._vertical_list_of_value_pv = vertical_list_of_value_pv
+        self._frontward_vertical_list_of_move_pv = frontward_vertical_list_of_move_pv
+        self._frontward_vertical_list_of_cap_pt_pv = frontward_vertical_list_of_cap_pt_pv
+        self._frontward_vertical_list_of_value_pv = frontward_vertical_list_of_value_pv
+        self._frontward_vertical_list_of_comment_pv = frontward_vertical_list_of_comment_pv
         self._vertical_list_of_backwards_plot_model_pv = vertical_list_of_backwards_plot_model_pv
         self._backwards_plot_model_pv = vertical_list_of_backwards_plot_model_pv[-1]   # TODO 廃止方針
-        self._vertical_list_of_comment_pv = vertical_list_of_comment_pv
+        self._backward_vertical_list_of_comment_pv = backward_vertical_list_of_comment_pv
         self._out_of_termination_is_mars = out_of_termination_is_mars
         self._out_of_termination_is_gote = out_of_termination_is_gote
         self._out_of_termination_state = out_of_termination_state
@@ -56,24 +61,32 @@ class PrincipalVariationModel:
     #######################
 
     @property
-    def vertical_list_of_move_pv(self):
+    def frontward_vertical_list_of_move_pv(self):
         """［指し手］の履歴。
         """
-        return self._vertical_list_of_move_pv
+        return self._frontward_vertical_list_of_move_pv
 
 
     @property
-    def vertical_list_of_cap_pt_pv(self):
+    def frontward_vertical_list_of_cap_pt_pv(self):
         """［取った駒の種類］の履歴。
         """
-        return self._vertical_list_of_cap_pt_pv
+        return self._frontward_vertical_list_of_cap_pt_pv
 
 
     @property
-    def vertical_list_of_value_pv(self):
+    def frontward_vertical_list_of_value_pv(self):
         """［局面評価値］の履歴。
         """
-        return self._vertical_list_of_value_pv
+        return self._frontward_vertical_list_of_value_pv
+
+
+    @property
+    def frontward_vertical_list_of_comment_pv(self):
+        """［後ろ向き探索の指し手のコメント］の履歴。
+        ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
+        """
+        return self._frontward_vertical_list_of_comment_pv
 
 
     @property
@@ -85,38 +98,43 @@ class PrincipalVariationModel:
 
 
     @property
-    def vertical_list_of_comment_pv(self):
+    def backward_vertical_list_of_comment_pv(self):
         """［後ろ向き探索の指し手のコメント］の履歴。
         ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
         """
-        return self._vertical_list_of_comment_pv
+        return self._backward_vertical_list_of_comment_pv
+
+
+    #######################
+    # MARK: 末端手目に近い方
+    #######################
+
+    @property
+    def leafer_move_pv(self):
+        """末端手目に近い方の［指し手］。
+        """
+        return self._frontward_vertical_list_of_move_pv[-1]
+
+
+    @property
+    def leafer_cap_pt_pv(self):
+        """末端手目に近い方の［最後に取った駒］。
+        """
+        return self._frontward_vertical_list_of_cap_pt_pv[-1]
+
+
+    @property
+    def leafer_value_pv(self):
+        """末端手目に近い方の［局面評価値］。
+        """
+        if len(self._frontward_vertical_list_of_value_pv) == 0:
+            return constants.value.ZERO
+        return self._frontward_vertical_list_of_value_pv[-1]
 
 
     #####################
     # MARK: １手目に近い方
     #####################
-
-    @property
-    def last_move_pv(self):
-        """１手目に近い方の［指し手］。
-        """
-        return self._vertical_list_of_move_pv[-1]
-
-
-    @property
-    def last_cap_pt_pv(self):
-        """１手目に近い方の［最後に取った駒］。
-        """
-        return self._vertical_list_of_cap_pt_pv[-1]
-
-
-    @property
-    def last_value_pv(self):
-        """１手目に近い方の［局面評価値］。
-        """
-        if len(self._vertical_list_of_value_pv) == 0:
-            return constants.value.ZERO
-        return self._vertical_list_of_value_pv[-1]
 
     @property
     def rooter_backwards_plot_model_pv(self):
@@ -184,11 +202,12 @@ class PrincipalVariationModel:
 
         # NOTE リストはコピー渡し。
         return PrincipalVariationModel(
-                vertical_list_of_move_pv                    = list(self._vertical_list_of_move_pv),
-                vertical_list_of_cap_pt_pv                  = list(self._vertical_list_of_cap_pt_pv),
-                vertical_list_of_value_pv                   = list(self._vertical_list_of_value_pv),
+                frontward_vertical_list_of_move_pv          = list(self._frontward_vertical_list_of_move_pv),
+                frontward_vertical_list_of_cap_pt_pv        = list(self._frontward_vertical_list_of_cap_pt_pv),
+                frontward_vertical_list_of_value_pv         = list(self._frontward_vertical_list_of_value_pv),
+                frontward_vertical_list_of_comment_pv       = list(self._frontward_vertical_list_of_comment_pv),
                 vertical_list_of_backwards_plot_model_pv    = self._create_copied_bpm_list(),
-                vertical_list_of_comment_pv                 = list(self._vertical_list_of_comment_pv),
+                backward_vertical_list_of_comment_pv        = list(self._backward_vertical_list_of_comment_pv),
                 out_of_termination_is_mars                  = self._out_of_termination_is_mars,
                 out_of_termination_is_gote                  = self._out_of_termination_is_gote,
                 out_of_termination_state                    = self._out_of_termination_state,
@@ -201,26 +220,30 @@ class PrincipalVariationModel:
             cap_pt_pv,
             value_pv,
             backwards_plot_model_pv,
-            comment_pv,
+            frontward_comment_pv,
+            backward_comment_pv,
             replace_is_terminate):
-        copied_vertical_list_of_move_pv = list(self._vertical_list_of_move_pv)
+        copied_vertical_list_of_move_pv = list(self._frontward_vertical_list_of_move_pv)
         copied_vertical_list_of_move_pv.append(move_pv)
-        copied_vertical_list_of_cap_pt_pv = list(self._vertical_list_of_cap_pt_pv)
+        copied_vertical_list_of_cap_pt_pv = list(self._frontward_vertical_list_of_cap_pt_pv)
         copied_vertical_list_of_cap_pt_pv.append(cap_pt_pv)
-        copied_vertical_list_of_value_pv = list(self._vertical_list_of_value_pv)
+        copied_vertical_list_of_value_pv = list(self._frontward_vertical_list_of_value_pv)
         copied_vertical_list_of_value_pv.append(value_pv)
         copied_vertical_list_of_backwards_plot_model_pv = self._create_copied_bpm_list()
         copied_vertical_list_of_backwards_plot_model_pv.append(backwards_plot_model_pv)
-        copied_vertical_list_of_comment_pv = list(self._vertical_list_of_comment_pv)
-        copied_vertical_list_of_comment_pv.append(comment_pv)
+        copied_frontward_vertical_list_of_comment_pv = list(self._frontward_vertical_list_of_comment_pv)
+        copied_frontward_vertical_list_of_comment_pv.append(frontward_comment_pv)
+        copied_backward_vertical_list_of_comment_pv = list(self._backward_vertical_list_of_comment_pv)
+        copied_backward_vertical_list_of_comment_pv.append(backward_comment_pv)
 
         # NOTE リストはコピー渡し。
         return PrincipalVariationModel(
-                vertical_list_of_move_pv                    = copied_vertical_list_of_move_pv,
-                vertical_list_of_cap_pt_pv                  = copied_vertical_list_of_cap_pt_pv,
-                vertical_list_of_value_pv                   = copied_vertical_list_of_value_pv,
+                frontward_vertical_list_of_move_pv          = copied_vertical_list_of_move_pv,
+                frontward_vertical_list_of_cap_pt_pv        = copied_vertical_list_of_cap_pt_pv,
+                frontward_vertical_list_of_value_pv         = copied_vertical_list_of_value_pv,
                 vertical_list_of_backwards_plot_model_pv    = copied_vertical_list_of_backwards_plot_model_pv,
-                vertical_list_of_comment_pv                 = copied_vertical_list_of_comment_pv,
+                frontward_vertical_list_of_comment_pv       = copied_frontward_vertical_list_of_comment_pv,
+                backward_vertical_list_of_comment_pv        = copied_backward_vertical_list_of_comment_pv,
                 out_of_termination_is_mars                  = self._out_of_termination_is_mars,
                 out_of_termination_is_gote                  = self._out_of_termination_is_gote,
                 out_of_termination_state                    = self._out_of_termination_state,
@@ -231,7 +254,7 @@ class PrincipalVariationModel:
     # def is_mars_at_peek(self):
     #     """最後の要素は火星か？
     #     """
-    #     if len(self._vertical_list_of_move_pv) % 2 == 0:
+    #     if len(self._frontward_vertical_list_of_move_pv) % 2 == 0:
     #         return False
     #     return True
 
@@ -240,7 +263,7 @@ class PrincipalVariationModel:
     # def is_gote_at_peek(self):
     #     """最後の要素は後手か？
     #     """
-    #     if len(self._vertical_list_of_move_pv) % 2 == 0:
+    #     if len(self._frontward_vertical_list_of_move_pv) % 2 == 0:
     #         return not self.is_gote_at_first
     #     return self.is_gote_at_first
 

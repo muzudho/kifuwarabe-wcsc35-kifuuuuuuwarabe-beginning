@@ -28,9 +28,9 @@ class O2CounterSearchRoutines(SearchRoutines):
 
             # 履歴を全部指す前
             # ----------------
-            my_move                         = pv.last_move_pv
-            cap_pt                          = pv.last_cap_pt_pv
-            piece_exchange_value_on_earth   = pv.last_value_pv
+            my_move                         = pv.leafer_move_pv
+            cap_pt                          = pv.leafer_cap_pt_pv
+            piece_exchange_value_on_earth   = pv.leafer_value_pv
 
             # 履歴を全部指す
             # --------------
@@ -172,8 +172,8 @@ class O2CounterSearchRoutines(SearchRoutines):
 
             # １階の手は、全ての手の読み筋を記憶します。最善手は選びません。
             pv.rooter_backwards_plot_model_pv.append_move_from_back(
-                    move                = pv.last_move_pv,
-                    capture_piece_type  = pv.last_cap_pt_pv,
+                    move                = pv.leafer_move_pv,
+                    capture_piece_type  = pv.leafer_cap_pt_pv,
                     best_value          = pv.rooter_backwards_plot_model_pv.get_exchange_value_on_earth(),
                     hint                = '')
 

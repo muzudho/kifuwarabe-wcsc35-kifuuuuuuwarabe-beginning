@@ -297,12 +297,13 @@ def _main_search_at_first(remaining_moves, search_context_model):
 
     # ［ゼロPV］。［指し手］が追加されなければ、［終端外］がセットされるだけのものです。
     pv = PrincipalVariationModel(
-            vertical_list_of_move_pv    =[],
-            vertical_list_of_cap_pt_pv  =[],
-            vertical_list_of_value_pv   =[],
+            frontward_vertical_list_of_move_pv    =[],
+            frontward_vertical_list_of_cap_pt_pv  =[],
+            frontward_vertical_list_of_value_pv   =[],
             # 終端外が有る分、他のリストより要素１個多い。＜水平線＞がデフォルト値。
             vertical_list_of_backwards_plot_model_pv=[SearchRoutines.create_backwards_plot_model_at_horizon(search_context_model=search_context_model)],
-            vertical_list_of_comment_pv = [''],
+            frontward_vertical_list_of_comment_pv = [''],
+            backward_vertical_list_of_comment_pv = [''],
             out_of_termination_is_mars  = False,
             out_of_termination_is_gote  = search_context_model.gymnasium.table.turn == cshogi.WHITE,
             out_of_termination_state    = constants.out_of_termination_state.HORIZON)
@@ -343,17 +344,17 @@ def _main_search_at_first(remaining_moves, search_context_model):
         next_pv_list = []
 
         for terminated_pv in terminated_pv_list_1:
-            if constants.value.MAYBE_EARTH_WIN_VALUE <= terminated_pv.last_value_pv:
+            if constants.value.MAYBE_EARTH_WIN_VALUE <= terminated_pv.leafer_value_pv:
                 next_pv_list.append(terminated_pv)
 
         if len(next_pv_list) == 0:
             for terminated_pv in terminated_pv_list_2:
-                if constants.value.MAYBE_EARTH_WIN_VALUE <= terminated_pv.last_value_pv:
+                if constants.value.MAYBE_EARTH_WIN_VALUE <= terminated_pv.leafer_value_pv:
                     next_pv_list.append(terminated_pv)
 
         if len(next_pv_list) == 0:
             for live_pv in next_pv_list:
-                if constants.value.MAYBE_EARTH_WIN_VALUE <= live_pv.last_value_pv:
+                if constants.value.MAYBE_EARTH_WIN_VALUE <= live_pv.leafer_value_pv:
                     next_pv_list.append(live_pv)
 
 
@@ -379,7 +380,7 @@ def _eliminate_not_capture_not_positive(pv_list, gymnasium):
     # まず、水平枝の中の最高点を調べます。
     best_exchange_value = constants.value.NOTHING_CAPTURE_MOVE
     for pv in pv_list:
-        value_on_earth = pv.last_value_pv
+        value_on_earth = pv.leafer_value_pv
         if best_exchange_value < value_on_earth:
             best_exchange_value = value_on_earth
 
@@ -395,7 +396,7 @@ def _eliminate_not_capture_not_positive(pv_list, gymnasium):
                 value   = pv)
 
         # （１）駒を取らない手で非正の手（最高点のケースを除く）。
-        value_on_earth = pv.last_value_pv
+        value_on_earth = pv.leafer_value_pv
         if not pv.rooter_backwards_plot_model_pv.is_capture_at_last and value_on_earth < 1 and value_on_earth != best_exchange_value:
             if value_on_earth == 0:
                 exists_zero_value_move = True
