@@ -6,25 +6,36 @@ class PrincipalVariationModel:
     """
 
 
-    def __init__(self, vertical_list_of_move_pv, vertical_list_of_cap_pt_pv, vertical_list_of_value_pv, vertical_list_of_backwards_plot_model_pv, is_terminate=False):
+    def __init__(
+            self,
+            vertical_list_of_move_pv,
+            vertical_list_of_cap_pt_pv,
+            vertical_list_of_value_pv,
+            vertical_list_of_backwards_plot_model_pv,
+            vertical_list_of_comment_pv,
+            is_terminate=False):
         """
         Parameters
         ----------
         vertical_list_of_move_pv : list<int>
-            シーショーギの指し手のリスト。
+            ［シーショーギの指し手］の履歴。
         vertical_list_of_cap_pt_pv : list<int>
-            取った駒の種類のリスト。
+            ［取った駒の種類］の履歴。
         vertical_list_of_value_pv : list<int>
-            ［取った駒の点数］のリスト。地球視点。
+            ［取った駒の点数］の履歴。地球視点。
         vertical_list_of_backwards_plot_model_pv : list<BackwardsPlotModel>
-            ［後ろ向き探索の読み筋］のリスト。
+            ［後ろ向き探索の読み筋］の履歴。
+            ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
+        vertical_list_of_comment_pv : list<string>
+            ［後ろ向き探索の指し手のコメント］の履歴。
             ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
         """
         self._vertical_list_of_move_pv = vertical_list_of_move_pv
         self._vertical_list_of_cap_pt_pv = vertical_list_of_cap_pt_pv
         self._vertical_list_of_value_pv = vertical_list_of_value_pv
         self._vertical_list_of_backwards_plot_model_pv = vertical_list_of_backwards_plot_model_pv
-        self._backwards_plot_model_pv = vertical_list_of_backwards_plot_model_pv[-1]   # TODO 廃止
+        self._backwards_plot_model_pv = vertical_list_of_backwards_plot_model_pv[-1]   # TODO 廃止方針
+        self._vertical_list_of_comment_pv = vertical_list_of_comment_pv
         self._is_terminate = is_terminate
 
 
@@ -61,6 +72,14 @@ class PrincipalVariationModel:
         return self._vertical_list_of_backwards_plot_model_pv
 
 
+    @property
+    def vertical_list_of_comment_pv(self):
+        """［後ろ向き探索の指し手のコメント］の履歴。
+        ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
+        """
+        return self._vertical_list_of_comment_pv
+
+
     #####################
     # MARK: １手目に近い方
     #####################
@@ -92,6 +111,13 @@ class PrincipalVariationModel:
         """１手目に近い方の［後ろ向き探索の読み筋モデル］。
         """
         return self._vertical_list_of_backwards_plot_model_pv[-1]
+
+
+    @property
+    def rooter_comment_pv(self):
+        """１手目に近い方の［後ろ向き探索の指し手のコメント］。
+        """
+        return self._vertical_list_of_comment_pv[-1]
 
 
     ##############
@@ -134,10 +160,18 @@ class PrincipalVariationModel:
                 vertical_list_of_cap_pt_pv                  = list(self._vertical_list_of_cap_pt_pv),
                 vertical_list_of_value_pv                   = list(self._vertical_list_of_value_pv),
                 vertical_list_of_backwards_plot_model_pv    = self._create_copied_bpm_list(),
+                vertical_list_of_comment_pv                 = list(self._vertical_list_of_comment_pv),
                 is_terminate                                = self._is_terminate)
 
 
-    def new_and_append_pv(self, move_pv, cap_pt_pv, value_pv, backwards_plot_model_pv, replace_is_terminate):
+    def new_and_append_pv(
+            self,
+            move_pv,
+            cap_pt_pv,
+            value_pv,
+            backwards_plot_model_pv,
+            comment_pv,
+            replace_is_terminate):
         copied_vertical_list_of_move_pv = list(self._vertical_list_of_move_pv)
         copied_vertical_list_of_move_pv.append(move_pv)
         copied_vertical_list_of_cap_pt_pv = list(self._vertical_list_of_cap_pt_pv)
@@ -146,6 +180,8 @@ class PrincipalVariationModel:
         copied_vertical_list_of_value_pv.append(value_pv)
         copied_vertical_list_of_backwards_plot_model_pv = self._create_copied_bpm_list()
         copied_vertical_list_of_backwards_plot_model_pv.append(backwards_plot_model_pv)
+        copied_vertical_list_of_comment_pv = list(self._vertical_list_of_comment_pv)
+        copied_vertical_list_of_comment_pv.append(comment_pv)
 
         # NOTE リストはコピー渡し。
         return PrincipalVariationModel(
@@ -153,6 +189,7 @@ class PrincipalVariationModel:
                 vertical_list_of_cap_pt_pv                  = copied_vertical_list_of_cap_pt_pv,
                 vertical_list_of_value_pv                   = copied_vertical_list_of_value_pv,
                 vertical_list_of_backwards_plot_model_pv    = copied_vertical_list_of_backwards_plot_model_pv,
+                vertical_list_of_comment_pv                 = copied_vertical_list_of_comment_pv,
                 is_terminate                                = replace_is_terminate)
 
 
