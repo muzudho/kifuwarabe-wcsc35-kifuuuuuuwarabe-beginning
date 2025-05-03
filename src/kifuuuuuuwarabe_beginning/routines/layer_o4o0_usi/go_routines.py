@@ -386,41 +386,41 @@ def _eliminate_not_capture_not_positive(pv_list, gymnasium):
 
         # ［後ろ向き探索］中の［根に近い方の指し手］
         gymnasium.health_check_go_model.append_health(
-                move    = pv.deprecated_rooter_backwards_plot_model_in_backward_pv.peek_move,
+                move    = pv.peek_move,
                 name    = 'QS_principal_variation',
                 value   = pv)
 
         # （１）駒を取らない手で非正の手（最高点のケースを除く）。
         value_on_earth = pv.leafer_value_in_frontward_pv
-        if not pv.deprecated_rooter_backwards_plot_model_in_backward_pv.is_capture_at_last and value_on_earth < 1 and value_on_earth != best_exchange_value:
+        if not pv.is_capture_at_last and value_on_earth < 1 and value_on_earth != best_exchange_value:
             if value_on_earth == 0:
                 exists_zero_value_move = True
             
             gymnasium.health_check_go_model.append_health(
-                    move    = pv.deprecated_rooter_backwards_plot_model_in_backward_pv.peek_move,
+                    move    = pv.peek_move,
                     name    = 'QS_eliminate171',
-                    value   = f"{pv.deprecated_rooter_backwards_plot_model_in_backward_pv.stringify_2():10} not_cap_not_posite")
+                    value   = f"{pv.stringify_2():10} not_cap_not_posite")
 
         # （２）最高点でない手。
         elif value_on_earth < best_exchange_value:
             gymnasium.health_check_go_model.append_health(
-                    move    = pv.deprecated_rooter_backwards_plot_model_in_backward_pv.peek_move,
+                    move    = pv.peek_move,
                     name    = 'QS_eliminate171',
-                    value   = f"{pv.deprecated_rooter_backwards_plot_model_in_backward_pv.stringify_2():10} not_best")
+                    value   = f"{pv.stringify_2():10} not_best")
 
         # （３）リスクヘッジにならない手
         elif exists_zero_value_move and value_on_earth < 0:
             gymnasium.health_check_go_model.append_health(
-                    move    = pv.deprecated_rooter_backwards_plot_model_in_backward_pv.peek_move,
+                    move    = pv.peek_move,
                     name    = 'QS_eliminate171',
-                    value   = f"{pv.deprecated_rooter_backwards_plot_model_in_backward_pv.stringify_2():10} not_risk_hedge")
+                    value   = f"{pv.stringify_2():10} not_risk_hedge")
 
         # それ以外の手は選択します。
         else:
-            alice_s_move_list.append(pv.deprecated_rooter_backwards_plot_model_in_backward_pv.peek_move)
+            alice_s_move_list.append(pv.peek_move)
             gymnasium.health_check_go_model.append_health(
-                    move    = pv.deprecated_rooter_backwards_plot_model_in_backward_pv.peek_move,
+                    move    = pv.peek_move,
                     name    = 'QS_eliminate171',
-                    value   = f"{pv.deprecated_rooter_backwards_plot_model_in_backward_pv.stringify_2():10} ok")
+                    value   = f"{pv.stringify_2():10} ok")
 
     return alice_s_move_list

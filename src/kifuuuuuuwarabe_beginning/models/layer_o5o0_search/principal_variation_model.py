@@ -337,6 +337,20 @@ class PrincipalVariationModel:
                 vertical_list_of_backwards_plot_model_arg   = self._create_copied_bpm_list())
 
 
+    def stringify_2(self):
+        return self.deprecated_rooter_backwards_plot_model_in_backward_pv.stringify_2()
+
+
+    @property
+    def peek_move(self):
+        return self.deprecated_rooter_backwards_plot_model_in_backward_pv.peek_move
+
+
+    @property
+    def is_capture_at_last(self):
+        return self.deprecated_rooter_backwards_plot_model_in_backward_pv.is_capture_at_last
+
+
     ###############
     # MARK: 廃止方針
     ###############
@@ -356,11 +370,6 @@ class PrincipalVariationModel:
         TODO 廃止方針。
         """
         return self._deprecated_vertical_list_of_backwards_plot_model_pv[-1]
-
-
-    # @deprecated_rooter_backwards_plot_model_in_backward_pv.setter
-    # def deprecated_rooter_backwards_plot_model_in_backward_pv(self, value):
-    #     self._deprecated_vertical_list_of_backwards_plot_model_pv[-1] = value
 
 
     def set_deprecated_rooter_backwards_plot_model_in_backward_pv(self, value):
