@@ -168,7 +168,7 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
         #     return SearchRoutines.create_backwards_plot_model_at_no_candidates(info_depth=INFO_DEPTH, search_context_model=search_context_model)
 
         # # 読み筋に今回の手を付け加える。（ TODO 駒得点も付けたい）
-        # best_pv.deprecated_rooter_backwards_plot_model_in_backward_pv.append_move_from_back(
+        # best_pv.append_move_in_backward_pv(
         #         move                = best_move,
         #         capture_piece_type  = best_move_cap_pt,
         #         best_value          = best_value,

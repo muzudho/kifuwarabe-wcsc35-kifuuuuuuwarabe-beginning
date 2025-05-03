@@ -250,7 +250,7 @@ class O1RootSearchRoutines(SearchRoutines):
             # ----------------------------------------------------------
 
             # １階の手は、全ての手の読み筋を記憶します。最善手は選びません。
-            pv.deprecated_rooter_backwards_plot_model_in_backward_pv.append_move_from_back(
+            pv.append_move_in_backward_pv(
                     move                = pv.leafer_move_in_frontward_pv,
                     capture_piece_type  = pv.leafer_cap_pt_in_frontward_pv,
                     best_value          = pv.get_root_value_in_backward_pv(),

@@ -241,7 +241,7 @@ class PrincipalVariationModel:
     # MARK: 前向き探索
     ##################
 
-    def new_and_append_pv_in_frontward(
+    def new_and_append_in_frontward_pv(
             self,
             move_arg,
             cap_pt_arg,
@@ -249,7 +249,7 @@ class PrincipalVariationModel:
             backwards_plot_model_arg,
             frontward_comment_arg,
             replace_is_terminate_arg):
-        """前向き探索。
+        """［前向き探索］中に要素追加。
         """
         copied_frontward_vertical_list_of_move_pv = list(self._frontward_vertical_list_of_move_pv)
         copied_frontward_vertical_list_of_move_pv.append(move_arg)
@@ -276,6 +276,20 @@ class PrincipalVariationModel:
                 out_of_termination_comment_arg              = '',
                 is_terminate_arg                            = replace_is_terminate_arg,
                 vertical_list_of_backwards_plot_model_arg   = copied_vertical_list_of_backwards_plot_model_pv)
+
+
+    ###################
+    # MARK: 後ろ向き探索
+    ###################
+
+    def append_move_in_backward_pv(self, move, capture_piece_type, best_value, hint):
+        """［後ろ向き探索］中に要素追加。
+        """
+        self.deprecated_rooter_backwards_plot_model_in_backward_pv.append_move_from_back(
+                move                = move,
+                capture_piece_type  = capture_piece_type,
+                best_value          = best_value,
+                hint                = hint)
 
 
     #####################

@@ -172,7 +172,7 @@ class O2CounterSearchRoutines(SearchRoutines):
             # ----------------------------------------------------------
 
             # １階の手は、全ての手の読み筋を記憶します。最善手は選びません。
-            pv.deprecated_rooter_backwards_plot_model_in_backward_pv.append_move_from_back(
+            pv.append_move_in_backward_pv(
                     move                = pv.leafer_move_in_frontward_pv,
                     capture_piece_type  = pv.leafer_cap_pt_in_frontward_pv,
                     best_value          = pv.get_root_value_in_backward_pv(),
@@ -199,7 +199,7 @@ class O2CounterSearchRoutines(SearchRoutines):
         #     return SearchRoutines.create_backwards_plot_model_at_no_candidates(info_depth=INFO_DEPTH, search_context_model=search_context_model)
 
         # # 今回の手を付け加える。
-        # best_pv.deprecated_rooter_backwards_plot_model_in_backward_pv.append_move_from_back(
+        # best_pv.append_move_in_backward_pv(
         #         move                = best_move,
         #         capture_piece_type  = best_move_cap_pt,
         #         best_value          = best_value,
