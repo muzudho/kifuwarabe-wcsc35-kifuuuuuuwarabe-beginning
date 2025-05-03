@@ -18,7 +18,7 @@ class PrincipalVariationModel:
             ［取った駒の点数］のリスト。地球視点。
         vertical_list_of_backwards_plot_model_pv : list<BackwardsPlotModel>
             ［後ろ向き探索の読み筋］のリスト。
-            終端外が有る分、他のリストより要素１個多い。
+            ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
         """
         self._vertical_list_of_move_pv = vertical_list_of_move_pv
         self._vertical_list_of_cap_pt_pv = vertical_list_of_cap_pt_pv
@@ -28,53 +28,64 @@ class PrincipalVariationModel:
         self._is_terminate = is_terminate
 
 
-    ####################
-    # MARK: 最後の指し手
-    ####################
-
-    @property
-    def last_move_pv(self):
-        """最終の子の指し手。
-        """
-        return self._vertical_list_of_move_pv[-1]
-
-
-    @property
-    def last_cap_pt_pv(self):
-        """最後の取った駒。
-        """
-        return self._vertical_list_of_cap_pt_pv[-1]
-
-
-    @property
-    def last_value_pv(self):
-        """評価値。
-        """
-        if len(self._vertical_list_of_value_pv) == 0:
-            return constants.value.ZERO
-        return self._vertical_list_of_value_pv[-1]
-
+    #######################
+    # MARK: 縦の指し手リスト
+    #######################
 
     @property
     def vertical_list_of_move_pv(self):
-        """指し手の履歴。
+        """［指し手］の履歴。
         """
         return self._vertical_list_of_move_pv
 
 
     @property
     def vertical_list_of_cap_pt_pv(self):
-        """取った駒の種類のリスト。
+        """［取った駒の種類］の履歴。
         """
         return self._vertical_list_of_cap_pt_pv
 
 
     @property
+    def vertical_list_of_value_pv(self):
+        """［局面評価値］の履歴。
+        """
+        return self._vertical_list_of_value_pv
+
+
+    @property
     def vertical_list_of_backwards_plot_model_pv(self):
-        """［後ろ向き探索の読み筋モデル］のリスト。
+        """［後ろ向き探索の読み筋モデル］の履歴。
+        ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
         """
         return self._vertical_list_of_backwards_plot_model_pv
 
+
+    #####################
+    # MARK: １手目に近い方
+    #####################
+
+    @property
+    def last_move_pv(self):
+        """１手目に近い方の［指し手］。
+        """
+        return self._vertical_list_of_move_pv[-1]
+
+
+    @property
+    def last_cap_pt_pv(self):
+        """１手目に近い方の［最後に取った駒］。
+        """
+        return self._vertical_list_of_cap_pt_pv[-1]
+
+
+    @property
+    def last_value_pv(self):
+        """１手目に近い方の［局面評価値］。
+        """
+        if len(self._vertical_list_of_value_pv) == 0:
+            return constants.value.ZERO
+        return self._vertical_list_of_value_pv[-1]
 
     @property
     def rooter_backwards_plot_model_pv(self):
@@ -82,6 +93,10 @@ class PrincipalVariationModel:
         """
         return self._vertical_list_of_backwards_plot_model_pv[-1]
 
+
+    ##############
+    # MARK: その他
+    ##############
 
     @rooter_backwards_plot_model_pv.setter
     def rooter_backwards_plot_model_pv(self, value):
