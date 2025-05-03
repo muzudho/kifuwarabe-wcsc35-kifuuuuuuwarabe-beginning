@@ -13,6 +13,8 @@ class PrincipalVariationModel:
             vertical_list_of_value_pv,
             vertical_list_of_backwards_plot_model_pv,
             vertical_list_of_comment_pv,
+            out_of_termination_is_mars,
+            out_of_termination_is_gote,
             is_terminate=False):
         """
         Parameters
@@ -29,6 +31,10 @@ class PrincipalVariationModel:
         vertical_list_of_comment_pv : list<string>
             ［後ろ向き探索の指し手のコメント］の履歴。
             ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
+        out_of_termination_is_mars : bool
+            ［終端外］は火星か。（後ろ向きに設定します）
+        out_of_termination_is_gote : bool
+            ［終端外］は後手か。（後ろ向きに設定します）
         """
         self._vertical_list_of_move_pv = vertical_list_of_move_pv
         self._vertical_list_of_cap_pt_pv = vertical_list_of_cap_pt_pv
@@ -36,6 +42,8 @@ class PrincipalVariationModel:
         self._vertical_list_of_backwards_plot_model_pv = vertical_list_of_backwards_plot_model_pv
         self._backwards_plot_model_pv = vertical_list_of_backwards_plot_model_pv[-1]   # TODO 廃止方針
         self._vertical_list_of_comment_pv = vertical_list_of_comment_pv
+        self._out_of_termination_is_mars = out_of_termination_is_mars
+        self._out_of_termination_is_gote = out_of_termination_is_gote
         self._is_terminate = is_terminate
 
 
@@ -120,14 +128,26 @@ class PrincipalVariationModel:
         return self._vertical_list_of_comment_pv[-1]
 
 
-    ##############
-    # MARK: その他
-    ##############
-
     @rooter_backwards_plot_model_pv.setter
     def rooter_backwards_plot_model_pv(self, value):
         self._vertical_list_of_backwards_plot_model_pv[-1] = value
 
+
+    ##############
+    # MARK: 終端外
+    ##############
+
+    def out_of_termination_is_mars(self):
+        return self._out_of_termination_is_mars
+
+
+    def out_of_termination_is_gote(self):
+        return self._out_of_termination_is_gote
+
+
+    ##############
+    # MARK: その他
+    ##############
 
     @property
     def is_terminate(self):
@@ -161,6 +181,8 @@ class PrincipalVariationModel:
                 vertical_list_of_value_pv                   = list(self._vertical_list_of_value_pv),
                 vertical_list_of_backwards_plot_model_pv    = self._create_copied_bpm_list(),
                 vertical_list_of_comment_pv                 = list(self._vertical_list_of_comment_pv),
+                out_of_termination_is_mars                  = self._out_of_termination_is_mars,
+                out_of_termination_is_gote                  = self._out_of_termination_is_gote,
                 is_terminate                                = self._is_terminate)
 
 
@@ -190,6 +212,8 @@ class PrincipalVariationModel:
                 vertical_list_of_value_pv                   = copied_vertical_list_of_value_pv,
                 vertical_list_of_backwards_plot_model_pv    = copied_vertical_list_of_backwards_plot_model_pv,
                 vertical_list_of_comment_pv                 = copied_vertical_list_of_comment_pv,
+                out_of_termination_is_mars                  = self._out_of_termination_is_mars,
+                out_of_termination_is_gote                  = self._out_of_termination_is_gote,
                 is_terminate                                = replace_is_terminate)
 
 

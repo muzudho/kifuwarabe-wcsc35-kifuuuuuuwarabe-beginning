@@ -29,9 +29,9 @@ class O1RootSearchRoutines(SearchRoutines):
 
         Returns
         -------
-        terminated_pv_list : list<PrincipalVariationModel>
+        terminated_pv_list : list<P rincipalVariationModel>
             終了したPV一覧。
-        live_pv_list : list<PrincipalVariationModel>
+        live_pv_list : list<P rincipalVariationModel>
             残っているPV一覧。
         """
 
@@ -59,9 +59,9 @@ class O1RootSearchRoutines(SearchRoutines):
 
         Returns
         -------
-        terminated_pv_list : list<PrincipalVariationModel>
+        terminated_pv_list : list<P rincipalVariationModel>
             終了したPV一覧。
-        live_pv_list : list<PrincipalVariationModel>
+        live_pv_list : list<P rincipalVariationModel>
             残っているPV一覧。
         """
 
@@ -148,7 +148,7 @@ class O1RootSearchRoutines(SearchRoutines):
 
         Parameters
         ----------
-        parent_pv : PrincipalVariationModel
+        parent_pv : P rincipalVariationModel
             親手。
 
         Returns
@@ -171,12 +171,12 @@ class O1RootSearchRoutines(SearchRoutines):
 
         Parameters
         ----------
-        pv_list : list<PrincipalVariationModel>
+        pv_list : list<P rincipalVariationModel>
             ［読み筋］のリスト。
 
         Returns
         -------
-        pv_list : list<PrincipalVariationModel>
+        pv_list : list<P rincipalVariationModel>
             有力な読み筋。棋譜のようなもの。
             枝が増えて、合法手の数より多くなることがあることに注意。
         """
