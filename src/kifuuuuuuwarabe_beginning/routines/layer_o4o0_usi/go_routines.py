@@ -297,7 +297,7 @@ def _main_search_at_first(remaining_moves, search_context_model):
             out_of_termination_is_gote_arg              = search_context_model.gymnasium.table.turn == cshogi.WHITE,
             # TODO 廃止方針。
             # 終端外が有る分、他のリストより要素１個多い。＜水平線＞がデフォルト値。
-            vertical_list_of_backwards_plot_model_arg   = [SearchRoutines.create_backwards_plot_model_at_horizon(search_context_model=search_context_model)])
+            vertical_list_of_backwards_plot_model_arg   = [PrincipalVariationModel.create_backwards_plot_model_at_horizon(search_context_model=search_context_model)])
 
     next_pv_list = [pv]
 

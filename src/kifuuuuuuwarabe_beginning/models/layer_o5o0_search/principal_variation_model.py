@@ -336,19 +336,27 @@ class PrincipalVariationModel:
         self.set_search_is_over_pv(True)
 
 
-    def setup_to_horizon(self, search_context_model):
+    @staticmethod
+    def create_backwards_plot_model_at_horizon(search_context_model):
         """読みの水平線。
         水平線はデフォルトの状態なので、深さは設定しません。
         """
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜水平線＞")
-        obj_1 = BackwardsPlotModel(
-                is_mars_at_out_of_termination               = search_context_model.gymnasium.is_mars,
-                is_gote_at_out_of_termination               = search_context_model.gymnasium.table.is_gote,
-                out_of_termination_state                    = constants.out_of_termination_state.HORIZON,
-                hint_list                                   = [],
-                move_list                                   = [],
-                cap_list                                    = [],
+        return BackwardsPlotModel(
+                is_mars_at_out_of_termination   = search_context_model.gymnasium.is_mars,
+                is_gote_at_out_of_termination   = search_context_model.gymnasium.table.is_gote,
+                out_of_termination_state        = constants.out_of_termination_state.HORIZON,
+                hint_list                       = [],
+                move_list                       = [],
+                cap_list                        = [],
                 list_of_accumulate_exchange_value_on_earth  = [])
+
+
+    def setup_to_horizon(self, search_context_model):
+        """読みの水平線。
+        水平線はデフォルトの状態なので、深さは設定しません。
+        """
+        obj_1 = PrincipalVariationModel.create_backwards_plot_model_at_horizon(search_context_model=search_context_model)
         self.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
         self.set_search_is_over_pv(True)
 
