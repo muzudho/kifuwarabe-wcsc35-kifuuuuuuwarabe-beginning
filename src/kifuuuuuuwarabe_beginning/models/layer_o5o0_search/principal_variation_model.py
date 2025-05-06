@@ -23,7 +23,7 @@ class PrincipalVariationModel:
             TODO 廃止方針。
         """
 
-        return PrincipalVariationModel(
+        obj_1 = PrincipalVariationModel(
                 frontward_vertical_list_of_move_arg         = [],
                 frontward_vertical_list_of_cap_pt_arg       = [],
                 frontward_vertical_list_of_value_arg        = [],
@@ -38,6 +38,7 @@ class PrincipalVariationModel:
                 # TODO 廃止方針。
                 # 終端外が有る分、他のリストより要素１個多い。＜水平線＞がデフォルト値。
                 vertical_list_of_backwards_plot_model_arg   = [PrincipalVariationModel.create_backwards_plot_model_at_horizon(search_context_model=search_context_model)])
+        return obj_1
 
 
     def __init__(
