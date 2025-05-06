@@ -83,43 +83,6 @@ class SearchRoutines:
 
 
     @staticmethod
-    def create_backwards_plot_model_at_mate_move_in_1_ply(info_depth, mate_move, search_context_model):
-        """一手詰まされ。
-        """
-        dst_sq_obj = SquareModel(cshogi.move_to(mate_move))           # ［移動先マス］
-        cap_pt = search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # 取った駒種類 NOTE 移動する前に、移動先の駒を取得すること。
-        piece_exchange_value_on_earth = PieceValuesModel.get_piece_exchange_value_on_earth(
-                pt          = cap_pt,
-                is_mars     = search_context_model.gymnasium.is_mars)
-        
-        search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=mate_move, cap_pt=cap_pt, value=piece_exchange_value_on_earth, comment='＜一手詰め＞')
-        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
-
-        is_mars_at_out_of_termination = not search_context_model.gymnasium.is_mars    # ［詰む］のは、もう１手先だから not する。
-
-        best_plot_model = BackwardsPlotModel(
-                is_mars_at_out_of_termination               = is_mars_at_out_of_termination,     
-                is_gote_at_out_of_termination               = search_context_model.gymnasium.table.is_gote,
-                out_of_termination_state                    = constants.out_of_termination_state.RESIGN,
-                hint_list                                   = [],
-                move_list                                   = [],
-                cap_list                                    = [],
-                list_of_accumulate_exchange_value_on_earth  = [])
-    
-        # 今回の手を付け加える。
-        if is_mars_at_out_of_termination:
-            best_value = constants.value.BIG_VALUE        # 火星の負け
-        else:
-            best_value = constants.value.SMALL_VALUE      # 地球の負け
-
-        best_plot_model.append_move_from_back(
-                move                = mate_move,
-                capture_piece_type  = cap_pt,
-                best_value          = best_value,
-                hint                = f"{info_depth}階で{Mars.japanese(is_mars_at_out_of_termination)}は一手詰まされ")
-        return best_plot_model
-
-    @staticmethod
     def create_backwards_plot_model_at_horizon(search_context_model):
         """読みの水平線。
         水平線はデフォルトの状態なので、深さは設定しません。
@@ -298,9 +261,7 @@ class SearchRoutines:
                 value_pt    = PieceValuesModel.get_piece_exchange_value_on_earth(
                         pt          = cap_pt,
                         is_mars     = search_context_model.gymnasium.is_mars)
-                obj_1 = SearchRoutines.create_backwards_plot_model_at_mate_move_in_1_ply(info_depth=info_depth, mate_move=mate_move, search_context_model=search_context_model)
-                parent_pv.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
-                parent_pv.set_search_is_over_pv(True)
+                parent_pv.setup_to_mate_move_in_1_ply(info_depth=info_depth, mate_move=mate_move, search_context_model=search_context_model)
                 return
 
         if search_context_model.gymnasium.table.is_nyugyoku():
