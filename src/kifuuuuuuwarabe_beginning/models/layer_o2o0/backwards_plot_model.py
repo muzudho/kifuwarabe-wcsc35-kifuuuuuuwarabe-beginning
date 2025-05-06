@@ -41,7 +41,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
     def __init__(
             self,
-            is_gote_at_out_of_termination,
             out_of_termination_state,
             hint_list,
             move_list,
@@ -51,16 +50,11 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
         Parameters
         ----------
-        i s_mars_at_out_of_termination_arg : bool
-            ［葉局面］＝［終端外］手番は対戦相手か。
-        is_gote_at_out_of_termination : bool
-            ［葉局面］＝［終端外］手番は後手か。
         out_of_termination_state : int
             ［終端外］
         hint_list : list<str>
             デバッグ用文字列
         """
-        self._is_gote_at_out_of_termination = is_gote_at_out_of_termination
         self._out_of_termination_state      = out_of_termination_state
         self._hint_list                     = hint_list
         self._move_list                     = move_list
@@ -68,24 +62,17 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         self._list_of_accumulate_exchange_value_on_earth = list_of_accumulate_exchange_value_on_earth   # 地球から見た、取った駒の交換値。
 
 
-    @property
-    def is_gote_at_out_of_termination(self):
-        """木構造の葉ノードの次で後手か。
-        """
-        return self._is_gote_at_out_of_termination
-
-
-    def is_mars_at_peek(self, out_of_termination_is_mars):
+    def is_mars_at_peek(self, out_of_termination_is_mars_arg):
         if len(self._move_list) % 2 == 0:
-            return out_of_termination_is_mars
-        return not out_of_termination_is_mars
+            return out_of_termination_is_mars_arg
+        return not out_of_termination_is_mars_arg
 
 
     @property
-    def is_gote_at_peek(self):
+    def is_gote_at_peek(self, out_of_termination_is_gote_arg):
         if len(self._move_list) % 2 == 0:
-            return self._is_gote_at_out_of_termination
-        return not self._is_gote_at_out_of_termination
+            return out_of_termination_is_gote_arg
+        return not out_of_termination_is_gote_arg
 
 
     @property
@@ -270,7 +257,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
     def copy_bpm(self):
         return BackwardsPlotModel(
-                is_gote_at_out_of_termination               = self._is_gote_at_out_of_termination,
                 out_of_termination_state                    = self._out_of_termination_state,
                 hint_list                                   = list(self._hint_list),
                 move_list                                   = list(self._move_list),

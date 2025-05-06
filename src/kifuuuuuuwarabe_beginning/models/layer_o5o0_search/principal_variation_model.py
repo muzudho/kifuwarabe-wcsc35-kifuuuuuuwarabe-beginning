@@ -102,7 +102,7 @@ class PrincipalVariationModel:
         # ［終端外］で設定する要素。
         # TODO ［終端外］オブジェクトというまとまりにするか？
         self._out_of_termination_is_mars_pv             = out_of_termination_is_mars_arg
-        self._out_of_termination_is_gote                = out_of_termination_is_gote_arg
+        self._out_of_termination_is_gote_pv             = out_of_termination_is_gote_arg
         self._out_of_termination_state                  = out_of_termination_state_arg
         self._out_of_termination_comment                = out_of_termination_comment_arg
         self._search_is_over_pv                         = search_is_over_arg
@@ -232,7 +232,7 @@ class PrincipalVariationModel:
     def out_of_termination_is_gote(self):
         """［終端外］は後手か？
         """
-        return self._out_of_termination_is_gote
+        return self._out_of_termination_is_gote_pv
 
 
     def out_of_termination_state(self):
@@ -250,8 +250,8 @@ class PrincipalVariationModel:
     def setup_to_nyugyoku_win(self, search_context_model):
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜入玉宣言勝ち＞')
         self._out_of_termination_is_mars_pv = search_context_model.gymnasium.is_mars
+        self._out_of_termination_is_gote_pv = search_context_model.gymnasium.table.is_gote
         obj_1 = BackwardsPlotModel(
-                is_gote_at_out_of_termination               = search_context_model.gymnasium.table.is_gote,
                 out_of_termination_state                    = constants.out_of_termination_state.NYUGYOKU_WIN,
                 hint_list                                   = [],
                 move_list                                   = [],
@@ -264,8 +264,8 @@ class PrincipalVariationModel:
     def setup_to_no_candidates(self, info_depth, search_context_model):
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜候補手無し[深={info_depth}]＞")
         self._out_of_termination_is_mars_pv = search_context_model.gymnasium.is_mars
+        self._out_of_termination_is_gote_pv = search_context_model.gymnasium.table.is_gote
         obj_1 = BackwardsPlotModel(
-                is_gote_at_out_of_termination               = search_context_model.gymnasium.table.is_gote,
                 out_of_termination_state                    = constants.out_of_termination_state.NO_CANDIDATES,
                 hint_list                                   = [],
                 move_list                                   = [],
@@ -278,8 +278,8 @@ class PrincipalVariationModel:
     def setup_to_quiescence(self, info_depth, search_context_model):
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜静止[深={info_depth}]＞")
         self._out_of_termination_is_mars_pv = search_context_model.gymnasium.is_mars
+        self._out_of_termination_is_gote_pv = search_context_model.gymnasium.table.is_gote
         obj_1 = BackwardsPlotModel(
-                is_gote_at_out_of_termination               = search_context_model.gymnasium.table.is_gote,
                 out_of_termination_state                    = constants.out_of_termination_state.QUIESCENCE,
                 hint_list                                   = [],
                 move_list                                   = [],
@@ -292,8 +292,8 @@ class PrincipalVariationModel:
     def setup_to_game_over(self, search_context_model):
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
         self._out_of_termination_is_mars_pv = search_context_model.gymnasium.is_mars
+        self._out_of_termination_is_gote_pv = search_context_model.gymnasium.table.is_gote
         obj_1 = BackwardsPlotModel(
-                is_gote_at_out_of_termination               = search_context_model.gymnasium.table.is_gote,
                 out_of_termination_state                    = constants.out_of_termination_state.RESIGN,
                 hint_list                                   = [],
                 move_list                                   = [],
@@ -318,8 +318,8 @@ class PrincipalVariationModel:
         is_mars_at_out_of_termination = not search_context_model.gymnasium.is_mars    # ［詰む］のは、もう１手先だから not する。
 
         self._out_of_termination_is_mars_pv = search_context_model.gymnasium.is_mars
+        self._out_of_termination_is_gote_pv = search_context_model.gymnasium.table.is_gote
         best_plot_model = BackwardsPlotModel(
-                is_gote_at_out_of_termination               = search_context_model.gymnasium.table.is_gote,
                 out_of_termination_state                    = constants.out_of_termination_state.RESIGN,
                 hint_list                                   = [],
                 move_list                                   = [],
@@ -347,8 +347,8 @@ class PrincipalVariationModel:
         """
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜水平線＞")
         self._out_of_termination_is_mars_pv = search_context_model.gymnasium.is_mars
+        self._out_of_termination_is_gote_pv = search_context_model.gymnasium.table.is_gote
         obj_1 = BackwardsPlotModel(
-                is_gote_at_out_of_termination               = search_context_model.gymnasium.table.is_gote,
                 out_of_termination_state                    = constants.out_of_termination_state.HORIZON,
                 hint_list                                   = [],
                 move_list                                   = [],
