@@ -41,7 +41,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
     def __init__(
             self,
-            is_mars_at_out_of_termination_arg,
             is_gote_at_out_of_termination,
             out_of_termination_state,
             hint_list,
@@ -61,7 +60,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         hint_list : list<str>
             デバッグ用文字列
         """
-        self._is_mars_at_out_of_termination = is_mars_at_out_of_termination_arg
         self._is_gote_at_out_of_termination = is_gote_at_out_of_termination
         self._out_of_termination_state      = out_of_termination_state
         self._hint_list                     = hint_list
@@ -71,24 +69,16 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
 
     @property
-    def is_mars_at_out_of_termination_bpm(self):
-        """木構造の葉ノードの次で対戦相手か。
-        """
-        return self._is_mars_at_out_of_termination
-
-
-    @property
     def is_gote_at_out_of_termination(self):
         """木構造の葉ノードの次で後手か。
         """
         return self._is_gote_at_out_of_termination
 
 
-    @property
-    def is_mars_at_peek(self):
+    def is_mars_at_peek(self, out_of_termination_is_mars):
         if len(self._move_list) % 2 == 0:
-            return self._is_mars_at_out_of_termination
-        return not self._is_mars_at_out_of_termination
+            return out_of_termination_is_mars
+        return not out_of_termination_is_mars
 
 
     @property
@@ -129,14 +119,14 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         return self._cap_list[-1] != cshogi.NONE
 
 
-    def get_exchange_value_on_earth(self):
+    def get_exchange_value_on_earth(self, out_of_termination_is_mars):
         """駒得の交換値。
         """
 
         if len(self._list_of_accumulate_exchange_value_on_earth) == 0:
             return self._get_out_of_termination_to_value_on_earth(   # ［終端外］の点数。
-                    out_of_termination_state = self._out_of_termination_state,
-                    is_mars     = self._is_mars_at_out_of_termination)
+                    out_of_termination_state    = self._out_of_termination_state,
+                    is_mars                     = out_of_termination_is_mars)
 
         return self._list_of_accumulate_exchange_value_on_earth[-1]
 
@@ -218,11 +208,11 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         self._list_of_accumulate_exchange_value_on_earth.append(best_value)
 
 
-    def stringify(self):
+    def stringify_bpm(self, out_of_termination_is_mars):
         """読み筋を１行で文字列化。
         """
         tokens = []
-        is_mars = self.is_mars_at_peek   # 逆順なので、ピークから。
+        is_mars = self.is_mars_at_peek(out_of_termination_is_mars=out_of_termination_is_mars)   # 逆順なので、ピークから。
         is_gote = self.is_gote_at_peek   # 逆順なので、ピークから。
 
         len_of_move_list = len(self._move_list)
@@ -271,7 +261,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
 
     def stringify_dump(self):
-        return f"{self._is_mars_at_out_of_termination=} {self._out_of_termination_state=} {self._move_list=} {self._cap_list=} {self._list_of_accumulate_exchange_value_on_earth=} {' '.join(self._hint_list)=}"
+        return f"{self._out_of_termination_state=} {self._move_list=} {self._cap_list=} {self._list_of_accumulate_exchange_value_on_earth=} {' '.join(self._hint_list)=}"
 
 
     def stringify_debug_1(self):
@@ -280,7 +270,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
     def copy_bpm(self):
         return BackwardsPlotModel(
-                is_mars_at_out_of_termination_arg           = self._is_mars_at_out_of_termination,
                 is_gote_at_out_of_termination               = self._is_gote_at_out_of_termination,
                 out_of_termination_state                    = self._out_of_termination_state,
                 hint_list                                   = list(self._hint_list),
