@@ -1,4 +1,5 @@
 from ..layer_o1o0 import constants
+from ..layer_o2o0 import BackwardsPlotModel
 
 
 class PrincipalVariationModel:
@@ -73,7 +74,7 @@ class PrincipalVariationModel:
             ［終端外］は何か。
         out_of_termination_comment_arg : str
             ［終端外］へのコメント。
-        vertical_list_of_backwards_plot_model_arg : list<BackwardsPlotModel>
+        vertical_list_of_backwards_plot_model_arg : list<B ackwardsPlotModel>
             ［後ろ向き探索］中に追加していく［読み筋］の履歴。
             ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
             TODO 廃止方針。
@@ -236,6 +237,65 @@ class PrincipalVariationModel:
         """［終端外］の［指し手のコメント］。
         """
         return self._out_of_termination_comment
+
+
+    def setup_to_nyugyoku_win(self, search_context_model):
+        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜入玉宣言勝ち＞')
+        obj_1 = BackwardsPlotModel(
+                is_mars_at_out_of_termination               = search_context_model.gymnasium.is_mars,
+                is_gote_at_out_of_termination               = search_context_model.gymnasium.table.is_gote,
+                out_of_termination_state                    = constants.out_of_termination_state.NYUGYOKU_WIN,
+                hint_list                                   = [],
+                move_list                                   = [],
+                cap_list                                    = [],
+                list_of_accumulate_exchange_value_on_earth  = [])
+        self.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
+        self.set_search_is_over_pv(True)
+
+
+    def setup_to_no_candidates(self, info_depth, search_context_model):
+        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜候補手無し[深={info_depth}]＞")
+        obj_1 = BackwardsPlotModel(
+                is_mars_at_out_of_termination               = search_context_model.gymnasium.is_mars,
+                is_gote_at_out_of_termination               = search_context_model.gymnasium.table.is_gote,
+                out_of_termination_state                    = constants.out_of_termination_state.NO_CANDIDATES,
+                hint_list                                   = [],
+                move_list                                   = [],
+                cap_list                                    = [],
+                list_of_accumulate_exchange_value_on_earth  = [])
+        self.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
+        self.set_search_is_over_pv(True)
+
+
+    def setup_to_quiescence(self, info_depth, search_context_model):
+        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜静止[深={info_depth}]＞")
+        obj_1 = BackwardsPlotModel(
+                is_mars_at_out_of_termination               = search_context_model.gymnasium.is_mars,
+                is_gote_at_out_of_termination               = search_context_model.gymnasium.table.is_gote,
+                out_of_termination_state                    = constants.out_of_termination_state.QUIESCENCE,
+                hint_list                                   = [],
+                move_list                                   = [],
+                cap_list                                    = [],
+                list_of_accumulate_exchange_value_on_earth  = [])
+        self.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
+        self.set_search_is_over_pv(True)
+
+
+    def setup_to_horizon(self, search_context_model):
+        """読みの水平線。
+        水平線はデフォルトの状態なので、深さは設定しません。
+        """
+        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜水平線＞")
+        obj_1 = BackwardsPlotModel(
+                is_mars_at_out_of_termination   = search_context_model.gymnasium.is_mars,
+                is_gote_at_out_of_termination   = search_context_model.gymnasium.table.is_gote,
+                out_of_termination_state        = constants.out_of_termination_state.HORIZON,
+                hint_list                       = [],
+                move_list                       = [],
+                cap_list                        = [],
+                list_of_accumulate_exchange_value_on_earth  = [])
+        self.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
+        self.set_search_is_over_pv(True)
 
 
     ##################

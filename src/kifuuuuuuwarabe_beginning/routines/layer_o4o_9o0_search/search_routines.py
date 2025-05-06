@@ -111,12 +111,12 @@ class SearchRoutines:
         is_mars_at_out_of_termination = not search_context_model.gymnasium.is_mars    # ［詰む］のは、もう１手先だから not する。
 
         best_plot_model = BackwardsPlotModel(
-                is_mars_at_out_of_termination   = is_mars_at_out_of_termination,     
-                is_gote_at_out_of_termination   = search_context_model.gymnasium.table.is_gote,
-                out_of_termination_state              = constants.out_of_termination_state.RESIGN,
-                hint_list                       = [],
-                move_list                       = [],
-                cap_list                        = [],
+                is_mars_at_out_of_termination               = is_mars_at_out_of_termination,     
+                is_gote_at_out_of_termination               = search_context_model.gymnasium.table.is_gote,
+                out_of_termination_state                    = constants.out_of_termination_state.RESIGN,
+                hint_list                                   = [],
+                move_list                                   = [],
+                cap_list                                    = [],
                 list_of_accumulate_exchange_value_on_earth  = [])
     
         # 今回の手を付け加える。
@@ -132,20 +132,6 @@ class SearchRoutines:
                 hint                = f"{info_depth}階で{Mars.japanese(is_mars_at_out_of_termination)}は一手詰まされ")
         return best_plot_model
 
-
-    @staticmethod
-    def create_backwards_plot_model_at_nyugyoku_win(search_context_model):
-        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜入玉宣言勝ち＞')
-        return BackwardsPlotModel(
-                is_mars_at_out_of_termination   = search_context_model.gymnasium.is_mars,
-                is_gote_at_out_of_termination   = search_context_model.gymnasium.table.is_gote,
-                out_of_termination_state              = constants.out_of_termination_state.NYUGYOKU_WIN,
-                hint_list                       = [],
-                move_list                       = [],
-                cap_list                        = [],
-                list_of_accumulate_exchange_value_on_earth  = [])
-
-
     @staticmethod
     def create_backwards_plot_model_at_horizon(search_context_model):
         """読みの水平線。
@@ -156,32 +142,6 @@ class SearchRoutines:
                 is_mars_at_out_of_termination   = search_context_model.gymnasium.is_mars,
                 is_gote_at_out_of_termination   = search_context_model.gymnasium.table.is_gote,
                 out_of_termination_state        = constants.out_of_termination_state.HORIZON,
-                hint_list                       = [],
-                move_list                       = [],
-                cap_list                        = [],
-                list_of_accumulate_exchange_value_on_earth  = [])
-
-
-    @staticmethod
-    def create_backwards_plot_model_at_quiescence(info_depth, search_context_model):
-        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜静止[深={info_depth}]＞")
-        return BackwardsPlotModel(
-                is_mars_at_out_of_termination   = search_context_model.gymnasium.is_mars,
-                is_gote_at_out_of_termination   = search_context_model.gymnasium.table.is_gote,
-                out_of_termination_state        = constants.out_of_termination_state.QUIESCENCE,
-                hint_list                       = [],
-                move_list                       = [],
-                cap_list                        = [],
-                list_of_accumulate_exchange_value_on_earth  = [])
-
-
-    @staticmethod
-    def create_backwards_plot_model_at_no_candidates(info_depth, search_context_model):
-        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜候補手無し[深={info_depth}]＞")
-        return BackwardsPlotModel(
-                is_mars_at_out_of_termination   = search_context_model.gymnasium.is_mars,
-                is_gote_at_out_of_termination   = search_context_model.gymnasium.table.is_gote,
-                out_of_termination_state              = constants.out_of_termination_state.NO_CANDIDATES,
                 hint_list                       = [],
                 move_list                       = [],
                 cap_list                        = [],
@@ -313,7 +273,7 @@ class SearchRoutines:
 
         Returns
         -------
-        d eprecated_rooter_backwards_plot_model_pv : BackwardsPlotModel
+        d eprecated_rooter_backwards_plot_model_pv : B ackwardsPlotModel
             読み筋。
             TODO 廃止方針。
         i s_terminate_pv : bool
@@ -361,7 +321,5 @@ class SearchRoutines:
         if search_context_model.gymnasium.table.is_nyugyoku():
             """手番の入玉宣言勝ち局面時。
             """
-            obj_1 = SearchRoutines.create_backwards_plot_model_at_nyugyoku_win(search_context_model=search_context_model)
-            parent_pv.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
-            parent_pv.set_search_is_over_pv(True)
+            parent_pv.setup_to_nyugyoku_win(search_context_model=search_context_model)
             return

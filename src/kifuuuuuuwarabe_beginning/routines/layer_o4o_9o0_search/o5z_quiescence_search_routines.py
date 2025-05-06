@@ -164,7 +164,7 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
 
         # # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
         # if best_pv is None:
-        #     return SearchRoutines.create_backwards_plot_model_at_no_candidates(info_depth=INFO_DEPTH, search_context_model=search_context_model)
+        #     return SearchRoutines.setup_to_no_candidates(info_depth=INFO_DEPTH, search_context_model=search_context_model)
 
         # # 読み筋に今回の手を付け加える。（ TODO 駒得点も付けたい）
         # best_pv.append_move_in_backward_pv(

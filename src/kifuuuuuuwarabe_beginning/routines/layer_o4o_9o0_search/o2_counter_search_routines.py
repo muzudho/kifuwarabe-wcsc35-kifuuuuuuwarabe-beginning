@@ -145,8 +145,7 @@ class O2CounterSearchRoutines(SearchRoutines):
                 # ［終端外］判定。
                 # ［駒を取る手］がないことを、［静止］と呼ぶ。
                 if len(remaining_moves) == 0:
-                    pv.set_deprecated_rooter_backwards_plot_model_in_backward_pv(SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model))
-                    pv.set_search_is_over_pv(True)
+                    pv.setup_to_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model)
                     terminated_pv_list.append(pv)
 
                 else:
@@ -196,7 +195,7 @@ class O2CounterSearchRoutines(SearchRoutines):
 
         # # 指したい手がなかったなら、静止探索の末端局面の後ろだ。
         # if best_pv is None:
-        #     return SearchRoutines.create_backwards_plot_model_at_no_candidates(info_depth=INFO_DEPTH, search_context_model=search_context_model)
+        #     return SearchRoutines.setup_to_no_candidates(info_depth=INFO_DEPTH, search_context_model=search_context_model)
 
         # # 今回の手を付け加える。
         # best_pv.append_move_in_backward_pv(
