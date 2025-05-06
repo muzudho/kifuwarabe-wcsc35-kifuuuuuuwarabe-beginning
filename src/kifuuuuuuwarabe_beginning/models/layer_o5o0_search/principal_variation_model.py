@@ -108,7 +108,8 @@ class PrincipalVariationModel:
         self._search_is_over_pv                         = search_is_over_arg
 
         # TODO 廃止方針の要素。
-        self._deprecated_vertical_list_of_backwards_plot_model_pv  = vertical_list_of_backwards_plot_model_arg
+        self._deprecated_vertical_list_of_backwards_plot_model_pv   = vertical_list_of_backwards_plot_model_arg
+        self._list_of_accumulate_exchange_value_on_earth_pv         = []
 
 
     ############################################
@@ -252,11 +253,11 @@ class PrincipalVariationModel:
         self._out_of_termination_is_mars_pv = search_context_model.gymnasium.is_mars
         self._out_of_termination_is_gote_pv = search_context_model.gymnasium.table.is_gote
         self._out_of_termination_state_pv   = constants.out_of_termination_state_const.NYUGYOKU_WIN
+        self._list_of_accumulate_exchange_value_on_earth_pv = []
         obj_1 = BackwardsPlotModel(
                 hint_list                                   = [],
                 move_list                                   = [],
-                cap_list                                    = [],
-                list_of_accumulate_exchange_value_on_earth  = [])
+                cap_list                                    = [])
         self.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
         self.set_search_is_over_pv(True)
 
@@ -266,11 +267,11 @@ class PrincipalVariationModel:
         self._out_of_termination_is_mars_pv = search_context_model.gymnasium.is_mars
         self._out_of_termination_is_gote_pv = search_context_model.gymnasium.table.is_gote
         self._out_of_termination_state_pv   = constants.out_of_termination_state_const.NO_CANDIDATES
+        self._list_of_accumulate_exchange_value_on_earth_pv = []
         obj_1 = BackwardsPlotModel(
                 hint_list                                   = [],
                 move_list                                   = [],
-                cap_list                                    = [],
-                list_of_accumulate_exchange_value_on_earth  = [])
+                cap_list                                    = [])
         self.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
         self.set_search_is_over_pv(True)
 
@@ -280,11 +281,11 @@ class PrincipalVariationModel:
         self._out_of_termination_is_mars_pv = search_context_model.gymnasium.is_mars
         self._out_of_termination_is_gote_pv = search_context_model.gymnasium.table.is_gote
         self._out_of_termination_state_pv   = constants.out_of_termination_state_const.QUIESCENCE
+        self._list_of_accumulate_exchange_value_on_earth_pv = []
         obj_1 = BackwardsPlotModel(
                 hint_list                                   = [],
                 move_list                                   = [],
-                cap_list                                    = [],
-                list_of_accumulate_exchange_value_on_earth  = [])
+                cap_list                                    = [])
         self.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
         self.set_search_is_over_pv(True)
 
@@ -294,11 +295,11 @@ class PrincipalVariationModel:
         self._out_of_termination_is_mars_pv = search_context_model.gymnasium.is_mars
         self._out_of_termination_is_gote_pv = search_context_model.gymnasium.table.is_gote
         self._out_of_termination_state_pv   = constants.out_of_termination_state_const.RESIGN
+        self._list_of_accumulate_exchange_value_on_earth_pv = []
         obj_1 = BackwardsPlotModel(
                 hint_list                                   = [],
                 move_list                                   = [],
-                cap_list                                    = [],
-                list_of_accumulate_exchange_value_on_earth  = [])
+                cap_list                                    = [])
         self.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
         self.set_search_is_over_pv(True)
 
@@ -320,11 +321,11 @@ class PrincipalVariationModel:
         self._out_of_termination_is_mars_pv = search_context_model.gymnasium.is_mars
         self._out_of_termination_is_gote_pv = search_context_model.gymnasium.table.is_gote
         self._out_of_termination_state_pv   = constants.out_of_termination_state_const.RESIGN
+        self._list_of_accumulate_exchange_value_on_earth_pv = []
         best_plot_model = BackwardsPlotModel(
                 hint_list                                   = [],
                 move_list                                   = [],
-                cap_list                                    = [],
-                list_of_accumulate_exchange_value_on_earth  = [])
+                cap_list                                    = [])
     
         # 今回の手を付け加える。
         if is_mars_at_out_of_termination:
@@ -336,7 +337,8 @@ class PrincipalVariationModel:
                 move                = mate_move,
                 capture_piece_type  = cap_pt,
                 best_value          = best_value,
-                hint                = f"{info_depth}階で{Mars.japanese(is_mars_at_out_of_termination)}は一手詰まされ")
+                hint                = f"{info_depth}階で{Mars.japanese(is_mars_at_out_of_termination)}は一手詰まされ",
+                list_of_accumulate_exchange_value_on_earth_arg  = self._list_of_accumulate_exchange_value_on_earth_pv)
         self.set_deprecated_rooter_backwards_plot_model_in_backward_pv(best_plot_model)
         self.set_search_is_over_pv(True)
 
@@ -349,11 +351,11 @@ class PrincipalVariationModel:
         self._out_of_termination_is_mars_pv = search_context_model.gymnasium.is_mars
         self._out_of_termination_is_gote_pv = search_context_model.gymnasium.table.is_gote
         self._out_of_termination_state_pv   = constants.out_of_termination_state_const.HORIZON
+        self._list_of_accumulate_exchange_value_on_earth_pv = []
         obj_1 = BackwardsPlotModel(
                 hint_list                                   = [],
                 move_list                                   = [],
-                cap_list                                    = [],
-                list_of_accumulate_exchange_value_on_earth  = [])
+                cap_list                                    = [])
         self.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
         self.set_search_is_over_pv(True)
 
@@ -403,14 +405,15 @@ class PrincipalVariationModel:
     # MARK: 後ろ向き探索
     ###################
 
-    def append_move_in_backward_pv(self, move, capture_piece_type, best_value, hint):
+    def append_move_in_backward_pv(self, move, capture_piece_type, best_value, hint, list_of_accumulate_exchange_value_on_earth_arg):
         """［後ろ向き探索］中に要素追加。
         """
         self.deprecated_rooter_backwards_plot_model_in_backward_pv.append_move_from_back(
                 move                = move,
                 capture_piece_type  = capture_piece_type,
                 best_value          = best_value,
-                hint                = hint)
+                hint                = hint,
+                list_of_accumulate_exchange_value_on_earth_arg = list_of_accumulate_exchange_value_on_earth_arg)
 
 
     #####################

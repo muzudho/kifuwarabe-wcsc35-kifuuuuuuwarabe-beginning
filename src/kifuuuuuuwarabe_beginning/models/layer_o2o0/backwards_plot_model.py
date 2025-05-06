@@ -43,8 +43,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             self,
             hint_list,
             move_list,
-            cap_list,
-            list_of_accumulate_exchange_value_on_earth):
+            cap_list):
         """初期化。
 
         Parameters
@@ -55,7 +54,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         self._hint_list                                     = hint_list
         self._move_list                                     = move_list
         self._cap_list                                      = cap_list
-        self._list_of_accumulate_exchange_value_on_earth    = list_of_accumulate_exchange_value_on_earth   # 地球から見た、取った駒の交換値。
 
 
     def is_mars_at_peek(self, out_of_termination_is_mars_arg):
@@ -95,16 +93,16 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         return self._cap_list[-1] != cshogi.NONE
 
 
-    def get_exchange_value_on_earth(self, out_of_termination_is_mars_arg, out_of_termination_state_arg):
+    def get_exchange_value_on_earth(self, out_of_termination_is_mars_arg, out_of_termination_state_arg, list_of_accumulate_exchange_value_on_earth_arg):
         """駒得の交換値。
         """
 
-        if len(self._list_of_accumulate_exchange_value_on_earth) == 0:
+        if len(list_of_accumulate_exchange_value_on_earth_arg) == 0:
             return self._get_out_of_termination_to_value_on_earth(   # ［終端外］の点数。
                     out_of_termination_state_arg    = out_of_termination_state_arg,
                     is_mars_arg                     = out_of_termination_is_mars_arg)
 
-        return self._list_of_accumulate_exchange_value_on_earth[-1]
+        return list_of_accumulate_exchange_value_on_earth_arg[-1]
 
 
     @property
@@ -120,14 +118,13 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         # ASSERT
         len_move_list = len(self._move_list)
         len_cap_list = len(self._cap_list)
-        len_ev_list = len(self._list_of_accumulate_exchange_value_on_earth)
-        if not (len_move_list == len_cap_list and len_cap_list == len_ev_list):
-            raise ValueError(f"配列の長さの整合性が取れていません。 {len_move_list=} {len_cap_list=} {len_ev_list=}")
+        if not (len_move_list == len_cap_list):
+            raise ValueError(f"配列の長さの整合性が取れていません。 {len_move_list=} {len_cap_list=}")
         
         return len(self._move_list) < 1
 
 
-    def append_move_from_back(self, move, capture_piece_type, best_value, hint):
+    def append_move_from_back(self, move, capture_piece_type, best_value, hint, list_of_accumulate_exchange_value_on_earth_arg):
         """
         Parameters
         ----------
@@ -181,7 +178,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
         # self._list_of_accumulate_exchange_value_on_earth.append(piece_exchange_value_on_earth)
 
-        self._list_of_accumulate_exchange_value_on_earth.append(best_value)
+        list_of_accumulate_exchange_value_on_earth_arg.append(best_value)
 
 
     def stringify_bpm(self, out_of_termination_is_mars_arg, out_of_termination_state_arg):
@@ -237,16 +234,15 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
 
     def stringify_dump(self):
-        return f"{self._move_list=} {self._cap_list=} {self._list_of_accumulate_exchange_value_on_earth=} {' '.join(self._hint_list)=}"
+        return f"{self._move_list=} {self._cap_list=} {' '.join(self._hint_list)=}"
 
 
     def stringify_debug_1(self):
-        return f"{len(self._move_list)=} {len(self._cap_list)=} {len(self._list_of_accumulate_exchange_value_on_earth)=}"
+        return f"{len(self._move_list)=} {len(self._cap_list)=}"
 
 
     def copy_bpm(self):
         return BackwardsPlotModel(
                 hint_list                                   = list(self._hint_list),
                 move_list                                   = list(self._move_list),
-                cap_list                                    = list(self._cap_list),
-                list_of_accumulate_exchange_value_on_earth  = list(self._list_of_accumulate_exchange_value_on_earth))
+                cap_list                                    = list(self._cap_list))
