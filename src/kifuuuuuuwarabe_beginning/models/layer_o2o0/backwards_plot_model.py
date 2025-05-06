@@ -116,7 +116,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
 
     @property
-    def peek_move(self):
+    def peek_move_bpm(self):
         if len(self._move_list) < 1:
             raise ValueError('指し手のリストが０件です。')
         return self._move_list[-1]

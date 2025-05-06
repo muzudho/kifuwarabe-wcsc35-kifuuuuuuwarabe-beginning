@@ -37,7 +37,11 @@ class PrincipalVariationModel:
                 search_is_over_arg                          = False,
                 # TODO 廃止方針。
                 # 終端外が有る分、他のリストより要素１個多い。＜水平線＞がデフォルト値。
-                vertical_list_of_backwards_plot_model_arg   = [PrincipalVariationModel.create_backwards_plot_model_at_horizon(search_context_model=search_context_model)])
+                vertical_list_of_backwards_plot_model_arg   = [])
+                #vertical_list_of_backwards_plot_model_arg   = [PrincipalVariationModel.create_backwards_plot_model_at_horizon(search_context_model=search_context_model)])
+
+        obj_1.setup_to_horizon(search_context_model=search_context_model)
+
         return obj_1
 
 
@@ -471,8 +475,8 @@ class PrincipalVariationModel:
 
 
     @property
-    def peek_move(self):
-        return self.deprecated_rooter_backwards_plot_model_in_backward_pv.peek_move
+    def peek_move_pv(self):
+        return self.deprecated_rooter_backwards_plot_model_in_backward_pv.peek_move_bpm
 
 
     @property
@@ -493,6 +497,9 @@ class PrincipalVariationModel:
     #     return self._deprecated_vertical_list_of_backwards_plot_model_pv
 
 
+    def get_len_of_deprecated_vertical_list_of_backwards_plot_model_pv(self):
+        return len(self._deprecated_vertical_list_of_backwards_plot_model_pv)
+
     @property
     def deprecated_rooter_backwards_plot_model_in_backward_pv(self):
         """［後ろ向き探索］の方の、１手目に近い方の［読み筋モデル］。
@@ -504,7 +511,10 @@ class PrincipalVariationModel:
     def set_deprecated_rooter_backwards_plot_model_in_backward_pv(self, value):
         """TODO 廃止方針。
         """
-        self._deprecated_vertical_list_of_backwards_plot_model_pv[-1] = value
+        if len(self._deprecated_vertical_list_of_backwards_plot_model_pv)==0:
+            self._deprecated_vertical_list_of_backwards_plot_model_pv.append(value)
+        else:
+            self._deprecated_vertical_list_of_backwards_plot_model_pv[-1] = value
 
 
     ##############

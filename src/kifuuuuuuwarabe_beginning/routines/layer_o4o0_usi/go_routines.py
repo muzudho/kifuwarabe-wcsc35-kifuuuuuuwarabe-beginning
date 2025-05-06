@@ -378,9 +378,15 @@ def _eliminate_not_capture_not_positive(pv_list, gymnasium):
 
     for pv in pv_list:
 
+        if pv.get_len_of_deprecated_vertical_list_of_backwards_plot_model_pv() == 0:
+            continue
+
+        if len(pv.deprecated_rooter_backwards_plot_model_in_backward_pv.move_list) == 0:
+            continue
+
         # ［後ろ向き探索］中の［根に近い方の指し手］
         gymnasium.health_check_go_model.append_health(
-                move    = pv.peek_move,
+                move    = pv.peek_move_pv,
                 name    = 'QS_principal_variation',
                 value   = pv)
 
@@ -391,29 +397,29 @@ def _eliminate_not_capture_not_positive(pv_list, gymnasium):
                 exists_zero_value_move = True
             
             gymnasium.health_check_go_model.append_health(
-                    move    = pv.peek_move,
+                    move    = pv.peek_move_pv,
                     name    = 'QS_eliminate171',
                     value   = f"{pv.stringify_2():10} not_cap_not_posite")
 
         # （２）最高点でない手。
         elif value_on_earth < best_exchange_value:
             gymnasium.health_check_go_model.append_health(
-                    move    = pv.peek_move,
+                    move    = pv.peek_move_pv,
                     name    = 'QS_eliminate171',
                     value   = f"{pv.stringify_2():10} not_best")
 
         # （３）リスクヘッジにならない手
         elif exists_zero_value_move and value_on_earth < 0:
             gymnasium.health_check_go_model.append_health(
-                    move    = pv.peek_move,
+                    move    = pv.peek_move_pv,
                     name    = 'QS_eliminate171',
                     value   = f"{pv.stringify_2():10} not_risk_hedge")
 
         # それ以外の手は選択します。
         else:
-            alice_s_move_list.append(pv.peek_move)
+            alice_s_move_list.append(pv.peek_move_pv)
             gymnasium.health_check_go_model.append_health(
-                    move    = pv.peek_move,
+                    move    = pv.peek_move_pv,
                     name    = 'QS_eliminate171',
                     value   = f"{pv.stringify_2():10} ok")
 
