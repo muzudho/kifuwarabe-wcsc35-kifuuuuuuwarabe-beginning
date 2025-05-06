@@ -13,16 +13,16 @@ class PrincipalVariationModel:
     @staticmethod
     def create_zeroth_pv(
             out_of_termination_is_gote_arg,
-            vertical_list_of_backwards_plot_model_arg   # TODO 廃止方針。
-    ):
+            search_context_model):
         """TODO ０手の［読み筋］。
         Parameters
         ----------
         out_of_termination_is_gote_arg : bool
             ［終端外］は後手か？
-        vertical_list_of_backwards_plot_model_arg : _
+        search_context_model : _
             TODO 廃止方針。
         """
+
         return PrincipalVariationModel(
                 frontward_vertical_list_of_move_arg         = [],
                 frontward_vertical_list_of_cap_pt_arg       = [],
@@ -37,7 +37,7 @@ class PrincipalVariationModel:
                 search_is_over_arg                          = False,
                 # TODO 廃止方針。
                 # 終端外が有る分、他のリストより要素１個多い。＜水平線＞がデフォルト値。
-                vertical_list_of_backwards_plot_model_arg   = vertical_list_of_backwards_plot_model_arg)
+                vertical_list_of_backwards_plot_model_arg   = [PrincipalVariationModel.create_backwards_plot_model_at_horizon(search_context_model=search_context_model)])
 
 
     def __init__(

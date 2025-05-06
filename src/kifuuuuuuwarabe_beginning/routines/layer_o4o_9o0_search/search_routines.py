@@ -4,7 +4,6 @@ import time
 from ...models.layer_o1o_9o0 import PieceValuesModel
 from ...models.layer_o1o0o_9o0_table_helper import TableHelper
 from ...models.layer_o1o0 import constants, Mars, SquareModel
-from ...models.layer_o2o0 import BackwardsPlotModel
 from ...models.layer_o4o0_rules.negative import DoNotDepromotionModel
 
 
