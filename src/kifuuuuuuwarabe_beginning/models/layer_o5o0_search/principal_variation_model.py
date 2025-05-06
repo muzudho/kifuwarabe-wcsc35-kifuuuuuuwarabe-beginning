@@ -208,16 +208,44 @@ class PrincipalVariationModel:
         return self._backward_vertical_list_of_comment_pv[-1]
 
 
-    def get_root_value_in_backward_pv(self):
+    @staticmethod
+    def _get_out_of_termination_to_value_on_earth(out_of_termination_state_arg, is_mars_arg):
+        """［終端外］の駒の価値。
+        """
+        if out_of_termination_state_arg == constants.out_of_termination_state_const.RESIGN:
+            value = constants.value.GAME_OVER
+        elif out_of_termination_state_arg == constants.out_of_termination_state_const.NYUGYOKU_WIN:
+            value = constants.value.NYUGYOKU_WIN
+        elif out_of_termination_state_arg == constants.out_of_termination_state_const.HORIZON:
+            value = constants.value.ZERO
+        elif out_of_termination_state_arg == constants.out_of_termination_state_const.NO_CANDIDATES:
+            value = constants.value.ZERO
+        elif out_of_termination_state_arg == constants.out_of_termination_state_const.QUIESCENCE:
+            value = constants.value.ZERO
+        else:
+            raise ValueError(f"想定外の［終端外］。{out_of_termination_state_arg=}")
+
+        # 対戦相手なら正負を逆転。
+        if is_mars_arg:
+            value *= -1
+
+        return value
+
+
+    def get_root_value_in_backward_pv(self, out_of_termination_is_mars_arg, out_of_termination_state_arg, list_of_accumulate_exchange_value_on_earth_arg):
         """TODO ［後ろ向き探索］の方の、初手の［局面評価値］。地球視点。
-        旧名: get_exchange_value_on_earth
         """
 
         # TODO 取った駒を、葉要素から点数付けして累計する。
         # 先手、後手を正確に把握していれば、前から順に累計しても同じ。
         #
         # 旧方式
-        return self.deprecated_rooter_backwards_plot_model_in_backward_pv.get_exchange_value_on_earth()
+        if len(list_of_accumulate_exchange_value_on_earth_arg) == 0:
+            return PrincipalVariationModel._get_out_of_termination_to_value_on_earth(   # ［終端外］の点数。
+                    out_of_termination_state_arg    = out_of_termination_state_arg,
+                    is_mars_arg                     = out_of_termination_is_mars_arg)
+
+        return list_of_accumulate_exchange_value_on_earth_arg[-1]
 
 
     ##############

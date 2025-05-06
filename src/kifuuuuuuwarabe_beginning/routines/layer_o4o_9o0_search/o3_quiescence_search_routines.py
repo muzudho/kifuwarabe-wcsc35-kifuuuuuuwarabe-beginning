@@ -185,10 +185,10 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
             # ----------------------------------------------------------
 
             # # 手番の処理
-            # (this_branch_value_on_earth, is_update_best) = SearchRoutines.is_update_best(best_pv=best_pv, child_plot_model=child_plot_model, piece_exchange_value_on_earth=piece_exchange_value_on_earth, search_context_model=search_context_model)
+            # (this_branch_value_on_earth, is_update_best_o3) = SearchRoutines.is_update_best_search(best_pv=best_pv, child_pv=child_pv, piece_exchange_value_on_earth=piece_exchange_value_on_earth, search_context_model=search_context_model)
                         
             # # 最善手の更新（１つに絞る）
-            # if is_update_best:
+            # if is_update_best_o3:
             #     best_pv             = pv
             #     best_pv.set_deprecated_rooter_backwards_plot_model_in_backward_pv(child_plot_model)
             #     best_move           = my_move

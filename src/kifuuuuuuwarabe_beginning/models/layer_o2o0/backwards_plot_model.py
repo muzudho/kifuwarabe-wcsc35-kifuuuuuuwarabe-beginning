@@ -15,30 +15,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
     """
 
 
-    @staticmethod
-    def _get_out_of_termination_to_value_on_earth(out_of_termination_state_arg, is_mars_arg):
-        """［終端外］の駒の価値。
-        """
-        if out_of_termination_state_arg == constants.out_of_termination_state_const.RESIGN:
-            value = constants.value.GAME_OVER
-        elif out_of_termination_state_arg == constants.out_of_termination_state_const.NYUGYOKU_WIN:
-            value = constants.value.NYUGYOKU_WIN
-        elif out_of_termination_state_arg == constants.out_of_termination_state_const.HORIZON:
-            value = constants.value.ZERO
-        elif out_of_termination_state_arg == constants.out_of_termination_state_const.NO_CANDIDATES:
-            value = constants.value.ZERO
-        elif out_of_termination_state_arg == constants.out_of_termination_state_const.QUIESCENCE:
-            value = constants.value.ZERO
-        else:
-            raise ValueError(f"想定外の［終端外］。{out_of_termination_state_arg=}")
-
-        # 対戦相手なら正負を逆転。
-        if is_mars_arg:
-            value *= -1
-
-        return value
-
-
     def __init__(
             self,
             hint_list,
@@ -91,18 +67,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         if len(self._cap_list) < 1:
             raise ValueError('取った駒のリストが０件です。')
         return self._cap_list[-1] != cshogi.NONE
-
-
-    def get_exchange_value_on_earth(self, out_of_termination_is_mars_arg, out_of_termination_state_arg, list_of_accumulate_exchange_value_on_earth_arg):
-        """駒得の交換値。
-        """
-
-        if len(list_of_accumulate_exchange_value_on_earth_arg) == 0:
-            return self._get_out_of_termination_to_value_on_earth(   # ［終端外］の点数。
-                    out_of_termination_state_arg    = out_of_termination_state_arg,
-                    is_mars_arg                     = out_of_termination_is_mars_arg)
-
-        return list_of_accumulate_exchange_value_on_earth_arg[-1]
 
 
     @property
@@ -230,7 +194,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
                 return 'cap'
             return ''
 
-        return f"{self.get_exchange_value_on_earth():4} {_cap_str():3}"
+        return f"{_cap_str():3}"
 
 
     def stringify_dump(self):

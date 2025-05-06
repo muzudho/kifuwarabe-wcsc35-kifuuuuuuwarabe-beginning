@@ -54,31 +54,31 @@ class SearchRoutines:
         return pv_list
 
 
-    @staticmethod
-    def is_update_best(best_pv, child_plot_model, piece_exchange_value_on_earth, search_context_model):
-        """ベストを更新するか？
+    # @staticmethod
+    # def is_update_best_search(best_pv, child_pv, piece_exchange_value_on_earth, search_context_model):
+    #     """ベストを更新するか？
 
-        Returns
-        -------
-        this_branch_value_on_earth : int
-            駒得点。
-        is_update_best : bool
-            ベストを更新するか。
-        """
-        # この枝の点（将来の点＋取った駒の点）
-        this_branch_value_on_earth = child_plot_model.get_exchange_value_on_earth() + piece_exchange_value_on_earth
+    #     Returns
+    #     -------
+    #     this_branch_value_on_earth : int
+    #         駒得点。
+    #     i s_update_best : bool
+    #         ベストを更新するか。
+    #     """
+    #     # この枝の点（将来の点＋取った駒の点）
+    #     this_branch_value_on_earth = child_pv.get_root_value_in_backward_pv() + piece_exchange_value_on_earth
 
-        # この枝が長兄なら。
-        if best_pv is None:
-            old_sibling_value = 0
-        else:
-            # 兄枝のベスト評価値
-            old_sibling_value = best_pv.get_root_value_in_backward_pv()     # とりあえず最善の読み筋の点数。
+    #     # この枝が長兄なら。
+    #     if best_pv is None:
+    #         old_sibling_value = 0
+    #     else:
+    #         # 兄枝のベスト評価値
+    #         old_sibling_value = best_pv.get_root_value_in_backward_pv()     # とりあえず最善の読み筋の点数。
 
-        (a, b) = search_context_model.gymnasium.ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
-        # TODO この比較、合っているか？
-        return this_branch_value_on_earth, (a < b)
-        #return this_branch_value_on_earth, (a > b)
+    #     (a, b) = search_context_model.gymnasium.ptolemaic_theory_model.swap(old_sibling_value, this_branch_value_on_earth)
+    #     # TODO この比較、合っているか？
+    #     return this_branch_value_on_earth, (a < b)
+    #     #return this_branch_value_on_earth, (a > b)
 
 
     @staticmethod
