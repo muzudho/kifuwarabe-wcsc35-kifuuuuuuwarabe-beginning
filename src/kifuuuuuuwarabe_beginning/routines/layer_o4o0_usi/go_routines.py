@@ -6,7 +6,7 @@ from ...models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateMo
 from ...models.layer_o1o0o1o0_japanese import JapaneseMoveModel
 from ...models.layer_o5o0_search import PrincipalVariationModel, SearchContextModel
 from ...views import TableView
-from ..layer_o4o_9o0_search import O0NoSearchRoutines, O1RootSearchRoutines, SearchRoutines
+from ..layer_o4o_9o0_search import O0NoSearchRoutines, O1RootSearchRoutines, OutOfSearchRoutines, SearchRoutines
 from ..layer_o3o0 import MovesPickupFilterRoutines, MovesReductionFilterRoutines
 
 
@@ -289,11 +289,8 @@ def _main_search_at_first(remaining_moves, search_context_model):
         ［訪問ノード数］
     """
 
-    # ノード訪問時
-    # ------------
-
-    # 各PV
-    # ----
+    # 次のPVリストを集める
+    # --------------------
 
     # ［ゼロPV］。［指し手］が追加されなければ、［終端外］がセットされるだけのものです。
     pv = PrincipalVariationModel.create_zeroth_pv(
@@ -301,6 +298,15 @@ def _main_search_at_first(remaining_moves, search_context_model):
             # TODO 廃止方針。
             # 終端外が有る分、他のリストより要素１個多い。＜水平線＞がデフォルト値。
             vertical_list_of_backwards_plot_model_arg   = [SearchRoutines.create_backwards_plot_model_at_horizon(search_context_model=search_context_model)])
+
+    next_pv_list = [pv]
+
+    # ノード訪問時
+    # ------------
+
+    # 各PV
+    # ----
+
     
     # 履歴を全部指す
     # --------------
@@ -316,41 +322,31 @@ def _main_search_at_first(remaining_moves, search_context_model):
 
     # （無し）［水平指し手一覧］を［PV］へ変換。
 
-    # 縦の辺を伸ばす。
-    O0NoSearchRoutines.extend_vertical_edges_o0(pv_list=[pv], search_context_model=search_context_model)
+    # 縦の辺を伸ばす。（０階では、［終端外］判定するだけ）
+    O0NoSearchRoutines.extend_vertical_edges_o0(pv_list=next_pv_list, search_context_model=search_context_model)
 
     # TODO 残りのPVリストを集める
 
     # TODO （奇数＋１階なら火星、偶数＋１階なら地球）が嫌な手は削除。
 
     # ０階で終了。
-    if pv.is_terminate:
+    if pv.is_terminate_pv:
         next_pv_list = [pv]
 
     else:
+        # １階の操作。
         (terminated_pv_list_1, live_pv_list) = O1RootSearchRoutines.main_a_o1(remaining_moves_o1=remaining_moves, parent_pv=pv, search_context_model=search_context_model)
 
         # O2 の操作。
         if len(live_pv_list) != 0:
+            # FIXME この関数から、O2 の呼出を取り除きたい。
             (terminated_pv_list_2, live_pv_list) = O1RootSearchRoutines.main_b_o1_to_o2(live_pv_list=live_pv_list, parent_pv=pv, search_context_model=search_context_model)
 
         # 次のPVリストを集める
-        next_pv_list = []
-
-        for terminated_pv in terminated_pv_list_1:
-            if constants.value.MAYBE_EARTH_WIN_VALUE <= terminated_pv.leafer_value_in_frontward_pv:
-                next_pv_list.append(terminated_pv)
-
-        if len(next_pv_list) == 0:
-            for terminated_pv in terminated_pv_list_2:
-                if constants.value.MAYBE_EARTH_WIN_VALUE <= terminated_pv.leafer_value_in_frontward_pv:
-                    next_pv_list.append(terminated_pv)
-
-        if len(next_pv_list) == 0:
-            for live_pv in next_pv_list:
-                if constants.value.MAYBE_EARTH_WIN_VALUE <= live_pv.leafer_value_in_frontward_pv:
-                    next_pv_list.append(live_pv)
-
+        next_pv_list = OutOfSearchRoutines.filtering_next_pv_list(
+                terminated_pv_list_1    = terminated_pv_list_1,
+                terminated_pv_list_2    = terminated_pv_list_2,
+                live_pv_list            = live_pv_list)
 
     return next_pv_list, search_context_model.number_of_visited_nodes
 

@@ -5,4 +5,5 @@ from .o3_quiescence_search_routines import O3QuiescenceSearchRoutines
 from .o4_quiescence_search_routines import O4QuiescenceSearchRoutines
 from .o5z_quiescence_search_routines import O5zQuiescenceSearchRoutines
 from .o6_no_search_routines import O6NoSearchRoutines
+from .out_of_search_routines import OutOfSearchRoutines
 from .search_routines import SearchRoutines

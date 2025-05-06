@@ -38,10 +38,11 @@ class O1RootSearchRoutines(SearchRoutines):
         # ［水平指し手一覧］をクリーニング。
         remaining_moves = O1RootSearchRoutines.cleaning_horizontal_edges_o1(remaining_moves=remaining_moves_o1, parent_pv=parent_pv, search_context_model=search_context_model)
 
+        # ［終端外］判定。
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(remaining_moves) == 0:
             parent_pv.set_deprecated_rooter_backwards_plot_model_in_backward_pv(SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model))
-            parent_pv.is_terminate = True
+            parent_pv.set_is_terminate_pv(True)
             return [parent_pv], []
         
         # ［水平指し手一覧］を［PV］へ変換。
@@ -52,6 +53,8 @@ class O1RootSearchRoutines(SearchRoutines):
     @staticmethod
     def main_b_o1_to_o2(live_pv_list, parent_pv, search_context_model):
         """
+        FIXME この関数から、O2 の呼出を取り除きたい。
+
         Parameters
         ----------
         live_pv_list : list
@@ -169,6 +172,8 @@ class O1RootSearchRoutines(SearchRoutines):
     def move_all_pv_o1(pv_list, search_context_model):
         """探索の開始。
 
+        # FIXME この関数から、O2 の呼出を取り除きたい。
+        
         Parameters
         ----------
         pv_list : list<P rincipalVariationModel>
@@ -197,17 +202,19 @@ class O1RootSearchRoutines(SearchRoutines):
             # 手番の処理
             # ----------
 
-            if pv.is_terminate:                 # 探索不要なら。
+            if pv.is_terminate_pv:                 # 探索不要なら。
                 terminated_pv_list.append(pv)   # 終了済みPVリストへ当PVを追加。
             
             else:
+                # FIXME この関数から、２階の呼出を取り除きたい。
                 # ［水平指し手一覧］をクリーニング。
                 remaining_moves = O2CounterSearchRoutines.cleaning_horizontal_edges_o2(parent_pv=pv, search_context_model=search_context_model)
 
+                # ［終端外］判定。
                 # ［駒を取る手］がないことを、［静止］と呼ぶ。
                 if len(remaining_moves) == 0:
                     pv.set_deprecated_rooter_backwards_plot_model_in_backward_pv(SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model))
-                    pv.is_terminate = True
+                    pv.set_is_terminate_pv(True)
                     terminated_pv_list.append(pv)
                 
                 else:

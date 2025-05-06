@@ -135,17 +135,18 @@ class O2CounterSearchRoutines(SearchRoutines):
             # 手番の処理
             # ----------
 
-            if pv.is_terminate:                 # 探索不要なら。
+            if pv.is_terminate_pv:                 # 探索不要なら。
                 terminated_pv_list.append(pv)   # 終了済みPVリストへ当PVを追加。
 
             else:
                 # ［水平指し手一覧］をクリーニング。
                 remaining_moves = O3QuiescenceSearchRoutines.cleaning_horizontal_edges_o3(parent_pv=pv, search_context_model=search_context_model)
 
+                # ［終端外］判定。
                 # ［駒を取る手］がないことを、［静止］と呼ぶ。
                 if len(remaining_moves) == 0:
                     pv.set_deprecated_rooter_backwards_plot_model_in_backward_pv(SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model))
-                    pv.is_terminate = True
+                    pv.set_is_terminate_pv(True)
                     terminated_pv_list.append(pv)
 
                 else:
@@ -158,7 +159,7 @@ class O2CounterSearchRoutines(SearchRoutines):
                     #         search_context_model    = search_context_model))
 
                     # for next_pv in reversed(next_pv_list):          # 各［次PV］。
-                    #     if next_pv.is_terminate:                    # 次の読み筋が終了していれば。
+                    #     if next_pv.is_terminate_pv:                    # 次の読み筋が終了していれば。
                     #         terminated_pv_list.append(next_pv)      # 終了済みPVリストへ［次PV］を追加。
                     #     else:
                     #         live_pv_list.append(next_pv)            # 残PVリストへ［次PV］を追加。

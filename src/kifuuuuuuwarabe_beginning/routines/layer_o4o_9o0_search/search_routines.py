@@ -316,7 +316,7 @@ class SearchRoutines:
         d eprecated_rooter_backwards_plot_model_pv : BackwardsPlotModel
             読み筋。
             TODO 廃止方針。
-        is_terminate : bool
+        i s_terminate_pv : bool
             読み終わり。
         """
 
@@ -333,12 +333,13 @@ class SearchRoutines:
 
         # 指さなくても分かること（ライブラリー使用）
 
+        # ［終端外］判定。
         if search_context_model.gymnasium.table.is_game_over():
             """手番の投了局面時。
             """
             obj_1 = SearchRoutines.create_backwards_plot_model_at_game_over(search_context_model=search_context_model)
             parent_pv.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
-            parent_pv.is_terminate = True
+            parent_pv.set_is_terminate_pv(True)
             return
 
         # 一手詰めを詰める
@@ -354,7 +355,7 @@ class SearchRoutines:
                         is_mars     = search_context_model.gymnasium.is_mars)
                 obj_1 = SearchRoutines.create_backwards_plot_model_at_mate_move_in_1_ply(info_depth=info_depth, mate_move=mate_move, search_context_model=search_context_model)
                 parent_pv.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
-                parent_pv.is_terminate = True
+                parent_pv.set_is_terminate_pv(True)
                 return
 
         if search_context_model.gymnasium.table.is_nyugyoku():
@@ -362,9 +363,5 @@ class SearchRoutines:
             """
             obj_1 = SearchRoutines.create_backwards_plot_model_at_nyugyoku_win(search_context_model=search_context_model)
             parent_pv.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
-            parent_pv.is_terminate = True
+            parent_pv.set_is_terminate_pv(True)
             return
-
-        obj_1 = parent_pv.deprecated_rooter_backwards_plot_model_in_backward_pv
-        parent_pv.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
-        parent_pv.is_terminate = parent_pv.is_terminate

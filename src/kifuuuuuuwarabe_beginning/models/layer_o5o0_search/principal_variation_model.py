@@ -92,11 +92,12 @@ class PrincipalVariationModel:
         self._backward_vertical_list_of_comment_pv      = backward_vertical_list_of_comment_arg
 
         # ［終端外］で設定する要素。
+        # TODO ［終端外］オブジェクトというまとまりにするか？
         self._out_of_termination_is_mars                = out_of_termination_is_mars_arg
         self._out_of_termination_is_gote                = out_of_termination_is_gote_arg
         self._out_of_termination_state                  = out_of_termination_state_arg
         self._out_of_termination_comment                = out_of_termination_comment_arg
-        self._is_terminate                              = is_terminate_arg
+        self._is_terminate_pv                              = is_terminate_arg
 
         # TODO 廃止方針の要素。
         self._deprecated_vertical_list_of_backwards_plot_model_pv  = vertical_list_of_backwards_plot_model_arg
@@ -297,15 +298,19 @@ class PrincipalVariationModel:
     #####################
 
     @property
-    def is_terminate(self):
+    def is_terminate_pv(self):
         """探索は終端です。
+        TODO ［終端外］オブジェクトの有無に変更したい。
         """
-        return self._is_terminate
+        return self._is_terminate_pv
 
-    
-    @is_terminate.setter
-    def is_terminate(self, value):
-        self._is_terminate = value
+
+    def set_is_terminate_pv(self, value):
+        """［終端外］設定。
+        * ［指し手一覧のクリーニング］後とか。
+        TODO だったら、フラグではなく、［終端外］オブジェクトを設定したい。
+        """
+        self._is_terminate_pv = value
 
 
     def _create_copied_bpm_list(self):
@@ -333,7 +338,7 @@ class PrincipalVariationModel:
                 out_of_termination_is_gote_arg              = self._out_of_termination_is_gote,
                 out_of_termination_state_arg                = self._out_of_termination_state,
                 out_of_termination_comment_arg              = self._out_of_termination_comment_arg,
-                is_terminate_arg                            = self._is_terminate,
+                is_terminate_arg                            = self._is_terminate_pv,
                 vertical_list_of_backwards_plot_model_arg   = self._create_copied_bpm_list())
 
 
