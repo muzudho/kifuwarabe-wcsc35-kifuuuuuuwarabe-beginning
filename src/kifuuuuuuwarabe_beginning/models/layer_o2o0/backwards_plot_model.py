@@ -16,24 +16,24 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
 
     @staticmethod
-    def _get_out_of_termination_to_value_on_earth(out_of_termination_state, is_mars):
+    def _get_out_of_termination_to_value_on_earth(out_of_termination_state_arg, is_mars_arg):
         """［終端外］の駒の価値。
         """
-        if out_of_termination_state == constants.out_of_termination_state.RESIGN:
+        if out_of_termination_state_arg == constants.out_of_termination_state_const.RESIGN:
             value = constants.value.GAME_OVER
-        elif out_of_termination_state == constants.out_of_termination_state.NYUGYOKU_WIN:
+        elif out_of_termination_state_arg == constants.out_of_termination_state_const.NYUGYOKU_WIN:
             value = constants.value.NYUGYOKU_WIN
-        elif out_of_termination_state == constants.out_of_termination_state.HORIZON:
+        elif out_of_termination_state_arg == constants.out_of_termination_state_const.HORIZON:
             value = constants.value.ZERO
-        elif out_of_termination_state == constants.out_of_termination_state.NO_CANDIDATES:
+        elif out_of_termination_state_arg == constants.out_of_termination_state_const.NO_CANDIDATES:
             value = constants.value.ZERO
-        elif out_of_termination_state == constants.out_of_termination_state.QUIESCENCE:
+        elif out_of_termination_state_arg == constants.out_of_termination_state_const.QUIESCENCE:
             value = constants.value.ZERO
         else:
-            raise ValueError(f"想定外の［終端外］。{out_of_termination_state=}")
+            raise ValueError(f"想定外の［終端外］。{out_of_termination_state_arg=}")
 
         # 対戦相手なら正負を逆転。
-        if is_mars:
+        if is_mars_arg:
             value *= -1
 
         return value
@@ -41,7 +41,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
     def __init__(
             self,
-            out_of_termination_state,
             hint_list,
             move_list,
             cap_list,
@@ -50,16 +49,13 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
         Parameters
         ----------
-        out_of_termination_state : int
-            ［終端外］
         hint_list : list<str>
             デバッグ用文字列
         """
-        self._out_of_termination_state      = out_of_termination_state
-        self._hint_list                     = hint_list
-        self._move_list                     = move_list
-        self._cap_list                      = cap_list
-        self._list_of_accumulate_exchange_value_on_earth = list_of_accumulate_exchange_value_on_earth   # 地球から見た、取った駒の交換値。
+        self._hint_list                                     = hint_list
+        self._move_list                                     = move_list
+        self._cap_list                                      = cap_list
+        self._list_of_accumulate_exchange_value_on_earth    = list_of_accumulate_exchange_value_on_earth   # 地球から見た、取った駒の交換値。
 
 
     def is_mars_at_peek(self, out_of_termination_is_mars_arg):
@@ -73,13 +69,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         if len(self._move_list) % 2 == 0:
             return out_of_termination_is_gote_arg
         return not out_of_termination_is_gote_arg
-
-
-    @property
-    def out_of_termination_state(self):
-        """［終端外］
-        """
-        return self._out_of_termination_state
 
 
     @property
@@ -106,14 +95,14 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         return self._cap_list[-1] != cshogi.NONE
 
 
-    def get_exchange_value_on_earth(self, out_of_termination_is_mars):
+    def get_exchange_value_on_earth(self, out_of_termination_is_mars_arg, out_of_termination_state_arg):
         """駒得の交換値。
         """
 
         if len(self._list_of_accumulate_exchange_value_on_earth) == 0:
             return self._get_out_of_termination_to_value_on_earth(   # ［終端外］の点数。
-                    out_of_termination_state    = self._out_of_termination_state,
-                    is_mars                     = out_of_termination_is_mars)
+                    out_of_termination_state_arg    = out_of_termination_state_arg,
+                    is_mars_arg                     = out_of_termination_is_mars_arg)
 
         return self._list_of_accumulate_exchange_value_on_earth[-1]
 
@@ -195,11 +184,11 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         self._list_of_accumulate_exchange_value_on_earth.append(best_value)
 
 
-    def stringify_bpm(self, out_of_termination_is_mars):
+    def stringify_bpm(self, out_of_termination_is_mars_arg, out_of_termination_state_arg):
         """読み筋を１行で文字列化。
         """
         tokens = []
-        is_mars = self.is_mars_at_peek(out_of_termination_is_mars=out_of_termination_is_mars)   # 逆順なので、ピークから。
+        is_mars = self.is_mars_at_peek(out_of_termination_is_mars=out_of_termination_is_mars_arg)   # 逆順なので、ピークから。
         is_gote = self.is_gote_at_peek   # 逆順なので、ピークから。
 
         len_of_move_list = len(self._move_list)
@@ -230,7 +219,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             is_mars = not is_mars
             is_gote = not is_gote
 
-        tokens.append(f"(終端外){Mars.japanese(is_mars)}の{OutOfTerminationStateModel.japanese(self.out_of_termination_state)}")   # ［終端外］
+        tokens.append(f"(終端外){Mars.japanese(is_mars)}の{OutOfTerminationStateModel.japanese(self.out_of_termination_state_arg)}")   # ［終端外］
 
         # ヒント・リスト
         tokens.append(' '.join(self._hint_list))
@@ -248,7 +237,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
 
     def stringify_dump(self):
-        return f"{self._out_of_termination_state=} {self._move_list=} {self._cap_list=} {self._list_of_accumulate_exchange_value_on_earth=} {' '.join(self._hint_list)=}"
+        return f"{self._move_list=} {self._cap_list=} {self._list_of_accumulate_exchange_value_on_earth=} {' '.join(self._hint_list)=}"
 
 
     def stringify_debug_1(self):
@@ -257,7 +246,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
     def copy_bpm(self):
         return BackwardsPlotModel(
-                out_of_termination_state                    = self._out_of_termination_state,
                 hint_list                                   = list(self._hint_list),
                 move_list                                   = list(self._move_list),
                 cap_list                                    = list(self._cap_list),

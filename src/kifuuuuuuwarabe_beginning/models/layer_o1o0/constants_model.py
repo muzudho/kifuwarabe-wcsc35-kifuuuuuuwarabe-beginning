@@ -22,7 +22,7 @@ class ConstantsModel():
 
 
     @property
-    def out_of_termination_state(self):
+    def out_of_termination_state_const(self):
         """［終端外］です。
         """
         return self._out_of_termination_state

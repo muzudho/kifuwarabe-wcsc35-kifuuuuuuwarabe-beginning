@@ -32,7 +32,7 @@ class PrincipalVariationModel:
                 backward_vertical_list_of_comment_arg       = [],
                 out_of_termination_is_mars_arg              = False,
                 out_of_termination_is_gote_arg              = out_of_termination_is_gote_arg,
-                out_of_termination_state_arg                = constants.out_of_termination_state.HORIZON,
+                out_of_termination_state_arg                = constants.out_of_termination_state_const.HORIZON,
                 out_of_termination_comment_arg              = '',
                 search_is_over_arg                          = False,
                 # TODO 廃止方針。
@@ -103,7 +103,7 @@ class PrincipalVariationModel:
         # TODO ［終端外］オブジェクトというまとまりにするか？
         self._out_of_termination_is_mars_pv             = out_of_termination_is_mars_arg
         self._out_of_termination_is_gote_pv             = out_of_termination_is_gote_arg
-        self._out_of_termination_state                  = out_of_termination_state_arg
+        self._out_of_termination_state_pv               = out_of_termination_state_arg
         self._out_of_termination_comment                = out_of_termination_comment_arg
         self._search_is_over_pv                         = search_is_over_arg
 
@@ -235,10 +235,10 @@ class PrincipalVariationModel:
         return self._out_of_termination_is_gote_pv
 
 
-    def out_of_termination_state(self):
+    def out_of_termination_state_pv(self):
         """［終端外］の状態。
         """
-        return self._out_of_termination_state
+        return self._out_of_termination_state_pv
 
 
     def out_of_termination_comment(self):
@@ -251,8 +251,8 @@ class PrincipalVariationModel:
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜入玉宣言勝ち＞')
         self._out_of_termination_is_mars_pv = search_context_model.gymnasium.is_mars
         self._out_of_termination_is_gote_pv = search_context_model.gymnasium.table.is_gote
+        self._out_of_termination_state_pv   = constants.out_of_termination_state_const.NYUGYOKU_WIN
         obj_1 = BackwardsPlotModel(
-                out_of_termination_state                    = constants.out_of_termination_state.NYUGYOKU_WIN,
                 hint_list                                   = [],
                 move_list                                   = [],
                 cap_list                                    = [],
@@ -265,8 +265,8 @@ class PrincipalVariationModel:
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜候補手無し[深={info_depth}]＞")
         self._out_of_termination_is_mars_pv = search_context_model.gymnasium.is_mars
         self._out_of_termination_is_gote_pv = search_context_model.gymnasium.table.is_gote
+        self._out_of_termination_state_pv   = constants.out_of_termination_state_const.NO_CANDIDATES
         obj_1 = BackwardsPlotModel(
-                out_of_termination_state                    = constants.out_of_termination_state.NO_CANDIDATES,
                 hint_list                                   = [],
                 move_list                                   = [],
                 cap_list                                    = [],
@@ -279,8 +279,8 @@ class PrincipalVariationModel:
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜静止[深={info_depth}]＞")
         self._out_of_termination_is_mars_pv = search_context_model.gymnasium.is_mars
         self._out_of_termination_is_gote_pv = search_context_model.gymnasium.table.is_gote
+        self._out_of_termination_state_pv   = constants.out_of_termination_state_const.QUIESCENCE
         obj_1 = BackwardsPlotModel(
-                out_of_termination_state                    = constants.out_of_termination_state.QUIESCENCE,
                 hint_list                                   = [],
                 move_list                                   = [],
                 cap_list                                    = [],
@@ -293,8 +293,8 @@ class PrincipalVariationModel:
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
         self._out_of_termination_is_mars_pv = search_context_model.gymnasium.is_mars
         self._out_of_termination_is_gote_pv = search_context_model.gymnasium.table.is_gote
+        self._out_of_termination_state_pv   = constants.out_of_termination_state_const.RESIGN
         obj_1 = BackwardsPlotModel(
-                out_of_termination_state                    = constants.out_of_termination_state.RESIGN,
                 hint_list                                   = [],
                 move_list                                   = [],
                 cap_list                                    = [],
@@ -319,8 +319,8 @@ class PrincipalVariationModel:
 
         self._out_of_termination_is_mars_pv = search_context_model.gymnasium.is_mars
         self._out_of_termination_is_gote_pv = search_context_model.gymnasium.table.is_gote
+        self._out_of_termination_state_pv   = constants.out_of_termination_state_const.RESIGN
         best_plot_model = BackwardsPlotModel(
-                out_of_termination_state                    = constants.out_of_termination_state.RESIGN,
                 hint_list                                   = [],
                 move_list                                   = [],
                 cap_list                                    = [],
@@ -348,8 +348,8 @@ class PrincipalVariationModel:
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜水平線＞")
         self._out_of_termination_is_mars_pv = search_context_model.gymnasium.is_mars
         self._out_of_termination_is_gote_pv = search_context_model.gymnasium.table.is_gote
+        self._out_of_termination_state_pv   = constants.out_of_termination_state_const.HORIZON
         obj_1 = BackwardsPlotModel(
-                out_of_termination_state                    = constants.out_of_termination_state.HORIZON,
                 hint_list                                   = [],
                 move_list                                   = [],
                 cap_list                                    = [],
