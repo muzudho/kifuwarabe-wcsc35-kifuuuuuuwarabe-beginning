@@ -30,7 +30,7 @@ class PrincipalVariationModel:
                 out_of_termination_is_gote_arg              = out_of_termination_is_gote_arg,
                 out_of_termination_state_arg                = constants.out_of_termination_state.HORIZON,
                 out_of_termination_comment_arg              = '',
-                is_terminate_arg                            = False,
+                search_is_over_arg                          = False,
                 # TODO 廃止方針。
                 # 終端外が有る分、他のリストより要素１個多い。＜水平線＞がデフォルト値。
                 vertical_list_of_backwards_plot_model_arg   = vertical_list_of_backwards_plot_model_arg)
@@ -48,7 +48,7 @@ class PrincipalVariationModel:
             out_of_termination_is_gote_arg,
             out_of_termination_state_arg,
             out_of_termination_comment_arg,
-            is_terminate_arg,
+            search_is_over_arg,
             vertical_list_of_backwards_plot_model_arg):  # TODO 廃止方針。
         """
         Parameters
@@ -77,7 +77,7 @@ class PrincipalVariationModel:
             ［後ろ向き探索］中に追加していく［読み筋］の履歴。
             ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
             TODO 廃止方針。
-        is_terminate_arg : bool
+        search_is_over_arg : bool
             ［読み筋］が終わっているか。
         """
 
@@ -97,7 +97,7 @@ class PrincipalVariationModel:
         self._out_of_termination_is_gote                = out_of_termination_is_gote_arg
         self._out_of_termination_state                  = out_of_termination_state_arg
         self._out_of_termination_comment                = out_of_termination_comment_arg
-        self._is_terminate_pv                              = is_terminate_arg
+        self._search_is_over_pv                         = search_is_over_arg
 
         # TODO 廃止方針の要素。
         self._deprecated_vertical_list_of_backwards_plot_model_pv  = vertical_list_of_backwards_plot_model_arg
@@ -249,7 +249,7 @@ class PrincipalVariationModel:
             value_arg,
             backwards_plot_model_arg,
             frontward_comment_arg,
-            replace_is_terminate_arg):
+            replace_search_is_over_arg):
         """［前向き探索］中に要素追加。
         """
         copied_frontward_vertical_list_of_move_pv = list(self._frontward_vertical_list_of_move_pv)
@@ -275,7 +275,7 @@ class PrincipalVariationModel:
                 out_of_termination_is_gote_arg              = self._out_of_termination_is_gote,
                 out_of_termination_state_arg                = self._out_of_termination_state,
                 out_of_termination_comment_arg              = '',
-                is_terminate_arg                            = replace_is_terminate_arg,
+                search_is_over_arg                          = replace_search_is_over_arg,
                 vertical_list_of_backwards_plot_model_arg   = copied_vertical_list_of_backwards_plot_model_pv)
 
 
@@ -298,19 +298,19 @@ class PrincipalVariationModel:
     #####################
 
     @property
-    def is_terminate_pv(self):
+    def search_is_over_pv(self):
         """探索は終端です。
         TODO ［終端外］オブジェクトの有無に変更したい。
         """
-        return self._is_terminate_pv
+        return self._search_is_over_pv
 
 
-    def set_is_terminate_pv(self, value):
+    def set_search_is_over_pv(self, value):
         """［終端外］設定。
         * ［指し手一覧のクリーニング］後とか。
         TODO だったら、フラグではなく、［終端外］オブジェクトを設定したい。
         """
-        self._is_terminate_pv = value
+        self._search_is_over_pv = value
 
 
     def _create_copied_bpm_list(self):
@@ -338,7 +338,7 @@ class PrincipalVariationModel:
                 out_of_termination_is_gote_arg              = self._out_of_termination_is_gote,
                 out_of_termination_state_arg                = self._out_of_termination_state,
                 out_of_termination_comment_arg              = self._out_of_termination_comment_arg,
-                is_terminate_arg                            = self._is_terminate_pv,
+                search_is_over_arg                          = self._search_is_over_pv,
                 vertical_list_of_backwards_plot_model_arg   = self._create_copied_bpm_list())
 
 

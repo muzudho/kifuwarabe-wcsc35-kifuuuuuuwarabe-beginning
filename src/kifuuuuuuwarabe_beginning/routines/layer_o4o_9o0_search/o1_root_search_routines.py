@@ -42,7 +42,7 @@ class O1RootSearchRoutines(SearchRoutines):
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(remaining_moves) == 0:
             parent_pv.set_deprecated_rooter_backwards_plot_model_in_backward_pv(SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model))
-            parent_pv.set_is_terminate_pv(True)
+            parent_pv.set_search_is_over_pv(True)
             return [parent_pv], []
         
         # ［水平指し手一覧］を［PV］へ変換。
@@ -202,7 +202,7 @@ class O1RootSearchRoutines(SearchRoutines):
             # 手番の処理
             # ----------
 
-            if pv.is_terminate_pv:                 # 探索不要なら。
+            if pv.search_is_over_pv:                 # 探索不要なら。
                 terminated_pv_list.append(pv)   # 終了済みPVリストへ当PVを追加。
             
             else:
@@ -214,7 +214,7 @@ class O1RootSearchRoutines(SearchRoutines):
                 # ［駒を取る手］がないことを、［静止］と呼ぶ。
                 if len(remaining_moves) == 0:
                     pv.set_deprecated_rooter_backwards_plot_model_in_backward_pv(SearchRoutines.create_backwards_plot_model_at_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model))
-                    pv.set_is_terminate_pv(True)
+                    pv.set_search_is_over_pv(True)
                     terminated_pv_list.append(pv)
                 
                 else:

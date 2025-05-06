@@ -49,7 +49,7 @@ class SearchRoutines:
                                                         is_mars     = search_context_model.gymnasium.is_mars),
                     backwards_plot_model_arg    = parent_pv.deprecated_rooter_backwards_plot_model_in_backward_pv,     # TODO 廃止方針
                     frontward_comment_arg       = '',
-                    replace_is_terminate_arg    = False)
+                    replace_search_is_over_arg  = False)
             pv_list.append(pv)
         
         return pv_list
@@ -339,7 +339,7 @@ class SearchRoutines:
             """
             obj_1 = SearchRoutines.create_backwards_plot_model_at_game_over(search_context_model=search_context_model)
             parent_pv.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
-            parent_pv.set_is_terminate_pv(True)
+            parent_pv.set_search_is_over_pv(True)
             return
 
         # 一手詰めを詰める
@@ -355,7 +355,7 @@ class SearchRoutines:
                         is_mars     = search_context_model.gymnasium.is_mars)
                 obj_1 = SearchRoutines.create_backwards_plot_model_at_mate_move_in_1_ply(info_depth=info_depth, mate_move=mate_move, search_context_model=search_context_model)
                 parent_pv.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
-                parent_pv.set_is_terminate_pv(True)
+                parent_pv.set_search_is_over_pv(True)
                 return
 
         if search_context_model.gymnasium.table.is_nyugyoku():
@@ -363,5 +363,5 @@ class SearchRoutines:
             """
             obj_1 = SearchRoutines.create_backwards_plot_model_at_nyugyoku_win(search_context_model=search_context_model)
             parent_pv.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
-            parent_pv.set_is_terminate_pv(True)
+            parent_pv.set_search_is_over_pv(True)
             return
