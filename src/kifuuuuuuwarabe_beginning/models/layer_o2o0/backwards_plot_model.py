@@ -32,17 +32,17 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         self._cap_list                                      = cap_list
 
 
-    def is_mars_at_peek(self, out_of_termination_is_mars_arg):
-        if len(self._move_list) % 2 == 0:
-            return out_of_termination_is_mars_arg
-        return not out_of_termination_is_mars_arg
+    # def is_mars_at_peek(self, out_of_termination_is_mars_arg):
+    #     if len(self._move_list) % 2 == 0:
+    #         return out_of_termination_is_mars_arg
+    #     return not out_of_termination_is_mars_arg
 
 
-    @property
-    def is_gote_at_peek(self, out_of_termination_is_gote_arg):
-        if len(self._move_list) % 2 == 0:
-            return out_of_termination_is_gote_arg
-        return not out_of_termination_is_gote_arg
+    # @property
+    # def is_gote_at_peek(self, out_of_termination_is_gote_arg):
+    #     if len(self._move_list) % 2 == 0:
+    #         return out_of_termination_is_gote_arg
+    #     return not out_of_termination_is_gote_arg
 
 
     @property
@@ -145,47 +145,47 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         list_of_accumulate_exchange_value_on_earth_arg.append(best_value)
 
 
-    def stringify_bpm(self, out_of_termination_is_mars_arg, out_of_termination_state_arg):
-        """読み筋を１行で文字列化。
-        """
-        tokens = []
-        is_mars = self.is_mars_at_peek(out_of_termination_is_mars=out_of_termination_is_mars_arg)   # 逆順なので、ピークから。
-        is_gote = self.is_gote_at_peek   # 逆順なので、ピークから。
+    # def stringify_bpm(self, out_of_termination_is_mars_arg, out_of_termination_state_arg):
+    #     """読み筋を１行で文字列化。
+    #     """
+    #     tokens = []
+    #     is_mars = self.is_mars_at_peek(out_of_termination_is_mars=out_of_termination_is_mars_arg)   # 逆順なので、ピークから。
+    #     is_gote = self.is_gote_at_peek   # 逆順なので、ピークから。
 
-        len_of_move_list = len(self._move_list)
-        for layer_no in reversed(range(0, len_of_move_list)):  # 逆順。
-            piece_exchange_value_on_earth   = self._list_of_accumulate_exchange_value_on_earth[layer_no]
+    #     len_of_move_list = len(self._move_list)
+    #     for layer_no in reversed(range(0, len_of_move_list)):  # 逆順。
+    #         piece_exchange_value_on_earth   = self._list_of_accumulate_exchange_value_on_earth[layer_no]
 
-            # １手目は読み筋から省く。（別項目として表示されるから）
-            if layer_no == len_of_move_list - 1:
-                tokens.append(f"({len_of_move_list - layer_no})[{piece_exchange_value_on_earth}]")
+    #         # １手目は読み筋から省く。（別項目として表示されるから）
+    #         if layer_no == len_of_move_list - 1:
+    #             tokens.append(f"({len_of_move_list - layer_no})[{piece_exchange_value_on_earth}]")
 
-            else:
-                move        = self._move_list[layer_no]
-                cap_pt      = self._cap_list[layer_no]
+    #         else:
+    #             move        = self._move_list[layer_no]
+    #             cap_pt      = self._cap_list[layer_no]
 
-                if not isinstance(move, int):   # FIXME バグがあるよう
-                    raise ValueError(f"move は int 型である必要があります。 {layer_no=} {type(move)=} {move=} {self._move_list=}")
+    #             if not isinstance(move, int):   # FIXME バグがあるよう
+    #                 raise ValueError(f"move は int 型である必要があります。 {layer_no=} {type(move)=} {move=} {self._move_list=}")
 
-                # 指し手のUSI表記を独自形式に変更。
-                move_jp_str = JapaneseMoveModel.from_move(
-                        move    = move,
-                        cap_pt  = cap_pt,
-                        is_mars = is_mars,
-                        is_gote = is_gote).stringify()
+    #             # 指し手のUSI表記を独自形式に変更。
+    #             move_jp_str = JapaneseMoveModel.from_move(
+    #                     move    = move,
+    #                     cap_pt  = cap_pt,
+    #                     is_mars = is_mars,
+    #                     is_gote = is_gote).stringify()
 
-                tokens.append(f"({len_of_move_list - layer_no}){move_jp_str}[{piece_exchange_value_on_earth}]")
+    #             tokens.append(f"({len_of_move_list - layer_no}){move_jp_str}[{piece_exchange_value_on_earth}]")
 
-            # 手番交代
-            is_mars = not is_mars
-            is_gote = not is_gote
+    #         # 手番交代
+    #         is_mars = not is_mars
+    #         is_gote = not is_gote
 
-        tokens.append(f"(終端外){Mars.japanese(is_mars)}の{OutOfTerminationStateModel.japanese(self.out_of_termination_state_arg)}")   # ［終端外］
+    #     tokens.append(f"(終端外){Mars.japanese(is_mars)}の{OutOfTerminationStateModel.japanese(self.out_of_termination_state_arg)}")   # ［終端外］
 
-        # ヒント・リスト
-        tokens.append(' '.join(self._hint_list))
+    #     # ヒント・リスト
+    #     tokens.append(' '.join(self._hint_list))
 
-        return ' '.join(tokens)
+    #     return ' '.join(tokens)
 
 
     def stringify_2(self):
