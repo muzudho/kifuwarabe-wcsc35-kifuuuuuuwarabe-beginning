@@ -41,7 +41,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
     def __init__(
             self,
-            is_mars_at_out_of_termination,
+            is_mars_at_out_of_termination_arg,
             is_gote_at_out_of_termination,
             out_of_termination_state,
             hint_list,
@@ -52,7 +52,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
         Parameters
         ----------
-        is_mars_at_out_of_termination : bool
+        i s_mars_at_out_of_termination_arg : bool
             ［葉局面］＝［終端外］手番は対戦相手か。
         is_gote_at_out_of_termination : bool
             ［葉局面］＝［終端外］手番は後手か。
@@ -61,7 +61,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         hint_list : list<str>
             デバッグ用文字列
         """
-        self._is_mars_at_out_of_termination = is_mars_at_out_of_termination
+        self._is_mars_at_out_of_termination = is_mars_at_out_of_termination_arg
         self._is_gote_at_out_of_termination = is_gote_at_out_of_termination
         self._out_of_termination_state      = out_of_termination_state
         self._hint_list                     = hint_list
@@ -71,7 +71,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
 
     @property
-    def is_mars_at_out_of_termination(self):
+    def is_mars_at_out_of_termination_bpm(self):
         """木構造の葉ノードの次で対戦相手か。
         """
         return self._is_mars_at_out_of_termination
@@ -280,10 +280,10 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
     def copy_bpm(self):
         return BackwardsPlotModel(
-                is_mars_at_out_of_termination   = self._is_mars_at_out_of_termination,
-                is_gote_at_out_of_termination   = self._is_gote_at_out_of_termination,
-                out_of_termination_state              = self._out_of_termination_state,
-                hint_list                       = list(self._hint_list),
-                move_list                       = list(self._move_list),
-                cap_list                        = list(self._cap_list),
-                list_of_accumulate_exchange_value_on_earth = list(self._list_of_accumulate_exchange_value_on_earth))
+                is_mars_at_out_of_termination_arg           = self._is_mars_at_out_of_termination,
+                is_gote_at_out_of_termination               = self._is_gote_at_out_of_termination,
+                out_of_termination_state                    = self._out_of_termination_state,
+                hint_list                                   = list(self._hint_list),
+                move_list                                   = list(self._move_list),
+                cap_list                                    = list(self._cap_list),
+                list_of_accumulate_exchange_value_on_earth  = list(self._list_of_accumulate_exchange_value_on_earth))
