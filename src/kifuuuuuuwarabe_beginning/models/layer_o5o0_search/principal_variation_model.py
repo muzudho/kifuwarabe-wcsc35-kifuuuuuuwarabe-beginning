@@ -3,6 +3,7 @@ import cshogi
 from ..layer_o1o_9o0 import PieceValuesModel
 from ..layer_o1o0 import constants, Mars, SquareModel
 from ..layer_o2o0 import BackwardsPlotModel
+from .termination_model import TerminationModel
 
 
 class PrincipalVariationModel:
@@ -25,6 +26,12 @@ class PrincipalVariationModel:
             TODO 廃止方針。
         """
 
+        termination_model = TerminationModel(
+                is_mars_arg = False,
+                is_gote_arg = out_of_termination_is_gote_arg,
+                state_arg   = constants.out_of_termination_state_const.HORIZON,
+                comment_arg = '')
+
         obj_1 = PrincipalVariationModel(
                 frontward_vertical_list_of_move_arg         = [],
                 frontward_vertical_list_of_cap_pt_arg       = [],
@@ -34,10 +41,10 @@ class PrincipalVariationModel:
                 backward_vertical_list_of_cap_pt_arg        = [],
                 backward_vertical_list_of_value_arg         = [],
                 backward_vertical_list_of_comment_arg       = [],
-                out_of_termination_is_mars_arg              = False,
-                out_of_termination_is_gote_arg              = out_of_termination_is_gote_arg,
-                out_of_termination_state_arg                = constants.out_of_termination_state_const.HORIZON,
-                out_of_termination_comment_arg              = '',
+                out_of_termination_is_mars_arg              = termination_model.is_mars_tm,
+                out_of_termination_is_gote_arg              = termination_model.is_gote_tm,
+                out_of_termination_state_arg                = termination_model.state_tm,
+                out_of_termination_comment_arg              = termination_model.comment_tm,
                 search_is_over_arg                          = False,
                 # TODO 廃止方針。
                 # 終端外が有る分、他のリストより要素１個多い。＜水平線＞がデフォルト値。
@@ -438,6 +445,12 @@ class PrincipalVariationModel:
         copied_frontward_vertical_list_of_comment_pv = list(self._frontward_vertical_list_of_comment_pv)
         copied_frontward_vertical_list_of_comment_pv.append(frontward_comment_arg)
 
+        termination_model = TerminationModel(
+                is_mars_arg = self._out_of_termination_is_mars_pv,
+                is_gote_arg = self._out_of_termination_is_gote,
+                state_arg   = self._out_of_termination_state,
+                comment_arg = '')
+
         # NOTE リストはコピー渡し。
         return PrincipalVariationModel(
                 frontward_vertical_list_of_move_arg         = copied_frontward_vertical_list_of_move_pv,
@@ -448,10 +461,10 @@ class PrincipalVariationModel:
                 backward_vertical_list_of_cap_pt_arg        = self._backward_vertical_list_of_cap_pt_pv,
                 backward_vertical_list_of_value_arg         = self._backward_vertical_list_of_value_pv,
                 backward_vertical_list_of_comment_arg       = self._backward_vertical_list_of_comment_pv,
-                out_of_termination_is_mars_arg              = self._out_of_termination_is_mars_pv,
-                out_of_termination_is_gote_arg              = self._out_of_termination_is_gote,
-                out_of_termination_state_arg                = self._out_of_termination_state,
-                out_of_termination_comment_arg              = '',
+                out_of_termination_is_mars_arg              = termination_model.is_mars_tm,
+                out_of_termination_is_gote_arg              = termination_model.is_gote_tm,
+                out_of_termination_state_arg                = termination_model.state_tm,
+                out_of_termination_comment_arg              = termination_model.comment_tm,
                 search_is_over_arg                          = replace_search_is_over_arg,
                 vertical_list_of_backwards_plot_model_arg   = copied_vertical_list_of_backwards_plot_model_pv)
 
@@ -503,6 +516,12 @@ class PrincipalVariationModel:
         """コピー。
         """
 
+        termination_model = TerminationModel(
+                is_mars_arg = self._out_of_termination_is_mars_pv,
+                is_gote_arg = self._out_of_termination_is_gote,
+                state_arg   = self._out_of_termination_state,
+                comment_arg = self._out_of_termination_comment_arg)
+
         # NOTE リストはコピー渡し。
         return PrincipalVariationModel(
                 frontward_vertical_list_of_move_arg         = list(self._frontward_vertical_list_of_move_pv),
@@ -513,10 +532,10 @@ class PrincipalVariationModel:
                 backward_vertical_list_of_cap_pt_arg        = list(self._backward_vertical_list_of_cap_pt_pv),
                 backward_vertical_list_of_value_arg         = list(self._backward_vertical_list_of_value_pv),
                 backward_vertical_list_of_comment_arg       = list(self._backward_vertical_list_of_comment_pv),
-                out_of_termination_is_mars_arg              = self._out_of_termination_is_mars_pv,
-                out_of_termination_is_gote_arg              = self._out_of_termination_is_gote,
-                out_of_termination_state_arg                = self._out_of_termination_state,
-                out_of_termination_comment_arg              = self._out_of_termination_comment_arg,
+                out_of_termination_is_mars_arg              = termination_model.is_mars_tm,
+                out_of_termination_is_gote_arg              = termination_model.is_gote_tm,
+                out_of_termination_state_arg                = termination_model.state_tm,
+                out_of_termination_comment_arg              = termination_model.comment_tm,
                 search_is_over_arg                          = self._search_is_over_pv,
                 vertical_list_of_backwards_plot_model_arg   = self._create_copied_bpm_list())
 
