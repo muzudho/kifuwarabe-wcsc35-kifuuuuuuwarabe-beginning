@@ -28,6 +28,8 @@ class PrincipalVariationModel:
                 frontward_vertical_list_of_cap_pt_arg       = [],
                 frontward_vertical_list_of_value_arg        = [],
                 frontward_vertical_list_of_comment_arg      = [],
+                backward_vertical_list_of_move_arg          = [],
+                backward_vertical_list_of_cap_pt_arg        = [],
                 backward_vertical_list_of_value_arg         = [],
                 backward_vertical_list_of_comment_arg       = [],
                 out_of_termination_is_mars_arg              = False,
@@ -50,6 +52,8 @@ class PrincipalVariationModel:
             frontward_vertical_list_of_cap_pt_arg,
             frontward_vertical_list_of_value_arg,
             frontward_vertical_list_of_comment_arg,
+            backward_vertical_list_of_move_arg,
+            backward_vertical_list_of_cap_pt_arg,
             backward_vertical_list_of_value_arg,
             backward_vertical_list_of_comment_arg,
             out_of_termination_is_mars_arg,
@@ -69,6 +73,10 @@ class PrincipalVariationModel:
             ［前向き探索］中に確定しながら追加していく［取った駒の点数］の履歴。地球視点。
         frontward_vertical_list_of_comment_arg : list<str>
             ［前向き探索］中に確定しながら追加していく［コメント］の履歴。地球視点。
+        backward_vertical_list_of_move_arg : list<int>
+            ［後ろ向き探索］中に確定しながら追加していく［シーショーギの指し手］の履歴。
+        backward_vertical_list_of_cap_pt_arg : list<int>
+            ［後ろ向き探索］中に確定しながら追加していく［取った駒の種類］の履歴。
         backward_vertical_list_of_value_arg : list<int>
             ［後ろ向き探索］中に追加していく［局面評価値］の履歴。
         backward_vertical_list_of_comment_arg : list<str>
@@ -96,6 +104,8 @@ class PrincipalVariationModel:
         self._frontward_vertical_list_of_comment_pv     = frontward_vertical_list_of_comment_arg
 
         # ［後ろ向き探索］しながら追加していく要素。
+        self._backward_vertical_list_of_move_pv         = backward_vertical_list_of_move_arg
+        self._backward_vertical_list_of_cap_pt_pv       = backward_vertical_list_of_cap_pt_arg
         self._backward_vertical_list_of_value_pv        = backward_vertical_list_of_value_arg
         self._backward_vertical_list_of_comment_pv      = backward_vertical_list_of_comment_arg
 
@@ -148,6 +158,19 @@ class PrincipalVariationModel:
     ##############################################
     # MARK: 後ろ向き探索しながら伸ばす縦の指し手リスト
     ##############################################
+
+    @property
+    def backward_vertical_list_of_move_pv(self):
+        """［指し手］の履歴。
+        """
+        return self._backward_vertical_list_of_move_pv
+
+
+    @property
+    def backward_vertical_list_of_cap_pt_pv(self):
+        """［取った駒の種類］の履歴。
+        """
+        return self._backward_vertical_list_of_cap_pt_pv
 
     @property
     def backward_vertical_list_of_value_pv(self):
@@ -282,10 +305,10 @@ class PrincipalVariationModel:
         self._out_of_termination_is_gote_pv                 = search_context_model.gymnasium.table.is_gote
         self._out_of_termination_state_pv                   = constants.out_of_termination_state_const.NYUGYOKU_WIN
         self._list_of_accumulate_exchange_value_on_earth_pv = []
+        self._backward_vertical_list_of_move_pv             = []
+        self._backward_vertical_list_of_cap_pv              = []
         self._backward_vertical_list_of_comment_pv          = []
-        obj_1 = BackwardsPlotModel(
-                move_list                                   = [],
-                cap_list                                    = [])
+        obj_1 = BackwardsPlotModel()
         self.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
         self.set_search_is_over_pv(True)
 
@@ -296,10 +319,10 @@ class PrincipalVariationModel:
         self._out_of_termination_is_gote_pv                 = search_context_model.gymnasium.table.is_gote
         self._out_of_termination_state_pv                   = constants.out_of_termination_state_const.NO_CANDIDATES
         self._list_of_accumulate_exchange_value_on_earth_pv = []
+        self._backward_vertical_list_of_move_pv             = []
+        self._backward_vertical_list_of_cap_pv              = []
         self._backward_vertical_list_of_comment_pv          = []
-        obj_1 = BackwardsPlotModel(
-                move_list                                   = [],
-                cap_list                                    = [])
+        obj_1 = BackwardsPlotModel()
         self.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
         self.set_search_is_over_pv(True)
 
@@ -310,10 +333,10 @@ class PrincipalVariationModel:
         self._out_of_termination_is_gote_pv                 = search_context_model.gymnasium.table.is_gote
         self._out_of_termination_state_pv                   = constants.out_of_termination_state_const.QUIESCENCE
         self._list_of_accumulate_exchange_value_on_earth_pv = []
+        self._backward_vertical_list_of_move_pv             = []
+        self._backward_vertical_list_of_cap_pv              = []
         self._backward_vertical_list_of_comment_pv          = []
-        obj_1 = BackwardsPlotModel(
-                move_list                                   = [],
-                cap_list                                    = [])
+        obj_1 = BackwardsPlotModel()
         self.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
         self.set_search_is_over_pv(True)
 
@@ -324,10 +347,10 @@ class PrincipalVariationModel:
         self._out_of_termination_is_gote_pv                 = search_context_model.gymnasium.table.is_gote
         self._out_of_termination_state_pv                   = constants.out_of_termination_state_const.RESIGN
         self._list_of_accumulate_exchange_value_on_earth_pv = []
+        self._backward_vertical_list_of_move_pv             = []
+        self._backward_vertical_list_of_cap_pv              = []
         self._backward_vertical_list_of_comment_pv          = []
-        obj_1 = BackwardsPlotModel(
-                move_list                                   = [],
-                cap_list                                    = [])
+        obj_1 = BackwardsPlotModel()
         self.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
         self.set_search_is_over_pv(True)
 
@@ -350,10 +373,10 @@ class PrincipalVariationModel:
         self._out_of_termination_is_gote_pv                 = search_context_model.gymnasium.table.is_gote
         self._out_of_termination_state_pv                   = constants.out_of_termination_state_const.RESIGN
         self._list_of_accumulate_exchange_value_on_earth_pv = []
+        self._backward_vertical_list_of_move_pv             = []
+        self._backward_vertical_list_of_cap_pv              = []
         self._backward_vertical_list_of_comment_pv          = []
-        best_plot_model = BackwardsPlotModel(
-                move_list                                   = [],
-                cap_list                                    = [])
+        best_plot_model = BackwardsPlotModel()
     
         # 今回の手を付け加える。
         if is_mars_at_out_of_termination:
@@ -380,10 +403,10 @@ class PrincipalVariationModel:
         self._out_of_termination_is_gote_pv                 = search_context_model.gymnasium.table.is_gote
         self._out_of_termination_state_pv                   = constants.out_of_termination_state_const.HORIZON
         self._list_of_accumulate_exchange_value_on_earth_pv = []
+        self._backward_vertical_list_of_move_pv             = []
+        self._backward_vertical_list_of_cap_pv              = []
         self._backward_vertical_list_of_comment_pv          = []
-        obj_1 = BackwardsPlotModel(
-                move_list                                   = [],
-                cap_list                                    = [])
+        obj_1 = BackwardsPlotModel()
         self.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
         self.set_search_is_over_pv(True)
 
@@ -419,6 +442,8 @@ class PrincipalVariationModel:
                 frontward_vertical_list_of_cap_pt_arg       = copied_frontward_vertical_list_of_cap_pt_pv,
                 frontward_vertical_list_of_value_arg        = copied_frontward_vertical_list_of_value_pv,
                 frontward_vertical_list_of_comment_arg      = copied_frontward_vertical_list_of_comment_pv,
+                backward_vertical_list_of_move_arg          = self._backward_vertical_list_of_move_pv,
+                backward_vertical_list_of_cap_pt_arg        = self._backward_vertical_list_of_cap_pt_pv,
                 backward_vertical_list_of_value_arg         = self._backward_vertical_list_of_value_pv,
                 backward_vertical_list_of_comment_arg       = self._backward_vertical_list_of_comment_pv,
                 out_of_termination_is_mars_arg              = self._out_of_termination_is_mars_pv,
@@ -437,10 +462,10 @@ class PrincipalVariationModel:
         """［後ろ向き探索］中に要素追加。
         """
         self.deprecated_rooter_backwards_plot_model_in_backward_pv.append_move_from_back(
-                move                = move,
-                capture_piece_type  = capture_piece_type,
-                best_value          = best_value,
-                list_of_accumulate_exchange_value_on_earth_arg = list_of_accumulate_exchange_value_on_earth_arg)
+                move                                            = move,
+                capture_piece_type                              = capture_piece_type,
+                best_value                                      = best_value,
+                list_of_accumulate_exchange_value_on_earth_arg  = list_of_accumulate_exchange_value_on_earth_arg)
 
 
     #####################
@@ -482,6 +507,8 @@ class PrincipalVariationModel:
                 frontward_vertical_list_of_cap_pt_arg       = list(self._frontward_vertical_list_of_cap_pt_pv),
                 frontward_vertical_list_of_value_arg        = list(self._frontward_vertical_list_of_value_pv),
                 frontward_vertical_list_of_comment_arg      = list(self._frontward_vertical_list_of_comment_pv),
+                backward_vertical_list_of_move_arg          = list(self._backward_vertical_list_of_move_pv),
+                backward_vertical_list_of_cap_pt_arg        = list(self._backward_vertical_list_of_cap_pt_pv),
                 backward_vertical_list_of_value_arg         = list(self._backward_vertical_list_of_value_pv),
                 backward_vertical_list_of_comment_arg       = list(self._backward_vertical_list_of_comment_pv),
                 out_of_termination_is_mars_arg              = self._out_of_termination_is_mars_pv,

@@ -15,14 +15,10 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
     """
 
 
-    def __init__(
-            self,
-            move_list,
-            cap_list):
+    def __init__(self):
         """初期化。
         """
-        self._move_list                                     = move_list
-        self._cap_list                                      = cap_list
+        pass
 
 
     # def is_mars_at_peek(self, out_of_termination_is_mars_arg):
@@ -38,96 +34,86 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
     #     return not out_of_termination_is_gote_arg
 
 
-    @property
-    def move_list(self):
-        return self._move_list
+    # @property
+    # def peek_move_bpm(self):
+    #     if len(self._move_list) < 1:
+    #         raise ValueError('指し手のリストが０件です。')
+    #     return self._move_list[-1]
 
 
-    @property
-    def cap_list(self):
-        return self._cap_list
+    # @property
+    # def is_capture_at_last(self):
+    #     if len(self._cap_list) < 1:
+    #         raise ValueError('取った駒のリストが０件です。')
+    #     return self._cap_list[-1] != cshogi.NONE
 
 
-    @property
-    def peek_move_bpm(self):
-        if len(self._move_list) < 1:
-            raise ValueError('指し手のリストが０件です。')
-        return self._move_list[-1]
+    # def move_list_length(self):
+    #     return len(self._move_list)
 
 
-    @property
-    def is_capture_at_last(self):
-        if len(self._cap_list) < 1:
-            raise ValueError('取った駒のリストが０件です。')
-        return self._cap_list[-1] != cshogi.NONE
-
-
-    def move_list_length(self):
-        return len(self._move_list)
-
-
-    def is_empty_moves(self):
-        # ASSERT
-        len_move_list = len(self._move_list)
-        len_cap_list = len(self._cap_list)
-        if not (len_move_list == len_cap_list):
-            raise ValueError(f"配列の長さの整合性が取れていません。 {len_move_list=} {len_cap_list=}")
+    # def is_empty_moves(self):
+    #     # ASSERT
+    #     len_move_list = len(self._move_list)
+    #     len_cap_list = len(self._cap_list)
+    #     if not (len_move_list == len_cap_list):
+    #         raise ValueError(f"配列の長さの整合性が取れていません。 {len_move_list=} {len_cap_list=}")
         
-        return len(self._move_list) < 1
+    #     return len(self._move_list) < 1
 
 
-    def append_move_from_back(self, move, capture_piece_type, best_value, list_of_accumulate_exchange_value_on_earth_arg):
-        """
-        Parameters
-        ----------
-        move : int
-            シーショーギの指し手。
-        capture_piece_type : int
-            取った駒の種類。
-        best_value : int
-            ベスト点。
-        """
+    # def append_move_from_back(self, move, capture_piece_type, best_value, list_of_accumulate_exchange_value_on_earth_arg):
+    #     """
+    #     Parameters
+    #     ----------
+    #     move : int
+    #         シーショーギの指し手。
+    #     capture_piece_type : int
+    #         取った駒の種類。
+    #     best_value : int
+    #         ベスト点。
+    #     """
 
-        ##########
-        # １手追加
-        ##########
-        self._move_list.append(move)
-        self._cap_list.append(capture_piece_type)
+    #     ##########
+    #     # １手追加
+    #     ##########
+    #     self._move_list.append(move)
+    #     self._cap_list.append(capture_piece_type)
 
-        ############
-        # １手追加後
-        ############
+    #     ############
+    #     # １手追加後
+    #     ############
 
-        if capture_piece_type is None:
-            raise ValueError(f"capture_piece_type をナンにしてはいけません。cshogi.NONE を使ってください。 {capture_piece_type=}")
+    #     if capture_piece_type is None:
+    #         raise ValueError(f"capture_piece_type をナンにしてはいけません。cshogi.NONE を使ってください。 {capture_piece_type=}")
 
-        # if len(self._list_of_accumulate_exchange_value_on_earth) == 0:
-        #     accumulate_value_on_earth = self._get_out_of_termination_to_value_on_earth(   # ［終端外］の点数。
-        #             out_of_termination_state  = self._out_of_termination_state,
-        #             is_mars             = self._is_mars_at_out_of_termination)
-        # else:
-        #     accumulate_value_on_earth = self._list_of_accumulate_exchange_value_on_earth[-1]
+    #     # if len(self._list_of_accumulate_exchange_value_on_earth) == 0:
+    #     #     accumulate_value_on_earth = self._get_out_of_termination_to_value_on_earth(   # ［終端外］の点数。
+    #     #             out_of_termination_state  = self._out_of_termination_state,
+    #     #             is_mars             = self._is_mars_at_out_of_termination)
+    #     # else:
+    #     #     accumulate_value_on_earth = self._list_of_accumulate_exchange_value_on_earth[-1]
 
-        # piece_exchange_value_on_earth = 2 * PieceValuesModel.by_piece_type(pt=capture_piece_type)      # 交換値に変換。正の数とする。
-        # if self.is_mars_at_peek:                    # 火星なら。
-        #     piece_exchange_value_on_earth *= -1     # 正負の符号を反転する。
+    #     # piece_exchange_value_on_earth = 2 * PieceValuesModel.by_piece_type(pt=capture_piece_type)      # 交換値に変換。正の数とする。
+    #     # if self.is_mars_at_peek:                    # 火星なら。
+    #     #     piece_exchange_value_on_earth *= -1     # 正負の符号を反転する。
 
-        # # ＜📚原則１＞地球と火星のペアが完成したら、駒得点を逓減。
-        # # # かつ、火星の［終端外］で終わるとき　＝　地球の［指し手］で読み終わるとき
-        # # if (
-        # #         self._out_of_termination_state == constants.out_of_termination_state.HORIZON     # ［終端外］が［読みの深さの最大］。
-        # #     and len(self._list_of_accumulate_exchange_value_on_earth) == 1                      # ［読みの深さの最大］のときの末端の指し手のとき。
-        # #     and not self.is_mars_at_peek                                                        # ［地球］の手番。
-        # #     ):
-        # #     piece_exchange_value_on_earth = 0   # 駒得点をノーカウントにする。（［地球の手］を１回多くカウントするのは数えすぎだから）
+    #     # # ＜📚原則１＞地球と火星のペアが完成したら、駒得点を逓減。
+    #     # # # かつ、火星の［終端外］で終わるとき　＝　地球の［指し手］で読み終わるとき
+    #     # # if (
+    #     # #         self._out_of_termination_state == constants.out_of_termination_state.HORIZON     # ［終端外］が［読みの深さの最大］。
+    #     # #     and len(self._list_of_accumulate_exchange_value_on_earth) == 1                      # ［読みの深さの最大］のときの末端の指し手のとき。
+    #     # #     and not self.is_mars_at_peek                                                        # ［地球］の手番。
+    #     # #     ):
+    #     # #     piece_exchange_value_on_earth = 0   # 駒得点をノーカウントにする。（［地球の手］を１回多くカウントするのは数えすぎだから）
 
-        # # （完全に読み切るわけではないので）深くの手ほど価値を減らします。ただしあまり深くの駒を弱く調整すると、浅い銀と深い角が同じ価値になるなど不具合が生じます。
-        # # 累計します。
-        # piece_exchange_value_on_earth = (piece_exchange_value_on_earth + accumulate_value_on_earth)     # * 3 / 4     # * 9 / 10
+    #     # # （完全に読み切るわけではないので）深くの手ほど価値を減らします。ただしあまり深くの駒を弱く調整すると、浅い銀と深い角が同じ価値になるなど不具合が生じます。
+    #     # # 累計します。
+    #     # piece_exchange_value_on_earth = (piece_exchange_value_on_earth + accumulate_value_on_earth)     # * 3 / 4     # * 9 / 10
 
-        # self._list_of_accumulate_exchange_value_on_earth.append(piece_exchange_value_on_earth)
+    #     # self._list_of_accumulate_exchange_value_on_earth.append(piece_exchange_value_on_earth)
 
-        list_of_accumulate_exchange_value_on_earth_arg.append(best_value)
+    #     list_of_accumulate_exchange_value_on_earth_arg.append(best_value)
 
 
     # def stringify_bpm(self, out_of_termination_is_mars_arg, out_of_termination_state_arg):
@@ -170,24 +156,24 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
     #     return ' '.join(tokens)
 
 
-    def stringify_2(self):
-        def _cap_str():
-            if self.is_capture_at_last:
-                return 'cap'
-            return ''
+    # def stringify_2(self):
+    #     def _cap_str():
+    #         if self.is_capture_at_last:
+    #             return 'cap'
+    #         return ''
 
-        return f"{_cap_str():3}"
-
-
-    def stringify_dump(self):
-        return f"{self._move_list=} {self._cap_list=}"
+    #     return f"{_cap_str():3}"
 
 
-    def stringify_debug_1(self):
-        return f"{len(self._move_list)=} {len(self._cap_list)=}"
+    # def stringify_dump(self):
+    #     return f"{self._move_list=} {self._cap_list=}"
 
 
-    def copy_bpm(self):
-        return BackwardsPlotModel(
-                move_list                                   = list(self._move_list),
-                cap_list                                    = list(self._cap_list))
+    # def stringify_debug_1(self):
+    #     return f"{len(self._move_list)=} {len(self._cap_list)=}"
+
+
+    # def copy_bpm(self):
+    #     return BackwardsPlotModel(
+    #             move_list                                   = list(self._move_list),
+    #             cap_list                                    = list(self._cap_list))
