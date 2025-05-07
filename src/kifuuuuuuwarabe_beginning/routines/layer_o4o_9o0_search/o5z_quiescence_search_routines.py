@@ -170,7 +170,6 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
         # best_pv.append_move_in_backward_pv(
         #         move                = best_move,
         #         capture_piece_type  = best_move_cap_pt,
-        #         best_value          = best_value,
-        #         hint                = '')
+        #         best_value          = best_value)
 
         return terminated_pv_list, live_pv_list

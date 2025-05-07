@@ -257,8 +257,7 @@ class O1RootSearchRoutines(SearchRoutines):
             pv.append_move_in_backward_pv(
                     move                = pv.leafer_move_in_frontward_pv,
                     capture_piece_type  = pv.leafer_cap_pt_in_frontward_pv,
-                    best_value          = pv.get_root_value_in_backward_pv(),
-                    hint                = '')
+                    best_value          = pv.get_root_value_in_backward_pv())
 
             # ベータカットもしません。全部返すから。
             #pv.value_pv += pv.get_root_value_in_backward_pv()

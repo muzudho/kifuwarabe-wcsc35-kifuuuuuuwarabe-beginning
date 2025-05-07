@@ -174,8 +174,7 @@ class O2CounterSearchRoutines(SearchRoutines):
             pv.append_move_in_backward_pv(
                     move                = pv.leafer_move_in_frontward_pv,
                     capture_piece_type  = pv.leafer_cap_pt_in_frontward_pv,
-                    best_value          = pv.get_root_value_in_backward_pv(),
-                    hint                = '')
+                    best_value          = pv.get_root_value_in_backward_pv())
 
             #(this_branch_value_on_earth, is_update_best_o2) = SearchRoutines.is_update_best_search(best_pv=best_pv, child_pv=child_pv, piece_exchange_value_on_earth=piece_exchange_value_on_earth, search_context_model=search_context_model)
 
@@ -201,8 +200,7 @@ class O2CounterSearchRoutines(SearchRoutines):
         # best_pv.append_move_in_backward_pv(
         #         move                = best_move,
         #         capture_piece_type  = best_move_cap_pt,
-        #         best_value          = best_value,
-        #         hint                = '')
+        #         best_value          = best_value)
 
         return terminated_pv_list, live_pv_list
 

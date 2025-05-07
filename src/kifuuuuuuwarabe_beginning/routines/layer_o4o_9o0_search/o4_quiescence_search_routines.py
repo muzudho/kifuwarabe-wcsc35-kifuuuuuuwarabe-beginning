@@ -213,7 +213,6 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
         # best_pv.appappend_move_in_backward_pvend_move_from_back(
         #         move                = best_move,
         #         capture_piece_type  = best_move_cap_pt,
-        #         best_value          = best_value,
-        #         hint                = '')
+        #         best_value          = best_value)
 
         return terminated_pv_list, live_pv_list

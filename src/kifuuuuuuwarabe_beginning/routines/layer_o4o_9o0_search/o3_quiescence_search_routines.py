@@ -205,7 +205,6 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
         # best_pv.appendappend_move_in_backward_pv_move_from_back(
         #         move                = best_move,
         #         capture_piece_type  = best_move_cap_pt,
-        #         best_value          = best_value,
-        #         hint                = '')
+        #         best_value          = best_value)
 
         return terminated_pv_list, live_pv_list

@@ -17,17 +17,10 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
     def __init__(
             self,
-            hint_list,
             move_list,
             cap_list):
         """初期化。
-
-        Parameters
-        ----------
-        hint_list : list<str>
-            デバッグ用文字列
         """
-        self._hint_list                                     = hint_list
         self._move_list                                     = move_list
         self._cap_list                                      = cap_list
 
@@ -69,11 +62,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         return self._cap_list[-1] != cshogi.NONE
 
 
-    @property
-    def hint_list(self):
-        return self._hint_list
-
-
     def move_list_length(self):
         return len(self._move_list)
 
@@ -88,7 +76,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         return len(self._move_list) < 1
 
 
-    def append_move_from_back(self, move, capture_piece_type, best_value, hint, list_of_accumulate_exchange_value_on_earth_arg):
+    def append_move_from_back(self, move, capture_piece_type, best_value, list_of_accumulate_exchange_value_on_earth_arg):
         """
         Parameters
         ----------
@@ -98,8 +86,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
             取った駒の種類。
         best_value : int
             ベスト点。
-        hint : str
-            デバッグ用文字列。
         """
 
         ##########
@@ -107,7 +93,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
         ##########
         self._move_list.append(move)
         self._cap_list.append(capture_piece_type)
-        self._hint_list.append(hint)
 
         ############
         # １手追加後
@@ -182,9 +167,6 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
     #     tokens.append(f"(終端外){Mars.japanese(is_mars)}の{OutOfTerminationStateModel.japanese(self.out_of_termination_state_arg)}")   # ［終端外］
 
-    #     # ヒント・リスト
-    #     tokens.append(' '.join(self._hint_list))
-
     #     return ' '.join(tokens)
 
 
@@ -198,7 +180,7 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
 
     def stringify_dump(self):
-        return f"{self._move_list=} {self._cap_list=} {' '.join(self._hint_list)=}"
+        return f"{self._move_list=} {self._cap_list=}"
 
 
     def stringify_debug_1(self):
@@ -207,6 +189,5 @@ class BackwardsPlotModel(): # TODO Rename PathFromLeaf
 
     def copy_bpm(self):
         return BackwardsPlotModel(
-                hint_list                                   = list(self._hint_list),
                 move_list                                   = list(self._move_list),
                 cap_list                                    = list(self._cap_list))
