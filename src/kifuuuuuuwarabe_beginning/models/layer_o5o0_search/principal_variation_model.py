@@ -7,6 +7,8 @@ from ..layer_o2o0 import BackwardsPlotModel
 
 class PrincipalVariationModel:
     """読み筋モデル。
+
+    TODO HistoryNode へ移行したい。
     """
 
 
