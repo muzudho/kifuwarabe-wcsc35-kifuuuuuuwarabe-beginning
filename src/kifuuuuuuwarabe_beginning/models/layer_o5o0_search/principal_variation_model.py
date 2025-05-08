@@ -402,7 +402,7 @@ class PrincipalVariationModel:
     # MARK: 前向き探索
     ##################
 
-    def new_and_append_in_frontward_pv(
+    def extend_node_pv(
             self,
             move_arg,
             cap_pt_arg,
@@ -494,17 +494,26 @@ class PrincipalVariationModel:
 
 
     def stringify_2(self):
-        return self.deprecated_rooter_backwards_plot_model_in_backward_pv.stringify_2()
+        def _cap_str():
+            if self.is_capture_at_last:
+                return 'cap'
+            return ''
+
+        return f"{_cap_str():3}"
 
 
     @property
     def peek_move_pv(self):
-        return self.deprecated_rooter_backwards_plot_model_in_backward_pv.peek_move_bpm
+        if len(self._backward_vertical_list_of_move_pv) < 1:
+            raise ValueError('指し手のリストが０件です。')
+        return self._backward_vertical_list_of_move_pv[-1]
 
 
     @property
     def is_capture_at_last(self):
-        return self.deprecated_rooter_backwards_plot_model_in_backward_pv.is_capture_at_last
+        if len(self._backward_vertical_list_of_cap_pt_pv) < 1:
+            raise ValueError('取った駒のリストが０件です。')
+        return self._backward_vertical_list_of_cap_pt_pv[-1] != cshogi.NONE
 
 
     ###############

@@ -34,20 +34,6 @@
 #     #     return not out_of_termination_is_gote_arg
 
 
-#     # @property
-#     # def peek_move_bpm(self):
-#     #     if len(self._move_list) < 1:
-#     #         raise ValueError('指し手のリストが０件です。')
-#     #     return self._move_list[-1]
-
-
-#     # @property
-#     # def is_capture_at_last(self):
-#     #     if len(self._cap_list) < 1:
-#     #         raise ValueError('取った駒のリストが０件です。')
-#     #     return self._cap_list[-1] != cshogi.NONE
-
-
 #     # def move_list_length(self):
 #     #     return len(self._move_list)
 
@@ -154,15 +140,6 @@
 #     #     tokens.append(f"(終端外){Mars.japanese(is_mars)}の{OutOfTerminationStateModel.japanese(self.out_of_termination_state_arg)}")   # ［終端外］
 
 #     #     return ' '.join(tokens)
-
-
-#     # def stringify_2(self):
-#     #     def _cap_str():
-#     #         if self.is_capture_at_last:
-#     #             return 'cap'
-#     #         return ''
-
-#     #     return f"{_cap_str():3}"
 
 
 #     # def stringify_dump(self):
