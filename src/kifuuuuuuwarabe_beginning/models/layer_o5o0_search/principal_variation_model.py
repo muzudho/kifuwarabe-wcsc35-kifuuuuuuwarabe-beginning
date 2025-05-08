@@ -422,11 +422,11 @@ class PrincipalVariationModel:
         copied_frontward_vertical_list_of_comment_pv = list(self._frontward_vertical_list_of_comment_pv)
         copied_frontward_vertical_list_of_comment_pv.append(frontward_comment_arg)
 
-        termination_model = TerminationModel(
-                is_mars_arg = self._termination_model_pv.is_mars_tm,
-                is_gote_arg = self._out_of_termination_is_gote,
-                state_arg   = self._out_of_termination_state,
-                comment_arg = '')
+        # termination_model = TerminationModel(
+        #         is_mars_arg = self._termination_model_pv.is_mars_tm,
+        #         is_gote_arg = self._out_of_termination_is_gote,
+        #         state_arg   = self._out_of_termination_state,
+        #         comment_arg = '')
 
         # NOTE リストはコピー渡し。
         return PrincipalVariationModel(
@@ -438,7 +438,7 @@ class PrincipalVariationModel:
                 backward_vertical_list_of_cap_pt_arg        = self._backward_vertical_list_of_cap_pt_pv,
                 backward_vertical_list_of_value_arg         = self._backward_vertical_list_of_value_pv,
                 backward_vertical_list_of_comment_arg       = self._backward_vertical_list_of_comment_pv,
-                termination_model_arg                       = termination_model,
+                termination_model_arg                       = None, #termination_model, # ［終端外］に達している枝が伸びることはないことから。
                 vertical_list_of_backwards_plot_model_arg   = copied_vertical_list_of_backwards_plot_model_pv)
 
 

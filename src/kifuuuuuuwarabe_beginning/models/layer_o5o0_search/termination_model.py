@@ -43,3 +43,13 @@ class TerminationModel:
         """［コメント］。
         """
         return self._comment_tm
+
+
+    def copy_termination_model(self):
+        """複製。
+        """
+        return TerminationModel(
+                is_mars_arg = self._is_mars_tm,
+                is_gote_arg = self._is_gote_tm,
+                state_arg   = self._state_tm,
+                comment_arg = self._comment_tm)
