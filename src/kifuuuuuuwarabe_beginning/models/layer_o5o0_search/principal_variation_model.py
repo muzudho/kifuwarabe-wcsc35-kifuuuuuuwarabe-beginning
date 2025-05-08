@@ -41,7 +41,7 @@ class PrincipalVariationModel:
                 backward_vertical_list_of_cap_pt_arg        = [],
                 backward_vertical_list_of_value_arg         = [],
                 backward_vertical_list_of_comment_arg       = [],
-                termination_model                           = termination_model,
+                termination_model_arg                       = termination_model,
                 search_is_over_arg                          = False,
                 # TODO 廃止方針。
                 # 終端外が有る分、他のリストより要素１個多い。＜水平線＞がデフォルト値。
@@ -62,7 +62,7 @@ class PrincipalVariationModel:
             backward_vertical_list_of_cap_pt_arg,
             backward_vertical_list_of_value_arg,
             backward_vertical_list_of_comment_arg,
-            termination_model,
+            termination_model_arg,
             search_is_over_arg,
             vertical_list_of_backwards_plot_model_arg):  # TODO 廃止方針。
         """
@@ -84,7 +84,7 @@ class PrincipalVariationModel:
             ［後ろ向き探索］中に追加していく［局面評価値］の履歴。
         backward_vertical_list_of_comment_arg : list<str>
             ［後ろ向き探索］中に追加していく［指し手のコメント］の履歴。
-        termination_model : TerminationModel
+        termination_model_arg : TerminationModel
             ［終端外］モデル。
         vertical_list_of_backwards_plot_model_arg : list<B ackwardsPlotModel>
             ［後ろ向き探索］中に追加していく［読み筋］の履歴。
@@ -108,10 +108,7 @@ class PrincipalVariationModel:
 
         # ［終端外］で設定する要素。
         # TODO ［終端外］オブジェクトというまとまりにするか？
-        self._out_of_termination_is_mars_pv             = termination_model.is_mars_tm
-        self._out_of_termination_is_gote_pv             = termination_model.is_gote_tm
-        self._out_of_termination_state_pv               = termination_model.state_tm
-        self._out_of_termination_comment                = termination_model.comment_tm
+        self._termination_model_pv                      = termination_model_arg
         self._search_is_over_pv                         = search_is_over_arg
 
         # TODO 廃止方針の要素。
@@ -272,35 +269,43 @@ class PrincipalVariationModel:
     # MARK: 終端外
     ##############
 
+    def termination_model_arg_pv(self):
+        """［終端外］。
+        """
+        return self._termination_model_pv
+
+
     def out_of_termination_is_mars_pv(self):
         """［終端外］は火星か？
         """
-        return self._out_of_termination_is_mars_pv
+        return self._termination_model_pv.is_mars_tm
 
 
     def out_of_termination_is_gote(self):
         """［終端外］は後手か？
         """
-        return self._out_of_termination_is_gote_pv
+        return self._termination_model_pv.is_gote_tm
 
 
     def out_of_termination_state_pv(self):
         """［終端外］の状態。
         """
-        return self._out_of_termination_state_pv
+        return self._termination_model_pv.state_tm
 
 
     def out_of_termination_comment(self):
         """［終端外］の［指し手のコメント］。
         """
-        return self._out_of_termination_comment
+        return self._termination_model_pv.comment_tm
 
 
     def setup_to_nyugyoku_win(self, search_context_model):
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜入玉宣言勝ち＞')
-        self._out_of_termination_is_mars_pv                 = search_context_model.gymnasium.is_mars
-        self._out_of_termination_is_gote_pv                 = search_context_model.gymnasium.table.is_gote
-        self._out_of_termination_state_pv                   = constants.out_of_termination_state_const.NYUGYOKU_WIN
+        self._termination_model_pv                          = TerminationModel(
+                                                                    is_mars_arg = search_context_model.gymnasium.is_mars,
+                                                                    is_gote_arg = search_context_model.gymnasium.table.is_gote,
+                                                                    state_arg   = constants.out_of_termination_state_const.NYUGYOKU_WIN,
+                                                                    comment_arg = '')
         self._list_of_accumulate_exchange_value_on_earth_pv = []
         self._backward_vertical_list_of_move_pv             = []
         self._backward_vertical_list_of_cap_pv              = []
@@ -312,9 +317,11 @@ class PrincipalVariationModel:
 
     def setup_to_no_candidates(self, info_depth, search_context_model):
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜候補手無し[深={info_depth}]＞")
-        self._out_of_termination_is_mars_pv                 = search_context_model.gymnasium.is_mars
-        self._out_of_termination_is_gote_pv                 = search_context_model.gymnasium.table.is_gote
-        self._out_of_termination_state_pv                   = constants.out_of_termination_state_const.NO_CANDIDATES
+        self._termination_model_pv                          = TerminationModel(
+                                                                    is_mars_arg = search_context_model.gymnasium.is_mars,
+                                                                    is_gote_arg = search_context_model.gymnasium.table.is_gote,
+                                                                    state_arg   = constants.out_of_termination_state_const.NO_CANDIDATES,
+                                                                    comment_arg = '')
         self._list_of_accumulate_exchange_value_on_earth_pv = []
         self._backward_vertical_list_of_move_pv             = []
         self._backward_vertical_list_of_cap_pv              = []
@@ -326,9 +333,11 @@ class PrincipalVariationModel:
 
     def setup_to_quiescence(self, info_depth, search_context_model):
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜静止[深={info_depth}]＞")
-        self._out_of_termination_is_mars_pv                 = search_context_model.gymnasium.is_mars
-        self._out_of_termination_is_gote_pv                 = search_context_model.gymnasium.table.is_gote
-        self._out_of_termination_state_pv                   = constants.out_of_termination_state_const.QUIESCENCE
+        self._termination_model_pv                          = TerminationModel(
+                                                                    is_mars_arg = search_context_model.gymnasium.is_mars,
+                                                                    is_gote_arg = search_context_model.gymnasium.table.is_gote,
+                                                                    state_arg   = constants.out_of_termination_state_const.QUIESCENCE,
+                                                                    comment_arg = '')
         self._list_of_accumulate_exchange_value_on_earth_pv = []
         self._backward_vertical_list_of_move_pv             = []
         self._backward_vertical_list_of_cap_pv              = []
@@ -340,9 +349,11 @@ class PrincipalVariationModel:
 
     def setup_to_game_over(self, search_context_model):
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
-        self._out_of_termination_is_mars_pv                 = search_context_model.gymnasium.is_mars
-        self._out_of_termination_is_gote_pv                 = search_context_model.gymnasium.table.is_gote
-        self._out_of_termination_state_pv                   = constants.out_of_termination_state_const.RESIGN
+        self._termination_model_pv                          = TerminationModel(
+                                                                    is_mars_arg = search_context_model.gymnasium.is_mars,
+                                                                    is_gote_arg = search_context_model.gymnasium.table.is_gote,
+                                                                    state_arg   = constants.out_of_termination_state_const.RESIGN,
+                                                                    comment_arg = '')
         self._list_of_accumulate_exchange_value_on_earth_pv = []
         self._backward_vertical_list_of_move_pv             = []
         self._backward_vertical_list_of_cap_pv              = []
@@ -365,10 +376,11 @@ class PrincipalVariationModel:
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
 
         is_mars_at_out_of_termination = not search_context_model.gymnasium.is_mars    # ［詰む］のは、もう１手先だから not する。
-
-        self._out_of_termination_is_mars_pv                 = search_context_model.gymnasium.is_mars
-        self._out_of_termination_is_gote_pv                 = search_context_model.gymnasium.table.is_gote
-        self._out_of_termination_state_pv                   = constants.out_of_termination_state_const.RESIGN
+        self._termination_model_pv                          = TerminationModel(
+                                                                    is_mars_arg = search_context_model.gymnasium.is_mars,
+                                                                    is_gote_arg = search_context_model.gymnasium.table.is_gote,
+                                                                    state_arg   = constants.out_of_termination_state_const.RESIGN,
+                                                                    comment_arg = '')
         self._list_of_accumulate_exchange_value_on_earth_pv = []
         self._backward_vertical_list_of_move_pv             = []
         self._backward_vertical_list_of_cap_pv              = []
@@ -396,9 +408,11 @@ class PrincipalVariationModel:
         水平線はデフォルトの状態なので、深さは設定しません。
         """
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜水平線＞")
-        self._out_of_termination_is_mars_pv                 = search_context_model.gymnasium.is_mars
-        self._out_of_termination_is_gote_pv                 = search_context_model.gymnasium.table.is_gote
-        self._out_of_termination_state_pv                   = constants.out_of_termination_state_const.HORIZON
+        self._termination_model_pv                          = TerminationModel(
+                                                                    is_mars_arg = search_context_model.gymnasium.is_mars,
+                                                                    is_gote_arg = search_context_model.gymnasium.table.is_gote,
+                                                                    state_arg   = constants.out_of_termination_state_const.HORIZON,
+                                                                    comment_arg = '')
         self._list_of_accumulate_exchange_value_on_earth_pv = []
         self._backward_vertical_list_of_move_pv             = []
         self._backward_vertical_list_of_cap_pv              = []
@@ -434,7 +448,7 @@ class PrincipalVariationModel:
         copied_frontward_vertical_list_of_comment_pv.append(frontward_comment_arg)
 
         termination_model = TerminationModel(
-                is_mars_arg = self._out_of_termination_is_mars_pv,
+                is_mars_arg = self._termination_model_pv.is_mars_tm,
                 is_gote_arg = self._out_of_termination_is_gote,
                 state_arg   = self._out_of_termination_state,
                 comment_arg = '')
@@ -449,7 +463,7 @@ class PrincipalVariationModel:
                 backward_vertical_list_of_cap_pt_arg        = self._backward_vertical_list_of_cap_pt_pv,
                 backward_vertical_list_of_value_arg         = self._backward_vertical_list_of_value_pv,
                 backward_vertical_list_of_comment_arg       = self._backward_vertical_list_of_comment_pv,
-                termination_model                           = termination_model,
+                termination_model_arg                       = termination_model,
                 search_is_over_arg                          = replace_search_is_over_arg,
                 vertical_list_of_backwards_plot_model_arg   = copied_vertical_list_of_backwards_plot_model_pv)
 
@@ -502,7 +516,7 @@ class PrincipalVariationModel:
         """
 
         termination_model = TerminationModel(
-                is_mars_arg = self._out_of_termination_is_mars_pv,
+                is_mars_arg = self._termination_model_pv.is_mars_tm,
                 is_gote_arg = self._out_of_termination_is_gote,
                 state_arg   = self._out_of_termination_state,
                 comment_arg = self._out_of_termination_comment_arg)
@@ -517,7 +531,7 @@ class PrincipalVariationModel:
                 backward_vertical_list_of_cap_pt_arg        = list(self._backward_vertical_list_of_cap_pt_pv),
                 backward_vertical_list_of_value_arg         = list(self._backward_vertical_list_of_value_pv),
                 backward_vertical_list_of_comment_arg       = list(self._backward_vertical_list_of_comment_pv),
-                termination_model                           = termination_model,
+                termination_model_arg                       = termination_model,
                 search_is_over_arg                          = self._search_is_over_pv,
                 vertical_list_of_backwards_plot_model_arg   = self._create_copied_bpm_list())
 
