@@ -328,7 +328,7 @@ def _main_search_at_first(remaining_moves, search_context_model):
     # TODO （奇数＋１階なら火星、偶数＋１階なら地球）が嫌な手は削除。
 
     # ０階で終了。
-    if pv.search_is_over_pv:
+    if pv.termination_model_pv is not None:
         next_pv_list = [pv]
 
     else:

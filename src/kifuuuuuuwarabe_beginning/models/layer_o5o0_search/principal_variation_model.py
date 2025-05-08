@@ -41,7 +41,6 @@ class PrincipalVariationModel:
                 backward_vertical_list_of_value_arg         = [],
                 backward_vertical_list_of_comment_arg       = [],
                 termination_model_arg                       = None, #termination_model,
-                search_is_over_arg                          = False,
                 # TODO 廃止方針。
                 # 終端外が有る分、他のリストより要素１個多い。＜水平線＞がデフォルト値。
                 vertical_list_of_backwards_plot_model_arg   = [])
@@ -62,7 +61,6 @@ class PrincipalVariationModel:
             backward_vertical_list_of_value_arg,
             backward_vertical_list_of_comment_arg,
             termination_model_arg,
-            search_is_over_arg,
             vertical_list_of_backwards_plot_model_arg):  # TODO 廃止方針。
         """
         Parameters
@@ -89,8 +87,6 @@ class PrincipalVariationModel:
             ［後ろ向き探索］中に追加していく［読み筋］の履歴。
             ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
             TODO 廃止方針。
-        search_is_over_arg : bool
-            ［読み筋］が終わっているか。
         """
 
         # ［前向き探索］しながら追加していく要素。
@@ -108,7 +104,6 @@ class PrincipalVariationModel:
         # ［終端外］で設定する要素。
         # TODO ［終端外］オブジェクトというまとまりにするか？
         self._termination_model_pv                      = termination_model_arg
-        self._search_is_over_pv                         = search_is_over_arg
 
         # TODO 廃止方針の要素。
         self._deprecated_vertical_list_of_backwards_plot_model_pv   = vertical_list_of_backwards_plot_model_arg
@@ -268,7 +263,7 @@ class PrincipalVariationModel:
     # MARK: 終端外
     ##############
 
-    def termination_model_arg_pv(self):
+    def termination_model_pv(self):
         """［終端外］。
         """
         return self._termination_model_pv
@@ -299,59 +294,55 @@ class PrincipalVariationModel:
 
 
     def setup_to_nyugyoku_win(self, search_context_model):
+        self._list_of_accumulate_exchange_value_on_earth_pv = []
+        self._backward_vertical_list_of_move_pv             = []
+        self._backward_vertical_list_of_cap_pv              = []
+        self._backward_vertical_list_of_comment_pv          = []
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜入玉宣言勝ち＞')
         self._termination_model_pv                          = TerminationModel(
                                                                     is_mars_arg = search_context_model.gymnasium.is_mars,
                                                                     is_gote_arg = search_context_model.gymnasium.table.is_gote,
                                                                     state_arg   = constants.out_of_termination_state_const.NYUGYOKU_WIN,
                                                                     comment_arg = '')
+
+
+    def setup_to_no_candidates(self, info_depth, search_context_model):
         self._list_of_accumulate_exchange_value_on_earth_pv = []
         self._backward_vertical_list_of_move_pv             = []
         self._backward_vertical_list_of_cap_pv              = []
         self._backward_vertical_list_of_comment_pv          = []
-        self.set_search_is_over_pv(True)
-
-
-    def setup_to_no_candidates(self, info_depth, search_context_model):
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜候補手無し[深={info_depth}]＞")
         self._termination_model_pv                          = TerminationModel(
                                                                     is_mars_arg = search_context_model.gymnasium.is_mars,
                                                                     is_gote_arg = search_context_model.gymnasium.table.is_gote,
                                                                     state_arg   = constants.out_of_termination_state_const.NO_CANDIDATES,
                                                                     comment_arg = '')
+
+
+    def setup_to_quiescence(self, info_depth, search_context_model):
         self._list_of_accumulate_exchange_value_on_earth_pv = []
         self._backward_vertical_list_of_move_pv             = []
         self._backward_vertical_list_of_cap_pv              = []
         self._backward_vertical_list_of_comment_pv          = []
-        self.set_search_is_over_pv(True)
-
-
-    def setup_to_quiescence(self, info_depth, search_context_model):
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜静止[深={info_depth}]＞")
         self._termination_model_pv                          = TerminationModel(
                                                                     is_mars_arg = search_context_model.gymnasium.is_mars,
                                                                     is_gote_arg = search_context_model.gymnasium.table.is_gote,
                                                                     state_arg   = constants.out_of_termination_state_const.QUIESCENCE,
                                                                     comment_arg = '')
+
+
+    def setup_to_game_over(self, search_context_model):
         self._list_of_accumulate_exchange_value_on_earth_pv = []
         self._backward_vertical_list_of_move_pv             = []
         self._backward_vertical_list_of_cap_pv              = []
         self._backward_vertical_list_of_comment_pv          = []
-        self.set_search_is_over_pv(True)
-
-
-    def setup_to_game_over(self, search_context_model):
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
         self._termination_model_pv                          = TerminationModel(
                                                                     is_mars_arg = search_context_model.gymnasium.is_mars,
                                                                     is_gote_arg = search_context_model.gymnasium.table.is_gote,
                                                                     state_arg   = constants.out_of_termination_state_const.RESIGN,
                                                                     comment_arg = '')
-        self._list_of_accumulate_exchange_value_on_earth_pv = []
-        self._backward_vertical_list_of_move_pv             = []
-        self._backward_vertical_list_of_cap_pv              = []
-        self._backward_vertical_list_of_comment_pv          = []
-        self.set_search_is_over_pv(True)
 
 
     def setup_to_mate_move_in_1_ply(self, info_depth, mate_move, search_context_model):
@@ -364,14 +355,7 @@ class PrincipalVariationModel:
                 is_mars     = search_context_model.gymnasium.is_mars)
         
         search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=mate_move, cap_pt=cap_pt, value=piece_exchange_value_on_earth, comment='＜一手詰め＞')
-        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
-
         is_mars_at_out_of_termination = not search_context_model.gymnasium.is_mars    # ［詰む］のは、もう１手先だから not する。
-        self._termination_model_pv                          = TerminationModel(
-                                                                    is_mars_arg = search_context_model.gymnasium.is_mars,
-                                                                    is_gote_arg = search_context_model.gymnasium.table.is_gote,
-                                                                    state_arg   = constants.out_of_termination_state_const.RESIGN,
-                                                                    comment_arg = '')
         self._list_of_accumulate_exchange_value_on_earth_pv = []
         self._backward_vertical_list_of_move_pv             = []
         self._backward_vertical_list_of_cap_pv              = []
@@ -389,24 +373,29 @@ class PrincipalVariationModel:
         #         best_value          = best_value,
         #         #hint                = f"{info_depth}階で{Mars.japanese(is_mars_at_out_of_termination)}は一手詰まされ",
         #         list_of_accumulate_exchange_value_on_earth_arg  = self._list_of_accumulate_exchange_value_on_earth_pv)
-        self.set_search_is_over_pv(True)
+
+        search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
+        self._termination_model_pv                          = TerminationModel(
+                                                                    is_mars_arg = search_context_model.gymnasium.is_mars,
+                                                                    is_gote_arg = search_context_model.gymnasium.table.is_gote,
+                                                                    state_arg   = constants.out_of_termination_state_const.RESIGN,
+                                                                    comment_arg = '')
 
 
     def setup_to_horizon(self, search_context_model):
         """読みの水平線。
         水平線はデフォルトの状態なので、深さは設定しません。
         """
+        self._list_of_accumulate_exchange_value_on_earth_pv = []
+        self._backward_vertical_list_of_move_pv             = []
+        self._backward_vertical_list_of_cap_pv              = []
+        self._backward_vertical_list_of_comment_pv          = []
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜水平線＞")
         self._termination_model_pv                          = TerminationModel(
                                                                     is_mars_arg = search_context_model.gymnasium.is_mars,
                                                                     is_gote_arg = search_context_model.gymnasium.table.is_gote,
                                                                     state_arg   = constants.out_of_termination_state_const.HORIZON,
                                                                     comment_arg = '')
-        self._list_of_accumulate_exchange_value_on_earth_pv = []
-        self._backward_vertical_list_of_move_pv             = []
-        self._backward_vertical_list_of_cap_pv              = []
-        self._backward_vertical_list_of_comment_pv          = []
-        self.set_search_is_over_pv(True)
 
 
     ##################
@@ -419,8 +408,7 @@ class PrincipalVariationModel:
             cap_pt_arg,
             value_arg,
             backwards_plot_model_arg,
-            frontward_comment_arg,
-            replace_search_is_over_arg):
+            frontward_comment_arg):
         """［前向き探索］中に要素追加。
         """
         copied_frontward_vertical_list_of_move_pv = list(self._frontward_vertical_list_of_move_pv)
@@ -451,7 +439,6 @@ class PrincipalVariationModel:
                 backward_vertical_list_of_value_arg         = self._backward_vertical_list_of_value_pv,
                 backward_vertical_list_of_comment_arg       = self._backward_vertical_list_of_comment_pv,
                 termination_model_arg                       = termination_model,
-                search_is_over_arg                          = replace_search_is_over_arg,
                 vertical_list_of_backwards_plot_model_arg   = copied_vertical_list_of_backwards_plot_model_pv)
 
 
@@ -472,22 +459,6 @@ class PrincipalVariationModel:
     #####################
     # MARK: その他いろいろ
     #####################
-
-    @property
-    def search_is_over_pv(self):
-        """探索は終端です。
-        TODO ［終端外］オブジェクトの有無に変更したい。
-        """
-        return self._search_is_over_pv
-
-
-    def set_search_is_over_pv(self, value):
-        """［終端外］設定。
-        * ［指し手一覧のクリーニング］後とか。
-        TODO だったら、フラグではなく、［終端外］オブジェクトを設定したい。
-        """
-        self._search_is_over_pv = value
-
 
     def _create_copied_bpm_list(self):
         """［後ろ向き探索の評価値モデル］のリストを、要素１つずつコピー。
@@ -519,7 +490,6 @@ class PrincipalVariationModel:
                 backward_vertical_list_of_value_arg         = list(self._backward_vertical_list_of_value_pv),
                 backward_vertical_list_of_comment_arg       = list(self._backward_vertical_list_of_comment_pv),
                 termination_model_arg                       = termination_model,
-                search_is_over_arg                          = self._search_is_over_pv,
                 vertical_list_of_backwards_plot_model_arg   = self._create_copied_bpm_list())
 
 

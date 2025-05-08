@@ -47,8 +47,7 @@ class SearchRoutines:
                                                         pt          = cap_pt,
                                                         is_mars     = search_context_model.gymnasium.is_mars),
                     backwards_plot_model_arg    = parent_pv.deprecated_rooter_backwards_plot_model_in_backward_pv,     # TODO 廃止方針
-                    frontward_comment_arg       = '',
-                    replace_search_is_over_arg  = False)
+                    frontward_comment_arg       = '')
             pv_list.append(pv)
         
         return pv_list

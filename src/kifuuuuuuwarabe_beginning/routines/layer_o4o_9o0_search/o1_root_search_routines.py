@@ -201,8 +201,8 @@ class O1RootSearchRoutines(SearchRoutines):
             # 手番の処理
             # ----------
 
-            if pv.search_is_over_pv:                 # 探索不要なら。
-                terminated_pv_list.append(pv)   # 終了済みPVリストへ当PVを追加。
+            if pv.termination_model_pv is not None:     # 探索不要なら。
+                terminated_pv_list.append(pv)           # 終了済みPVリストへ当PVを追加。
             
             else:
                 # FIXME この関数から、２階の呼出を取り除きたい。

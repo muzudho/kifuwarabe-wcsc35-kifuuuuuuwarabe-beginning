@@ -142,8 +142,8 @@ class O5zQuiescenceSearchRoutines(SearchRoutines):
             # 一手も指さずに局面を見て、終局なら終局外を付加。
             O6NoSearchRoutines.set_termination_if_it_o6(parent_pv=pv, search_context_model=search_context_model)
 
-            if pv.search_is_over_pv:                 # 探索不要なら。
-                terminated_pv_list.append(pv)   # 終了済みPVリストへ当PVを追加。
+            if pv.termination_model_pv is not None:     # 探索不要なら。
+                terminated_pv_list.append(pv)           # 終了済みPVリストへ当PVを追加。
 
             else:
                 # （無し）［水平指し手一覧］をクリーニング。

@@ -151,8 +151,8 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
             # 一手も指さずに局面を見て、終局なら終局外を付加。
             O4QuiescenceSearchRoutines.set_termination_if_it_o4(parent_pv=pv, search_context_model=search_context_model)
 
-            if pv.search_is_over_pv:                 # 探索不要なら。
-                terminated_pv_list.append(pv)   # 終了済みPVリストへ当PVを追加。
+            if pv.termination_model_pv is not None:     # 探索不要なら。
+                terminated_pv_list.append(pv)           # 終了済みPVリストへ当PVを追加。
                 #child_plot_model = pv.deprecated_rooter_backwards_plot_model_in_backward_pv
 
             else:
@@ -170,7 +170,7 @@ class O3QuiescenceSearchRoutines(SearchRoutines):
                     next_pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
 
                     # # NOTE 再帰は廃止。デバッグ作れないから。
-                    # if not pv.search_is_over_pv:
+                    # if pv.termination_model_pv is not None:     # 探索不要なら。
                     #     child_plot_model = O4QuiescenceSearchRoutines.move_all_pv_o4(
                     #             pv_list     = next_pv_list,
                     #             search_context_model    = search_context_model)
