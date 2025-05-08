@@ -41,10 +41,7 @@ class PrincipalVariationModel:
                 backward_vertical_list_of_cap_pt_arg        = [],
                 backward_vertical_list_of_value_arg         = [],
                 backward_vertical_list_of_comment_arg       = [],
-                out_of_termination_is_mars_arg              = termination_model.is_mars_tm,
-                out_of_termination_is_gote_arg              = termination_model.is_gote_tm,
-                out_of_termination_state_arg                = termination_model.state_tm,
-                out_of_termination_comment_arg              = termination_model.comment_tm,
+                termination_model                           = termination_model,
                 search_is_over_arg                          = False,
                 # TODO 廃止方針。
                 # 終端外が有る分、他のリストより要素１個多い。＜水平線＞がデフォルト値。
@@ -65,10 +62,7 @@ class PrincipalVariationModel:
             backward_vertical_list_of_cap_pt_arg,
             backward_vertical_list_of_value_arg,
             backward_vertical_list_of_comment_arg,
-            out_of_termination_is_mars_arg,
-            out_of_termination_is_gote_arg,
-            out_of_termination_state_arg,
-            out_of_termination_comment_arg,
+            termination_model,
             search_is_over_arg,
             vertical_list_of_backwards_plot_model_arg):  # TODO 廃止方針。
         """
@@ -90,14 +84,8 @@ class PrincipalVariationModel:
             ［後ろ向き探索］中に追加していく［局面評価値］の履歴。
         backward_vertical_list_of_comment_arg : list<str>
             ［後ろ向き探索］中に追加していく［指し手のコメント］の履歴。
-        out_of_termination_is_mars_arg : bool
-            ［終端外］は火星か。（後ろ向きに設定します）
-        out_of_termination_is_gote_arg : bool
-            ［終端外］は後手か。（後ろ向きに設定します）
-        out_of_termination_state_arg : int
-            ［終端外］は何か。
-        out_of_termination_comment_arg : str
-            ［終端外］へのコメント。
+        termination_model : TerminationModel
+            ［終端外］モデル。
         vertical_list_of_backwards_plot_model_arg : list<B ackwardsPlotModel>
             ［後ろ向き探索］中に追加していく［読み筋］の履歴。
             ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
@@ -120,10 +108,10 @@ class PrincipalVariationModel:
 
         # ［終端外］で設定する要素。
         # TODO ［終端外］オブジェクトというまとまりにするか？
-        self._out_of_termination_is_mars_pv             = out_of_termination_is_mars_arg
-        self._out_of_termination_is_gote_pv             = out_of_termination_is_gote_arg
-        self._out_of_termination_state_pv               = out_of_termination_state_arg
-        self._out_of_termination_comment                = out_of_termination_comment_arg
+        self._out_of_termination_is_mars_pv             = termination_model.is_mars_tm
+        self._out_of_termination_is_gote_pv             = termination_model.is_gote_tm
+        self._out_of_termination_state_pv               = termination_model.state_tm
+        self._out_of_termination_comment                = termination_model.comment_tm
         self._search_is_over_pv                         = search_is_over_arg
 
         # TODO 廃止方針の要素。
@@ -461,10 +449,7 @@ class PrincipalVariationModel:
                 backward_vertical_list_of_cap_pt_arg        = self._backward_vertical_list_of_cap_pt_pv,
                 backward_vertical_list_of_value_arg         = self._backward_vertical_list_of_value_pv,
                 backward_vertical_list_of_comment_arg       = self._backward_vertical_list_of_comment_pv,
-                out_of_termination_is_mars_arg              = termination_model.is_mars_tm,
-                out_of_termination_is_gote_arg              = termination_model.is_gote_tm,
-                out_of_termination_state_arg                = termination_model.state_tm,
-                out_of_termination_comment_arg              = termination_model.comment_tm,
+                termination_model                           = termination_model,
                 search_is_over_arg                          = replace_search_is_over_arg,
                 vertical_list_of_backwards_plot_model_arg   = copied_vertical_list_of_backwards_plot_model_pv)
 
@@ -532,10 +517,7 @@ class PrincipalVariationModel:
                 backward_vertical_list_of_cap_pt_arg        = list(self._backward_vertical_list_of_cap_pt_pv),
                 backward_vertical_list_of_value_arg         = list(self._backward_vertical_list_of_value_pv),
                 backward_vertical_list_of_comment_arg       = list(self._backward_vertical_list_of_comment_pv),
-                out_of_termination_is_mars_arg              = termination_model.is_mars_tm,
-                out_of_termination_is_gote_arg              = termination_model.is_gote_tm,
-                out_of_termination_state_arg                = termination_model.state_tm,
-                out_of_termination_comment_arg              = termination_model.comment_tm,
+                termination_model                           = termination_model,
                 search_is_over_arg                          = self._search_is_over_pv,
                 vertical_list_of_backwards_plot_model_arg   = self._create_copied_bpm_list())
 
