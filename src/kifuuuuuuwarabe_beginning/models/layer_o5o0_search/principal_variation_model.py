@@ -446,14 +446,14 @@ class PrincipalVariationModel:
     # MARK: 後ろ向き探索
     ###################
 
-    def append_move_in_backward_pv(self, move, capture_piece_type, best_value, list_of_accumulate_exchange_value_on_earth_arg):
-        """［後ろ向き探索］中に要素追加。
-        """
-        self.deprecated_rooter_backwards_plot_model_in_backward_pv.append_move_from_back(
-                move                                            = move,
-                capture_piece_type                              = capture_piece_type,
-                best_value                                      = best_value,
-                list_of_accumulate_exchange_value_on_earth_arg  = list_of_accumulate_exchange_value_on_earth_arg)
+    # def append_move_in_backward_pv(self, move, capture_piece_type, best_value, list_of_accumulate_exchange_value_on_earth_arg):
+    #     """［後ろ向き探索］中に要素追加。
+    #     """
+    #     self.deprecated_rooter_backwards_plot_model_in_backward_pv.append_move_from_back(
+    #             move                                            = move,
+    #             capture_piece_type                              = capture_piece_type,
+    #             best_value                                      = best_value,
+    #             list_of_accumulate_exchange_value_on_earth_arg  = list_of_accumulate_exchange_value_on_earth_arg)
 
 
     #####################
