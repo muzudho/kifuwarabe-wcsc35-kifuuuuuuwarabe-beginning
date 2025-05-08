@@ -242,8 +242,8 @@ class SearchRoutines:
                 dst_sq_obj  = SquareModel(cshogi.move_to(mate_move))      # ［移動先マス］
                 cap_pt      = search_context_model.gymnasium.table.piece_type(dst_sq_obj.sq)    # ［移動先マス］にある［駒種類］。つまりそれは取った駒。打の［移動先マス］は常に空きマス。
                 value_pt    = PieceValuesModel.get_piece_exchange_value_on_earth(
-                        pt          = cap_pt,
-                        is_mars     = search_context_model.gymnasium.is_mars)
+                                    pt          = cap_pt,
+                                    is_mars     = search_context_model.gymnasium.is_mars)
                 parent_pv.setup_to_mate_move_in_1_ply(info_depth=info_depth, mate_move=mate_move, search_context_model=search_context_model)
                 return
 

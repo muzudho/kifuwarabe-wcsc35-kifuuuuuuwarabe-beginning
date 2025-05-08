@@ -2,7 +2,6 @@ import cshogi
 
 from ..layer_o1o_9o0 import PieceValuesModel
 from ..layer_o1o0 import constants, Mars, SquareModel
-from ..layer_o2o0 import BackwardsPlotModel
 from .termination_model import TerminationModel
 
 
@@ -26,11 +25,11 @@ class PrincipalVariationModel:
             TODO 廃止方針。
         """
 
-        termination_model = TerminationModel(
-                is_mars_arg = False,
-                is_gote_arg = out_of_termination_is_gote_arg,
-                state_arg   = constants.out_of_termination_state_const.HORIZON,
-                comment_arg = '')
+        # termination_model = TerminationModel(
+        #         is_mars_arg = False,
+        #         is_gote_arg = out_of_termination_is_gote_arg,
+        #         state_arg   = constants.out_of_termination_state_const.HORIZON,
+        #         comment_arg = '')
 
         obj_1 = PrincipalVariationModel(
                 frontward_vertical_list_of_move_arg         = [],
@@ -41,7 +40,7 @@ class PrincipalVariationModel:
                 backward_vertical_list_of_cap_pt_arg        = [],
                 backward_vertical_list_of_value_arg         = [],
                 backward_vertical_list_of_comment_arg       = [],
-                termination_model_arg                       = termination_model,
+                termination_model_arg                       = None, #termination_model,
                 search_is_over_arg                          = False,
                 # TODO 廃止方針。
                 # 終端外が有る分、他のリストより要素１個多い。＜水平線＞がデフォルト値。
@@ -310,8 +309,6 @@ class PrincipalVariationModel:
         self._backward_vertical_list_of_move_pv             = []
         self._backward_vertical_list_of_cap_pv              = []
         self._backward_vertical_list_of_comment_pv          = []
-        obj_1 = BackwardsPlotModel()
-        self.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
         self.set_search_is_over_pv(True)
 
 
@@ -326,8 +323,6 @@ class PrincipalVariationModel:
         self._backward_vertical_list_of_move_pv             = []
         self._backward_vertical_list_of_cap_pv              = []
         self._backward_vertical_list_of_comment_pv          = []
-        obj_1 = BackwardsPlotModel()
-        self.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
         self.set_search_is_over_pv(True)
 
 
@@ -342,8 +337,6 @@ class PrincipalVariationModel:
         self._backward_vertical_list_of_move_pv             = []
         self._backward_vertical_list_of_cap_pv              = []
         self._backward_vertical_list_of_comment_pv          = []
-        obj_1 = BackwardsPlotModel()
-        self.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
         self.set_search_is_over_pv(True)
 
 
@@ -358,8 +351,6 @@ class PrincipalVariationModel:
         self._backward_vertical_list_of_move_pv             = []
         self._backward_vertical_list_of_cap_pv              = []
         self._backward_vertical_list_of_comment_pv          = []
-        obj_1 = BackwardsPlotModel()
-        self.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
         self.set_search_is_over_pv(True)
 
 
@@ -385,7 +376,6 @@ class PrincipalVariationModel:
         self._backward_vertical_list_of_move_pv             = []
         self._backward_vertical_list_of_cap_pv              = []
         self._backward_vertical_list_of_comment_pv          = []
-        best_plot_model = BackwardsPlotModel()
     
         # 今回の手を付け加える。
         if is_mars_at_out_of_termination:
@@ -393,13 +383,12 @@ class PrincipalVariationModel:
         else:
             best_value = constants.value.SMALL_VALUE      # 地球の負け
 
-        best_plot_model.append_move_from_back(
-                move                = mate_move,
-                capture_piece_type  = cap_pt,
-                best_value          = best_value,
-                #hint                = f"{info_depth}階で{Mars.japanese(is_mars_at_out_of_termination)}は一手詰まされ",
-                list_of_accumulate_exchange_value_on_earth_arg  = self._list_of_accumulate_exchange_value_on_earth_pv)
-        self.set_deprecated_rooter_backwards_plot_model_in_backward_pv(best_plot_model)
+        # best_plot_model.append_move_from_back(
+        #         move                = mate_move,
+        #         capture_piece_type  = cap_pt,
+        #         best_value          = best_value,
+        #         #hint                = f"{info_depth}階で{Mars.japanese(is_mars_at_out_of_termination)}は一手詰まされ",
+        #         list_of_accumulate_exchange_value_on_earth_arg  = self._list_of_accumulate_exchange_value_on_earth_pv)
         self.set_search_is_over_pv(True)
 
 
@@ -417,8 +406,6 @@ class PrincipalVariationModel:
         self._backward_vertical_list_of_move_pv             = []
         self._backward_vertical_list_of_cap_pv              = []
         self._backward_vertical_list_of_comment_pv          = []
-        obj_1 = BackwardsPlotModel()
-        self.set_deprecated_rooter_backwards_plot_model_in_backward_pv(obj_1)
         self.set_search_is_over_pv(True)
 
 
