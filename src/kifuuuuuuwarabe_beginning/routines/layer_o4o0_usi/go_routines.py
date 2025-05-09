@@ -365,7 +365,35 @@ def _main_search_at_first(remaining_moves, search_context_model):
     # MARK: ２階
     ############
 
-    info_depth = 2
+    def floor_2(terminated_pv_list, live_pv_list, pv):
+        info_depth = 2
+
+        if pv.termination_model_pv is not None:     # （２階．１）　［終端外］終了。
+            terminated_pv_list.append(pv)        # 終了済みPVリストへ当PVを追加。
+            return
+        
+        # （２階．２）　［水平指し手一覧］をクリーニング。
+        remaining_moves = O2CounterSearchRoutines.cleaning_horizontal_edges_o2(parent_pv=pv, search_context_model=search_context_model)
+
+        # （２階．３）　［駒を取る手］がないことを、［静止］と呼ぶ。
+        if len(remaining_moves) == 0:
+            pv.setup_to_quiescence(info_depth=info_depth, search_context_model=search_context_model)
+            terminated_pv_list.append(pv)
+            return
+
+        # （２階．４）　［水平指し手一覧］を［PV］へ変換。
+        live_pv_list.append(
+                SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model))
+
+        # # ２階の操作。
+        # O2CounterSearchRoutines.move_pv_o2(
+        #         terminated_pv_list  = terminated_pv_list_o2,
+        #         live_pv_list        = live_pv_list_o2,
+        #         pv                  = pv_o1,
+        #         remaining_moves     = remaining_moves,
+        #         search_context_model= search_context_model)
+
+
     terminated_pv_list_o2 = []
     live_pv_list_o2 = []
 
@@ -377,34 +405,15 @@ def _main_search_at_first(remaining_moves, search_context_model):
         # --------------
         SearchRoutines.do_move_vertical_all(pv=pv, search_context_model=search_context_model)
 
-        if pv.termination_model_pv is not None:     # （２階．１）　［終端外］終了。
-            terminated_pv_list_o2.append(pv)        # 終了済みPVリストへ当PVを追加。
-        
-        else:
-
-            # （２階．２）　［水平指し手一覧］をクリーニング。
-            remaining_moves = O2CounterSearchRoutines.cleaning_horizontal_edges_o2(parent_pv=pv, search_context_model=search_context_model)
-
-            # （２階．３）　［駒を取る手］がないことを、［静止］と呼ぶ。
-            if len(remaining_moves) == 0:
-                pv.setup_to_quiescence(info_depth=info_depth, search_context_model=search_context_model)
-                terminated_pv_list_o2.append(pv)
-
-            else:
-                # （２階．４）　［水平指し手一覧］を［PV］へ変換。
-                live_pv_list_o2 = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
-
-                # # ２階の操作。
-                # O2CounterSearchRoutines.move_pv_o2(
-                #         terminated_pv_list  = terminated_pv_list_o2,
-                #         live_pv_list        = live_pv_list_o2,
-                #         pv                  = pv_o1,
-                #         remaining_moves     = remaining_moves,
-                #         search_context_model= search_context_model)
+        floor_2(
+                terminated_pv_list  = terminated_pv_list_o2,
+                live_pv_list        = live_pv_list_o2,
+                pv                  = pv_o1)
 
         # 履歴を全部戻す
         # --------------
         SearchRoutines.undo_move_vertical_all(pv=pv, search_context_model=search_context_model)
+
 
     live_pv_list = live_pv_list_o2
 
