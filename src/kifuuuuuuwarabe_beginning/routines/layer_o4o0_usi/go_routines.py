@@ -134,12 +134,10 @@ class _Go2nd():
         search_context_model.start_time = time.time()          # 探索開始時間
         search_context_model.restart_time = search_context_model.start_time   # 前回の計測開始時間
 
-        (
-            next_pv_list,
-            number_of_visited_nodes
-        ) = _main_search_at_first(
+        next_pv_list = _main_search_at_first(
                 remaining_moves         = move_list,
                 search_context_model    = search_context_model)
+        number_of_visited_nodes = search_context_model.number_of_visited_nodes
         
         remaining_moves_qs, = EndOfSearchRoutines.eliminate_qs_171(
                 pv_list     = next_pv_list,
@@ -283,10 +281,8 @@ def _main_search_at_first(remaining_moves, search_context_model):
     
     Returns
     -------
-    remaining_moves : list
-        指し手のリスト。
-    number_of_visited_nodes : int
-        ［訪問ノード数］
+    next_pv_list : list
+        PVのリスト。
     """
 
     # 次のPVリストを集める
@@ -327,38 +323,51 @@ def _main_search_at_first(remaining_moves, search_context_model):
 
     # TODO （奇数＋１階なら火星、偶数＋１階なら地球）が嫌な手は削除。
 
+    info_depth = 0
+
     # ０階で終了。
     if pv.termination_model_pv is not None:
-        next_pv_list = [pv]
+        return [pv]
 
-    else:
-        # １階の操作A。
-        (terminated_pv_list_1, live_pv_list) = O1RootSearchRoutines.main_a_o1(remaining_moves_o1=remaining_moves, pv=pv, search_context_model=search_context_model)
+    info_depth = 1
 
-        # １階の操作B。
-        if len(live_pv_list) != 0:
-            # 縦の辺を伸ばす。
-            O1RootSearchRoutines.extend_vertical_edges_o1(pv_list=live_pv_list, search_context_model=search_context_model)
+    # １階の［水平指し手一覧］をクリーニング。
+    remaining_moves = O1RootSearchRoutines.cleaning_horizontal_edges_o1(remaining_moves=remaining_moves, parent_pv=pv, search_context_model=search_context_model)
 
-            terminated_pv_list_o2 = []
-            live_pv_list_o2 = []
+    # ［駒を取る手］がないことを、［静止］と呼ぶ。
+    if len(remaining_moves) == 0:
+        pv.setup_to_quiescence(info_depth=info_depth, search_context_model=search_context_model)
+        return [pv]
 
-            # 各PV
-            # ----
-            for pv_o1 in live_pv_list:
-                # ２階の操作。
-                O2CounterSearchRoutines.move_pv_o2(
-                        terminated_pv_list  = terminated_pv_list_o2,
-                        live_pv_list        = live_pv_list_o2,
-                        pv                  = pv_o1,
-                        search_context_model= search_context_model)
+    # ［水平指し手一覧］を［PV］へ変換。
+    live_pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
+    terminated_pv_list_1 = []
 
-            live_pv_list = live_pv_list_o2
+    if len(live_pv_list) == 0:
+        return [pv]
 
-        # 次のPVリストを集める
-        next_pv_list = OutOfSearchRoutines.filtering_next_pv_list(
-                terminated_pv_list_1    = terminated_pv_list_1,
-                terminated_pv_list_2    = terminated_pv_list_o2,
-                live_pv_list            = live_pv_list)
+    # 縦の辺を伸ばす。
+    O1RootSearchRoutines.extend_vertical_edges_o1(pv_list=live_pv_list, search_context_model=search_context_model)
 
-    return next_pv_list, search_context_model.number_of_visited_nodes
+    terminated_pv_list_o2 = []
+    live_pv_list_o2 = []
+
+    # 各PV
+    # ----
+    for pv_o1 in live_pv_list:
+        # ２階の操作。
+        O2CounterSearchRoutines.move_pv_o2(
+                terminated_pv_list  = terminated_pv_list_o2,
+                live_pv_list        = live_pv_list_o2,
+                pv                  = pv_o1,
+                search_context_model= search_context_model)
+
+    live_pv_list = live_pv_list_o2
+
+    # 次のPVリストを集める
+    next_pv_list = OutOfSearchRoutines.filtering_next_pv_list(
+            terminated_pv_list_1    = terminated_pv_list_1,
+            terminated_pv_list_2    = terminated_pv_list_o2,
+            live_pv_list            = live_pv_list)
+
+    return next_pv_list
