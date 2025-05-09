@@ -39,7 +39,6 @@ class PrincipalVariationModel:
                                                                     cap_arg     = cshogi.NONE,  # ［取った駒の型種類］
                                                                     value_arg   = 0,            # ［局面評価値］
                                                                     comment_arg = ''),          # ［指し手へのコメント］
-                frontward_vertical_list_of_move_arg         = [],
                 frontward_vertical_list_of_cap_pt_arg       = [],
                 frontward_vertical_list_of_value_arg        = [],
                 frontward_vertical_list_of_comment_arg      = [],
@@ -60,7 +59,6 @@ class PrincipalVariationModel:
     def __init__(
             self,
             history_node_model_arg,
-            frontward_vertical_list_of_move_arg,
             frontward_vertical_list_of_cap_pt_arg,
             frontward_vertical_list_of_value_arg,
             frontward_vertical_list_of_comment_arg,
@@ -73,8 +71,6 @@ class PrincipalVariationModel:
         """
         Parameters
         ----------
-        frontward_vertical_list_of_move_arg : list<int>
-            ［前向き探索］中に確定しながら追加していく［シーショーギの指し手］の履歴。
         frontward_vertical_list_of_cap_pt_arg : list<int>
             ［前向き探索］中に確定しながら追加していく［取った駒の種類］の履歴。
         frontward_vertical_list_of_value_arg : list<int>
@@ -99,9 +95,9 @@ class PrincipalVariationModel:
 
         # ノード。
         self._history_node_model                        = history_node_model_arg
+        self._leaf_node                                 = None
 
         # ［前向き探索］しながら追加していく要素。
-        self._frontward_vertical_list_of_move_pv        = frontward_vertical_list_of_move_arg
         self._frontward_vertical_list_of_cap_pt_pv      = frontward_vertical_list_of_cap_pt_arg
         self._frontward_vertical_list_of_value_pv       = frontward_vertical_list_of_value_arg
         self._frontward_vertical_list_of_comment_pv     = frontward_vertical_list_of_comment_arg
@@ -133,13 +129,6 @@ class PrincipalVariationModel:
     ############################################
     # MARK: 前向き探索しながら伸ばす縦の指し手リスト
     ############################################
-
-    @property
-    def frontward_vertical_list_of_move_pv(self):
-        """［指し手］の履歴。
-        """
-        return self._frontward_vertical_list_of_move_pv
-
 
     @property
     def frontward_vertical_list_of_cap_pt_pv(self):
@@ -202,7 +191,7 @@ class PrincipalVariationModel:
     def leafer_move_in_frontward_pv(self):
         """［前向き探索］の方の、末端手目に近い方の［指し手］。
         """
-        return self._frontward_vertical_list_of_move_pv[-1]
+        return self._leaf_node.move_hn
 
 
     @property
@@ -433,16 +422,14 @@ class PrincipalVariationModel:
         """
 
         # ツリーノードを伸ばす。
-        child_node = HistoryNodeModel(
+        self._leaf_node = HistoryNodeModel(
                 parent_arg      = self._history_node_model,
                 move_arg        = move_arg,
                 cap_arg         = cap_pt_arg,
                 value_arg       = value_arg,
                 comment_arg     = frontward_comment_arg)
-        self._history_node_model.append_child_tn(child_node)
+        self._history_node_model.append_child_tn(self._leaf_node)
 
-        copied_frontward_vertical_list_of_move_pv = list(self._frontward_vertical_list_of_move_pv)
-        copied_frontward_vertical_list_of_move_pv.append(move_arg)
         copied_frontward_vertical_list_of_cap_pt_pv = list(self._frontward_vertical_list_of_cap_pt_pv)
         copied_frontward_vertical_list_of_cap_pt_pv.append(cap_pt_arg)
         copied_frontward_vertical_list_of_value_pv = list(self._frontward_vertical_list_of_value_pv)
@@ -461,7 +448,6 @@ class PrincipalVariationModel:
         # NOTE リストはコピー渡し。
         return (PrincipalVariationModel(
                 history_node_model_arg                      = self._history_node_model, # FIXME
-                frontward_vertical_list_of_move_arg         = copied_frontward_vertical_list_of_move_pv,
                 frontward_vertical_list_of_cap_pt_arg       = copied_frontward_vertical_list_of_cap_pt_pv,
                 frontward_vertical_list_of_value_arg        = copied_frontward_vertical_list_of_value_pv,
                 frontward_vertical_list_of_comment_arg      = copied_frontward_vertical_list_of_comment_pv,
@@ -471,7 +457,7 @@ class PrincipalVariationModel:
                 backward_vertical_list_of_comment_arg       = self._backward_vertical_list_of_comment_pv,
                 termination_model_arg                       = None, #termination_model, # ［終端外］に達している枝が伸びることはないことから。
                 vertical_list_of_backwards_plot_model_arg   = copied_vertical_list_of_backwards_plot_model_pv),
-               child_node)
+               self._leaf_node)
 
 
     ###################
@@ -514,7 +500,6 @@ class PrincipalVariationModel:
         # NOTE リストはコピー渡し。
         return PrincipalVariationModel(
                 history_node_model_arg                      = self._history_node_model, # FIXME
-                frontward_vertical_list_of_move_arg         = list(self._frontward_vertical_list_of_move_pv),
                 frontward_vertical_list_of_cap_pt_arg       = list(self._frontward_vertical_list_of_cap_pt_pv),
                 frontward_vertical_list_of_value_arg        = list(self._frontward_vertical_list_of_value_pv),
                 frontward_vertical_list_of_comment_arg      = list(self._frontward_vertical_list_of_comment_pv),
@@ -590,7 +575,7 @@ class PrincipalVariationModel:
     # def is_mars_at_peek(self):
     #     """最後の要素は火星か？
     #     """
-    #     if len(self._frontward_vertical_list_of_move_pv) % 2 == 0:
+    #     if len(self._leaf_node._get_depth_tn()) % 2 == 0:
     #         return False
     #     return True
 
@@ -599,7 +584,7 @@ class PrincipalVariationModel:
     # def is_gote_at_peek(self):
     #     """最後の要素は後手か？
     #     """
-    #     if len(self._frontward_vertical_list_of_move_pv) % 2 == 0:
+    #     if len(self._leaf_node._get_depth_tn()) % 2 == 0:
     #         return not self.is_gote_at_first
     #     return self.is_gote_at_first
 

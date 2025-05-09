@@ -14,13 +14,13 @@ class SearchRoutines:
 
     @staticmethod
     def do_move_vertical_all(pv, search_context_model):
-        for my_move in pv.frontward_vertical_list_of_move_pv:
+        for my_move in pv._leaf_node._get_depth_tn():
             search_context_model.gymnasium.do_move_o1x(move = my_move)
 
 
     @staticmethod
     def undo_move_vertical_all(pv, search_context_model):
-        for i in range(0, len(pv.frontward_vertical_list_of_move_pv)):
+        for i in range(0, len(pv._leaf_node._get_depth_tn())):
             search_context_model.gymnasium.undo_move_o1x()
 
 
