@@ -1,6 +1,3 @@
-#from ..layer_o1o0 import constants
-
-
 class TerminationModel:
     """［終端外］オブジェクト。
     """
@@ -11,10 +8,10 @@ class TerminationModel:
             is_gote_arg,
             state_arg,
             comment_arg):
-        self._is_mars_tm    = is_mars_arg   # False
-        self._is_gote_tm    = is_gote_arg   # False
-        self._state_tm      = state_arg     # constants.out_of_termination_state_const.NONE
-        self._comment_tm    = comment_arg   # ''
+        self._is_mars_tm    = is_mars_arg
+        self._is_gote_tm    = is_gote_arg
+        self._state_tm      = state_arg
+        self._comment_tm    = comment_arg
 
 
     @property

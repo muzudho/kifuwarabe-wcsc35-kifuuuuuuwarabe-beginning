@@ -184,30 +184,6 @@ class PrincipalVariationModel:
         return self._termination_model_pv
 
 
-    def out_of_termination_is_mars_pv(self):
-        """［終端外］は火星か？
-        """
-        return self._termination_model_pv.is_mars_tm
-
-
-    # def out_of_termination_is_gote(self):
-    #     """［終端外］は後手か？
-    #     """
-    #     return self._termination_model_pv.is_gote_tm
-
-
-    # def out_of_termination_state_pv(self):
-    #     """［終端外］の状態。
-    #     """
-    #     return self._termination_model_pv.state_tm
-
-
-    # def out_of_termination_comment(self):
-    #     """［終端外］の［指し手のコメント］。
-    #     """
-    #     return self._termination_model_pv.comment_tm
-
-
     def setup_to_nyugyoku_win(self, search_context_model):
         self._list_of_accumulate_exchange_value_on_earth_pv = []
         self._backward_vertical_list_of_cap_pv              = []
