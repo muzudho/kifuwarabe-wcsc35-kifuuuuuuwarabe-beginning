@@ -129,14 +129,6 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
         terminated_pv_list = []
         live_pv_list = []
 
-        best_pv             = None  # ベストな子
-        best_move           = None
-        best_move_cap_pt    = None
-        if search_context_model.gymnasium.is_mars:
-            best_value = constants.value.BIG_VALUE
-        else:
-            best_value = constants.value.SMALL_VALUE
-
         # 各PV
         # ----
         for pv in pv_list:
@@ -157,14 +149,15 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
             # ----------
 
             # 一手も指さずに局面を見て、終局なら終局外を付加。
-            O5zQuiescenceSearchRoutines.set_termination_if_it_o5(parent_pv=pv, search_context_model=search_context_model)
+            O4QuiescenceSearchRoutines.set_termination_if_it_o4(parent_pv=pv, search_context_model=search_context_model)
 
             if pv.termination_model_pv is not None:     # 探索不要なら。
                 terminated_pv_list.append(pv)           # 終了済みPVリストへ当PVを追加。
+                #child_plot_model = pv.deprecated_rooter_backwards_plot_model_in_backward_pv
 
             else:
                 # ［水平指し手一覧］をクリーニング。
-                remaining_moves = O5zQuiescenceSearchRoutines.cleaning_horizontal_edges_o5(parent_pv=pv, search_context_model=search_context_model)
+                remaining_moves = O4QuiescenceSearchRoutines.cleaning_horizontal_edges_o4(parent_pv=pv, search_context_model=search_context_model)
 
                 # ［終端外］判定。
                 # ［駒を取る手］がないことを、［静止］と呼ぶ。
@@ -192,11 +185,10 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
             # ----------------------------------------------------------
 
             # # 手番の処理
-
-            # (this_branch_value_on_earth, is_update_best_o4) = SearchRoutines.is_update_best_search(best_pv=best_pv, child_pv=child_pv, piece_exchange_value_on_earth=piece_exchange_value_on_earth, search_context_model=search_context_model)
+            # (this_branch_value_on_earth, is_update_best_o3) = SearchRoutines.is_update_best_search(best_pv=best_pv, child_pv=child_pv, piece_exchange_value_on_earth=piece_exchange_value_on_earth, search_context_model=search_context_model)
                         
             # # 最善手の更新（１つに絞る）
-            # if is_update_best_o4:
+            # if is_update_best_o3:
             #     best_pv             = pv
             #     best_pv.set_deprecated_rooter_backwards_plot_model_in_backward_pv(child_plot_model)
             #     best_move           = my_move
@@ -210,7 +202,7 @@ class O4QuiescenceSearchRoutines(SearchRoutines):
         #     return SearchRoutines.setup_to_no_candidates(info_depth=INFO_DEPTH, search_context_model=search_context_model)
 
         # # 読み筋に今回の手を付け加える。（ TODO 駒得点も付けたい）
-        # best_pv.appappend_move_in_backward_pvend_move_from_back(
+        # best_pv.appendappend_move_in_backward_pv_move_from_back(
         #         move                = best_move,
         #         capture_piece_type  = best_move_cap_pt,
         #         best_value          = best_value)

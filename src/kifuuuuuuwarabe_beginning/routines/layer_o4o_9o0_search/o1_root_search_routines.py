@@ -70,7 +70,7 @@ class O1RootSearchRoutines(SearchRoutines):
     #     """
 
     #     # FIXME この関数から、O2 の呼出を取り除きたい。
-    #     (terminated_pv_list, live_pv_list) = O1RootSearchRoutines.move_all_pv_o1(
+    #     (terminated_pv_list, live_pv_list) = O2CounterSearchRoutines.move_all_pv_o2(
     #             pv_list             = live_pv_list,
     #             search_context_model= search_context_model)
 
@@ -167,7 +167,7 @@ class O1RootSearchRoutines(SearchRoutines):
     ################
 
     @staticmethod
-    def move_all_pv_o1(pv_list, search_context_model):
+    def move_all_pv_o2(pv_list, search_context_model):
         """探索の開始。
 
         # FIXME この関数から、O2 の呼出を取り除きたい。
@@ -220,7 +220,7 @@ class O1RootSearchRoutines(SearchRoutines):
 
                     # TODO 縦の辺を伸ばす。
                     # O2CounterSearchRoutines.extend_vertical_edges_o2(pv_list=next_pv_list, search_context_model=search_context_model)
-                    # (terminated_pv_list, live_pv_list) = O2CounterSearchRoutines.move_all_pv_o2(
+                    # (terminated_pv_list, live_pv_list) = O3QuiescenceSearchRoutines.move_all_pv_o3(
                     #         pv_list             = live_pv_list,
                     #         search_context_model= search_context_model)
 

@@ -6,7 +6,7 @@ from ...models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateMo
 from ...models.layer_o1o0o1o0_japanese import JapaneseMoveModel
 from ...models.layer_o5o0_search import PrincipalVariationModel, SearchContextModel
 from ...views import TableView
-from ..layer_o4o_9o0_search import EndOfSearchRoutines, O0NoSearchRoutines, O1RootSearchRoutines, OutOfSearchRoutines, SearchRoutines
+from ..layer_o4o_9o0_search import EndOfSearchRoutines, O0NoSearchRoutines, O1RootSearchRoutines, O2CounterSearchRoutines, OutOfSearchRoutines, SearchRoutines
 from ..layer_o3o0 import MovesPickupFilterRoutines, MovesReductionFilterRoutines
 
 
@@ -341,7 +341,7 @@ def _main_search_at_first(remaining_moves, search_context_model):
             O1RootSearchRoutines.extend_vertical_edges_o1(pv_list=live_pv_list, search_context_model=search_context_model)
 
             # FIXME この関数から、O2 の呼出を取り除きたい。
-            (terminated_pv_list_2, live_pv_list) = O1RootSearchRoutines.move_all_pv_o1(
+            (terminated_pv_list_2, live_pv_list) = O2CounterSearchRoutines.move_all_pv_o2(
                     pv_list             = live_pv_list,
                     search_context_model= search_context_model)
 
