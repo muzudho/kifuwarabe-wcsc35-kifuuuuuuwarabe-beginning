@@ -341,7 +341,12 @@ def _main_search_at_first(remaining_moves, search_context_model):
             O1RootSearchRoutines.extend_vertical_edges_o1(pv_list=live_pv_list, search_context_model=search_context_model)
 
             # FIXME この関数から、O2 の呼出を取り除きたい。
-            (terminated_pv_list_2, live_pv_list) = O1RootSearchRoutines.main_b_o1_to_o2(live_pv_list=live_pv_list, parent_pv=pv, search_context_model=search_context_model)
+            (terminated_pv_list_2, live_pv_list) = O1RootSearchRoutines.move_all_pv_o1(
+                    pv_list             = live_pv_list,
+                    search_context_model= search_context_model)
+
+            # # FIXME この関数から、O2 の呼出を取り除きたい。
+            # (terminated_pv_list_2, live_pv_list) = O1RootSearchRoutines.main_b_o1_to_o2(live_pv_list=live_pv_list, parent_pv=pv, search_context_model=search_context_model)
 
         # 次のPVリストを集める
         next_pv_list = OutOfSearchRoutines.filtering_next_pv_list(

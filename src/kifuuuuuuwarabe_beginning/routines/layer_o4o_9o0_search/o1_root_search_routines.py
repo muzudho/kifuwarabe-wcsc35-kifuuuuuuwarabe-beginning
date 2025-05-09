@@ -51,30 +51,30 @@ class O1RootSearchRoutines(SearchRoutines):
         return [], next_pv_list_temp
 
 
-    @staticmethod
-    def main_b_o1_to_o2(live_pv_list, parent_pv, search_context_model):
-        """
-        FIXME この関数から、O2 の呼出を取り除きたい。
+    # @staticmethod
+    # def main_b_o1_to_o2(live_pv_list, parent_pv, search_context_model):
+    #     """
+    #     FIXME この関数から、O2 の呼出を取り除きたい。
 
-        Parameters
-        ----------
-        live_pv_list : list
-            伸ばす前のPV一覧。
+    #     Parameters
+    #     ----------
+    #     live_pv_list : list
+    #         伸ばす前のPV一覧。
 
-        Returns
-        -------
-        terminated_pv_list : list<P rincipalVariationModel>
-            終了したPV一覧。
-        live_pv_list : list<P rincipalVariationModel>
-            残っているPV一覧。
-        """
+    #     Returns
+    #     -------
+    #     terminated_pv_list : list<P rincipalVariationModel>
+    #         終了したPV一覧。
+    #     live_pv_list : list<P rincipalVariationModel>
+    #         残っているPV一覧。
+    #     """
 
-        # FIXME この関数から、O2 の呼出を取り除きたい。
-        (terminated_pv_list, live_pv_list) = O1RootSearchRoutines.move_all_pv_o1(
-                pv_list             = live_pv_list,
-                search_context_model= search_context_model)
+    #     # FIXME この関数から、O2 の呼出を取り除きたい。
+    #     (terminated_pv_list, live_pv_list) = O1RootSearchRoutines.move_all_pv_o1(
+    #             pv_list             = live_pv_list,
+    #             search_context_model= search_context_model)
 
-        return terminated_pv_list, live_pv_list
+    #     return terminated_pv_list, live_pv_list
 
 
     ######################
