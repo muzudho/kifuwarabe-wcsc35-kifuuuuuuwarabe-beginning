@@ -29,3 +29,9 @@ class TreeNodeModel:
         if self._parent_tn is None:
             return 1
         return self._parent_tn.get_depth_tn() + 1
+
+
+    def get_root_node_tn(self):
+        if self._parent_tn is None:
+            return self
+        return self._parent_tn.get_root_node_tn()

@@ -39,7 +39,6 @@ class PrincipalVariationModel:
                                                                     cap_arg     = cshogi.NONE,  # ［取った駒の型種類］
                                                                     value_arg   = 0,            # ［局面評価値］
                                                                     comment_arg = ''),          # ［指し手へのコメント］
-                backward_vertical_list_of_value_arg         = [],
                 backward_vertical_list_of_comment_arg       = [],
                 termination_model_arg                       = None, #termination_model,
                 # TODO 廃止方針。
@@ -54,15 +53,12 @@ class PrincipalVariationModel:
     def __init__(
             self,
             history_node_model_arg,
-            backward_vertical_list_of_value_arg,
             backward_vertical_list_of_comment_arg,
             termination_model_arg,
             vertical_list_of_backwards_plot_model_arg):  # TODO 廃止方針。
         """
         Parameters
         ----------
-        backward_vertical_list_of_value_arg : list<int>
-            ［後ろ向き探索］中に追加していく［局面評価値］の履歴。
         backward_vertical_list_of_comment_arg : list<str>
             ［後ろ向き探索］中に追加していく［指し手のコメント］の履歴。
         termination_model_arg : TerminationModel
@@ -78,7 +74,6 @@ class PrincipalVariationModel:
         self._leaf_node                                 = None
 
         # ［後ろ向き探索］しながら追加していく要素。
-        self._backward_vertical_list_of_value_pv        = backward_vertical_list_of_value_arg
         self._backward_vertical_list_of_comment_pv      = backward_vertical_list_of_comment_arg
 
         # ［終端外］で設定する要素。
@@ -102,13 +97,6 @@ class PrincipalVariationModel:
     ##############################################
     # MARK: 後ろ向き探索しながら伸ばす縦の指し手リスト
     ##############################################
-
-    @property
-    def backward_vertical_list_of_value_pv(self):
-        """［後ろ向き探索］しながら追加していく［局面評価値］の履歴。
-        """
-        return self._backward_vertical_list_of_value_pv
-
 
     @property
     def backward_vertical_list_of_comment_pv(self):
@@ -152,7 +140,7 @@ class PrincipalVariationModel:
     def rooter_value_in_backward_pv(self):
         """［後ろ向き探索］の方の、１手目に近い方の［局面評価値］。
         """
-        return self._backward_vertical_list_of_value_pv[-1]
+        return self.get_root_node_tn().value_hn
 
 
     @property
@@ -370,7 +358,6 @@ class PrincipalVariationModel:
         # NOTE リストはコピー渡し。
         return (PrincipalVariationModel(
                 history_node_model_arg                      = self._history_node_model, # FIXME
-                backward_vertical_list_of_value_arg         = self._backward_vertical_list_of_value_pv,
                 backward_vertical_list_of_comment_arg       = self._backward_vertical_list_of_comment_pv,
                 termination_model_arg                       = None, #termination_model, # ［終端外］に達している枝が伸びることはないことから。
                 vertical_list_of_backwards_plot_model_arg   = copied_vertical_list_of_backwards_plot_model_pv),
@@ -417,7 +404,6 @@ class PrincipalVariationModel:
         # NOTE リストはコピー渡し。
         return PrincipalVariationModel(
                 history_node_model_arg                      = self._history_node_model, # FIXME
-                backward_vertical_list_of_value_arg         = list(self._backward_vertical_list_of_value_pv),
                 backward_vertical_list_of_comment_arg       = list(self._backward_vertical_list_of_comment_pv),
                 termination_model_arg                       = termination_model,
                 vertical_list_of_backwards_plot_model_arg   = self._create_copied_bpm_list())
