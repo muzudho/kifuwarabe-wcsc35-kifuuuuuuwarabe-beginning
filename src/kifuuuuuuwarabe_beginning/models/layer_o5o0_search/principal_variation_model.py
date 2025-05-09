@@ -39,7 +39,6 @@ class PrincipalVariationModel:
                                                                     cap_arg     = cshogi.NONE,  # ［取った駒の型種類］
                                                                     value_arg   = 0,            # ［局面評価値］
                                                                     comment_arg = ''),          # ［指し手へのコメント］
-                backward_vertical_list_of_comment_arg       = [],
                 termination_model_arg                       = None, #termination_model,
                 # TODO 廃止方針。
                 # 終端外が有る分、他のリストより要素１個多い。＜水平線＞がデフォルト値。
@@ -53,14 +52,11 @@ class PrincipalVariationModel:
     def __init__(
             self,
             history_node_model_arg,
-            backward_vertical_list_of_comment_arg,
             termination_model_arg,
             vertical_list_of_backwards_plot_model_arg):  # TODO 廃止方針。
         """
         Parameters
         ----------
-        backward_vertical_list_of_comment_arg : list<str>
-            ［後ろ向き探索］中に追加していく［指し手のコメント］の履歴。
         termination_model_arg : TerminationModel
             ［終端外］モデル。
         vertical_list_of_backwards_plot_model_arg : list<B ackwardsPlotModel>
@@ -72,9 +68,6 @@ class PrincipalVariationModel:
         # ノード。
         self._history_node_model                        = history_node_model_arg
         self._leaf_node                                 = None
-
-        # ［後ろ向き探索］しながら追加していく要素。
-        self._backward_vertical_list_of_comment_pv      = backward_vertical_list_of_comment_arg
 
         # ［終端外］で設定する要素。
         # TODO ［終端外］オブジェクトというまとまりにするか？
@@ -358,7 +351,6 @@ class PrincipalVariationModel:
         # NOTE リストはコピー渡し。
         return (PrincipalVariationModel(
                 history_node_model_arg                      = self._history_node_model, # FIXME
-                backward_vertical_list_of_comment_arg       = self._backward_vertical_list_of_comment_pv,
                 termination_model_arg                       = None, #termination_model, # ［終端外］に達している枝が伸びることはないことから。
                 vertical_list_of_backwards_plot_model_arg   = copied_vertical_list_of_backwards_plot_model_pv),
                self._leaf_node)
@@ -404,7 +396,6 @@ class PrincipalVariationModel:
         # NOTE リストはコピー渡し。
         return PrincipalVariationModel(
                 history_node_model_arg                      = self._history_node_model, # FIXME
-                backward_vertical_list_of_comment_arg       = list(self._backward_vertical_list_of_comment_pv),
                 termination_model_arg                       = termination_model,
                 vertical_list_of_backwards_plot_model_arg   = self._create_copied_bpm_list())
 
