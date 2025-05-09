@@ -327,30 +327,39 @@ def _main_search_at_first(remaining_moves, search_context_model):
     # MARK: １階
     ############
 
-    info_depth = 1
 
-    # （１階．１）　［終端外］終了。
-    if pv.termination_model_pv is not None:
-        return [pv]
+    def floor_1():
+        info_depth = 1
 
-    # （１階．２）　［水平指し手一覧］をクリーニング。
-    remaining_moves = O1RootSearchRoutines.cleaning_horizontal_edges_o1(remaining_moves=remaining_moves, parent_pv=pv, search_context_model=search_context_model)
+        # （１階．１）　［終端外］終了。
+        if pv.termination_model_pv is not None:
+            return [pv], []
 
-    # （１階．３）　［駒を取る手］がないことを、［静止］と呼ぶ。
-    if len(remaining_moves) == 0:
-        pv.setup_to_quiescence(info_depth=info_depth, search_context_model=search_context_model)
-        return [pv]
+        # （１階．２）　［水平指し手一覧］をクリーニング。
+        remaining_moves = O1RootSearchRoutines.cleaning_horizontal_edges_o1(remaining_moves=remaining_moves, parent_pv=pv, search_context_model=search_context_model)
 
-    # （１階．４）　［水平指し手一覧］を［PV］へ変換。
-    live_pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
-    terminated_pv_list_o1 = []
+        # （１階．３）　［駒を取る手］がないことを、［静止］と呼ぶ。
+        if len(remaining_moves) == 0:
+            pv.setup_to_quiescence(info_depth=info_depth, search_context_model=search_context_model)
+            return [pv], []
 
-    # （１階．５）　［候補手］が無い。
-    if len(live_pv_list) == 0:
-        return [pv]
+        # （１階．４）　［水平指し手一覧］を［PV］へ変換。
+        live_pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
 
-    # （１階．６）　縦の辺を伸ばす。
-    O1RootSearchRoutines.extend_vertical_edges_o1(pv_list=live_pv_list, search_context_model=search_context_model)
+        # （１階．５）　［候補手］が無い。
+        if len(live_pv_list) == 0:
+            return [pv], []
+
+        # （１階．６）　縦の辺を伸ばす。
+        O1RootSearchRoutines.extend_vertical_edges_o1(pv_list=live_pv_list, search_context_model=search_context_model)
+        return [], live_pv_list
+
+
+    (terminated_pv_list_o1, live_pv_list_o1) = floor_1()
+
+    if len(live_pv_list_o1) == 0:
+        return terminated_pv_list_o1
+
 
     ############
     # MARK: ２階
@@ -362,7 +371,7 @@ def _main_search_at_first(remaining_moves, search_context_model):
 
     # 各PV
     # ----
-    for pv_o1 in live_pv_list:
+    for pv_o1 in live_pv_list_o1:
 
         # 履歴を全部指す
         # --------------
