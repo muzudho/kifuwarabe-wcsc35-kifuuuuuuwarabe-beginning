@@ -39,8 +39,6 @@ class PrincipalVariationModel:
                                                                     cap_arg     = cshogi.NONE,  # ［取った駒の型種類］
                                                                     value_arg   = 0,            # ［局面評価値］
                                                                     comment_arg = ''),          # ［指し手へのコメント］
-                backward_vertical_list_of_move_arg          = [],
-                backward_vertical_list_of_cap_pt_arg        = [],
                 backward_vertical_list_of_value_arg         = [],
                 backward_vertical_list_of_comment_arg       = [],
                 termination_model_arg                       = None, #termination_model,
@@ -56,8 +54,6 @@ class PrincipalVariationModel:
     def __init__(
             self,
             history_node_model_arg,
-            backward_vertical_list_of_move_arg,
-            backward_vertical_list_of_cap_pt_arg,
             backward_vertical_list_of_value_arg,
             backward_vertical_list_of_comment_arg,
             termination_model_arg,
@@ -65,10 +61,6 @@ class PrincipalVariationModel:
         """
         Parameters
         ----------
-        backward_vertical_list_of_move_arg : list<int>
-            ［後ろ向き探索］中に確定しながら追加していく［シーショーギの指し手］の履歴。
-        backward_vertical_list_of_cap_pt_arg : list<int>
-            ［後ろ向き探索］中に確定しながら追加していく［取った駒の種類］の履歴。
         backward_vertical_list_of_value_arg : list<int>
             ［後ろ向き探索］中に追加していく［局面評価値］の履歴。
         backward_vertical_list_of_comment_arg : list<str>
@@ -86,8 +78,6 @@ class PrincipalVariationModel:
         self._leaf_node                                 = None
 
         # ［後ろ向き探索］しながら追加していく要素。
-        self._backward_vertical_list_of_move_pv         = backward_vertical_list_of_move_arg
-        self._backward_vertical_list_of_cap_pt_pv       = backward_vertical_list_of_cap_pt_arg
         self._backward_vertical_list_of_value_pv        = backward_vertical_list_of_value_arg
         self._backward_vertical_list_of_comment_pv      = backward_vertical_list_of_comment_arg
 
@@ -112,19 +102,6 @@ class PrincipalVariationModel:
     ##############################################
     # MARK: 後ろ向き探索しながら伸ばす縦の指し手リスト
     ##############################################
-
-    @property
-    def backward_vertical_list_of_move_pv(self):
-        """［指し手］の履歴。
-        """
-        return self._backward_vertical_list_of_move_pv
-
-
-    @property
-    def backward_vertical_list_of_cap_pt_pv(self):
-        """［取った駒の種類］の履歴。
-        """
-        return self._backward_vertical_list_of_cap_pt_pv
 
     @property
     def backward_vertical_list_of_value_pv(self):
@@ -261,7 +238,6 @@ class PrincipalVariationModel:
 
     def setup_to_nyugyoku_win(self, search_context_model):
         self._list_of_accumulate_exchange_value_on_earth_pv = []
-        self._backward_vertical_list_of_move_pv             = []
         self._backward_vertical_list_of_cap_pv              = []
         self._backward_vertical_list_of_comment_pv          = []
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜入玉宣言勝ち＞')
@@ -274,7 +250,6 @@ class PrincipalVariationModel:
 
     def setup_to_no_candidates(self, info_depth, search_context_model):
         self._list_of_accumulate_exchange_value_on_earth_pv = []
-        self._backward_vertical_list_of_move_pv             = []
         self._backward_vertical_list_of_cap_pv              = []
         self._backward_vertical_list_of_comment_pv          = []
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜候補手無し[深={info_depth}]＞")
@@ -287,7 +262,6 @@ class PrincipalVariationModel:
 
     def setup_to_quiescence(self, info_depth, search_context_model):
         self._list_of_accumulate_exchange_value_on_earth_pv = []
-        self._backward_vertical_list_of_move_pv             = []
         self._backward_vertical_list_of_cap_pv              = []
         self._backward_vertical_list_of_comment_pv          = []
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜静止[深={info_depth}]＞")
@@ -300,7 +274,6 @@ class PrincipalVariationModel:
 
     def setup_to_game_over(self, search_context_model):
         self._list_of_accumulate_exchange_value_on_earth_pv = []
-        self._backward_vertical_list_of_move_pv             = []
         self._backward_vertical_list_of_cap_pv              = []
         self._backward_vertical_list_of_comment_pv          = []
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination('＜GameOver＞')
@@ -323,7 +296,6 @@ class PrincipalVariationModel:
         search_context_model.gymnasium.health_check_qs_model.append_edge_qs(move=mate_move, cap_pt=cap_pt, value=piece_exchange_value_on_earth, comment='＜一手詰め＞')
         is_mars_at_out_of_termination = not search_context_model.gymnasium.is_mars    # ［詰む］のは、もう１手先だから not する。
         self._list_of_accumulate_exchange_value_on_earth_pv = []
-        self._backward_vertical_list_of_move_pv             = []
         self._backward_vertical_list_of_cap_pv              = []
         self._backward_vertical_list_of_comment_pv          = []
     
@@ -353,7 +325,6 @@ class PrincipalVariationModel:
         水平線はデフォルトの状態なので、深さは設定しません。
         """
         self._list_of_accumulate_exchange_value_on_earth_pv = []
-        self._backward_vertical_list_of_move_pv             = []
         self._backward_vertical_list_of_cap_pv              = []
         self._backward_vertical_list_of_comment_pv          = []
         search_context_model.gymnasium.health_check_qs_model.on_out_of_termination(f"＜水平線＞")
@@ -399,8 +370,6 @@ class PrincipalVariationModel:
         # NOTE リストはコピー渡し。
         return (PrincipalVariationModel(
                 history_node_model_arg                      = self._history_node_model, # FIXME
-                backward_vertical_list_of_move_arg          = self._backward_vertical_list_of_move_pv,
-                backward_vertical_list_of_cap_pt_arg        = self._backward_vertical_list_of_cap_pt_pv,
                 backward_vertical_list_of_value_arg         = self._backward_vertical_list_of_value_pv,
                 backward_vertical_list_of_comment_arg       = self._backward_vertical_list_of_comment_pv,
                 termination_model_arg                       = None, #termination_model, # ［終端外］に達している枝が伸びることはないことから。
@@ -448,8 +417,6 @@ class PrincipalVariationModel:
         # NOTE リストはコピー渡し。
         return PrincipalVariationModel(
                 history_node_model_arg                      = self._history_node_model, # FIXME
-                backward_vertical_list_of_move_arg          = list(self._backward_vertical_list_of_move_pv),
-                backward_vertical_list_of_cap_pt_arg        = list(self._backward_vertical_list_of_cap_pt_pv),
                 backward_vertical_list_of_value_arg         = list(self._backward_vertical_list_of_value_pv),
                 backward_vertical_list_of_comment_arg       = list(self._backward_vertical_list_of_comment_pv),
                 termination_model_arg                       = termination_model,
@@ -467,16 +434,16 @@ class PrincipalVariationModel:
 
     @property
     def peek_move_pv(self):
-        if len(self._backward_vertical_list_of_move_pv) < 1:
+        if self._leaf_node.move_hn is None:
             raise ValueError('指し手のリストが０件です。')
-        return self._backward_vertical_list_of_move_pv[-1]
+        return self._leaf_node.move_hn
 
 
     @property
     def is_capture_at_last(self):
-        if len(self._backward_vertical_list_of_cap_pt_pv) < 1:
+        if self._leaf_node.move_hn is None:
             raise ValueError('取った駒のリストが０件です。')
-        return self._backward_vertical_list_of_cap_pt_pv[-1] != cshogi.NONE
+        return self._leaf_node.cap_hn
 
 
     ###############
