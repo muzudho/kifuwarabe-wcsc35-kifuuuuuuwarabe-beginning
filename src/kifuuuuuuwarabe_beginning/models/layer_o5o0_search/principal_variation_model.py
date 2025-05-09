@@ -39,7 +39,6 @@ class PrincipalVariationModel:
                                                                     cap_arg     = cshogi.NONE,  # ［取った駒の型種類］
                                                                     value_arg   = 0,            # ［局面評価値］
                                                                     comment_arg = ''),          # ［指し手へのコメント］
-                frontward_vertical_list_of_value_arg        = [],
                 frontward_vertical_list_of_comment_arg      = [],
                 backward_vertical_list_of_move_arg          = [],
                 backward_vertical_list_of_cap_pt_arg        = [],
@@ -58,7 +57,6 @@ class PrincipalVariationModel:
     def __init__(
             self,
             history_node_model_arg,
-            frontward_vertical_list_of_value_arg,
             frontward_vertical_list_of_comment_arg,
             backward_vertical_list_of_move_arg,
             backward_vertical_list_of_cap_pt_arg,
@@ -69,8 +67,6 @@ class PrincipalVariationModel:
         """
         Parameters
         ----------
-        frontward_vertical_list_of_value_arg : list<int>
-            ［前向き探索］中に確定しながら追加していく［取った駒の点数］の履歴。地球視点。
         frontward_vertical_list_of_comment_arg : list<str>
             ［前向き探索］中に確定しながら追加していく［コメント］の履歴。地球視点。
         backward_vertical_list_of_move_arg : list<int>
@@ -94,7 +90,6 @@ class PrincipalVariationModel:
         self._leaf_node                                 = None
 
         # ［前向き探索］しながら追加していく要素。
-        self._frontward_vertical_list_of_value_pv       = frontward_vertical_list_of_value_arg
         self._frontward_vertical_list_of_comment_pv     = frontward_vertical_list_of_comment_arg
 
         # ［後ろ向き探索］しながら追加していく要素。
@@ -124,13 +119,6 @@ class PrincipalVariationModel:
     ############################################
     # MARK: 前向き探索しながら伸ばす縦の指し手リスト
     ############################################
-
-    @property
-    def frontward_vertical_list_of_value_pv(self):
-        """［局面評価値］の履歴。
-        """
-        return self._frontward_vertical_list_of_value_pv
-
 
     @property
     def frontward_vertical_list_of_comment_pv(self):
@@ -193,9 +181,9 @@ class PrincipalVariationModel:
     def leafer_value_in_frontward_pv(self):
         """［前向き探索］の方の、末端手目に近い方の［局面評価値］。
         """
-        if len(self._frontward_vertical_list_of_value_pv) == 0:
+        if self._leaf_node is None:
             return constants.value.ZERO
-        return self._frontward_vertical_list_of_value_pv[-1]
+        return self._leaf_node.value_hn
 
 
     ###########################################
@@ -418,8 +406,6 @@ class PrincipalVariationModel:
                 comment_arg     = frontward_comment_arg)
         self._history_node_model.append_child_tn(self._leaf_node)
 
-        copied_frontward_vertical_list_of_value_pv = list(self._frontward_vertical_list_of_value_pv)
-        copied_frontward_vertical_list_of_value_pv.append(value_arg)
         copied_vertical_list_of_backwards_plot_model_pv = self._create_copied_bpm_list()    # TODO 廃止方針。
         copied_vertical_list_of_backwards_plot_model_pv.append(backwards_plot_model_arg)
         copied_frontward_vertical_list_of_comment_pv = list(self._frontward_vertical_list_of_comment_pv)
@@ -434,7 +420,6 @@ class PrincipalVariationModel:
         # NOTE リストはコピー渡し。
         return (PrincipalVariationModel(
                 history_node_model_arg                      = self._history_node_model, # FIXME
-                frontward_vertical_list_of_value_arg        = copied_frontward_vertical_list_of_value_pv,
                 frontward_vertical_list_of_comment_arg      = copied_frontward_vertical_list_of_comment_pv,
                 backward_vertical_list_of_move_arg          = self._backward_vertical_list_of_move_pv,
                 backward_vertical_list_of_cap_pt_arg        = self._backward_vertical_list_of_cap_pt_pv,
@@ -485,7 +470,6 @@ class PrincipalVariationModel:
         # NOTE リストはコピー渡し。
         return PrincipalVariationModel(
                 history_node_model_arg                      = self._history_node_model, # FIXME
-                frontward_vertical_list_of_value_arg        = list(self._frontward_vertical_list_of_value_pv),
                 frontward_vertical_list_of_comment_arg      = list(self._frontward_vertical_list_of_comment_pv),
                 backward_vertical_list_of_move_arg          = list(self._backward_vertical_list_of_move_pv),
                 backward_vertical_list_of_cap_pt_arg        = list(self._backward_vertical_list_of_cap_pt_pv),
