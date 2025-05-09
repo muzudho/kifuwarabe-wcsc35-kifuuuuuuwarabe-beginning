@@ -39,10 +39,7 @@ class PrincipalVariationModel:
                                                                     cap_arg     = cshogi.NONE,  # ［取った駒の型種類］
                                                                     value_arg   = 0,            # ［局面評価値］
                                                                     comment_arg = ''),          # ［指し手へのコメント］
-                termination_model_arg                       = None, #termination_model,
-                # TODO 廃止方針。
-                # 終端外が有る分、他のリストより要素１個多い。＜水平線＞がデフォルト値。
-                vertical_list_of_backwards_plot_model_arg   = [])
+                termination_model_arg                       = None) #termination_model,
 
         obj_1.setup_to_horizon(search_context_model=search_context_model)
 
@@ -52,17 +49,12 @@ class PrincipalVariationModel:
     def __init__(
             self,
             history_node_model_arg,
-            termination_model_arg,
-            vertical_list_of_backwards_plot_model_arg):  # TODO 廃止方針。
+            termination_model_arg):
         """
         Parameters
         ----------
         termination_model_arg : TerminationModel
             ［終端外］モデル。
-        vertical_list_of_backwards_plot_model_arg : list<B ackwardsPlotModel>
-            ［後ろ向き探索］中に追加していく［読み筋］の履歴。
-            ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
-            TODO 廃止方針。
         """
 
         # ノード。
@@ -74,7 +66,6 @@ class PrincipalVariationModel:
         self._termination_model_pv                      = termination_model_arg
 
         # TODO 廃止方針の要素。
-        self._deprecated_vertical_list_of_backwards_plot_model_pv   = vertical_list_of_backwards_plot_model_arg
         self._list_of_accumulate_exchange_value_on_earth_pv         = []
 
 
@@ -339,9 +330,6 @@ class PrincipalVariationModel:
                 comment_arg     = frontward_comment_arg)
         self._history_node_model.append_child_tn(self._leaf_node)
 
-        copied_vertical_list_of_backwards_plot_model_pv = self._create_copied_bpm_list()    # TODO 廃止方針。
-        copied_vertical_list_of_backwards_plot_model_pv.append(backwards_plot_model_arg)
-
         # termination_model = TerminationModel(
         #         is_mars_arg = self._termination_model_pv.is_mars_tm,
         #         is_gote_arg = self._out_of_termination_is_gote,
@@ -351,8 +339,7 @@ class PrincipalVariationModel:
         # NOTE リストはコピー渡し。
         return (PrincipalVariationModel(
                 history_node_model_arg                      = self._history_node_model, # FIXME
-                termination_model_arg                       = None, #termination_model, # ［終端外］に達している枝が伸びることはないことから。
-                vertical_list_of_backwards_plot_model_arg   = copied_vertical_list_of_backwards_plot_model_pv),
+                termination_model_arg                       = None), #termination_model, # ［終端外］に達している枝が伸びることはないことから。
                self._leaf_node)
 
 
@@ -374,13 +361,13 @@ class PrincipalVariationModel:
     # MARK: その他いろいろ
     #####################
 
-    def _create_copied_bpm_list(self):
-        """［後ろ向き探索の評価値モデル］のリストを、要素１つずつコピー。
-        """
-        new_bpm_list = []
-        for old_bpm in self._deprecated_vertical_list_of_backwards_plot_model_pv:
-            new_bpm_list.append(old_bpm.copy_bpm())
-        return new_bpm_list
+    # def _create_copied_bpm_list(self):
+    #     """［後ろ向き探索の評価値モデル］のリストを、要素１つずつコピー。
+    #     """
+    #     new_bpm_list = []
+    #     for old_bpm in self._deprecated_v ertical_list_of_backwards_plot_model_pv:
+    #         new_bpm_list.append(old_bpm.copy_bpm())
+    #     return new_bpm_list
     
 
     def copy_pv(self):
@@ -396,8 +383,7 @@ class PrincipalVariationModel:
         # NOTE リストはコピー渡し。
         return PrincipalVariationModel(
                 history_node_model_arg                      = self._history_node_model, # FIXME
-                termination_model_arg                       = termination_model,
-                vertical_list_of_backwards_plot_model_arg   = self._create_copied_bpm_list())
+                termination_model_arg                       = termination_model)
 
 
     def stringify_2(self):
@@ -428,32 +414,32 @@ class PrincipalVariationModel:
     ###############
 
     # @property
-    # def vertical_list_of_backwards_plot_model_pv(self):
+    # def v ertical_list_of_backwards_plot_model_pv(self):
     #     """［後ろ向き探索の読み筋モデル］の履歴。
     #     ０番目の要素に［終端外］を含む分、他のリストより要素１個多い。
     #     TODO 廃止方針。
     #     """
-    #     return self._deprecated_vertical_list_of_backwards_plot_model_pv
+    #     return self._deprecated_v ertical_list_of_backwards_plot_model_pv
 
 
-    def get_len_of_deprecated_vertical_list_of_backwards_plot_model_pv(self):
-        return len(self._deprecated_vertical_list_of_backwards_plot_model_pv)
+    # def get_len_of_deprecated_v ertical_list_of_backwards_plot_model_pv(self):
+    #     return len(self._deprecated_v ertical_list_of_backwards_plot_model_pv)
 
-    @property
-    def deprecated_rooter_backwards_plot_model_in_backward_pv(self):
-        """［後ろ向き探索］の方の、１手目に近い方の［読み筋モデル］。
-        TODO 廃止方針。
-        """
-        return self._deprecated_vertical_list_of_backwards_plot_model_pv[-1]
+    # @property
+    # def deprecated_rooter_backwards_plot_model_in_backward_pv(self):
+    #     """［後ろ向き探索］の方の、１手目に近い方の［読み筋モデル］。
+    #     TODO 廃止方針。
+    #     """
+    #     return self._deprecated_v ertical_list_of_backwards_plot_model_pv[-1]
 
 
-    def set_deprecated_rooter_backwards_plot_model_in_backward_pv(self, value):
-        """TODO 廃止方針。
-        """
-        if len(self._deprecated_vertical_list_of_backwards_plot_model_pv)==0:
-            self._deprecated_vertical_list_of_backwards_plot_model_pv.append(value)
-        else:
-            self._deprecated_vertical_list_of_backwards_plot_model_pv[-1] = value
+    # def set_deprecated_rooter_backwards_plot_model_in_backward_pv(self, value):
+    #     """TODO 廃止方針。
+    #     """
+    #     if len(self._deprecated_v ertical_list_of_backwards_plot_model_pv)==0:
+    #         self._deprecated_v ertical_list_of_backwards_plot_model_pv.append(value)
+    #     else:
+    #         self._deprecated_v ertical_list_of_backwards_plot_model_pv[-1] = value
 
 
     ##############

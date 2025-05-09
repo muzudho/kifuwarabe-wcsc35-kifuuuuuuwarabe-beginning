@@ -378,10 +378,10 @@ def _eliminate_not_capture_not_positive(pv_list, gymnasium):
 
     for pv in pv_list:
 
-        if pv.get_len_of_deprecated_vertical_list_of_backwards_plot_model_pv() == 0:
-            continue
+        # if pv.get_len_of_deprecated_v ertical_list_of_backwards_plot_model_pv() == 0:
+        #     continue
 
-        if pv._leaf_node.move_hn is None:
+        if pv._leaf_node is None:
             continue
 
         # ［後ろ向き探索］中の［根に近い方の指し手］
