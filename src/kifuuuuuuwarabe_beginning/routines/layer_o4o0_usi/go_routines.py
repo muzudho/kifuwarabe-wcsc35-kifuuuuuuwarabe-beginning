@@ -357,6 +357,9 @@ def _main_search_at_first(remaining_moves, search_context_model):
 
     (terminated_pv_list_o1, live_pv_list_o1) = floor_1()
 
+    # （１階．７）　悪い［終端外］を除外。
+    terminated_pv_list_o1 = OutOfSearchRoutines.remove_bad_termination(pv_list = terminated_pv_list_o1)
+
     if len(live_pv_list_o1) == 0:
         return terminated_pv_list_o1
 
@@ -415,12 +418,21 @@ def _main_search_at_first(remaining_moves, search_context_model):
         SearchRoutines.undo_move_vertical_all(pv=pv, search_context_model=search_context_model)
 
 
-    live_pv_list = live_pv_list_o2
+    # （２階．７）　悪い［終端外］を除外。
+    terminated_pv_list_o2 = OutOfSearchRoutines.remove_bad_termination(pv_list = terminated_pv_list_o2)
 
-    # 次のPVリストを集める
-    next_pv_list = OutOfSearchRoutines.filtering_next_pv_list(
-            terminated_pv_list_1    = terminated_pv_list_o1,
-            terminated_pv_list_2    = terminated_pv_list_o2,
-            live_pv_list            = live_pv_list)
+    if len(live_pv_list_o2) == 0:
+        return terminated_pv_list_o1
 
-    return next_pv_list
+    return live_pv_list_o2
+
+
+    # live_pv_list = live_pv_list_o2
+
+    # # 次のPVリストを集める
+    # next_pv_list = OutOfSearchRoutines.filtering_next_pv_list(
+    #         terminated_pv_list_1    = terminated_pv_list_o1,
+    #         terminated_pv_list_2    = terminated_pv_list_o2,
+    #         live_pv_list            = live_pv_list)
+
+    # return next_pv_list

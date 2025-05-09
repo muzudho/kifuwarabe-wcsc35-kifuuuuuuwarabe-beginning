@@ -6,6 +6,21 @@ class OutOfSearchRoutines:
     """
 
 
+    def remove_bad_termination(pv_list):
+        """次のPV一覧を残す。
+        """
+        next_pv_list = []
+
+        for pv in pv_list:
+            if constants.value.MAYBE_EARTH_WIN_VALUE <= pv.leafer_value_in_frontward_pv:
+                next_pv_list.append(pv)
+
+        if len(next_pv_list) == 0:
+            return pv_list
+
+        return next_pv_list
+
+
     def filtering_next_pv_list(terminated_pv_list_1, terminated_pv_list_2, live_pv_list):
         """次のPV一覧を残す。
         """
