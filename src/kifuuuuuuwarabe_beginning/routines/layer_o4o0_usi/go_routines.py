@@ -340,18 +340,25 @@ def _main_search_at_first(remaining_moves, search_context_model):
             # 縦の辺を伸ばす。
             O1RootSearchRoutines.extend_vertical_edges_o1(pv_list=live_pv_list, search_context_model=search_context_model)
 
-            # FIXME この関数から、O2 の呼出を取り除きたい。
-            (terminated_pv_list_2, live_pv_list) = O2CounterSearchRoutines.move_all_pv_o2(
-                    pv_list             = live_pv_list,
-                    search_context_model= search_context_model)
+            terminated_pv_list_o2 = []
+            live_pv_list_o2 = []
 
-            # # FIXME この関数から、O2 の呼出を取り除きたい。
-            # (terminated_pv_list_2, live_pv_list) = O1RootSearchRoutines.main_b_o1_to_o2(live_pv_list=live_pv_list, parent_pv=pv, search_context_model=search_context_model)
+            # 各PV
+            # ----
+            for pv_o1 in live_pv_list:
+                # ２階の操作。
+                O2CounterSearchRoutines.move_pv_o2(
+                        terminated_pv_list  = terminated_pv_list_o2,
+                        live_pv_list        = live_pv_list_o2,
+                        pv                  = pv_o1,
+                        search_context_model= search_context_model)
+
+            live_pv_list = live_pv_list_o2
 
         # 次のPVリストを集める
         next_pv_list = OutOfSearchRoutines.filtering_next_pv_list(
                 terminated_pv_list_1    = terminated_pv_list_1,
-                terminated_pv_list_2    = terminated_pv_list_2,
+                terminated_pv_list_2    = terminated_pv_list_o2,
                 live_pv_list            = live_pv_list)
 
     return next_pv_list, search_context_model.number_of_visited_nodes
