@@ -20,12 +20,14 @@ class O1RootSearchRoutines(SearchRoutines):
     ######################
 
     @staticmethod
-    def main_a_o1(remaining_moves_o1, parent_pv, search_context_model):
+    def main_a_o1(remaining_moves_o1, pv, search_context_model):
         """
         Parameters
         ----------
         remaining_moves_o1 : list
             指し手一覧。１階だけ、利便性のために指定。
+        pv : PrincipalVariationModel
+            読み筋。
 
         Returns
         -------
@@ -36,16 +38,16 @@ class O1RootSearchRoutines(SearchRoutines):
         """
 
         # ［水平指し手一覧］をクリーニング。
-        remaining_moves = O1RootSearchRoutines.cleaning_horizontal_edges_o1(remaining_moves=remaining_moves_o1, parent_pv=parent_pv, search_context_model=search_context_model)
+        remaining_moves = O1RootSearchRoutines.cleaning_horizontal_edges_o1(remaining_moves=remaining_moves_o1, parent_pv=pv, search_context_model=search_context_model)
 
         # ［終端外］判定。
         # ［駒を取る手］がないことを、［静止］と呼ぶ。
         if len(remaining_moves) == 0:
-            parent_pv.setup_to_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model)
-            return [parent_pv], []
+            pv.setup_to_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model)
+            return [pv], []
         
         # ［水平指し手一覧］を［PV］へ変換。
-        next_pv_list_temp = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=parent_pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
+        next_pv_list_temp = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
         return [], next_pv_list_temp
 
 
@@ -66,9 +68,6 @@ class O1RootSearchRoutines(SearchRoutines):
         live_pv_list : list<P rincipalVariationModel>
             残っているPV一覧。
         """
-
-        # 縦の辺を伸ばす。
-        O1RootSearchRoutines.extend_vertical_edges_o1(pv_list=live_pv_list, search_context_model=search_context_model)
 
         # FIXME この関数から、O2 の呼出を取り除きたい。
         (terminated_pv_list, live_pv_list) = O1RootSearchRoutines.move_all_pv_o1(

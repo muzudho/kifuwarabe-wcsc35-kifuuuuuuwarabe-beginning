@@ -332,11 +332,14 @@ def _main_search_at_first(remaining_moves, search_context_model):
         next_pv_list = [pv]
 
     else:
-        # １階の操作。
-        (terminated_pv_list_1, live_pv_list) = O1RootSearchRoutines.main_a_o1(remaining_moves_o1=remaining_moves, parent_pv=pv, search_context_model=search_context_model)
+        # １階の操作A。
+        (terminated_pv_list_1, live_pv_list) = O1RootSearchRoutines.main_a_o1(remaining_moves_o1=remaining_moves, pv=pv, search_context_model=search_context_model)
 
-        # O2 の操作。
+        # １階の操作B。
         if len(live_pv_list) != 0:
+            # 縦の辺を伸ばす。
+            O1RootSearchRoutines.extend_vertical_edges_o1(pv_list=live_pv_list, search_context_model=search_context_model)
+
             # FIXME この関数から、O2 の呼出を取り除きたい。
             (terminated_pv_list_2, live_pv_list) = O1RootSearchRoutines.main_b_o1_to_o2(live_pv_list=live_pv_list, parent_pv=pv, search_context_model=search_context_model)
 
