@@ -3,12 +3,13 @@ import cshogi
 from ..layer_o1o_9o0 import PieceValuesModel
 from ..layer_o1o0 import constants, Mars, SquareModel
 from .termination_model import TerminationModel
+from .history_node_model import HistoryNodeModel
 
 
 class PrincipalVariationModel:
-    """読み筋モデル。
+    """［読み筋木］モデル。
 
-    TODO HistoryNode へ移行したい。
+    TODO HistoryTreeModel に名前を変えたい。
     """
 
 
@@ -32,6 +33,12 @@ class PrincipalVariationModel:
         #         comment_arg = '')
 
         obj_1 = PrincipalVariationModel(
+                history_node_model_arg                      = HistoryNodeModel(
+                                                                    parent_arg  = None,
+                                                                    move_arg    = 0,            # ［指し手］
+                                                                    cap_arg     = cshogi.NONE,  # ［取った駒の型種類］
+                                                                    value_arg   = 0,            # ［局面評価値］
+                                                                    comment_arg = ''),          # ［指し手へのコメント］
                 frontward_vertical_list_of_move_arg         = [],
                 frontward_vertical_list_of_cap_pt_arg       = [],
                 frontward_vertical_list_of_value_arg        = [],
@@ -52,6 +59,7 @@ class PrincipalVariationModel:
 
     def __init__(
             self,
+            history_node_model_arg,
             frontward_vertical_list_of_move_arg,
             frontward_vertical_list_of_cap_pt_arg,
             frontward_vertical_list_of_value_arg,
@@ -89,6 +97,9 @@ class PrincipalVariationModel:
             TODO 廃止方針。
         """
 
+        # ノード。
+        self._history_node_model                        = history_node_model_arg
+
         # ［前向き探索］しながら追加していく要素。
         self._frontward_vertical_list_of_move_pv        = frontward_vertical_list_of_move_arg
         self._frontward_vertical_list_of_cap_pt_pv      = frontward_vertical_list_of_cap_pt_arg
@@ -108,6 +119,15 @@ class PrincipalVariationModel:
         # TODO 廃止方針の要素。
         self._deprecated_vertical_list_of_backwards_plot_model_pv   = vertical_list_of_backwards_plot_model_arg
         self._list_of_accumulate_exchange_value_on_earth_pv         = []
+
+
+    ######################
+    # MARK: 新プロパティー
+    ######################
+
+    @property
+    def history_node_model(self):
+        return self._history_node_model
 
 
     ############################################
@@ -402,15 +422,25 @@ class PrincipalVariationModel:
     # MARK: 前向き探索
     ##################
 
-    def extend_node_pv(
+    def grow_branch_pv(
             self,
             move_arg,
             cap_pt_arg,
             value_arg,
-            backwards_plot_model_arg,
+            backwards_plot_model_arg,   # TODO 廃止方針。
             frontward_comment_arg):
-        """［前向き探索］中に要素追加。
+        """［前向き探索］中に枝を生やす。
         """
+
+        # ツリーノードを伸ばす。
+        child_node = HistoryNodeModel(
+                parent_arg      = self._history_node_model,
+                move_arg        = move_arg,
+                cap_arg         = cap_pt_arg,
+                value_arg       = value_arg,
+                comment_arg     = frontward_comment_arg)
+        self._history_node_model.append_child_tn(child_node)
+
         copied_frontward_vertical_list_of_move_pv = list(self._frontward_vertical_list_of_move_pv)
         copied_frontward_vertical_list_of_move_pv.append(move_arg)
         copied_frontward_vertical_list_of_cap_pt_pv = list(self._frontward_vertical_list_of_cap_pt_pv)
@@ -429,7 +459,8 @@ class PrincipalVariationModel:
         #         comment_arg = '')
 
         # NOTE リストはコピー渡し。
-        return PrincipalVariationModel(
+        return (PrincipalVariationModel(
+                history_node_model_arg                      = self._history_node_model, # FIXME
                 frontward_vertical_list_of_move_arg         = copied_frontward_vertical_list_of_move_pv,
                 frontward_vertical_list_of_cap_pt_arg       = copied_frontward_vertical_list_of_cap_pt_pv,
                 frontward_vertical_list_of_value_arg        = copied_frontward_vertical_list_of_value_pv,
@@ -439,7 +470,8 @@ class PrincipalVariationModel:
                 backward_vertical_list_of_value_arg         = self._backward_vertical_list_of_value_pv,
                 backward_vertical_list_of_comment_arg       = self._backward_vertical_list_of_comment_pv,
                 termination_model_arg                       = None, #termination_model, # ［終端外］に達している枝が伸びることはないことから。
-                vertical_list_of_backwards_plot_model_arg   = copied_vertical_list_of_backwards_plot_model_pv)
+                vertical_list_of_backwards_plot_model_arg   = copied_vertical_list_of_backwards_plot_model_pv),
+               child_node)
 
 
     ###################
@@ -481,6 +513,7 @@ class PrincipalVariationModel:
 
         # NOTE リストはコピー渡し。
         return PrincipalVariationModel(
+                history_node_model_arg                      = self._history_node_model, # FIXME
                 frontward_vertical_list_of_move_arg         = list(self._frontward_vertical_list_of_move_pv),
                 frontward_vertical_list_of_cap_pt_arg       = list(self._frontward_vertical_list_of_cap_pt_pv),
                 frontward_vertical_list_of_value_arg        = list(self._frontward_vertical_list_of_value_pv),

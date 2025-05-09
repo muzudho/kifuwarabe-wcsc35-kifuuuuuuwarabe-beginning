@@ -1,9 +1,9 @@
-class TreeNode:
+class TreeNodeModel:
 
 
     @staticmethod
-    def create_tree_node(parent_arg):
-        return TreeNode(parent_arg=parent_arg)
+    def create_tree_node_model(parent_arg):
+        return TreeNodeModel(parent_arg=parent_arg)
 
 
     def __init__(self, parent_arg):
