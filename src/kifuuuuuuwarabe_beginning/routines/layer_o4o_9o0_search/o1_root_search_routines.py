@@ -103,89 +103,62 @@ class O1RootSearchRoutines(SearchRoutines):
     # MARK: 手を指す
     ################
 
-    @staticmethod
-    def move_pv_o2(terminated_pv_list, live_pv_list, pv, search_context_model):
-        """探索の開始。
+    # @staticmethod
+    # def move_pv_o2(terminated_pv_list, live_pv_list, pv, remaining_moves, search_context_model):
+    #     """探索の開始。
         
-        Parameters
-        ----------
-        pv_list : list<P rincipalVariationModel>
-            ［読み筋］のリスト。
+    #     Parameters
+    #     ----------
+    #     pv_list : list<P rincipalVariationModel>
+    #         ［読み筋］のリスト。
 
-        Returns
-        -------
-        pv_list : list<P rincipalVariationModel>
-            有力な読み筋。棋譜のようなもの。
-            枝が増えて、合法手の数より多くなることがあることに注意。
-        """
+    #     Returns
+    #     -------
+    #     pv_list : list<P rincipalVariationModel>
+    #         有力な読み筋。棋譜のようなもの。
+    #         枝が増えて、合法手の数より多くなることがあることに注意。
+    #     """
 
-        # 履歴を全部指す
-        # --------------
-        SearchRoutines.do_move_vertical_all(pv=pv, search_context_model=search_context_model)
+    #     # TODO 縦の辺を伸ばす。
+    #     # O2CounterSearchRoutines.extend_vertical_edges_o2(pv_list=next_pv_list, search_context_model=search_context_model)
+    #     # (terminated_pv_list, live_pv_list) = O3QuiescenceSearchRoutines.move_all_pv_o3(
+    #     #         pv_list             = live_pv_list,
+    #     #         search_context_model= search_context_model)
 
-        # 手番の処理
-        # ----------
+    #     # TODO 探索不要なら
 
-        if pv.termination_model_pv is not None:     # 探索不要なら。
-            terminated_pv_list.append(pv)           # 終了済みPVリストへ当PVを追加。
-        
-        else:
-            # ［水平指し手一覧］をクリーニング。
-            remaining_moves = O2CounterSearchRoutines.cleaning_horizontal_edges_o2(parent_pv=pv, search_context_model=search_context_model)
+    #     # TODO ［水平指し手一覧］をクリーニング。
 
-            # ［終端外］判定。
-            # ［駒を取る手］がないことを、［静止］と呼ぶ。
-            if len(remaining_moves) == 0:
-                pv.setup_to_quiescence(info_depth=INFO_DEPTH, search_context_model=search_context_model)
-                terminated_pv_list.append(pv)
-            
-            else:
-                # remaining_moves から pv へ変換。
-                next_pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
+    #     # TODO ［駒を取る手］がないことを、［静止］と呼ぶ。
 
-                # TODO 縦の辺を伸ばす。
-                # O2CounterSearchRoutines.extend_vertical_edges_o2(pv_list=next_pv_list, search_context_model=search_context_model)
-                # (terminated_pv_list, live_pv_list) = O3QuiescenceSearchRoutines.move_all_pv_o3(
-                #         pv_list             = live_pv_list,
-                #         search_context_model= search_context_model)
+    #     # TODO ［水平指し手一覧］を［PV］へ変換。
 
-                # TODO 探索不要なら
+    #     # TODO 縦の辺を伸ばす。
 
-                # TODO ［水平指し手一覧］をクリーニング。
+    #     # TODO 残りのPVリストを集める
 
-                # TODO ［駒を取る手］がないことを、［静止］と呼ぶ。
+    #     # TODO （奇数＋１階なら火星、偶数＋１階なら地球）が嫌な手は削除。
+    #     # for terminated_pv in reversed(terminated_pv_list):
+    #     #     if 0 < terminated_pv.leafer_value_in_frontward_pv:
+    #     #         terminated_pv_list.remove(terminated_pv)
+    #     #
+    #     # for live_pv in reversed(live_pv_list):
+    #     #     if 0 < live_pv.leafer_value_in_frontward_pv:
+    #     #         live_pv_list.remove(live_pv)
 
-                # TODO ［水平指し手一覧］を［PV］へ変換。
 
-                # TODO 縦の辺を伸ばす。
+    #     # MARK: TODO 全ての親手をさかのぼり、［後ろ向き探索の結果］を確定
+    #     # ----------------------------------------------------------
 
-                # TODO 残りのPVリストを集める
+    #     # １階の手は、全ての手の読み筋を記憶します。最善手は選びません。
+    #     # pv.append_move_in_backward_pv(
+    #     #         move                = pv.leafer_move_in_frontward_pv,
+    #     #         capture_piece_type  = pv.leafer_cap_pt_in_frontward_pv,
+    #     #         best_value          = pv.get_root_value_in_backward_pv())
 
-                # TODO （奇数＋１階なら火星、偶数＋１階なら地球）が嫌な手は削除。
-                # for terminated_pv in reversed(terminated_pv_list):
-                #     if 0 < terminated_pv.leafer_value_in_frontward_pv:
-                #         terminated_pv_list.remove(terminated_pv)
-                #
-                # for live_pv in reversed(live_pv_list):
-                #     if 0 < live_pv.leafer_value_in_frontward_pv:
-                #         live_pv_list.remove(live_pv)
-
-        # MARK: 履歴を全部戻す
-        # --------------------
-        SearchRoutines.undo_move_vertical_all(pv=pv, search_context_model=search_context_model)
-
-        # MARK: TODO 全ての親手をさかのぼり、［後ろ向き探索の結果］を確定
-        # ----------------------------------------------------------
-
-        # １階の手は、全ての手の読み筋を記憶します。最善手は選びません。
-        # pv.append_move_in_backward_pv(
-        #         move                = pv.leafer_move_in_frontward_pv,
-        #         capture_piece_type  = pv.leafer_cap_pt_in_frontward_pv,
-        #         best_value          = pv.get_root_value_in_backward_pv())
-
-        # ベータカットもしません。全部返すから。
-        #pv.value_pv += pv.get_root_value_in_backward_pv()
-        #terminated_pv_list.append(pv.copy_pv())
+    #     # ベータカットもしません。全部返すから。
+    #     #pv.value_pv += pv.get_root_value_in_backward_pv()
+    #     #terminated_pv_list.append(pv.copy_pv())
 
 
     ####################

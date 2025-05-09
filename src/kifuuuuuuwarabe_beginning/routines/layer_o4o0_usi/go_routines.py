@@ -323,50 +323,85 @@ def _main_search_at_first(remaining_moves, search_context_model):
 
     # TODO （奇数＋１階なら火星、偶数＋１階なら地球）が嫌な手は削除。
 
-    info_depth = 0
-
-    # ０階で終了。
-    if pv.termination_model_pv is not None:
-        return [pv]
+    ############
+    # MARK: １階
+    ############
 
     info_depth = 1
 
-    # １階の［水平指し手一覧］をクリーニング。
+    # （１階．１）　［終端外］終了。
+    if pv.termination_model_pv is not None:
+        return [pv]
+
+    # （１階．２）　［水平指し手一覧］をクリーニング。
     remaining_moves = O1RootSearchRoutines.cleaning_horizontal_edges_o1(remaining_moves=remaining_moves, parent_pv=pv, search_context_model=search_context_model)
 
-    # ［駒を取る手］がないことを、［静止］と呼ぶ。
+    # （１階．３）　［駒を取る手］がないことを、［静止］と呼ぶ。
     if len(remaining_moves) == 0:
         pv.setup_to_quiescence(info_depth=info_depth, search_context_model=search_context_model)
         return [pv]
 
-    # ［水平指し手一覧］を［PV］へ変換。
+    # （１階．４）　［水平指し手一覧］を［PV］へ変換。
     live_pv_list = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
-    terminated_pv_list_1 = []
+    terminated_pv_list_o1 = []
 
+    # （１階．５）　［候補手］が無い。
     if len(live_pv_list) == 0:
         return [pv]
 
-    # 縦の辺を伸ばす。
+    # （１階．６）　縦の辺を伸ばす。
     O1RootSearchRoutines.extend_vertical_edges_o1(pv_list=live_pv_list, search_context_model=search_context_model)
 
+    ############
+    # MARK: ２階
+    ############
+
+    info_depth = 2
     terminated_pv_list_o2 = []
     live_pv_list_o2 = []
 
     # 各PV
     # ----
     for pv_o1 in live_pv_list:
-        # ２階の操作。
-        O2CounterSearchRoutines.move_pv_o2(
-                terminated_pv_list  = terminated_pv_list_o2,
-                live_pv_list        = live_pv_list_o2,
-                pv                  = pv_o1,
-                search_context_model= search_context_model)
+
+        # 履歴を全部指す
+        # --------------
+        SearchRoutines.do_move_vertical_all(pv=pv, search_context_model=search_context_model)
+
+        if pv.termination_model_pv is not None:     # （２階．１）　［終端外］終了。
+            terminated_pv_list_o2.append(pv)        # 終了済みPVリストへ当PVを追加。
+        
+        else:
+
+            # （２階．２）　［水平指し手一覧］をクリーニング。
+            remaining_moves = O2CounterSearchRoutines.cleaning_horizontal_edges_o2(parent_pv=pv, search_context_model=search_context_model)
+
+            # （２階．３）　［駒を取る手］がないことを、［静止］と呼ぶ。
+            if len(remaining_moves) == 0:
+                pv.setup_to_quiescence(info_depth=info_depth, search_context_model=search_context_model)
+                terminated_pv_list_o2.append(pv)
+
+            else:
+                # （２階．４）　［水平指し手一覧］を［PV］へ変換。
+                live_pv_list_o2 = SearchRoutines.convert_remaining_moves_to_pv_list(parent_pv=pv, remaining_moves=remaining_moves, search_context_model=search_context_model)
+
+                # # ２階の操作。
+                # O2CounterSearchRoutines.move_pv_o2(
+                #         terminated_pv_list  = terminated_pv_list_o2,
+                #         live_pv_list        = live_pv_list_o2,
+                #         pv                  = pv_o1,
+                #         remaining_moves     = remaining_moves,
+                #         search_context_model= search_context_model)
+
+        # 履歴を全部戻す
+        # --------------
+        SearchRoutines.undo_move_vertical_all(pv=pv, search_context_model=search_context_model)
 
     live_pv_list = live_pv_list_o2
 
     # 次のPVリストを集める
     next_pv_list = OutOfSearchRoutines.filtering_next_pv_list(
-            terminated_pv_list_1    = terminated_pv_list_1,
+            terminated_pv_list_1    = terminated_pv_list_o1,
             terminated_pv_list_2    = terminated_pv_list_o2,
             live_pv_list            = live_pv_list)
 
