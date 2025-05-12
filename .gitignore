@@ -3,6 +3,7 @@
 !/logs/.gitkeep
 /private
 /temp
+*- コピー*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
