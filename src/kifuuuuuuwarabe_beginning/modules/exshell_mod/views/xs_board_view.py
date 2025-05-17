@@ -65,16 +65,19 @@ class XsBoardView():
         self._border_of_frame_of_river_right = Border(right=board_frame_river_soft_side)
         self._border_of_frame_of_earth_left = Border(left=board_frame_earth_light_side)
         self._border_of_frame_of_earth_right = Border(right=board_frame_earth_soft_side)
-        self._border_of_frame_of_earth_bottom_left = Border(left=board_frame_earth_light_side, bottom=board_frame_earth_light_side)
+        self._border_of_frame_of_earth_bottom_left = Border(left=board_frame_earth_light_side, bottom=board_frame_earth_soft_side)
         self._border_of_frame_of_earth_bottom = Border(bottom=board_frame_earth_soft_side)
-        self._border_of_frame_of_earth_bottom_right = Border(right=board_frame_earth_soft_side, bottom=board_frame_earth_light_side)
+        self._border_of_frame_of_earth_bottom_right = Border(right=board_frame_earth_soft_side, bottom=board_frame_earth_soft_side)
 
         # フィル
         self._background_fill = PatternFill(patternType='solid', fgColor=BACKGROUND_COLOR)
-        self._board_fill = PatternFill(patternType='solid', fgColor=BOARD_COLOR)
-        self._board_mars_fill = PatternFill(patternType='solid', fgColor=BOARD_MARS_LIGHT_COLOR)
-        self._board_river_fill = PatternFill(patternType='solid', fgColor=BOARD_RIVER_LIGHT_COLOR)
-        self._board_earth_fill = PatternFill(patternType='solid', fgColor=BOARD_EARTH_LIGHT_COLOR)
+        self._board_fill = PatternFill(patternType='solid', fgColor=BOARD_COLOR) # TODO 廃止方針
+        self._board_mars_light_fill = PatternFill(patternType='solid', fgColor=BOARD_MARS_LIGHT_COLOR)
+        self._board_mars_soft_fill = PatternFill(patternType='solid', fgColor=BOARD_MARS_SOFT_COLOR)
+        self._board_river_light_fill = PatternFill(patternType='solid', fgColor=BOARD_RIVER_LIGHT_COLOR)
+        self._board_river_soft_fill = PatternFill(patternType='solid', fgColor=BOARD_RIVER_SOFT_COLOR)
+        self._board_earth_light_fill = PatternFill(patternType='solid', fgColor=BOARD_EARTH_LIGHT_COLOR)
+        self._board_earth_soft_fill = PatternFill(patternType='solid', fgColor=BOARD_EARTH_SOFT_COLOR)
         self._header_1_fill = PatternFill(patternType='solid', fgColor=HEADER_2_COLOR)
         self._header_2_fill = PatternFill(patternType='solid', fgColor=HEADER_1_COLOR)
 
@@ -412,22 +415,34 @@ class XsBoardView():
         # 上辺
         for row_th in range(4, 6):
             for column_letter in xa.ColumnLetterRange(start='H', end='AD'):
-                ws[f"{column_letter}{row_th}"].fill = self._board_fill
+                ws[f"{column_letter}{row_th}"].fill = self._board_mars_light_fill
 
         # 下辺
         for row_th in range(24, 26):
             for column_letter in xa.ColumnLetterRange(start='H', end='AD'):
-                ws[f"{column_letter}{row_th}"].fill = self._board_fill
+                ws[f"{column_letter}{row_th}"].fill = self._board_earth_light_fill
 
         # 左辺
-        for row_th in range(6, 24):
+        for row_th in range(6, 12):
             for column_letter in xa.ColumnLetterRange(start='H', end='J'):
-                ws[f"{column_letter}{row_th}"].fill = self._board_fill
+                ws[f"{column_letter}{row_th}"].fill = self._board_mars_light_fill
+        for row_th in range(12, 18):
+            for column_letter in xa.ColumnLetterRange(start='H', end='J'):
+                ws[f"{column_letter}{row_th}"].fill = self._board_river_light_fill
+        for row_th in range(18, 24):
+            for column_letter in xa.ColumnLetterRange(start='H', end='J'):
+                ws[f"{column_letter}{row_th}"].fill = self._board_earth_light_fill
 
         # 右辺
-        for row_th in range(6, 24):
+        for row_th in range(6, 12):
             for column_letter in xa.ColumnLetterRange(start='AB', end='AD'):
-                ws[f"{column_letter}{row_th}"].fill = self._board_fill
+                ws[f"{column_letter}{row_th}"].fill = self._board_mars_light_fill
+        for row_th in range(12, 18):
+            for column_letter in xa.ColumnLetterRange(start='AB', end='AD'):
+                ws[f"{column_letter}{row_th}"].fill = self._board_river_light_fill
+        for row_th in range(18, 24):
+            for column_letter in xa.ColumnLetterRange(start='AB', end='AD'):
+                ws[f"{column_letter}{row_th}"].fill = self._board_earth_light_fill
 
         # 筋の番号
         for index, column_letter in enumerate(xa.ColumnLetterRange(start='J', end='AA', step=2)):
