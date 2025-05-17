@@ -249,7 +249,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 
     def xs_board(self, cmd):
-        XsBoardView.render(
+        XsBoardView().render(
                 gymnasium=self._gymnasium)
 
 

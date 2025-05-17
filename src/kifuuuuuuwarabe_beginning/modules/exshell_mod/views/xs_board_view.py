@@ -13,11 +13,7 @@ from ....models.layer_o1o0 import TurnModel
 class XsBoardView():
 
 
-    @staticmethod
-    def render(gymnasium):
-        """描画。
-        """
-
+    def __init__(self):
         # 色
         BLACK = '000000'
         BOARD_COLOR = 'DAEEF3'
@@ -25,33 +21,38 @@ class XsBoardView():
         HEADER_2_COLOR = 'FCD5B4'
 
         # フォント
-        LARGE_FONT = Font(size=20.0)
+        self._LARGE_FONT = Font(size=20.0)
 
         # 罫線
-        thin_black_side = Side(style='thin', color=BLACK)
-        thick_black_side = Side(style='thick', color=BLACK)
-        #board_top_border = Border(top=thick_black_side)
-        board_cell_border = Border(left=thin_black_side, right=thin_black_side, top=thin_black_side, bottom=thin_black_side)
-        board_top_left_border = Border(left=thick_black_side, top=thick_black_side)
-        board_top_border = Border(top=thick_black_side)
-        board_top_right_border = Border(right=thick_black_side, top=thick_black_side)
-        board_left_border = Border(left=thick_black_side)
-        board_right_border = Border(right=thick_black_side)
-        board_bottom_left_border = Border(left=thick_black_side, bottom=thick_black_side)
-        board_bottom_border = Border(bottom=thick_black_side)
-        board_bottom_right_border = Border(right=thick_black_side, bottom=thick_black_side)
+        self._thin_black_side = Side(style='thin', color=BLACK)
+        self._thick_black_side = Side(style='thick', color=BLACK)
+        #self._board_top_border = Border(top=self._thick_black_side)
+        self._board_cell_border = Border(left=self._thin_black_side, right=self._thin_black_side, top=self._thin_black_side, bottom=self._thin_black_side)
+        self._board_top_left_border = Border(left=self._thick_black_side, top=self._thick_black_side)
+        self._board_top_border = Border(top=self._thick_black_side)
+        self._board_top_right_border = Border(right=self._thick_black_side, top=self._thick_black_side)
+        self._board_left_border = Border(left=self._thick_black_side)
+        self._board_right_border = Border(right=self._thick_black_side)
+        self._board_bottom_left_border = Border(left=self._thick_black_side, bottom=self._thick_black_side)
+        self._board_bottom_border = Border(bottom=self._thick_black_side)
+        self._board_bottom_right_border = Border(right=self._thick_black_side, bottom=self._thick_black_side)
 
         # フィル
-        board_fill = PatternFill(patternType='solid', fgColor=BOARD_COLOR)
-        header_1_fill = PatternFill(patternType='solid', fgColor=HEADER_2_COLOR)
-        header_2_fill = PatternFill(patternType='solid', fgColor=HEADER_1_COLOR)
+        self._board_fill = PatternFill(patternType='solid', fgColor=BOARD_COLOR)
+        self._header_1_fill = PatternFill(patternType='solid', fgColor=HEADER_2_COLOR)
+        self._header_2_fill = PatternFill(patternType='solid', fgColor=HEADER_1_COLOR)
 
         # 寄せ
         #   horizontal は 'distributed', 'fill', 'general', 'center', 'centerContinuous', 'justify', 'right', 'left' のいずれかから選ぶ
         #   vertical は 'center', 'top', 'bottom', 'justify', 'distributed' のいずれかから選ぶ
-        left_center_alignment = Alignment(horizontal='left', vertical='center')
-        center_center_alignment = Alignment(horizontal='center', vertical='center')
-        right_center_alignment = Alignment(horizontal='right', vertical='center')
+        self._left_center_alignment = Alignment(horizontal='left', vertical='center')
+        self._center_center_alignment = Alignment(horizontal='center', vertical='center')
+        self._right_center_alignment = Alignment(horizontal='right', vertical='center')
+
+
+    def render(self, gymnasium):
+        """描画。
+        """
 
         # ワークブックを新規生成
         wb = xl.Workbook()
@@ -67,30 +68,13 @@ class XsBoardView():
                 height  = 100,
                 ws      = ws)
 
-        # 手数等部
-        ws['C2'].value = 'next'
-        ws['E2'].value = gymnasium.table.move_number
-        ws['G2'].value = 'move(s)'
-        ws['K2'].value = TurnModel.code(gymnasium.table.turn)
-        ws['M2'].value = 'repetition'
-        ws['Q2'].value = "'-"
-        ws['C2'].fill = header_2_fill
-        ws['E2'].fill = header_1_fill
-        ws['G2'].fill = header_2_fill
-        ws['K2'].fill = header_1_fill
-        ws['M2'].fill = header_2_fill
-        ws['Q2'].fill = header_1_fill
-        ws.merge_cells('C2:D2')
-        ws.merge_cells('E2:F2')
-        ws.merge_cells('G2:J2')
-        ws.merge_cells('K2:L2')
-        ws.merge_cells('M2:P2')
-        ws['C2'].alignment = right_center_alignment
-        ws['E2'].alignment = center_center_alignment
-        ws['G2'].alignment = left_center_alignment
-        ws['K2'].alignment = center_center_alignment
-        ws['M2'].alignment = right_center_alignment
-        ws['Q2'].alignment = left_center_alignment
+        self._render_next_label_1(ws)               # 何手目ラベル１。
+        self._render_next_value(ws, gymnasium)      # 何手目値。
+        self._render_moves_label_2(ws)              # 何手目ラベル２。
+        self._render_color(ws, gymnasium)           # 手番の描画。
+        self._render_repetition_label(ws)           # 局面反復回数ラベル。
+        self._render_repetition_value(ws)           # 局面反復回数値。
+
 
         # 駒台を塗り潰し
         # 先手
@@ -98,26 +82,26 @@ class XsBoardView():
             for column_letter in xa.ColumnLetterRange(start='AE', end='AI'):
                 # セル設定
                 cell = ws[f"{column_letter}{row_th}"]
-                cell.fill = board_fill
+                cell.fill = self._board_fill
 
         for row_th in range(9, 22, 2):  # セル結合
             ws.merge_cells(f"AG{row_th}:AH{row_th+1}")
             cell = ws[f"AG{row_th}"]
-            cell.font = LARGE_FONT
-            cell.alignment = center_center_alignment
+            cell.font = self._LARGE_FONT
+            cell.alignment = self._center_center_alignment
 
         # 後手
         for row_th in range(4, 20):
             for column_letter in xa.ColumnLetterRange(start='C', end='G'):
                 # セル設定
                 cell = ws[f"{column_letter}{row_th}"]
-                cell.fill = board_fill
+                cell.fill = self._board_fill
 
         for row_th in range(5, 18, 2):  # セル結合
             ws.merge_cells(f"E{row_th}:F{row_th+1}")
             cell = ws[f"E{row_th}"]
-            cell.font = LARGE_FONT
-            cell.alignment = center_center_alignment
+            cell.font = self._LARGE_FONT
+            cell.alignment = self._center_center_alignment
 
         # 先手、後手の持ち駒の数のリスト
         b_hand = gymnasium.table.pieces_in_hand[0]
@@ -145,45 +129,45 @@ class XsBoardView():
         # 上辺
         for row_th in range(4, 7):
             for column_letter in xa.ColumnLetterRange(start='H', end='AD'):
-                ws[f"{column_letter}{row_th}"].fill = board_fill
+                ws[f"{column_letter}{row_th}"].fill = self._board_fill
 
         # 下辺
         for column_letter in xa.ColumnLetterRange(start='H', end='AD'):
-            ws[f"{column_letter}25"].fill = board_fill
+            ws[f"{column_letter}25"].fill = self._board_fill
 
         # 左辺
         for row_th in range(7, 25):
-            ws[f"H{row_th}"].fill = board_fill
+            ws[f"H{row_th}"].fill = self._board_fill
 
         # 右辺
         for row_th in range(7, 25):
             for column_letter in xa.ColumnLetterRange(start='AA', end='AD'):
-                ws[f"{column_letter}{row_th}"].fill = board_fill
+                ws[f"{column_letter}{row_th}"].fill = self._board_fill
 
         # 筋の番号
         for index, column_letter in enumerate(xa.ColumnLetterRange(start='I', end='Z', step=2)):
             next_column_letter = xa.ColumnLetterLogic.add(column_letter, 1)
             ws.merge_cells(f"{column_letter}5:{next_column_letter}6")
             cell = ws[f"{column_letter}5"]
-            cell.value = f"'{StringResourcesModel.zenkaku_suji_list[9-index]}"
-            cell.font = LARGE_FONT
-            cell.alignment = center_center_alignment
+            cell.value = f"'{StringResourcesModel.zenkaku_suji_list()[9-index]}"
+            cell.font = self._LARGE_FONT
+            cell.alignment = self._center_center_alignment
 
         # 段の番号
         for index, row_th in enumerate(range(7, 24, 2)):
             ws.merge_cells(f"AA{row_th}:AB{row_th+1}")
             cell = ws[f"AA{row_th}"]
-            cell.value = f"{StringResourcesModel.kan_suji_list[index+1]}"
-            cell.font = LARGE_FONT
-            cell.alignment = center_center_alignment
+            cell.value = f"{StringResourcesModel.kan_suji_list()[index+1]}"
+            cell.font = self._LARGE_FONT
+            cell.alignment = self._center_center_alignment
 
         # 盤の各マス
         for row_th in range(7, 24, 2):
             for column_letter in xa.ColumnLetterRange(start='I', end='Z', step=2):
                 # セル設定
                 cell = ws[f"{column_letter}{row_th}"]
-                cell.border = board_cell_border
-                cell.fill = board_fill
+                cell.border = self._board_cell_border
+                cell.fill = self._board_fill
 
                 next_column_letter = xa.ColumnLetterLogic.add(column_letter, 1)
 
@@ -191,52 +175,52 @@ class XsBoardView():
                 ws.merge_cells(f"{column_letter}{row_th}:{next_column_letter}{row_th+1}")
 
         # 盤の枠を太線にします。セル結合を考えず描きます。
-        ws['I7'].border = board_top_left_border
-        ws['Z7'].border = board_top_right_border
-        ws['I24'].border = board_bottom_left_border
-        ws['Z24'].border = board_bottom_right_border
+        ws['I7'].border = self._board_top_left_border
+        ws['Z7'].border = self._board_top_right_border
+        ws['I24'].border = self._board_bottom_left_border
+        ws['Z24'].border = self._board_bottom_right_border
         for column_letter in xa.ColumnLetterRange(start='J', end='Z'):
             cell = ws[xa.CellAddressModel.from_code(f"{column_letter}7").to_code()]
             cell.border = xa.BorderLogic.add(
                     base        = cell.border,
-                    addition    = board_top_border)
+                    addition    = self._board_top_border)
 
             cell = ws[xa.CellAddressModel.from_code(f"{column_letter}24").to_code()]
             cell.border = xa.BorderLogic.add(
                     base        = cell.border,
-                    addition    = board_bottom_border)
+                    addition    = self._board_bottom_border)
 
         for row_th in range(8, 24):
             cell = ws[f"I{row_th}"]
             cell.border = xa.BorderLogic.add(
                     base        = cell.border,
-                    addition    = board_left_border)
+                    addition    = self._board_left_border)
 
             cell = ws[f"Z{row_th}"]
             cell.border = xa.BorderLogic.add(
                     base        = cell.border,
-                    addition    = board_right_border)
+                    addition    = self._board_right_border)
         
 
         # a7 = ws[f'A7']
         # a7.value = 'v香'
         # a7.border = board_top_boarder
-        # a7.fill = board_fill
+        # a7.fill = self._board_fill
 
         # b7 = ws[f'B7']
         # b7.value = 'v桂'
         # b7.border = board_top_boarder
-        # a7.fill = board_fill
+        # a7.fill = self._board_fill
 
         # c7 = ws[f'C7']
         # c7.value = 'v銀'
         # c7.border = board_top_boarder
-        # a7.fill = board_fill
+        # a7.fill = self._board_fill
 
         # d7 = ws[f'D7']
         # d7.value = 'v金'
         # d7.border = board_top_boarder
-        # a7.fill = board_fill
+        # a7.fill = self._board_fill
 
         # e7 = ws[f'E7']
         # e7.value = 'v玉'
@@ -300,3 +284,57 @@ class XsBoardView():
 
         # エクセル閉じる
         gymnasium.exshell.close_virtual_display()
+
+
+    def _render_next_label_1(self, ws):
+        """何手目ラベル１。
+        """
+        ws['C2'].value = 'next'
+        ws['C2'].font = Font(size=12.0, color='31869B')
+        ws['C2'].fill = self._header_2_fill
+        ws.merge_cells('C2:D2')
+        ws['C2'].alignment = self._right_center_alignment
+
+
+    def _render_next_value(self, ws, gymnasium):
+        """何手目値。
+        """
+        ws['E2'].value = gymnasium.table.move_number
+        ws['E2'].fill = self._header_1_fill
+        ws.merge_cells('E2:F2')
+        ws['E2'].alignment = self._center_center_alignment
+
+
+    def _render_moves_label_2(self, ws):
+        """何手目ラベル２。
+        """
+        ws['G2'].value = 'move(s)'
+        ws['G2'].fill = self._header_2_fill
+        ws.merge_cells('G2:J2')
+        ws['G2'].alignment = self._left_center_alignment
+
+
+    def _render_color(self, ws, gymnasium):
+        """手番の描画。
+        """
+        ws['K2'].value = TurnModel.code(gymnasium.table.turn)
+        ws['K2'].fill = self._header_1_fill
+        ws.merge_cells('K2:L2')
+        ws['K2'].alignment = self._center_center_alignment
+
+
+    def _render_repetition_label(self, ws):
+        """局面反復回数ラベル。
+        """
+        ws['M2'].value = 'repetition'
+        ws['M2'].fill = self._header_2_fill
+        ws.merge_cells('M2:P2')
+        ws['M2'].alignment = self._right_center_alignment
+
+
+    def _render_repetition_value(self, ws):
+        """局面反復回数値。
+        """
+        ws['Q2'].value = "'-"
+        ws['Q2'].fill = self._header_1_fill
+        ws['Q2'].alignment = self._left_center_alignment
