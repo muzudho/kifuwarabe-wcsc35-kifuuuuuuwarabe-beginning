@@ -45,6 +45,9 @@ class XsBoardView():
         EARTH_COLOR_2 = 'C4D79B'
         EARTH_SHADOW_1 = '76933C'
         EARTH_SHADOW_2 = '4F6228'
+        FILE_NUMBER_COLOR = 'B1A0C7'
+        LEFT_RANK_NUMBER_COLOR = '948A54'
+        RIGHT_RANK_NUMBER_COLOR = '95B3D7'
 
         # フォント
         self._LARGE_FONT = Font(size=20.0)
@@ -52,6 +55,9 @@ class XsBoardView():
         self._NEXT_VALUE_FONT = Font(size=12.0, bold=True, color='60497A')
         self._TITLE_FONT = Font(size=16.0, color=TITLE_COLOR)
         self._SMALL_TITLE_FONT = Font(size=6.0, color=TITLE_COLOR)
+        self._FILE_NUMBER_FONT = Font(size=20.0, color=FILE_NUMBER_COLOR)
+        self._LEFT_RANK_NUMBER_FONT = Font(size=20.0, color=LEFT_RANK_NUMBER_COLOR)
+        self._RIGHT_RANK_NUMBER_FONT = Font(size=20.0, color=RIGHT_RANK_NUMBER_COLOR)
 
         # 罫線の要素
         self._thin_black_side = Side(style='thin', color=BLACK)
@@ -631,7 +637,7 @@ class XsBoardView():
             ws.merge_cells(f"{column_letter}4:{next_column_letter}5")
             cell = ws[f"{column_letter}4"]
             cell.value = (index + 1) * 10
-            cell.font = self._LARGE_FONT
+            cell.font = self._FILE_NUMBER_FONT
             cell.alignment = self._center_center_alignment
 
         # 左側の段の番号
@@ -639,7 +645,7 @@ class XsBoardView():
             ws.merge_cells(f"H{row_th}:I{row_th+1}")
             cell = ws[f"H{row_th}"]
             cell.value = f"{StringResourcesModel.small_alphabet_list()[index+1]}"
-            cell.font = self._LARGE_FONT
+            cell.font = self._LEFT_RANK_NUMBER_FONT
             cell.alignment = self._center_center_alignment
 
         # 右側の段の番号
@@ -647,7 +653,7 @@ class XsBoardView():
             ws.merge_cells(f"AB{row_th}:AC{row_th+1}")
             cell = ws[f"AB{row_th}"]
             cell.value = index + 1
-            cell.font = self._LARGE_FONT
+            cell.font = self._RIGHT_RANK_NUMBER_FONT
             cell.alignment = self._center_center_alignment
 
         # 盤の枠の罫線
