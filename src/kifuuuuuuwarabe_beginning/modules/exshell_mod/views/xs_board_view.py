@@ -39,7 +39,11 @@ class XsBoardView():
         self._thin_black_side = Side(style='thin', color=BLACK)
         self._thick_black_side = Side(style='thick', color=BLACK)
         board_frame_mars_light_side = Side(style='thick', color='DAEEF3')
-        board_frame_mars_shadow_side = Side(style='thick', color='215967')
+        board_frame_mars_soft_side = Side(style='thick', color='215967')
+        board_frame_river_light_side = Side(style='thick', color='EEECE1')
+        board_frame_river_soft_side = Side(style='thick', color='1D1B10')
+        board_frame_earth_light_side = Side(style='thick', color='EBF1DE')
+        board_frame_earth_soft_side = Side(style='thick', color='4F6228')
 
         # 罫線
         self._board_cell_border = Border(left=self._thin_black_side, right=self._thin_black_side, top=self._thin_black_side, bottom=self._thin_black_side)
@@ -51,12 +55,19 @@ class XsBoardView():
         self._board_bottom_left_border = Border(left=self._thick_black_side, bottom=self._thick_black_side)
         self._board_bottom_border = Border(bottom=self._thick_black_side)
         self._board_bottom_right_border = Border(right=self._thick_black_side, bottom=self._thick_black_side)
-        # 盤の罫線
-        self._border_of_frame_top_left = Border(left=board_frame_mars_light_side, top=board_frame_mars_light_side)
-        self._border_of_frame_top = Border(top=board_frame_mars_light_side)
-        self._border_of_frame_top_right = Border(top=board_frame_mars_light_side, right=board_frame_mars_shadow_side)
-        self._border_of_frame_left = Border(left=board_frame_mars_light_side)
-        self._border_of_frame_right = Border(right=board_frame_mars_shadow_side)
+        # 盤の枠の罫線
+        self._border_of_frame_of_mars_top_left = Border(left=board_frame_mars_light_side, top=board_frame_mars_light_side)
+        self._border_of_frame_of_mars_top = Border(top=board_frame_mars_light_side)
+        self._border_of_frame_of_mars_top_right = Border(top=board_frame_mars_light_side, right=board_frame_mars_soft_side)
+        self._border_of_frame_of_mars_left = Border(left=board_frame_mars_light_side)
+        self._border_of_frame_of_mars_right = Border(right=board_frame_mars_soft_side)
+        self._border_of_frame_of_river_left = Border(left=board_frame_river_light_side)
+        self._border_of_frame_of_river_right = Border(right=board_frame_river_soft_side)
+        self._border_of_frame_of_earth_left = Border(left=board_frame_earth_light_side)
+        self._border_of_frame_of_earth_right = Border(right=board_frame_earth_soft_side)
+        self._border_of_frame_of_earth_bottom_left = Border(left=board_frame_earth_light_side, bottom=board_frame_earth_light_side)
+        self._border_of_frame_of_earth_bottom = Border(bottom=board_frame_earth_soft_side)
+        self._border_of_frame_of_earth_bottom_right = Border(right=board_frame_earth_soft_side, bottom=board_frame_earth_light_side)
 
         # フィル
         self._background_fill = PatternFill(patternType='solid', fgColor=BACKGROUND_COLOR)
@@ -446,14 +457,28 @@ class XsBoardView():
         # 盤の枠の罫線
         # 上辺 4行目
         row_th = 4
-        ws[f"H{row_th}"].border = self._border_of_frame_top_left
+        ws[f"H{row_th}"].border = self._border_of_frame_of_mars_top_left
         for column_letter in xa.ColumnLetterRange(start='I', end='AC'):
-            ws[f"{column_letter}{row_th}"].border = self._border_of_frame_top
-        ws[f"AC{row_th}"].border = self._border_of_frame_top_right
+            ws[f"{column_letter}{row_th}"].border = self._border_of_frame_of_mars_top
+        ws[f"AC{row_th}"].border = self._border_of_frame_of_mars_top_right
         # Mars部 5～11行目
         for row_th in range(5, 12):
-            ws[f"H{row_th}"].border = self._border_of_frame_left
-            ws[f"AC{row_th}"].border = self._border_of_frame_right
+            ws[f"H{row_th}"].border = self._border_of_frame_of_mars_left
+            ws[f"AC{row_th}"].border = self._border_of_frame_of_mars_right
+        # River部 12～17行目
+        for row_th in range(12, 18):
+            ws[f"H{row_th}"].border = self._border_of_frame_of_river_left
+            ws[f"AC{row_th}"].border = self._border_of_frame_of_river_right
+        # Earth部 18～24行目
+        for row_th in range(18, 25):
+            ws[f"H{row_th}"].border = self._border_of_frame_of_earth_left
+            ws[f"AC{row_th}"].border = self._border_of_frame_of_earth_right
+        # 下辺 25行目
+        row_th = 25
+        ws[f"H{row_th}"].border = self._border_of_frame_of_earth_bottom_left
+        for column_letter in xa.ColumnLetterRange(start='I', end='AC'):
+            ws[f"{column_letter}{row_th}"].border = self._border_of_frame_of_earth_bottom
+        ws[f"AC{row_th}"].border = self._border_of_frame_of_earth_bottom_right
 
 
     def _render_board_each_square(self, ws, gymnasium):
