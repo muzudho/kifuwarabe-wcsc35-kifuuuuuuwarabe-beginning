@@ -17,11 +17,16 @@ class XsBoardView():
         # 色
         BLACK = '000000'
         BOARD_COLOR = 'DAEEF3'
-        HEADER_1_COLOR = 'FDE9D9'
-        HEADER_2_COLOR = 'FCD5B4'
+        HEADER_1_COLOR = 'FCD5B4'
+        HEADER_2_COLOR = 'FDE9D9'
+        TITLE_COLOR = '4F81BD'
 
         # フォント
         self._LARGE_FONT = Font(size=20.0)
+        self._NEXT_LABEL_FONT = Font(size=12.0, color='31869B')
+        self._NEXT_VALUE_FONT = Font(size=12.0, bold=True, color='60497A')
+        self._TITLE_FONT = Font(size=16.0, color=TITLE_COLOR)
+        self._SMALL_TITLE_FONT = Font(size=6.0, color=TITLE_COLOR)
 
         # 罫線
         self._thin_black_side = Side(style='thin', color=BLACK)
@@ -74,6 +79,7 @@ class XsBoardView():
         self._render_color(ws, gymnasium)           # 手番の描画。
         self._render_repetition_label(ws)           # 局面反復回数ラベル。
         self._render_repetition_value(ws)           # 局面反復回数値。
+        self._render_title(ws)                      # タイトルを描画。
 
 
         # 駒台を塗り潰し
@@ -289,52 +295,131 @@ class XsBoardView():
     def _render_next_label_1(self, ws):
         """何手目ラベル１。
         """
-        ws['C2'].value = 'next'
-        ws['C2'].font = Font(size=12.0, color='31869B')
-        ws['C2'].fill = self._header_2_fill
+        cell = ws['C2']
+        cell.value = 'Next'
+        cell.font = self._NEXT_LABEL_FONT
+        cell.fill = self._header_2_fill
+        cell.alignment = self._right_center_alignment
         ws.merge_cells('C2:D2')
-        ws['C2'].alignment = self._right_center_alignment
 
 
     def _render_next_value(self, ws, gymnasium):
         """何手目値。
         """
-        ws['E2'].value = gymnasium.table.move_number
-        ws['E2'].fill = self._header_1_fill
+        cell = ws['E2']
+        cell.value = gymnasium.table.move_number
+        cell.font = self._NEXT_VALUE_FONT
+        cell.fill = self._header_1_fill
+        cell.alignment = self._center_center_alignment
         ws.merge_cells('E2:F2')
-        ws['E2'].alignment = self._center_center_alignment
 
 
     def _render_moves_label_2(self, ws):
         """何手目ラベル２。
         """
-        ws['G2'].value = 'move(s)'
-        ws['G2'].fill = self._header_2_fill
+        cell = ws['G2']
+        cell.value = 'move(s)'
+        cell.font = self._NEXT_LABEL_FONT
+        cell.fill = self._header_2_fill
+        cell.alignment = self._left_center_alignment
         ws.merge_cells('G2:J2')
-        ws['G2'].alignment = self._left_center_alignment
 
 
     def _render_color(self, ws, gymnasium):
         """手番の描画。
         """
-        ws['K2'].value = TurnModel.code(gymnasium.table.turn)
-        ws['K2'].fill = self._header_1_fill
+        cell = ws['K2']
+        cell.value = TurnModel.code(gymnasium.table.turn).capitalize()
+        cell.font = self._NEXT_VALUE_FONT
+        cell.fill = self._header_1_fill
+        cell.alignment = self._center_center_alignment
         ws.merge_cells('K2:L2')
-        ws['K2'].alignment = self._center_center_alignment
 
 
     def _render_repetition_label(self, ws):
         """局面反復回数ラベル。
         """
-        ws['M2'].value = 'repetition'
-        ws['M2'].fill = self._header_2_fill
+        cell = ws['M2']
+        cell.value = 'Repetition'
+        cell.font = self._NEXT_LABEL_FONT
+        cell.fill = self._header_2_fill
+        cell.alignment = self._right_center_alignment
         ws.merge_cells('M2:P2')
-        ws['M2'].alignment = self._right_center_alignment
 
 
     def _render_repetition_value(self, ws):
         """局面反復回数値。
         """
-        ws['Q2'].value = "'-"
-        ws['Q2'].fill = self._header_1_fill
-        ws['Q2'].alignment = self._left_center_alignment
+        cell = ws['Q2']
+        cell.value = "'-"
+        cell.font = self._NEXT_VALUE_FONT
+        cell.fill = self._header_1_fill
+        cell.alignment = self._left_center_alignment
+
+
+    def _render_title(self, ws):
+        """タイトルを描画。
+        """
+        cell = ws['S2']
+        cell.value = 'B'
+        cell.font = self._TITLE_FONT
+
+        cell = ws['T2']
+        cell.value = 'i'
+        cell.font = self._TITLE_FONT
+
+        cell = ws['U2']
+        cell.value = 'g'
+        cell.font = self._TITLE_FONT
+
+        cell = ws['W2']
+        cell.value = 'D'
+        cell.font = self._TITLE_FONT
+
+        cell = ws['X2']
+        cell.value = 'o'
+        cell.font = self._TITLE_FONT
+
+        cell = ws['Y2']
+        cell.value = 'b'
+        cell.font = self._TITLE_FONT
+
+        cell = ws['Z2']
+        cell.value = 'u'
+        cell.font = self._TITLE_FONT
+
+        cell = ws['AA2']
+        cell.value = 't'
+        cell.font = self._TITLE_FONT
+
+        cell = ws['AB2']
+        cell.value = 's'
+        cell.font = self._TITLE_FONT
+
+        cell = ws['AC2']
+        cell.value = 'u'
+        cell.font = self._TITLE_FONT
+
+        cell = ws['AE2']
+        cell.value = 's'
+        cell.font = self._TITLE_FONT
+
+        cell = ws['AF2']
+        cell.value = 'h'
+        cell.font = self._TITLE_FONT
+
+        cell = ws['AG2']
+        cell.value = 'o'
+        cell.font = self._TITLE_FONT
+
+        cell = ws['AH2']
+        cell.value = 'g'
+        cell.font = self._TITLE_FONT
+
+        cell = ws['AI2']
+        cell.value = 'i'
+        cell.font = self._TITLE_FONT
+
+        cell = ws['S3']
+        cell.value = 'Original 3x4 board was invented by Madoka Kitao. The original pieces were designed by Maiko Fujita.'
+        cell.font = self._SMALL_TITLE_FONT
