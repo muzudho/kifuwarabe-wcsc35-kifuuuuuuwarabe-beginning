@@ -50,7 +50,6 @@ class XsBoardView():
         RIGHT_RANK_NUMBER_COLOR = '95B3D7'
 
         # フォント
-        self._LARGE_FONT = Font(size=20.0)
         self._NEXT_LABEL_FONT = Font(size=12.0, color='31869B')
         self._NEXT_VALUE_FONT = Font(size=12.0, bold=True, color='60497A')
         self._TITLE_FONT = Font(size=16.0, color=TITLE_COLOR)
@@ -58,6 +57,8 @@ class XsBoardView():
         self._FILE_NUMBER_FONT = Font(size=20.0, color=FILE_NUMBER_COLOR)
         self._LEFT_RANK_NUMBER_FONT = Font(size=20.0, color=LEFT_RANK_NUMBER_COLOR)
         self._RIGHT_RANK_NUMBER_FONT = Font(size=20.0, color=RIGHT_RANK_NUMBER_COLOR)
+        self._MARS_HANDS_NUMBER_FONT = Font(size=20.0, color=MARS_SHADOW_2)
+        self._EARTH_HANDS_NUMBER_FONT = Font(size=20.0, color=EARTH_SHADOW_2)
 
         # 罫線の要素
         self._thin_black_side = Side(style='thin', color=BLACK)
@@ -479,7 +480,7 @@ class XsBoardView():
         for row_th in range(6, 19, 2):  # セル結合
             ws.merge_cells(f"E{row_th}:F{row_th+1}")
             cell = ws[f"E{row_th}"]
-            cell.font = self._LARGE_FONT
+            cell.font = self._MARS_HANDS_NUMBER_FONT
             cell.alignment = self._center_center_alignment
 
         # 後手の持ち駒の数のリスト
@@ -580,7 +581,7 @@ class XsBoardView():
         for row_th in range(10, 23, 2):  # セル結合
             ws.merge_cells(f"AG{row_th}:AH{row_th+1}")
             cell = ws[f"AG{row_th}"]
-            cell.font = self._LARGE_FONT
+            cell.font = self._EARTH_HANDS_NUMBER_FONT
             cell.alignment = self._center_center_alignment
 
         # 先手、後手の持ち駒の数のリスト
