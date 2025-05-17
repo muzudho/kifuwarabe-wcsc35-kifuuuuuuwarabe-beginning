@@ -16,6 +16,7 @@ class XsBoardView():
     def __init__(self):
         # 色
         BLACK = '000000'
+        BACKGROUND_COLOR = 'F2DCDB'
         BOARD_COLOR = 'DAEEF3'
         HEADER_1_COLOR = 'FCD5B4'
         HEADER_2_COLOR = 'FDE9D9'
@@ -43,6 +44,7 @@ class XsBoardView():
         self._board_bottom_right_border = Border(right=self._thick_black_side, bottom=self._thick_black_side)
 
         # フィル
+        self._background_fill = PatternFill(patternType='solid', fgColor=BACKGROUND_COLOR)
         self._board_fill = PatternFill(patternType='solid', fgColor=BOARD_COLOR)
         self._header_1_fill = PatternFill(patternType='solid', fgColor=HEADER_2_COLOR)
         self._header_2_fill = PatternFill(patternType='solid', fgColor=HEADER_1_COLOR)
@@ -50,6 +52,7 @@ class XsBoardView():
         # 寄せ
         #   horizontal は 'distributed', 'fill', 'general', 'center', 'centerContinuous', 'justify', 'right', 'left' のいずれかから選ぶ
         #   vertical は 'center', 'top', 'bottom', 'justify', 'distributed' のいずれかから選ぶ
+        self._left_top_alignment = Alignment(horizontal='left', vertical='top')
         self._left_center_alignment = Alignment(horizontal='left', vertical='center')
         self._center_center_alignment = Alignment(horizontal='center', vertical='center')
         self._right_center_alignment = Alignment(horizontal='right', vertical='center')
@@ -73,6 +76,7 @@ class XsBoardView():
                 height  = 100,
                 ws      = ws)
 
+        self._render_background(ws)                 # 背景を描画。
         self._render_next_label_1(ws)               # 何手目ラベル１。
         self._render_next_value(ws, gymnasium)      # 何手目値。
         self._render_moves_label_2(ws)              # 何手目ラベル２。
@@ -292,6 +296,22 @@ class XsBoardView():
         gymnasium.exshell.close_virtual_display()
 
 
+    def _render_background(self, ws):
+        """背景を描画。
+        """
+        # A1 ～ AJ27
+        start_row_th = 1
+        end_row_th = 27
+        start_column_th = xl.utils.column_index_from_string('A')
+        end_column_th = xl.utils.column_index_from_string('AJ')
+        for y_th in range(start_row_th, end_row_th + 1):
+            for x_th in range(start_column_th, end_column_th + 1):
+                row_th = y_th
+                column_th_str = xl.utils.get_column_letter(x_th)
+                cell = ws[f"{column_th_str}{row_th}"]
+                cell.fill = self._background_fill
+
+
     def _render_next_label_1(self, ws):
         """何手目ラベル１。
         """
@@ -423,3 +443,4 @@ class XsBoardView():
         cell = ws['S3']
         cell.value = 'Original 3x4 board was invented by Madoka Kitao. The original pieces were designed by Maiko Fujita.'
         cell.font = self._SMALL_TITLE_FONT
+        cell.alignment = self._left_top_alignment
