@@ -687,18 +687,43 @@ class XsBoardView():
     def _render_board_each_square(self, ws, gymnasium):
         """盤の各マスを描画。
         """
+
+        # マスの色指定
+        square_fills = []
+
+        for i in range(0,27):
+            if i % 2 == 0:
+                square_fills.append(self._board_mars_soft_fill)
+            else:
+                square_fills.append(self._board_mars_light_fill)
+
+        for i in range(0,27):
+            if i % 2 == 0:
+                square_fills.append(self._board_river_light_fill)
+            else:
+                square_fills.append(self._board_river_soft_fill)
+
+        for i in range(0,27):
+            if i % 2 == 0:
+                square_fills.append(self._board_earth_soft_fill)
+            else:
+                square_fills.append(self._board_earth_light_fill)
+
         # 盤の各マス
+        index = 0   # 通し番号
         for row_th in range(6, 23, 2):
             for column_letter in xa.ColumnLetterRange(start='J', end='AA', step=2):
                 # セル設定
                 cell = ws[f"{column_letter}{row_th}"]
                 cell.border = self._board_cell_border
-                cell.fill = self._board_fill
+
+                cell.fill = square_fills[index]
 
                 next_column_letter = xa.ColumnLetterLogic.add(column_letter, 1)
 
                 # セル結合
                 ws.merge_cells(f"{column_letter}{row_th}:{next_column_letter}{row_th+1}")
+                index += 1
 
         # 盤の枠を太線にします。セル結合を考えず描きます。
         ws['J6'].border = self._board_top_left_border
