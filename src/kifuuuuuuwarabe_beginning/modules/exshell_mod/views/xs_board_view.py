@@ -85,55 +85,8 @@ class XsBoardView():
         self._render_repetition_value(ws)           # 局面反復回数値。
         self._render_title(ws)                      # タイトルを描画。
 
-
-        # 駒台を塗り潰し
-        # 先手
-        for row_th in range(8, 24):
-            for column_letter in xa.ColumnLetterRange(start='AE', end='AI'):
-                # セル設定
-                cell = ws[f"{column_letter}{row_th}"]
-                cell.fill = self._board_fill
-
-        for row_th in range(9, 22, 2):  # セル結合
-            ws.merge_cells(f"AG{row_th}:AH{row_th+1}")
-            cell = ws[f"AG{row_th}"]
-            cell.font = self._LARGE_FONT
-            cell.alignment = self._center_center_alignment
-
-        # 後手
-        for row_th in range(4, 20):
-            for column_letter in xa.ColumnLetterRange(start='C', end='G'):
-                # セル設定
-                cell = ws[f"{column_letter}{row_th}"]
-                cell.fill = self._board_fill
-
-        for row_th in range(5, 18, 2):  # セル結合
-            ws.merge_cells(f"E{row_th}:F{row_th+1}")
-            cell = ws[f"E{row_th}"]
-            cell.font = self._LARGE_FONT
-            cell.alignment = self._center_center_alignment
-
-        # 先手、後手の持ち駒の数のリスト
-        b_hand = gymnasium.table.pieces_in_hand[0]
-        w_hand = gymnasium.table.pieces_in_hand[1]
-
-        # 先手の持ち駒の数
-        ws['AG9'].value     = b_hand[6]     # 飛
-        ws['AG11'].value    = b_hand[5]     # 角
-        ws['AG13'].value    = b_hand[4]     # 金
-        ws['AG15'].value    = b_hand[3]     # 銀
-        ws['AG17'].value    = b_hand[2]     # 桂
-        ws['AG19'].value    = b_hand[1]     # 香
-        ws['AG21'].value    = b_hand[0]     # 歩
-
-        # 後手の持ち駒の数
-        ws['E5'].value      = w_hand[6]     # 歩
-        ws['E7'].value      = w_hand[5]     # 香
-        ws['E9'].value      = w_hand[4]     # 桂
-        ws['E11'].value     = w_hand[3]     # 銀
-        ws['E13'].value     = w_hand[2]     # 金
-        ws['E15'].value     = w_hand[1]     # 角
-        ws['E17'].value     = w_hand[0]     # 飛
+        self._render_mars_hands(ws, gymnasium)      # 一段目側の持ち駒の描画。
+        self._render_earth_hands(ws, gymnasium)     # 九段目側の持ち駒の描画。
 
         # 枠の辺を塗り潰し
         # 上辺
@@ -302,13 +255,10 @@ class XsBoardView():
         # A1 ～ AJ27
         start_row_th = 1
         end_row_th = 27
-        start_column_th = xl.utils.column_index_from_string('A')
-        end_column_th = xl.utils.column_index_from_string('AJ')
         for y_th in range(start_row_th, end_row_th + 1):
-            for x_th in range(start_column_th, end_column_th + 1):
+            for column_letter in xa.ColumnLetterRange(start='A', end='AJ'):
                 row_th = y_th
-                column_th_str = xl.utils.get_column_letter(x_th)
-                cell = ws[f"{column_th_str}{row_th}"]
+                cell = ws[f"{column_letter}{row_th}"]
                 cell.fill = self._background_fill
 
 
@@ -371,7 +321,7 @@ class XsBoardView():
         """局面反復回数値。
         """
         cell = ws['Q2']
-        cell.value = "'-"
+        cell.value = '_'
         cell.font = self._NEXT_VALUE_FONT
         cell.fill = self._header_1_fill
         cell.alignment = self._left_center_alignment
@@ -444,3 +394,59 @@ class XsBoardView():
         cell.value = 'Original 3x4 board was invented by Madoka Kitao. The original pieces were designed by Maiko Fujita.'
         cell.font = self._SMALL_TITLE_FONT
         cell.alignment = self._left_top_alignment
+
+
+    def _render_mars_hands(self, ws, gymnasium):
+        """一段目側の持ち駒の描画。
+        """
+        # 駒台を塗り潰し
+        for row_th in range(5, 21):
+            for column_letter in xa.ColumnLetterRange(start='C', end='G'):
+                # セル設定
+                cell = ws[f"{column_letter}{row_th}"]
+                cell.fill = self._board_fill
+
+        for row_th in range(6, 19, 2):  # セル結合
+            ws.merge_cells(f"E{row_th}:F{row_th+1}")
+            cell = ws[f"E{row_th}"]
+            cell.font = self._LARGE_FONT
+            cell.alignment = self._center_center_alignment
+
+        # 後手の持ち駒の数のリスト
+        w_hand = gymnasium.table.pieces_in_hand[1]
+        # 後手の持ち駒の数
+        ws['E6'].value      = w_hand[6]     # 歩
+        ws['E8'].value      = w_hand[5]     # 香
+        ws['E10'].value     = w_hand[4]     # 桂
+        ws['E12'].value     = w_hand[3]     # 銀
+        ws['E14'].value     = w_hand[2]     # 金
+        ws['E16'].value     = w_hand[1]     # 角
+        ws['E18'].value     = w_hand[0]     # 飛
+
+
+    def _render_earth_hands(self, ws, gymnasium):
+        """九段目側の持ち駒の描画。
+        """
+        # 駒台を塗り潰し
+        for row_th in range(9, 25):
+            for column_letter in xa.ColumnLetterRange(start='AE', end='AI'):
+                # セル設定
+                cell = ws[f"{column_letter}{row_th}"]
+                cell.fill = self._board_fill
+
+        for row_th in range(10, 23, 2):  # セル結合
+            ws.merge_cells(f"AG{row_th}:AH{row_th+1}")
+            cell = ws[f"AG{row_th}"]
+            cell.font = self._LARGE_FONT
+            cell.alignment = self._center_center_alignment
+
+        # 先手、後手の持ち駒の数のリスト
+        b_hand = gymnasium.table.pieces_in_hand[0]
+        # 先手の持ち駒の数
+        ws['AG10'].value    = b_hand[6]     # 飛
+        ws['AG12'].value    = b_hand[5]     # 角
+        ws['AG14'].value    = b_hand[4]     # 金
+        ws['AG16'].value    = b_hand[3]     # 銀
+        ws['AG18'].value    = b_hand[2]     # 桂
+        ws['AG20'].value    = b_hand[1]     # 香
+        ws['AG22'].value    = b_hand[0]     # 歩
