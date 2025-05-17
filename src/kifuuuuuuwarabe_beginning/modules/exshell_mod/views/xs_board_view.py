@@ -76,94 +76,19 @@ class XsBoardView():
                 height  = 100,
                 ws      = ws)
 
-        self._render_background(ws)                 # 背景を描画。
-        self._render_next_label_1(ws)               # 何手目ラベル１。
-        self._render_next_value(ws, gymnasium)      # 何手目値。
-        self._render_moves_label_2(ws)              # 何手目ラベル２。
-        self._render_color(ws, gymnasium)           # 手番の描画。
-        self._render_repetition_label(ws)           # 局面反復回数ラベル。
-        self._render_repetition_value(ws)           # 局面反復回数値。
-        self._render_title(ws)                      # タイトルを描画。
-
-        self._render_mars_hands(ws, gymnasium)      # 一段目側の持ち駒の描画。
-        self._render_earth_hands(ws, gymnasium)     # 九段目側の持ち駒の描画。
-
-        # 枠の辺を塗り潰し
-        # 上辺
-        for row_th in range(4, 7):
-            for column_letter in xa.ColumnLetterRange(start='H', end='AD'):
-                ws[f"{column_letter}{row_th}"].fill = self._board_fill
-
-        # 下辺
-        for column_letter in xa.ColumnLetterRange(start='H', end='AD'):
-            ws[f"{column_letter}25"].fill = self._board_fill
-
-        # 左辺
-        for row_th in range(7, 25):
-            ws[f"H{row_th}"].fill = self._board_fill
-
-        # 右辺
-        for row_th in range(7, 25):
-            for column_letter in xa.ColumnLetterRange(start='AA', end='AD'):
-                ws[f"{column_letter}{row_th}"].fill = self._board_fill
-
-        # 筋の番号
-        for index, column_letter in enumerate(xa.ColumnLetterRange(start='I', end='Z', step=2)):
-            next_column_letter = xa.ColumnLetterLogic.add(column_letter, 1)
-            ws.merge_cells(f"{column_letter}5:{next_column_letter}6")
-            cell = ws[f"{column_letter}5"]
-            cell.value = f"'{StringResourcesModel.zenkaku_suji_list()[9-index]}"
-            cell.font = self._LARGE_FONT
-            cell.alignment = self._center_center_alignment
-
-        # 段の番号
-        for index, row_th in enumerate(range(7, 24, 2)):
-            ws.merge_cells(f"AA{row_th}:AB{row_th+1}")
-            cell = ws[f"AA{row_th}"]
-            cell.value = f"{StringResourcesModel.kan_suji_list()[index+1]}"
-            cell.font = self._LARGE_FONT
-            cell.alignment = self._center_center_alignment
-
-        # 盤の各マス
-        for row_th in range(7, 24, 2):
-            for column_letter in xa.ColumnLetterRange(start='I', end='Z', step=2):
-                # セル設定
-                cell = ws[f"{column_letter}{row_th}"]
-                cell.border = self._board_cell_border
-                cell.fill = self._board_fill
-
-                next_column_letter = xa.ColumnLetterLogic.add(column_letter, 1)
-
-                # セル結合
-                ws.merge_cells(f"{column_letter}{row_th}:{next_column_letter}{row_th+1}")
-
-        # 盤の枠を太線にします。セル結合を考えず描きます。
-        ws['I7'].border = self._board_top_left_border
-        ws['Z7'].border = self._board_top_right_border
-        ws['I24'].border = self._board_bottom_left_border
-        ws['Z24'].border = self._board_bottom_right_border
-        for column_letter in xa.ColumnLetterRange(start='J', end='Z'):
-            cell = ws[xa.CellAddressModel.from_code(f"{column_letter}7").to_code()]
-            cell.border = xa.BorderLogic.add(
-                    base        = cell.border,
-                    addition    = self._board_top_border)
-
-            cell = ws[xa.CellAddressModel.from_code(f"{column_letter}24").to_code()]
-            cell.border = xa.BorderLogic.add(
-                    base        = cell.border,
-                    addition    = self._board_bottom_border)
-
-        for row_th in range(8, 24):
-            cell = ws[f"I{row_th}"]
-            cell.border = xa.BorderLogic.add(
-                    base        = cell.border,
-                    addition    = self._board_left_border)
-
-            cell = ws[f"Z{row_th}"]
-            cell.border = xa.BorderLogic.add(
-                    base        = cell.border,
-                    addition    = self._board_right_border)
-        
+        self._render_background(ws)                     # 背景を描画。
+        self._render_next_label_1(ws)                   # 何手目ラベル１。
+        self._render_next_value(ws, gymnasium)          # 何手目値。
+        self._render_moves_label_2(ws)                  # 何手目ラベル２。
+        self._render_color(ws, gymnasium)               # 手番の描画。
+        self._render_repetition_label(ws)               # 局面反復回数ラベル。
+        self._render_repetition_value(ws)               # 局面反復回数値。
+        self._render_title(ws)                          # タイトルを描画。
+        self._render_mars_hands(ws, gymnasium)          # 一段目側の持ち駒の描画。
+        self._render_earth_hands(ws, gymnasium)         # 九段目側の持ち駒の描画。
+        self._render_board_background_except_squares(ws, gymnasium)    # 盤の背景を描画。マスを除く。
+        self._render_board_frame(ws, gymnasium)         # 盤の枠を描画。
+       
 
         # a7 = ws[f'A7']
         # a7.value = 'v香'
@@ -252,11 +177,10 @@ class XsBoardView():
     def _render_background(self, ws):
         """背景を描画。
         """
-        # A1 ～ AJ27
         start_row_th = 1
         end_row_th = 27
         for y_th in range(start_row_th, end_row_th + 1):
-            for column_letter in xa.ColumnLetterRange(start='A', end='AJ'):
+            for column_letter in xa.ColumnLetterRange(start='A', end='AK'):
                 row_th = y_th
                 cell = ws[f"{column_letter}{row_th}"]
                 cell.fill = self._background_fill
@@ -450,3 +374,89 @@ class XsBoardView():
         ws['AG18'].value    = b_hand[2]     # 桂
         ws['AG20'].value    = b_hand[1]     # 香
         ws['AG22'].value    = b_hand[0]     # 歩
+
+
+    def _render_board_background_except_squares(self, ws, gymnasium):
+        """盤の背景を描画。マスを除く。
+        """
+        # 枠の辺を塗り潰し
+        # 上辺
+        for row_th in range(4, 6):
+            for column_letter in xa.ColumnLetterRange(start='H', end='AD'):
+                ws[f"{column_letter}{row_th}"].fill = self._board_fill
+
+        # 下辺
+        for row_th in range(24, 26):
+            for column_letter in xa.ColumnLetterRange(start='H', end='AD'):
+                ws[f"{column_letter}{row_th}"].fill = self._board_fill
+
+        # 左辺
+        for row_th in range(6, 24):
+            for column_letter in xa.ColumnLetterRange(start='H', end='J'):
+                ws[f"{column_letter}{row_th}"].fill = self._board_fill
+
+        # 右辺
+        for row_th in range(6, 24):
+            for column_letter in xa.ColumnLetterRange(start='AB', end='AD'):
+                ws[f"{column_letter}{row_th}"].fill = self._board_fill
+
+        # 筋の番号
+        for index, column_letter in enumerate(xa.ColumnLetterRange(start='I', end='Z', step=2)):
+            next_column_letter = xa.ColumnLetterLogic.add(column_letter, 1)
+            ws.merge_cells(f"{column_letter}4:{next_column_letter}5")
+            cell = ws[f"{column_letter}4"]
+            cell.value = f"'{StringResourcesModel.zenkaku_suji_list()[9-index]}"
+            cell.font = self._LARGE_FONT
+            cell.alignment = self._center_center_alignment
+
+        # 段の番号
+        for index, row_th in enumerate(range(6, 23, 2)):
+            ws.merge_cells(f"AA{row_th}:AB{row_th+1}")
+            cell = ws[f"AA{row_th}"]
+            cell.value = f"{StringResourcesModel.kan_suji_list()[index+1]}"
+            cell.font = self._LARGE_FONT
+            cell.alignment = self._center_center_alignment
+
+
+    def _render_board_frame(self, ws, gymnasium):
+        """盤の枠を描画。
+        """
+        # 盤の各マス
+        for row_th in range(6, 23, 2):
+            for column_letter in xa.ColumnLetterRange(start='I', end='Z', step=2):
+                # セル設定
+                cell = ws[f"{column_letter}{row_th}"]
+                cell.border = self._board_cell_border
+                cell.fill = self._board_fill
+
+                next_column_letter = xa.ColumnLetterLogic.add(column_letter, 1)
+
+                # セル結合
+                ws.merge_cells(f"{column_letter}{row_th}:{next_column_letter}{row_th+1}")
+
+        # 盤の枠を太線にします。セル結合を考えず描きます。
+        ws['I6'].border = self._board_top_left_border
+        ws['Z6'].border = self._board_top_right_border
+        ws['I23'].border = self._board_bottom_left_border
+        ws['Z23'].border = self._board_bottom_right_border
+        for column_letter in xa.ColumnLetterRange(start='J', end='Z'):
+            cell = ws[xa.CellAddressModel.from_code(f"{column_letter}6").to_code()]
+            cell.border = xa.BorderLogic.add(
+                    base        = cell.border,
+                    addition    = self._board_top_border)
+
+            cell = ws[xa.CellAddressModel.from_code(f"{column_letter}23").to_code()]
+            cell.border = xa.BorderLogic.add(
+                    base        = cell.border,
+                    addition    = self._board_bottom_border)
+
+        for row_th in range(7, 23):
+            cell = ws[f"I{row_th}"]
+            cell.border = xa.BorderLogic.add(
+                    base        = cell.border,
+                    addition    = self._board_left_border)
+
+            cell = ws[f"Z{row_th}"]
+            cell.border = xa.BorderLogic.add(
+                    base        = cell.border,
+                    addition    = self._board_right_border)
