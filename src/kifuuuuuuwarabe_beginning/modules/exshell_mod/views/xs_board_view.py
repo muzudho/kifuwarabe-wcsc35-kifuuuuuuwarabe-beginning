@@ -87,7 +87,7 @@ class XsBoardView():
         self._render_mars_hands(ws, gymnasium)          # 一段目側の持ち駒の描画。
         self._render_earth_hands(ws, gymnasium)         # 九段目側の持ち駒の描画。
         self._render_board_background_except_squares(ws, gymnasium)    # 盤の背景を描画。マスを除く。
-        self._render_board_frame(ws, gymnasium)         # 盤の枠を描画。
+        self._render_board_each_cell(ws, gymnasium)     # 盤の各マスを描画。
        
 
         # a7 = ws[f'A7']
@@ -401,7 +401,7 @@ class XsBoardView():
                 ws[f"{column_letter}{row_th}"].fill = self._board_fill
 
         # 筋の番号
-        for index, column_letter in enumerate(xa.ColumnLetterRange(start='I', end='Z', step=2)):
+        for index, column_letter in enumerate(xa.ColumnLetterRange(start='J', end='AA', step=2)):
             next_column_letter = xa.ColumnLetterLogic.add(column_letter, 1)
             ws.merge_cells(f"{column_letter}4:{next_column_letter}5")
             cell = ws[f"{column_letter}4"]
@@ -410,16 +410,16 @@ class XsBoardView():
             cell.alignment = self._center_center_alignment
 
         # 段の番号
-        for index, row_th in enumerate(range(6, 23, 2)):
-            ws.merge_cells(f"AA{row_th}:AB{row_th+1}")
-            cell = ws[f"AA{row_th}"]
+        for index, row_th in enumerate(range(7, 24, 2)):
+            ws.merge_cells(f"AB{row_th}:AC{row_th+1}")
+            cell = ws[f"AB{row_th}"]
             cell.value = f"{StringResourcesModel.kan_suji_list()[index+1]}"
             cell.font = self._LARGE_FONT
             cell.alignment = self._center_center_alignment
 
 
-    def _render_board_frame(self, ws, gymnasium):
-        """盤の枠を描画。
+    def _render_board_each_cell(self, ws, gymnasium):
+        """盤の各マスを描画。
         """
         # 盤の各マス
         for row_th in range(6, 23, 2):
