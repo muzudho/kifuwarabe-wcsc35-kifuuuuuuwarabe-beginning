@@ -69,8 +69,14 @@ class XsBoardView():
         self._border_of_frame_of_mars_light_right = Border(right=board_frame_mars_soft_side)
         self._border_of_frame_of_mars_soft_left = Border(left=board_frame_mars_light_side)
         self._border_of_frame_of_mars_soft_right = Border(right=board_frame_mars_dull_side)
+        self._border_of_frame_of_mars_light_bottom_left = Border(left=board_frame_mars_pale_side, bottom=board_frame_mars_soft_side)
+        self._border_of_frame_of_mars_light_bottom = Border(bottom=board_frame_mars_soft_side)
+        self._border_of_frame_of_mars_light_bottom_right = Border(right=board_frame_mars_soft_side, bottom=board_frame_mars_soft_side)
         self._border_of_frame_of_river_light_left = Border(left=board_frame_river_pale_side)
         self._border_of_frame_of_river_light_right = Border(right=board_frame_river_soft_side)
+        self._border_of_frame_of_earth_light_top_left = Border(left=board_frame_earth_pale_side, top=board_frame_earth_pale_side)
+        self._border_of_frame_of_earth_light_top = Border(top=board_frame_earth_pale_side)
+        self._border_of_frame_of_earth_light_top_right = Border(top=board_frame_earth_pale_side, right=board_frame_earth_soft_side)
         self._border_of_frame_of_earth_light_left = Border(left=board_frame_earth_pale_side)
         self._border_of_frame_of_earth_light_right = Border(right=board_frame_earth_soft_side)
         self._border_of_frame_of_earth_soft_left = Border(left=board_frame_earth_light_side)
@@ -503,6 +509,48 @@ class XsBoardView():
         for column_letter in xa.ColumnLetterRange(start='AE', end='AI'):
             cell = ws[f"{column_letter}{row_th}"]
             cell.fill = self._board_earth_light_fill
+
+        # 枠の罫線
+        # 上辺 9行目
+        row_th = 9
+        ws[f"AE{row_th}"].border = self._border_of_frame_of_earth_light_top_left
+        for column_letter in xa.ColumnLetterRange(start='AF', end='AH'):
+            ws[f"{column_letter}{row_th}"].border = self._border_of_frame_of_earth_light_top
+        ws[f"AH{row_th}"].border = self._border_of_frame_of_earth_light_top_right
+        # Soft部 10～11行目
+        for row_th in range(10, 12):
+            ws[f"AE{row_th}"].border = self._border_of_frame_of_earth_soft_left
+            ws[f"AH{row_th}"].border = self._border_of_frame_of_earth_soft_right
+        # Light部 12～13行目
+        for row_th in range(12, 14):
+            ws[f"AE{row_th}"].border = self._border_of_frame_of_earth_light_left
+            ws[f"AH{row_th}"].border = self._border_of_frame_of_earth_light_right
+        # Soft部 14～15行目
+        for row_th in range(14, 16):
+            ws[f"AE{row_th}"].border = self._border_of_frame_of_earth_soft_left
+            ws[f"AH{row_th}"].border = self._border_of_frame_of_earth_soft_right
+        # Light部 16～17行目
+        for row_th in range(16, 18):
+            ws[f"AE{row_th}"].border = self._border_of_frame_of_earth_light_left
+            ws[f"AH{row_th}"].border = self._border_of_frame_of_earth_light_right
+        # Soft部 18～19行目
+        for row_th in range(18, 20):
+            ws[f"AE{row_th}"].border = self._border_of_frame_of_earth_soft_left
+            ws[f"AH{row_th}"].border = self._border_of_frame_of_earth_soft_right
+        # Light部 20～21行目
+        for row_th in range(20, 22):
+            ws[f"AE{row_th}"].border = self._border_of_frame_of_earth_light_left
+            ws[f"AH{row_th}"].border = self._border_of_frame_of_earth_light_right
+        # Soft部 22～23行目
+        for row_th in range(22, 24):
+            ws[f"AE{row_th}"].border = self._border_of_frame_of_earth_soft_left
+            ws[f"AH{row_th}"].border = self._border_of_frame_of_earth_soft_right
+        # 下辺 24行目
+        row_th = 24
+        ws[f"AE{row_th}"].border = self._border_of_frame_of_earth_light_bottom_left
+        for column_letter in xa.ColumnLetterRange(start='AF', end='AH'):
+            ws[f"{column_letter}{row_th}"].border = self._border_of_frame_of_earth_light_bottom
+        ws[f"AH{row_th}"].border = self._border_of_frame_of_earth_light_bottom_right
 
         for row_th in range(10, 23, 2):  # セル結合
             ws.merge_cells(f"AG{row_th}:AH{row_th+1}")
