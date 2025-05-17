@@ -55,6 +55,8 @@ class XsBoardView():
         self._border_of_frame_top_left = Border(left=board_frame_mars_light_side, top=board_frame_mars_light_side)
         self._border_of_frame_top = Border(top=board_frame_mars_light_side)
         self._border_of_frame_top_right = Border(top=board_frame_mars_light_side, right=board_frame_mars_shadow_side)
+        self._border_of_frame_left = Border(left=board_frame_mars_light_side)
+        self._border_of_frame_right = Border(right=board_frame_mars_shadow_side)
 
         # フィル
         self._background_fill = PatternFill(patternType='solid', fgColor=BACKGROUND_COLOR)
@@ -442,12 +444,16 @@ class XsBoardView():
             cell.alignment = self._center_center_alignment
 
         # 盤の枠の罫線
-        # 上辺
+        # 上辺 4行目
         row_th = 4
         ws[f"H{row_th}"].border = self._border_of_frame_top_left
         for column_letter in xa.ColumnLetterRange(start='I', end='AC'):
             ws[f"{column_letter}{row_th}"].border = self._border_of_frame_top
         ws[f"AC{row_th}"].border = self._border_of_frame_top_right
+        # Mars部 5～11行目
+        for row_th in range(5, 12):
+            ws[f"H{row_th}"].border = self._border_of_frame_left
+            ws[f"AC{row_th}"].border = self._border_of_frame_right
 
 
     def _render_board_each_square(self, ws, gymnasium):
