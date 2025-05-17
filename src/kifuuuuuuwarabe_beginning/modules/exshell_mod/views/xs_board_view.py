@@ -356,11 +356,42 @@ class XsBoardView():
         """一段目側の持ち駒の描画。
         """
         # 駒台を塗り潰し
-        for row_th in range(5, 21):
+        row_th = 5
+        for column_letter in xa.ColumnLetterRange(start='C', end='G'):
+            cell = ws[f"{column_letter}{row_th}"]
+            cell.fill = self._board_mars_light_fill
+        for row_th in range(6, 8):
             for column_letter in xa.ColumnLetterRange(start='C', end='G'):
-                # セル設定
                 cell = ws[f"{column_letter}{row_th}"]
-                cell.fill = self._board_fill
+                cell.fill = self._board_mars_soft_fill
+        for row_th in range(8, 10):
+            for column_letter in xa.ColumnLetterRange(start='C', end='G'):
+                cell = ws[f"{column_letter}{row_th}"]
+                cell.fill = self._board_mars_light_fill
+        for row_th in range(10, 12):
+            for column_letter in xa.ColumnLetterRange(start='C', end='G'):
+                cell = ws[f"{column_letter}{row_th}"]
+                cell.fill = self._board_mars_soft_fill
+        for row_th in range(12, 14):
+            for column_letter in xa.ColumnLetterRange(start='C', end='G'):
+                cell = ws[f"{column_letter}{row_th}"]
+                cell.fill = self._board_mars_light_fill
+        for row_th in range(14, 16):
+            for column_letter in xa.ColumnLetterRange(start='C', end='G'):
+                cell = ws[f"{column_letter}{row_th}"]
+                cell.fill = self._board_mars_soft_fill
+        for row_th in range(16, 18):
+            for column_letter in xa.ColumnLetterRange(start='C', end='G'):
+                cell = ws[f"{column_letter}{row_th}"]
+                cell.fill = self._board_mars_light_fill
+        for row_th in range(18, 20):
+            for column_letter in xa.ColumnLetterRange(start='C', end='G'):
+                cell = ws[f"{column_letter}{row_th}"]
+                cell.fill = self._board_mars_soft_fill
+        row_th = 20
+        for column_letter in xa.ColumnLetterRange(start='C', end='G'):
+            cell = ws[f"{column_letter}{row_th}"]
+            cell.fill = self._board_mars_light_fill
 
         for row_th in range(6, 19, 2):  # セル結合
             ws.merge_cells(f"E{row_th}:F{row_th+1}")
@@ -384,11 +415,42 @@ class XsBoardView():
         """九段目側の持ち駒の描画。
         """
         # 駒台を塗り潰し
-        for row_th in range(9, 25):
+        row_th = 9
+        for column_letter in xa.ColumnLetterRange(start='AE', end='AI'):
+            cell = ws[f"{column_letter}{row_th}"]
+            cell.fill = self._board_earth_light_fill
+        for row_th in range(10, 12):
             for column_letter in xa.ColumnLetterRange(start='AE', end='AI'):
-                # セル設定
                 cell = ws[f"{column_letter}{row_th}"]
-                cell.fill = self._board_fill
+                cell.fill = self._board_earth_soft_fill
+        for row_th in range(12, 14):
+            for column_letter in xa.ColumnLetterRange(start='AE', end='AI'):
+                cell = ws[f"{column_letter}{row_th}"]
+                cell.fill = self._board_earth_light_fill
+        for row_th in range(14, 16):
+            for column_letter in xa.ColumnLetterRange(start='AE', end='AI'):
+                cell = ws[f"{column_letter}{row_th}"]
+                cell.fill = self._board_earth_soft_fill
+        for row_th in range(16, 18):
+            for column_letter in xa.ColumnLetterRange(start='AE', end='AI'):
+                cell = ws[f"{column_letter}{row_th}"]
+                cell.fill = self._board_earth_light_fill
+        for row_th in range(18, 20):
+            for column_letter in xa.ColumnLetterRange(start='AE', end='AI'):
+                cell = ws[f"{column_letter}{row_th}"]
+                cell.fill = self._board_earth_soft_fill
+        for row_th in range(20, 22):
+            for column_letter in xa.ColumnLetterRange(start='AE', end='AI'):
+                cell = ws[f"{column_letter}{row_th}"]
+                cell.fill = self._board_earth_light_fill
+        for row_th in range(22, 24):
+            for column_letter in xa.ColumnLetterRange(start='AE', end='AI'):
+                cell = ws[f"{column_letter}{row_th}"]
+                cell.fill = self._board_earth_soft_fill
+        row_th = 24
+        for column_letter in xa.ColumnLetterRange(start='AE', end='AI'):
+            cell = ws[f"{column_letter}{row_th}"]
+            cell.fill = self._board_earth_light_fill
 
         for row_th in range(10, 23, 2):  # セル結合
             ws.merge_cells(f"AG{row_th}:AH{row_th+1}")
