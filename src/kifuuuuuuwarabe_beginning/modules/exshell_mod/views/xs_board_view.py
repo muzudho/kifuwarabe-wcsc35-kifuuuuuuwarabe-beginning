@@ -341,7 +341,7 @@ class XsBoardView():
         cell.font = self._TITLE_FONT
 
         cell = ws['W2']
-        cell.value = 'D'
+        cell.value = 'd'
         cell.font = self._TITLE_FONT
 
         cell = ws['X2']
