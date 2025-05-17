@@ -27,6 +27,24 @@ class XsBoardView():
         HEADER_1_COLOR = 'FCD5B4'
         HEADER_2_COLOR = 'FDE9D9'
         TITLE_COLOR = '4F81BD'
+        MARS_HIGHLIGHT_1 = 'DAEEF3'
+        MARS_HIGHLIGHT_2 = 'B7DEE8'
+        MARS_COLOR_1 = MARS_HIGHLIGHT_2
+        MARS_COLOR_2 = '31869B'
+        MARS_SHADOW_1 = '31869B'
+        MARS_SHADOW_2 = '215967'
+        RIVER_HIGHLIGHT_1 = 'EEECE1'
+        RIVER_HIGHLIGHT_2 = 'DDD9C4'
+        RIVER_COLOR_1 = RIVER_HIGHLIGHT_2
+        RIVER_COLOR_2 = 'C4BD97'
+        RIVER_SHADOW_1 = '494529'
+        RIVER_SHADOW_2 = '1D1B10'
+        EARTH_HIGHLIGHT_1 = 'EBF1DE'
+        EARTH_HIGHLIGHT_2 = 'D8E4BC'
+        EARTH_COLOR_1 = EARTH_HIGHLIGHT_2
+        EARTH_COLOR_2 = 'C4D79B'
+        EARTH_SHADOW_1 = '76933C'
+        EARTH_SHADOW_2 = '4F6228'
 
         # フォント
         self._LARGE_FONT = Font(size=20.0)
@@ -38,18 +56,19 @@ class XsBoardView():
         # 罫線の要素
         self._thin_black_side = Side(style='thin', color=BLACK)
         self._thick_black_side = Side(style='thick', color=BLACK)
-        board_frame_mars_pale_side = Side(style='thick', color='DAEEF3')
-        board_frame_mars_light_side = Side(style='thick', color='B7DEE8')
-        board_frame_mars_soft_side = Side(style='thick', color='31869B')
-        board_frame_mars_dull_side = Side(style='thick', color='215967')
-        board_frame_river_pale_side = Side(style='thick', color='EEECE1')
-        board_frame_river_light_side = Side(style='thick', color='DDD9C4')
-        board_frame_river_soft_side = Side(style='thick', color='C4BD97')
-        board_frame_river_dull_side = Side(style='thick', color='1D1B10')
-        board_frame_earth_pale_side = Side(style='thick', color='EBF1DE')
-        board_frame_earth_light_side = Side(style='thick', color='D8E4BC')
-        board_frame_earth_soft_side = Side(style='thick', color='C4D79B')
-        board_frame_earth_dull_side = Side(style='thick', color='4F6228')
+        board_frame_mars_highlight1_side = Side(style='thick', color=MARS_HIGHLIGHT_1)
+        board_frame_mars_highlight2_side = Side(style='thick', color=MARS_HIGHLIGHT_2)
+        board_frame_river_highlight1_side = Side(style='thick', color=RIVER_HIGHLIGHT_1)
+        board_frame_river_highlight2_side = Side(style='thick', color=RIVER_HIGHLIGHT_2)
+        board_frame_earth_highlight1_side = Side(style='thick', color=EARTH_HIGHLIGHT_1)
+        board_frame_earth_highlight2_side = Side(style='thick', color=EARTH_HIGHLIGHT_2)
+        board_frame_earth_soft_side = Side(style='thick', color=EARTH_COLOR_2)
+        board_frame_mars_shadow1_side = Side(style='thick', color=MARS_SHADOW_1)
+        board_frame_mars_shadow2_side = Side(style='thick', color=MARS_SHADOW_2)
+        board_frame_river_shadow1_side = Side(style='thick', color=RIVER_SHADOW_1)
+        board_frame_river_shadow2_side = Side(style='thick', color=RIVER_SHADOW_2)
+        board_frame_earth_shadow1_side = Side(style='thick', color=EARTH_SHADOW_1)
+        board_frame_earth_shadow2_side = Side(style='thick', color=EARTH_SHADOW_2)
 
         # 罫線
         self._board_cell_border = Border(left=self._thin_black_side, right=self._thin_black_side, top=self._thin_black_side, bottom=self._thin_black_side)
@@ -62,28 +81,28 @@ class XsBoardView():
         self._board_bottom_border = Border(bottom=self._thick_black_side)
         self._board_bottom_right_border = Border(right=self._thick_black_side, bottom=self._thick_black_side)
         # 盤の枠の罫線
-        self._border_of_frame_of_mars_light_top_left = Border(left=board_frame_mars_pale_side, top=board_frame_mars_pale_side)
-        self._border_of_frame_of_mars_light_top = Border(top=board_frame_mars_pale_side)
-        self._border_of_frame_of_mars_light_top_right = Border(top=board_frame_mars_pale_side, right=board_frame_mars_soft_side)
-        self._border_of_frame_of_mars_light_left = Border(left=board_frame_mars_pale_side)
-        self._border_of_frame_of_mars_light_right = Border(right=board_frame_mars_soft_side)
-        self._border_of_frame_of_mars_soft_left = Border(left=board_frame_mars_light_side)
-        self._border_of_frame_of_mars_soft_right = Border(right=board_frame_mars_dull_side)
-        self._border_of_frame_of_mars_light_bottom_left = Border(left=board_frame_mars_pale_side, bottom=board_frame_mars_soft_side)
-        self._border_of_frame_of_mars_light_bottom = Border(bottom=board_frame_mars_soft_side)
-        self._border_of_frame_of_mars_light_bottom_right = Border(right=board_frame_mars_soft_side, bottom=board_frame_mars_soft_side)
-        self._border_of_frame_of_river_light_left = Border(left=board_frame_river_pale_side)
-        self._border_of_frame_of_river_light_right = Border(right=board_frame_river_soft_side)
-        self._border_of_frame_of_earth_light_top_left = Border(left=board_frame_earth_pale_side, top=board_frame_earth_pale_side)
-        self._border_of_frame_of_earth_light_top = Border(top=board_frame_earth_pale_side)
-        self._border_of_frame_of_earth_light_top_right = Border(top=board_frame_earth_pale_side, right=board_frame_earth_soft_side)
-        self._border_of_frame_of_earth_light_left = Border(left=board_frame_earth_pale_side)
-        self._border_of_frame_of_earth_light_right = Border(right=board_frame_earth_soft_side)
-        self._border_of_frame_of_earth_soft_left = Border(left=board_frame_earth_light_side)
-        self._border_of_frame_of_earth_soft_right = Border(right=board_frame_earth_dull_side)
-        self._border_of_frame_of_earth_light_bottom_left = Border(left=board_frame_earth_pale_side, bottom=board_frame_earth_soft_side)
-        self._border_of_frame_of_earth_light_bottom = Border(bottom=board_frame_earth_soft_side)
-        self._border_of_frame_of_earth_light_bottom_right = Border(right=board_frame_earth_soft_side, bottom=board_frame_earth_soft_side)
+        self._border_of_frame_of_mars_light_top_left = Border(left=board_frame_mars_highlight1_side, top=board_frame_mars_highlight1_side)
+        self._border_of_frame_of_mars_light_top = Border(top=board_frame_mars_highlight1_side)
+        self._border_of_frame_of_mars_light_top_right = Border(top=board_frame_mars_highlight1_side, right=board_frame_mars_shadow1_side)
+        self._border_of_frame_of_mars_light_left = Border(left=board_frame_mars_highlight1_side)
+        self._border_of_frame_of_mars_light_right = Border(right=board_frame_mars_shadow1_side)
+        self._border_of_frame_of_mars_soft_left = Border(left=board_frame_mars_highlight2_side)
+        self._border_of_frame_of_mars_soft_right = Border(right=board_frame_mars_shadow2_side)
+        self._border_of_frame_of_mars_light_bottom_left = Border(left=board_frame_mars_highlight1_side, bottom=board_frame_mars_shadow1_side)
+        self._border_of_frame_of_mars_light_bottom = Border(bottom=board_frame_mars_shadow1_side)
+        self._border_of_frame_of_mars_light_bottom_right = Border(right=board_frame_mars_shadow1_side, bottom=board_frame_mars_shadow1_side)
+        self._border_of_frame_of_river_light_left = Border(left=board_frame_river_highlight1_side)
+        self._border_of_frame_of_river_light_right = Border(right=board_frame_river_shadow1_side)
+        self._border_of_frame_of_earth_light_top_left = Border(left=board_frame_earth_highlight1_side, top=board_frame_earth_highlight1_side)
+        self._border_of_frame_of_earth_light_top = Border(top=board_frame_earth_highlight1_side)
+        self._border_of_frame_of_earth_light_top_right = Border(top=board_frame_earth_highlight1_side, right=board_frame_earth_shadow1_side)
+        self._border_of_frame_of_earth_light_left = Border(left=board_frame_earth_highlight1_side)
+        self._border_of_frame_of_earth_light_right = Border(right=board_frame_earth_shadow1_side)
+        self._border_of_frame_of_earth_soft_left = Border(left=board_frame_earth_highlight2_side)
+        self._border_of_frame_of_earth_soft_right = Border(right=board_frame_earth_shadow2_side)
+        self._border_of_frame_of_earth_light_bottom_left = Border(left=board_frame_earth_highlight1_side, bottom=board_frame_earth_shadow1_side)
+        self._border_of_frame_of_earth_light_bottom = Border(bottom=board_frame_earth_shadow1_side)
+        self._border_of_frame_of_earth_light_bottom_right = Border(right=board_frame_earth_shadow1_side, bottom=board_frame_earth_shadow1_side)
 
         # フィル
         self._background_fill = PatternFill(patternType='solid', fgColor=BACKGROUND_COLOR)
