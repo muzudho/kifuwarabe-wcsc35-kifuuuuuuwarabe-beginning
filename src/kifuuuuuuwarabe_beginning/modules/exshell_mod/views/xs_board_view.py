@@ -67,10 +67,14 @@ class XsBoardView():
         self._border_of_frame_of_mars_light_top_right = Border(top=board_frame_mars_pale_side, right=board_frame_mars_soft_side)
         self._border_of_frame_of_mars_light_left = Border(left=board_frame_mars_pale_side)
         self._border_of_frame_of_mars_light_right = Border(right=board_frame_mars_soft_side)
+        self._border_of_frame_of_mars_soft_left = Border(left=board_frame_mars_light_side)
+        self._border_of_frame_of_mars_soft_right = Border(right=board_frame_mars_dull_side)
         self._border_of_frame_of_river_light_left = Border(left=board_frame_river_pale_side)
         self._border_of_frame_of_river_light_right = Border(right=board_frame_river_soft_side)
         self._border_of_frame_of_earth_light_left = Border(left=board_frame_earth_pale_side)
         self._border_of_frame_of_earth_light_right = Border(right=board_frame_earth_soft_side)
+        self._border_of_frame_of_earth_soft_left = Border(left=board_frame_earth_light_side)
+        self._border_of_frame_of_earth_soft_right = Border(right=board_frame_earth_dull_side)
         self._border_of_frame_of_earth_light_bottom_left = Border(left=board_frame_earth_pale_side, bottom=board_frame_earth_soft_side)
         self._border_of_frame_of_earth_light_bottom = Border(bottom=board_frame_earth_soft_side)
         self._border_of_frame_of_earth_light_bottom_right = Border(right=board_frame_earth_soft_side, bottom=board_frame_earth_soft_side)
@@ -406,24 +410,40 @@ class XsBoardView():
         for column_letter in xa.ColumnLetterRange(start='D', end='F'):
             ws[f"{column_letter}{row_th}"].border = self._border_of_frame_of_mars_light_top
         ws[f"F{row_th}"].border = self._border_of_frame_of_mars_light_top_right
-        # Light部 6～7行目
+        # Soft部 6～7行目
         for row_th in range(6, 8):
+            ws[f"C{row_th}"].border = self._border_of_frame_of_mars_soft_left
+            ws[f"F{row_th}"].border = self._border_of_frame_of_mars_soft_right
+        # Light部 8～9行目
+        for row_th in range(8, 10):
             ws[f"C{row_th}"].border = self._border_of_frame_of_mars_light_left
             ws[f"F{row_th}"].border = self._border_of_frame_of_mars_light_right
-        # River部 12～17行目
-        for row_th in range(12, 18):
-            ws[f"H{row_th}"].border = self._border_of_frame_of_river_light_left
-            ws[f"AC{row_th}"].border = self._border_of_frame_of_river_light_right
-        # Earth部 18～24行目
-        for row_th in range(18, 25):
-            ws[f"H{row_th}"].border = self._border_of_frame_of_earth_light_left
-            ws[f"AC{row_th}"].border = self._border_of_frame_of_earth_light_right
-        # 下辺 25行目
-        row_th = 25
-        ws[f"H{row_th}"].border = self._border_of_frame_of_earth_light_bottom_left
-        for column_letter in xa.ColumnLetterRange(start='I', end='AC'):
-            ws[f"{column_letter}{row_th}"].border = self._border_of_frame_of_earth_light_bottom
-        ws[f"AC{row_th}"].border = self._border_of_frame_of_earth_light_bottom_right
+        # Soft部 10～11行目
+        for row_th in range(10, 12):
+            ws[f"C{row_th}"].border = self._border_of_frame_of_mars_soft_left
+            ws[f"F{row_th}"].border = self._border_of_frame_of_mars_soft_right
+        # Light部 12～13行目
+        for row_th in range(12, 14):
+            ws[f"C{row_th}"].border = self._border_of_frame_of_mars_light_left
+            ws[f"F{row_th}"].border = self._border_of_frame_of_mars_light_right
+        # Soft部 14～16行目
+        for row_th in range(14, 16):
+            ws[f"C{row_th}"].border = self._border_of_frame_of_mars_soft_left
+            ws[f"F{row_th}"].border = self._border_of_frame_of_mars_soft_right
+        # Light部 16～18行目
+        for row_th in range(16, 18):
+            ws[f"C{row_th}"].border = self._border_of_frame_of_mars_light_left
+            ws[f"F{row_th}"].border = self._border_of_frame_of_mars_light_right
+        # Soft部 18～20行目
+        for row_th in range(18, 20):
+            ws[f"C{row_th}"].border = self._border_of_frame_of_mars_soft_left
+            ws[f"F{row_th}"].border = self._border_of_frame_of_mars_soft_right
+        # 下辺 20行目
+        row_th = 20
+        ws[f"C{row_th}"].border = self._border_of_frame_of_mars_light_bottom_left
+        for column_letter in xa.ColumnLetterRange(start='D', end='F'):
+            ws[f"{column_letter}{row_th}"].border = self._border_of_frame_of_mars_light_bottom
+        ws[f"F{row_th}"].border = self._border_of_frame_of_mars_light_bottom_right
 
         for row_th in range(6, 19, 2):  # セル結合
             ws.merge_cells(f"E{row_th}:F{row_th+1}")
