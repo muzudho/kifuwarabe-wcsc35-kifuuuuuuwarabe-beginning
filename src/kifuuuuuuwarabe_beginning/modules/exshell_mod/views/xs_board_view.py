@@ -17,7 +17,13 @@ class XsBoardView():
         # 色
         BLACK = '000000'
         BACKGROUND_COLOR = 'F2DCDB'
-        BOARD_COLOR = 'DAEEF3'
+        BOARD_COLOR = 'B7DEE8'  # 廃止方針
+        BOARD_MARS_LIGHT_COLOR = 'B7DEE8'
+        BOARD_MARS_SOFT_COLOR = '92CDDC'
+        BOARD_RIVER_LIGHT_COLOR = 'DDD9C4'
+        BOARD_RIVER_SOFT_COLOR = 'C4BD97'
+        BOARD_EARTH_LIGHT_COLOR = 'D8E4BC'
+        BOARD_EARTH_SOFT_COLOR = 'C4D79B'
         HEADER_1_COLOR = 'FCD5B4'
         HEADER_2_COLOR = 'FDE9D9'
         TITLE_COLOR = '4F81BD'
@@ -29,10 +35,13 @@ class XsBoardView():
         self._TITLE_FONT = Font(size=16.0, color=TITLE_COLOR)
         self._SMALL_TITLE_FONT = Font(size=6.0, color=TITLE_COLOR)
 
-        # 罫線
+        # 罫線の要素
         self._thin_black_side = Side(style='thin', color=BLACK)
         self._thick_black_side = Side(style='thick', color=BLACK)
-        #self._board_top_border = Border(top=self._thick_black_side)
+        board_frame_mars_light_side = Side(style='thick', color='DAEEF3')
+        board_frame_mars_shadow_side = Side(style='thick', color='215967')
+
+        # 罫線
         self._board_cell_border = Border(left=self._thin_black_side, right=self._thin_black_side, top=self._thin_black_side, bottom=self._thin_black_side)
         self._board_top_left_border = Border(left=self._thick_black_side, top=self._thick_black_side)
         self._board_top_border = Border(top=self._thick_black_side)
@@ -42,10 +51,17 @@ class XsBoardView():
         self._board_bottom_left_border = Border(left=self._thick_black_side, bottom=self._thick_black_side)
         self._board_bottom_border = Border(bottom=self._thick_black_side)
         self._board_bottom_right_border = Border(right=self._thick_black_side, bottom=self._thick_black_side)
+        # 盤の罫線
+        self._border_of_frame_top_left = Border(left=board_frame_mars_light_side, top=board_frame_mars_light_side)
+        self._border_of_frame_top = Border(top=board_frame_mars_light_side)
+        self._border_of_frame_top_right = Border(top=board_frame_mars_light_side, right=board_frame_mars_shadow_side)
 
         # フィル
         self._background_fill = PatternFill(patternType='solid', fgColor=BACKGROUND_COLOR)
         self._board_fill = PatternFill(patternType='solid', fgColor=BOARD_COLOR)
+        self._board_mars_fill = PatternFill(patternType='solid', fgColor=BOARD_MARS_LIGHT_COLOR)
+        self._board_river_fill = PatternFill(patternType='solid', fgColor=BOARD_RIVER_LIGHT_COLOR)
+        self._board_earth_fill = PatternFill(patternType='solid', fgColor=BOARD_EARTH_LIGHT_COLOR)
         self._header_1_fill = PatternFill(patternType='solid', fgColor=HEADER_2_COLOR)
         self._header_2_fill = PatternFill(patternType='solid', fgColor=HEADER_1_COLOR)
 
@@ -424,6 +440,14 @@ class XsBoardView():
             cell.value = index + 1
             cell.font = self._LARGE_FONT
             cell.alignment = self._center_center_alignment
+
+        # 盤の枠の罫線
+        # 上辺
+        row_th = 4
+        ws[f"H{row_th}"].border = self._border_of_frame_top_left
+        for column_letter in xa.ColumnLetterRange(start='I', end='AC'):
+            ws[f"{column_letter}{row_th}"].border = self._border_of_frame_top
+        ws[f"AC{row_th}"].border = self._border_of_frame_top_right
 
 
     def _render_board_each_square(self, ws, gymnasium):
