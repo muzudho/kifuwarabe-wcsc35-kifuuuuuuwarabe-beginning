@@ -87,7 +87,7 @@ class XsBoardView():
         self._render_mars_hands(ws, gymnasium)          # 一段目側の持ち駒の描画。
         self._render_earth_hands(ws, gymnasium)         # 九段目側の持ち駒の描画。
         self._render_board_background_except_squares(ws, gymnasium)    # 盤の背景を描画。マスを除く。
-        self._render_board_each_cell(ws, gymnasium)     # 盤の各マスを描画。
+        self._render_board_each_square(ws, gymnasium)     # 盤の各マスを描画。
        
 
         # a7 = ws[f'A7']
@@ -418,12 +418,12 @@ class XsBoardView():
             cell.alignment = self._center_center_alignment
 
 
-    def _render_board_each_cell(self, ws, gymnasium):
+    def _render_board_each_square(self, ws, gymnasium):
         """盤の各マスを描画。
         """
         # 盤の各マス
         for row_th in range(6, 23, 2):
-            for column_letter in xa.ColumnLetterRange(start='I', end='Z', step=2):
+            for column_letter in xa.ColumnLetterRange(start='J', end='AA', step=2):
                 # セル設定
                 cell = ws[f"{column_letter}{row_th}"]
                 cell.border = self._board_cell_border
@@ -435,11 +435,11 @@ class XsBoardView():
                 ws.merge_cells(f"{column_letter}{row_th}:{next_column_letter}{row_th+1}")
 
         # 盤の枠を太線にします。セル結合を考えず描きます。
-        ws['I6'].border = self._board_top_left_border
-        ws['Z6'].border = self._board_top_right_border
-        ws['I23'].border = self._board_bottom_left_border
-        ws['Z23'].border = self._board_bottom_right_border
-        for column_letter in xa.ColumnLetterRange(start='J', end='Z'):
+        ws['J6'].border = self._board_top_left_border
+        ws['AA6'].border = self._board_top_right_border
+        ws['J23'].border = self._board_bottom_left_border
+        ws['AA23'].border = self._board_bottom_right_border
+        for column_letter in xa.ColumnLetterRange(start='K', end='AA'):
             cell = ws[xa.CellAddressModel.from_code(f"{column_letter}6").to_code()]
             cell.border = xa.BorderLogic.add(
                     base        = cell.border,
@@ -451,12 +451,12 @@ class XsBoardView():
                     addition    = self._board_bottom_border)
 
         for row_th in range(7, 23):
-            cell = ws[f"I{row_th}"]
+            cell = ws[f"J{row_th}"]
             cell.border = xa.BorderLogic.add(
                     base        = cell.border,
                     addition    = self._board_left_border)
 
-            cell = ws[f"Z{row_th}"]
+            cell = ws[f"AA{row_th}"]
             cell.border = xa.BorderLogic.add(
                     base        = cell.border,
                     addition    = self._board_right_border)
