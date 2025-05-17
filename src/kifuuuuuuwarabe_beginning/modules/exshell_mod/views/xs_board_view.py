@@ -405,15 +405,23 @@ class XsBoardView():
             next_column_letter = xa.ColumnLetterLogic.add(column_letter, 1)
             ws.merge_cells(f"{column_letter}4:{next_column_letter}5")
             cell = ws[f"{column_letter}4"]
-            cell.value = f"'{StringResourcesModel.zenkaku_suji_list()[9-index]}"
+            cell.value = (index + 1) * 10
             cell.font = self._LARGE_FONT
             cell.alignment = self._center_center_alignment
 
-        # 段の番号
-        for index, row_th in enumerate(range(7, 24, 2)):
+        # 左側の段の番号
+        for index, row_th in enumerate(range(6, 23, 2)):
+            ws.merge_cells(f"H{row_th}:I{row_th+1}")
+            cell = ws[f"H{row_th}"]
+            cell.value = f"{StringResourcesModel.small_alphabet_list()[index+1]}"
+            cell.font = self._LARGE_FONT
+            cell.alignment = self._center_center_alignment
+
+        # 右側の段の番号
+        for index, row_th in enumerate(range(6, 23, 2)):
             ws.merge_cells(f"AB{row_th}:AC{row_th+1}")
             cell = ws[f"AB{row_th}"]
-            cell.value = f"{StringResourcesModel.kan_suji_list()[index+1]}"
+            cell.value = index + 1
             cell.font = self._LARGE_FONT
             cell.alignment = self._center_center_alignment
 
