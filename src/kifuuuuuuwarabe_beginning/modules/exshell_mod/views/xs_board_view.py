@@ -781,6 +781,7 @@ class XsBoardView():
                     addition    = self._board_right_border)
 
         # 駒を描画
-        XsUtils.render_piece(ws=ws, cell_number='J6', image_basename='inosisi-mars-40x40.png')
-        XsUtils.render_piece(ws=ws, cell_number='L6', image_basename='usagi-mars-40x40.png')
+        for column_letter in xa.ColumnLetterRange(start='J', end='AB', step=2):
+            for row_th in range(6, 24, 2):
+                XsUtils.render_piece(ws=ws, cell_number=f"{column_letter}{row_th}", image_basename='inosisi-mars-40x40.png')
 
