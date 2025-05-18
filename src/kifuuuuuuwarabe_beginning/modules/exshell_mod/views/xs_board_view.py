@@ -1,10 +1,13 @@
+import os
 import openpyxl as xl
 import pyxlart as xa
 import re
 
+from openpyxl.drawing.image import Image as XlImage
 from openpyxl.styles import PatternFill, Font
 from openpyxl.styles.borders import Border, Side
 from openpyxl.styles.alignment import Alignment
+
 
 from ....models.layer_o1o_8o0_str import StringResourcesModel
 from ....models.layer_o1o0 import TurnModel
@@ -482,6 +485,18 @@ class XsBoardView():
             cell = ws[f"E{row_th}"]
             cell.font = self._MARS_HANDS_NUMBER_FONT
             cell.alignment = self._center_center_alignment
+
+        #
+        # NOTE 元の画像サイズで貼り付けられるわけではないの、何でだろう？ 60x60pixels の画像にしておくと、90x90pixels のセルに合う？
+        #
+        # TODO 📖 [PythonでExcelファイルに画像を挿入する/列の幅を調整する](https://qiita.com/kaba_san/items/b231a41891ebc240efc7)
+        # 難しい
+        #
+        image_basename = 'kirin-mars-40x40.png'
+        try:
+            ws.add_image(XlImage(os.path.join('./assets/img', image_basename)), 'C6')
+        except FileNotFoundError as e:
+            print(f'FileNotFoundError {e=} {image_basename=}')
 
         # 後手の持ち駒の数のリスト
         w_hand = gymnasium.table.pieces_in_hand[1]
