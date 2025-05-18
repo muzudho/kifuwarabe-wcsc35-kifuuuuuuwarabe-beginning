@@ -417,27 +417,23 @@ class XsBoardView():
         # 難しい
         #
         input_data = [
-            ('C6', 'hiyoko-mars-40x40.png'),
-            ('C8', 'inosisi-mars-40x40.png'),
-            ('C10', 'usagi-mars-40x40.png'),
-            ('C12', 'neko-mars-40x40.png'),
-            ('C14', 'inu-mars-40x40.png'),
-            ('C16', 'zou-mars-40x40.png'),
-            ('C18', 'kirin-mars-40x40.png'),
-            ('AE10', 'hiyoko-earth-40x40.png'),
-            ('AE12', 'inosisi-earth-40x40.png'),
-            ('AE14', 'usagi-earth-40x40.png'),
-            ('AE16', 'neko-earth-40x40.png'),
-            ('AE18', 'inu-earth-40x40.png'),
-            ('AE20', 'zou-earth-40x40.png'),
-            ('AE22', 'kirin-earth-40x40.png'),
+            ('C6', cshogi.WHITE, cshogi.PAWN),
+            ('C8', cshogi.WHITE, cshogi.LANCE),
+            ('C10', cshogi.WHITE, cshogi.KNIGHT),
+            ('C12', cshogi.WHITE, cshogi.SILVER),
+            ('C14', cshogi.WHITE, cshogi.GOLD),
+            ('C16', cshogi.WHITE, cshogi.BISHOP),
+            ('C18', cshogi.WHITE, cshogi.ROOK),
+            ('AE10', cshogi.BLACK, cshogi.PAWN),
+            ('AE12', cshogi.BLACK, cshogi.LANCE),
+            ('AE14', cshogi.BLACK, cshogi.KNIGHT),
+            ('AE16', cshogi.BLACK, cshogi.SILVER),
+            ('AE18', cshogi.BLACK, cshogi.GOLD),
+            ('AE20', cshogi.BLACK, cshogi.BISHOP),
+            ('AE22', cshogi.BLACK, cshogi.ROOK),
         ]
-        for (cell_number, image_basename) in input_data:
-            XsUtils.render_piece_1(ws=ws, cell_number=cell_number, image_basename=image_basename)
-            # try:
-            #     ws.add_image(XlImage(os.path.join('./assets/img', image_basename)), cell_number)
-            # except FileNotFoundError as e:
-            #     print(f'FileNotFoundError {e=} {cell_number=} {image_basename=}')
+        for (cell_number, color, pt) in input_data:
+            XsUtils.render_piece_1(ws=ws, cell_address=cell_number, color=color, pt=pt)
 
         # 後手の持ち駒の数のリスト
         w_hand = gymnasium.table.pieces_in_hand[1]
