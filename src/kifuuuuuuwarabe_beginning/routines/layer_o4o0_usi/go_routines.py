@@ -5,7 +5,7 @@ import time
 from ...models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateModel
 from ...models.layer_o1o0o1o0_japanese import JapaneseMoveModel
 from ...models.layer_o5o0_search import PrincipalVariationModel, SearchContextModel
-from ...modules.search_mod.xl_search_module import XlSearchModule
+from ...modules.search_log_mod import XlSearchModule
 from ...views import TableView
 from ..layer_o4o_9o0_search import EndOfSearchRoutines, O0NoSearchRoutines, O1RootSearchRoutines, O2CounterSearchRoutines, OutOfSearchRoutines, SearchRoutines
 from ..layer_o3o0 import MovesPickupFilterRoutines, MovesReductionFilterRoutines
@@ -64,20 +64,21 @@ class _Go2nd():
             探索の結果。
         """
 
-        XlSearchModule(gymnasium=gymnasium).start_search(move_list=move_list)
+        # １手目を記録。
+        XlSearchModule(gymnasium=gymnasium).render_1st_move(move_list=move_list)
 
-        for move in move_list:
-            # 指し手のUSI表記に、独自形式を併記。
-            move_jp_str = JapaneseMoveModel.from_move(
-                    move    = move,
-                    cap_pt  = gymnasium.table.piece_type(sq=cshogi.move_to(move)),
-                    is_mars = False,
-                    is_gote = gymnasium.table.is_gote).stringify()
+        # for move in move_list:
+        #     # 指し手のUSI表記に、独自形式を併記。
+        #     move_jp_str = JapaneseMoveModel.from_move(
+        #             move    = move,
+        #             cap_pt  = gymnasium.table.piece_type(sq=cshogi.move_to(move)),
+        #             is_mars = False,
+        #             is_gote = gymnasium.table.is_gote).stringify()
 
-            gymnasium.health_check_go_model.append_health(
-                    move    = move,
-                    name    = 'GO_move_jp',
-                    value   = move_jp_str)
+        #     gymnasium.health_check_go_model.append_health(
+        #             move    = move,
+        #             name    = 'GO_move_jp',
+        #             value   = move_jp_str)
 
         length_by_cshogi                            = len(move_list)    # cshogi が示した合法手の数
         length_of_quiescence_search_by_kifuwarabe   = length_by_cshogi  # きふわらべ が静止探索で絞り込んだ指し手の数
