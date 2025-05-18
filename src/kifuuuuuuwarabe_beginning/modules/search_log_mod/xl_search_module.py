@@ -31,29 +31,8 @@ class XlSearchModel:
         # フォント
         self._HEADER_FONT = Font(size=12.0, color=self._HEADER_WHITE)
 
+        self._wb = None
         self._ws = None
-
-
-    def get_column_letter_of_column_name(self, column_name):
-        """TODO 列名を指定したら、列番号を返したい。
-
-        Returns
-        -------
-        該当が無ければナン。
-        """
-
-        row_th = 1
-        column_th = 1
-
-        while True:
-            column_letter = xl.utils.get_column_letter(column_th)
-            cell = self._ws[f"{column_letter}{row_th}"]
-            if cell.value == column_name:
-                return column_letter
-            elif cell.value == '':
-                return None
-            
-            column_th += 1
 
 
     def get_termination_state(self, number_of_moves, row_th):
@@ -68,7 +47,7 @@ class XlSearchModel:
         """
 
         column_name = f"{number_of_moves}階終端"
-        column_letter = self.get_column_letter_of_column_name(column_name=column_name)   # Excel シートを横に探索。［n階終端］列を探す。
+        column_letter = self._get_column_letter_of_column_name(column_name=column_name)   # Excel シートを横に探索。［n階終端］列を探す。
         cell = self._ws[f"{column_letter}{row_th}"]        
         return cell.value
 
@@ -78,10 +57,10 @@ class XlSearchModel:
         """
         try:
             # ワークブックを新規生成
-            wb = xl.Workbook()
+            self._wb = xl.Workbook()
 
             # ワークシート
-            self._ws = wb['Sheet']
+            self._ws = self._wb['Sheet']
 
             cell = self._ws['A1']
             cell.value = '削除'
@@ -138,7 +117,36 @@ class XlSearchModel:
 
                 row_th += 1
 
-            wb.save(filename=XlSearchModel._PATH_TO_XL_SEARCH_WORKSHEET)
-
         except Exception as ex:
             print(ex)
+
+
+    def save_worksheet(self):
+        self._wb.save(filename=XlSearchModel._PATH_TO_XL_SEARCH_WORKSHEET)
+
+
+
+    ####################
+    # MARK: サブルーチン
+    ####################
+
+    def _get_column_letter_of_column_name(self, column_name):
+        """列名を指定したら、列番号を返したい。
+
+        Returns
+        -------
+        該当が無ければナン。
+        """
+
+        row_th = 1
+        column_th = 1
+
+        while True:
+            column_letter = xl.utils.get_column_letter(column_th)
+            cell = self._ws[f"{column_letter}{row_th}"]
+            if cell.value == column_name:
+                return column_letter
+            elif cell.value == '':
+                return None
+            
+            column_th += 1

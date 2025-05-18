@@ -67,6 +67,7 @@ class _Go2nd():
         # １手目を記録。
         xl_search_model = XlSearchModel(gymnasium=gymnasium)
         xl_search_model.render_1st_move(move_list=move_list)
+        xl_search_model.save_worksheet()
 
         # for move in move_list:
         #     # 指し手のUSI表記に、独自形式を併記。
