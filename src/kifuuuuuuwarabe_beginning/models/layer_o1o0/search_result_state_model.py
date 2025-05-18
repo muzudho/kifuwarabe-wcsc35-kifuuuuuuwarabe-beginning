@@ -9,8 +9,8 @@ class SearchResultStateModel():
 
 
     @staticmethod
-    def RESIGN():
-        """投了。
+    def GAME_OVER():
+        """投了局面。
         """
         return 1
 

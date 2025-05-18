@@ -192,7 +192,7 @@ class ShogiEngineCompatibleWithUSIProtocol():
                 move_list   = list(self._gymnasium.table.legal_moves),
                 gymnasium   = self._gymnasium)
 
-        if result_of_go.search_result_state_model == SearchResultStateModel.RESIGN:
+        if result_of_go.search_result_state_model == SearchResultStateModel.GAME_OVER:
             # 投了。
             print(f'bestmove resign', flush=True)
             return

@@ -147,7 +147,7 @@ class OutOfTerminationStateModel():
 
     _japanese_dict = {
         0 : '未設定',
-        1 : '投了',
+        1 : '投了局面',
         2 : '入玉宣言勝ち',
         3 : '水平線',           # 読みの最大深さ
         4 : '有力な候補手無し',
@@ -170,8 +170,8 @@ class OutOfTerminationStateModel():
 
 
     @property
-    def RESIGN(self):
-        """投了。
+    def GAME_OVER(self):
+        """投了局面。
         """
         return 1
 

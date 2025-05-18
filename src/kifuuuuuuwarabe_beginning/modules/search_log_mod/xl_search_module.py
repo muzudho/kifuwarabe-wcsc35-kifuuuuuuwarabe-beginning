@@ -2,6 +2,7 @@ import cshogi
 import openpyxl as xl
 
 from openpyxl.styles import PatternFill, Font
+from ...models.layer_o1o0 import constants
 from ...models.layer_o1o0o1o0_japanese import JapaneseMoveModel
 
 
@@ -35,6 +36,13 @@ class XlSearchModel:
         self._ws = None
 
 
+    _TERMINATION = {
+        None: None,
+        'GAME_OVER' : constants.out_of_termination_state_const.GAME_OVER,
+        'NYUGYOKU_WIN' : constants.out_of_termination_state_const.NYUGYOKU_WIN,
+        #'MATE_IN_1_MOVE' : constants.out_of_termination_state_const.MATE_IN_1_MOVE,
+    }
+
     def get_termination_state(self, number_of_moves, row_th):
         """終端の状況を取得。
 
@@ -48,8 +56,8 @@ class XlSearchModel:
 
         column_name = f"{number_of_moves}階終端"
         column_letter = self._get_column_letter_of_column_name(column_name=column_name)   # Excel シートを横に探索。［n階終端］列を探す。
-        cell = self._ws[f"{column_letter}{row_th}"]        
-        return cell.value
+        termination_str = self._ws[f"{column_letter}{row_th}"].value
+        return XlSearchModel._TERMINATION[termination_str]
 
 
     def render_1st_move(self, move_list):

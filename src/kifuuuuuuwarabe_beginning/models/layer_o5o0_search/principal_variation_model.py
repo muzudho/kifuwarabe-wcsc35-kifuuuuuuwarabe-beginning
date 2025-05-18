@@ -132,7 +132,7 @@ class PrincipalVariationModel:
     def _get_out_of_termination_to_value_on_earth(out_of_termination_state_arg, is_mars_arg):
         """［終端外］の駒の価値。
         """
-        if out_of_termination_state_arg == constants.out_of_termination_state_const.RESIGN:
+        if out_of_termination_state_arg == constants.out_of_termination_state_const.GAME_OVER:
             value = constants.value.GAME_OVER
         elif out_of_termination_state_arg == constants.out_of_termination_state_const.NYUGYOKU_WIN:
             value = constants.value.NYUGYOKU_WIN
@@ -222,7 +222,7 @@ class PrincipalVariationModel:
         self._termination_model_pv                          = TerminationModel(
                                                                     is_mars_arg = search_context_model.gymnasium.is_mars,
                                                                     is_gote_arg = search_context_model.gymnasium.table.is_gote,
-                                                                    state_arg   = constants.out_of_termination_state_const.RESIGN,
+                                                                    state_arg   = constants.out_of_termination_state_const.GAME_OVER,
                                                                     comment_arg = '')
 
 
@@ -258,7 +258,7 @@ class PrincipalVariationModel:
         self._termination_model_pv                          = TerminationModel(
                                                                     is_mars_arg = search_context_model.gymnasium.is_mars,
                                                                     is_gote_arg = search_context_model.gymnasium.table.is_gote,
-                                                                    state_arg   = constants.out_of_termination_state_const.RESIGN,
+                                                                    state_arg   = constants.out_of_termination_state_const.GAME_OVER,
                                                                     comment_arg = '')
 
 

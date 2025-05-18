@@ -2,7 +2,7 @@ import cshogi
 import random
 import time
 
-from ...models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateModel
+from ...models.layer_o1o0 import constants, OutOfTerminationStateModel, ResultOfGoModel, SearchResultStateModel
 from ...models.layer_o1o0o1o0_japanese import JapaneseMoveModel
 from ...models.layer_o5o0_search import PrincipalVariationModel, SearchContextModel
 from ...modules.search_log_mod import XlSearchModel
@@ -89,14 +89,14 @@ class _Go2nd():
 
         # TODO Excel の記録から、終端の状況を取得したい。
         n1st_termination_state = xl_search_model.get_termination_state(number_of_moves=1, row_th=2)
-        print(f"{n1st_termination_state=}")
+        print(f"{OutOfTerminationStateModel.japanese(n1st_termination_state)=}")
 
-        if gymnasium.table.is_game_over():
+        if n1st_termination_state == constants.out_of_termination_state_const.GAME_OVER:
             """投了局面時。
             """
             gymnasium.thinking_logger_module.append_message(f"Game over.")
             return ResultOfGoModel(
-                    search_result_state_model   = SearchResultStateModel.RESIGN,
+                    search_result_state_model   = SearchResultStateModel.GAME_OVER,
                     alice_s_profit              = 0,
                     best_move                   = None,
                     length_by_cshogi            = length_by_cshogi,
@@ -104,7 +104,7 @@ class _Go2nd():
                     length_by_kifuwarabe        = length_by_kifuwarabe,
                     number_of_visited_nodes     = 0)
 
-        if gymnasium.table.is_nyugyoku():
+        if n1st_termination_state == constants.out_of_termination_state_const.NYUGYOKU_WIN:
             """入玉宣言勝ち局面時。
             """
             gymnasium.thinking_logger_module.append_message(f"Nyugyoku win.")
