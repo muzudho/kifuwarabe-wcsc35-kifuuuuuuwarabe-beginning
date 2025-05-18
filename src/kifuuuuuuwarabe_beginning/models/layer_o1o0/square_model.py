@@ -1,6 +1,13 @@
 class SquareModel():
 
 
+    @staticmethod
+    def from_masu(masu):
+        suji = masu // 10
+        dan = masu % 10
+        return SquareModel(sq=(suji-1) * 9 + (dan - 1))
+
+
     def __init__(self, sq):
         self._sq = sq
 

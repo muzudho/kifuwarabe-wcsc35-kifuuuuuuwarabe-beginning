@@ -1,3 +1,4 @@
+import cshogi
 import os
 import openpyxl as xl
 import pyxlart as xa
@@ -10,7 +11,7 @@ from openpyxl.styles.alignment import Alignment
 
 
 from ....models.layer_o1o_8o0_str import StringResourcesModel
-from ....models.layer_o1o0 import TurnModel
+from ....models.layer_o1o0 import PieceModel, SquareModel, TurnModel
 from .xs_utils import XsUtils
 
 
@@ -166,73 +167,6 @@ class XsBoardView():
         self._render_earth_hands(ws, gymnasium)         # 九段目側の持ち駒の描画。
         self._render_board_background_except_squares(ws, gymnasium)    # 盤の背景を描画。マスを除く。
         self._render_board_each_square(ws, gymnasium)     # 盤の各マスを描画。
-       
-
-        # b7 = ws[f'B7']
-        # b7.value = 'v桂'
-        # b7.border = board_top_boarder
-        # a7.fill = self._board_fill
-
-        # c7 = ws[f'C7']
-        # c7.value = 'v銀'
-        # c7.border = board_top_boarder
-        # a7.fill = self._board_fill
-
-        # d7 = ws[f'D7']
-        # d7.value = 'v金'
-        # d7.border = board_top_boarder
-        # a7.fill = self._board_fill
-
-        # e7 = ws[f'E7']
-        # e7.value = 'v玉'
-
-        # f7 = ws[f'F7']
-        # f7.value = 'v金'
-
-        # g7 = ws[f'G7']
-        # g7.value = 'v銀'
-
-        # h7 = ws[f'H7']
-        # h7.value = 'v桂'
-
-        # i7 = ws[f'I7']
-        # i7.value = 'v香'
-
-        # ws[f'B8'].value = 'v飛'
-        # ws[f'H8'].value = 'v角'
-
-        # ws[f'A9'].value = 'v歩'
-        # ws[f'B9'].value = 'v歩'
-        # ws[f'C9'].value = 'v歩'
-        # ws[f'D9'].value = 'v歩'
-        # ws[f'E9'].value = 'v歩'
-        # ws[f'F9'].value = 'v歩'
-        # ws[f'G9'].value = 'v歩'
-        # ws[f'H9'].value = 'v歩'
-        # ws[f'I9'].value = 'v歩'
-
-        # ws[f'A13'].value = '歩'
-        # ws[f'B13'].value = '歩'
-        # ws[f'C13'].value = '歩'
-        # ws[f'D13'].value = '歩'
-        # ws[f'E13'].value = '歩'
-        # ws[f'F13'].value = '歩'
-        # ws[f'G13'].value = '歩'
-        # ws[f'H13'].value = '歩'
-        # ws[f'I13'].value = '歩'
-
-        # ws[f'B14'].value = '飛'
-        # ws[f'H14'].value = '角'
-
-        # ws[f'A15'].value = '香'
-        # ws[f'B15'].value = '桂'
-        # ws[f'C15'].value = '銀'
-        # ws[f'D15'].value = '金'
-        # ws[f'E15'].value = '玉'
-        # ws[f'F15'].value = '金'
-        # ws[f'G15'].value = '銀'
-        # ws[f'H15'].value = '桂'
-        # ws[f'I15'].value = '香'
 
         # ワークブック保存
         gymnasium.exshell.save_workbook(wb=wb)
@@ -505,7 +439,7 @@ class XsBoardView():
             ('AE22', 'kirin-earth-40x40.png'),
         ]
         for (cell_number, image_basename) in input_data:
-            XsUtils.render_piece(ws=ws, cell_number=cell_number, image_basename=image_basename)
+            XsUtils.render_piece_1(ws=ws, cell_number=cell_number, image_basename=image_basename)
             # try:
             #     ws.add_image(XlImage(os.path.join('./assets/img', image_basename)), cell_number)
             # except FileNotFoundError as e:
@@ -665,7 +599,7 @@ class XsBoardView():
             next_column_letter = xa.ColumnLetterLogic.add(column_letter, 1)
             ws.merge_cells(f"{column_letter}4:{next_column_letter}5")
             cell = ws[f"{column_letter}4"]
-            cell.value = (index + 1) * 10
+            cell.value = (9 - index) * 10
             cell.font = self._FILE_NUMBER_FONT
             cell.alignment = self._center_center_alignment
 
@@ -781,7 +715,24 @@ class XsBoardView():
                     addition    = self._board_right_border)
 
         # 駒を描画
+        masu = 91
         for column_letter in xa.ColumnLetterRange(start='J', end='AB', step=2):
             for row_th in range(6, 24, 2):
-                XsUtils.render_piece(ws=ws, cell_number=f"{column_letter}{row_th}", image_basename='inosisi-mars-40x40.png')
+                sq = SquareModel.from_masu(masu=masu).sq
+                piece = gymnasium.table.piece(sq)
+                color = PieceModel.turn(piece)
+                pt = cshogi.piece_to_piece_type(piece)
+                print(f"{masu=} {sq=}")
+                XsUtils.render_piece_2(
+                        ws=ws,
+                        sq=sq,
+                        color=color,
+                        pt=pt)
+                masu -= 10
+            # 11 を 82 に変換
+            # 12 を 72 に変換
+            next_dan = masu % 10 + 1
+            next_suji = 9
+            masu = next_suji * 10 + next_dan
+            print(f"{next_suji=} {next_dan=} {masu=}")
 
