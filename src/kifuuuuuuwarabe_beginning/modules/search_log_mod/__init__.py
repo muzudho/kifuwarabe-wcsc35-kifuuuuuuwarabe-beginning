@@ -1,1 +1,1 @@
-from .xl_search_module import XlSearchModule
+from .xl_search_module import XlSearchModel

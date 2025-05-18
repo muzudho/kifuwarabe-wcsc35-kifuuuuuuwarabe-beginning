@@ -5,7 +5,7 @@ import time
 from ...models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateModel
 from ...models.layer_o1o0o1o0_japanese import JapaneseMoveModel
 from ...models.layer_o5o0_search import PrincipalVariationModel, SearchContextModel
-from ...modules.search_log_mod import XlSearchModule
+from ...modules.search_log_mod import XlSearchModel
 from ...views import TableView
 from ..layer_o4o_9o0_search import EndOfSearchRoutines, O0NoSearchRoutines, O1RootSearchRoutines, O2CounterSearchRoutines, OutOfSearchRoutines, SearchRoutines
 from ..layer_o3o0 import MovesPickupFilterRoutines, MovesReductionFilterRoutines
@@ -65,7 +65,8 @@ class _Go2nd():
         """
 
         # １手目を記録。
-        XlSearchModule(gymnasium=gymnasium).render_1st_move(move_list=move_list)
+        xl_search_model = XlSearchModel(gymnasium=gymnasium)
+        xl_search_model.render_1st_move(move_list=move_list)
 
         # for move in move_list:
         #     # 指し手のUSI表記に、独自形式を併記。
@@ -84,6 +85,10 @@ class _Go2nd():
         length_of_quiescence_search_by_kifuwarabe   = length_by_cshogi  # きふわらべ が静止探索で絞り込んだ指し手の数
         length_by_kifuwarabe                        = length_by_cshogi  # きふわらべ が最終的に絞り込んだ指し手の数
         #print(f"D-74: {len(all_regal_moves)=}")
+
+        # TODO Excel の記録から、終端の状況を取得したい。
+        n1st_termination_state = xl_search_model.get_termination_state(number_of_moves=1, row_th=2)
+        print(f"{n1st_termination_state=}")
 
         if gymnasium.table.is_game_over():
             """投了局面時。
