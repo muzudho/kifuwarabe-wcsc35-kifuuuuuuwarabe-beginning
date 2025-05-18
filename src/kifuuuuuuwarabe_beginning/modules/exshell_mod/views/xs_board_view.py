@@ -11,6 +11,7 @@ from openpyxl.styles.alignment import Alignment
 
 from ....models.layer_o1o_8o0_str import StringResourcesModel
 from ....models.layer_o1o0 import TurnModel
+from .xs_utils import XsUtils
 
 
 class XsBoardView():
@@ -166,11 +167,6 @@ class XsBoardView():
         self._render_board_background_except_squares(ws, gymnasium)    # 盤の背景を描画。マスを除く。
         self._render_board_each_square(ws, gymnasium)     # 盤の各マスを描画。
        
-
-        # a7 = ws[f'A7']
-        # a7.value = 'v香'
-        # a7.border = board_top_boarder
-        # a7.fill = self._board_fill
 
         # b7 = ws[f'B7']
         # b7.value = 'v桂'
@@ -509,10 +505,11 @@ class XsBoardView():
             ('AE22', 'kirin-earth-40x40.png'),
         ]
         for (cell_number, image_basename) in input_data:
-            try:
-                ws.add_image(XlImage(os.path.join('./assets/img', image_basename)), cell_number)
-            except FileNotFoundError as e:
-                print(f'FileNotFoundError {e=} {cell_number=} {image_basename=}')
+            XsUtils.render_piece(ws=ws, cell_number=cell_number, image_basename=image_basename)
+            # try:
+            #     ws.add_image(XlImage(os.path.join('./assets/img', image_basename)), cell_number)
+            # except FileNotFoundError as e:
+            #     print(f'FileNotFoundError {e=} {cell_number=} {image_basename=}')
 
         # 後手の持ち駒の数のリスト
         w_hand = gymnasium.table.pieces_in_hand[1]
@@ -782,3 +779,8 @@ class XsBoardView():
             cell.border = xa.BorderLogic.add(
                     base        = cell.border,
                     addition    = self._board_right_border)
+
+        # 駒を描画
+        XsUtils.render_piece(ws=ws, cell_number='J6', image_basename='inosisi-mars-40x40.png')
+        XsUtils.render_piece(ws=ws, cell_number='L6', image_basename='usagi-mars-40x40.png')
+
