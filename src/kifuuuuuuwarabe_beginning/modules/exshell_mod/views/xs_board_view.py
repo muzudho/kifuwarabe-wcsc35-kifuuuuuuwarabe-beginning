@@ -492,11 +492,27 @@ class XsBoardView():
         # TODO 📖 [PythonでExcelファイルに画像を挿入する/列の幅を調整する](https://qiita.com/kaba_san/items/b231a41891ebc240efc7)
         # 難しい
         #
-        image_basename = 'kirin-mars-40x40.png'
-        try:
-            ws.add_image(XlImage(os.path.join('./assets/img', image_basename)), 'C6')
-        except FileNotFoundError as e:
-            print(f'FileNotFoundError {e=} {image_basename=}')
+        input_data = [
+            ('C6', 'hiyoko-mars-40x40.png'),
+            ('C8', 'inosisi-mars-40x40.png'),
+            ('C10', 'usagi-mars-40x40.png'),
+            ('C12', 'neko-mars-40x40.png'),
+            ('C14', 'inu-mars-40x40.png'),
+            ('C16', 'zou-mars-40x40.png'),
+            ('C18', 'kirin-mars-40x40.png'),
+            ('AE10', 'hiyoko-earth-40x40.png'),
+            ('AE12', 'inosisi-earth-40x40.png'),
+            ('AE14', 'usagi-earth-40x40.png'),
+            ('AE16', 'neko-earth-40x40.png'),
+            ('AE18', 'inu-earth-40x40.png'),
+            ('AE20', 'zou-earth-40x40.png'),
+            ('AE22', 'kirin-earth-40x40.png'),
+        ]
+        for (cell_number, image_basename) in input_data:
+            try:
+                ws.add_image(XlImage(os.path.join('./assets/img', image_basename)), cell_number)
+            except FileNotFoundError as e:
+                print(f'FileNotFoundError {e=} {cell_number=} {image_basename=}')
 
         # 後手の持ち駒の数のリスト
         w_hand = gymnasium.table.pieces_in_hand[1]
