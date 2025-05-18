@@ -65,7 +65,7 @@ class XsUtils:
             raise ValueError(f"{color=} {pt=} {ex=}")
             
         sq_obj = SquareModel(sq)
-        column_th = 10 + sq_obj.file * 2
+        column_th = 10 + (8 - sq_obj.file) * 2
         row_th = 6 + sq_obj.rank * 2
         column_letter = xl.utils.get_column_letter(column_th)
         cell_address = f"{column_letter}{row_th}"

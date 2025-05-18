@@ -716,7 +716,7 @@ class XsBoardView():
                 piece = gymnasium.table.piece(sq)
                 color = PieceModel.turn(piece)
                 pt = cshogi.piece_to_piece_type(piece)
-                #print(f"{masu=} {sq=}")
+                print(f"{masu=} {sq=}")
                 XsUtils.render_piece_2(
                         ws=ws,
                         sq=sq,
