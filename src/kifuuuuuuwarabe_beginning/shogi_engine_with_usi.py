@@ -249,8 +249,11 @@ class ShogiEngineCompatibleWithUSIProtocol():
 
 
     def xs_board(self, cmd):
-        XsBoardView().render(
-                gymnasium=self._gymnasium)
+        try:
+            XsBoardView().render(
+                    gymnasium=self._gymnasium)
+        except Exception as ex:
+            print(f"エクシェルによる盤表示に失敗しました。 {ex}")
 
 
     def do(self, cmd):

@@ -22,7 +22,7 @@ class XsBoardView():
         # 色
         BLACK = '000000'
         BACKGROUND_COLOR = 'F2DCDB'
-        BOARD_COLOR = 'B7DEE8'  # 廃止方針
+        # 盤の色
         BOARD_MARS_LIGHT_COLOR = 'B7DEE8'
         BOARD_MARS_SOFT_COLOR = '92CDDC'
         BOARD_RIVER_LIGHT_COLOR = 'DDD9C4'
@@ -32,22 +32,17 @@ class XsBoardView():
         HEADER_1_COLOR = 'FCD5B4'
         HEADER_2_COLOR = 'FDE9D9'
         TITLE_COLOR = '4F81BD'
+        # ハイライトと影の色
         MARS_HIGHLIGHT_1 = 'DAEEF3'
         MARS_HIGHLIGHT_2 = 'B7DEE8'
-        MARS_COLOR_1 = MARS_HIGHLIGHT_2
-        MARS_COLOR_2 = '31869B'
         MARS_SHADOW_1 = '31869B'
         MARS_SHADOW_2 = '215967'
         RIVER_HIGHLIGHT_1 = 'EEECE1'
         RIVER_HIGHLIGHT_2 = 'DDD9C4'
-        RIVER_COLOR_1 = RIVER_HIGHLIGHT_2
-        RIVER_COLOR_2 = 'C4BD97'
-        RIVER_SHADOW_1 = '494529'
-        RIVER_SHADOW_2 = '1D1B10'
+        RIVER_SHADOW_1 = '948A54'
+        RIVER_SHADOW_2 = '494529'   # 暗すぎる。 1D1B10
         EARTH_HIGHLIGHT_1 = 'EBF1DE'
         EARTH_HIGHLIGHT_2 = 'D8E4BC'
-        EARTH_COLOR_1 = EARTH_HIGHLIGHT_2
-        EARTH_COLOR_2 = 'C4D79B'
         EARTH_SHADOW_1 = '76933C'
         EARTH_SHADOW_2 = '4F6228'
         FILE_NUMBER_COLOR = 'B1A0C7'
@@ -71,14 +66,14 @@ class XsBoardView():
         board_frame_mars_highlight1_side = Side(style='thick', color=MARS_HIGHLIGHT_1)
         board_frame_mars_highlight2_side = Side(style='thick', color=MARS_HIGHLIGHT_2)
         board_frame_river_highlight1_side = Side(style='thick', color=RIVER_HIGHLIGHT_1)
-        board_frame_river_highlight2_side = Side(style='thick', color=RIVER_HIGHLIGHT_2)
+        #board_frame_river_highlight2_side = Side(style='thick', color=RIVER_HIGHLIGHT_2)
         board_frame_earth_highlight1_side = Side(style='thick', color=EARTH_HIGHLIGHT_1)
         board_frame_earth_highlight2_side = Side(style='thick', color=EARTH_HIGHLIGHT_2)
-        board_frame_earth_soft_side = Side(style='thick', color=EARTH_COLOR_2)
+        #board_frame_earth_soft_side = Side(style='thick', color=BOARD_EARTH_SOFT_COLOR)
         board_frame_mars_shadow1_side = Side(style='thick', color=MARS_SHADOW_1)
         board_frame_mars_shadow2_side = Side(style='thick', color=MARS_SHADOW_2)
         board_frame_river_shadow1_side = Side(style='thick', color=RIVER_SHADOW_1)
-        board_frame_river_shadow2_side = Side(style='thick', color=RIVER_SHADOW_2)
+        #board_frame_river_shadow2_side = Side(style='thick', color=RIVER_SHADOW_2)
         board_frame_earth_shadow1_side = Side(style='thick', color=EARTH_SHADOW_1)
         board_frame_earth_shadow2_side = Side(style='thick', color=EARTH_SHADOW_2)
 
@@ -118,7 +113,6 @@ class XsBoardView():
 
         # フィル
         self._background_fill = PatternFill(patternType='solid', fgColor=BACKGROUND_COLOR)
-        self._board_fill = PatternFill(patternType='solid', fgColor=BOARD_COLOR) # TODO 廃止方針
         self._board_mars_light_fill = PatternFill(patternType='solid', fgColor=BOARD_MARS_LIGHT_COLOR)
         self._board_mars_soft_fill = PatternFill(patternType='solid', fgColor=BOARD_MARS_SOFT_COLOR)
         self._board_river_light_fill = PatternFill(patternType='solid', fgColor=BOARD_RIVER_LIGHT_COLOR)
@@ -722,7 +716,7 @@ class XsBoardView():
                 piece = gymnasium.table.piece(sq)
                 color = PieceModel.turn(piece)
                 pt = cshogi.piece_to_piece_type(piece)
-                print(f"{masu=} {sq=}")
+                #print(f"{masu=} {sq=}")
                 XsUtils.render_piece_2(
                         ws=ws,
                         sq=sq,
@@ -734,5 +728,5 @@ class XsBoardView():
             next_dan = masu % 10 + 1
             next_suji = 9
             masu = next_suji * 10 + next_dan
-            print(f"{next_suji=} {next_dan=} {masu=}")
+            #print(f"{next_suji=} {next_dan=} {masu=}")
 

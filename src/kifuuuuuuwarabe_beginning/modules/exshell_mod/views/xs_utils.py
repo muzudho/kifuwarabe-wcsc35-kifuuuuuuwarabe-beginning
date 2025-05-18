@@ -55,7 +55,7 @@ class XsUtils:
 
     @staticmethod
     def render_piece_2(ws, sq, color, pt):
-        print(f"{sq=} {color=} {pt=}")
+        #print(f"{sq=} {color=} {pt=}")
         if pt == cshogi.NONE:    # 空きマス
             return
 
