@@ -26,20 +26,14 @@ class PrincipalVariationModel:
             TODO 廃止方針。
         """
 
-        # termination_model = TerminationModel(
-        #         is_mars_arg = False,
-        #         is_gote_arg = out_of_termination_is_gote_arg,
-        #         state_arg   = constants.out_of_termination_state_const.HORIZON,
-        #         comment_arg = '')
-
         obj_1 = PrincipalVariationModel(
-                history_node_model_arg                      = HistoryNodeModel(
-                                                                    parent_arg  = None,
-                                                                    move_arg    = 0,            # ［指し手］
-                                                                    cap_arg     = cshogi.NONE,  # ［取った駒の型種類］
-                                                                    value_arg   = 0,            # ［局面評価値］
-                                                                    comment_arg = ''),          # ［指し手へのコメント］
-                termination_model_arg                       = None) #termination_model,
+                history_node_model_arg  = HistoryNodeModel(
+                                                parent_arg  = None,
+                                                move_arg    = 0,            # ［指し手］
+                                                cap_arg     = cshogi.NONE,  # ［取った駒の型種類］
+                                                value_arg   = 0,            # ［局面評価値］
+                                                comment_arg = ''),          # ［指し手へのコメント］
+                termination_model_arg   = None)
 
         obj_1.setup_to_horizon(search_context_model=search_context_model)
 

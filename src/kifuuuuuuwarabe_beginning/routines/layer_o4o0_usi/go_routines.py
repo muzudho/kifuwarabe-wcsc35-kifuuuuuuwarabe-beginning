@@ -5,6 +5,7 @@ import time
 from ...models.layer_o1o0 import constants, ResultOfGoModel, SearchResultStateModel
 from ...models.layer_o1o0o1o0_japanese import JapaneseMoveModel
 from ...models.layer_o5o0_search import PrincipalVariationModel, SearchContextModel
+from ...modules.search_mod.xl_search_module import XlSearchModule
 from ...views import TableView
 from ..layer_o4o_9o0_search import EndOfSearchRoutines, O0NoSearchRoutines, O1RootSearchRoutines, O2CounterSearchRoutines, OutOfSearchRoutines, SearchRoutines
 from ..layer_o3o0 import MovesPickupFilterRoutines, MovesReductionFilterRoutines
@@ -62,6 +63,8 @@ class _Go2nd():
         result_of_go_model : ResultOfGoModel
             探索の結果。
         """
+
+        XlSearchModule(gymnasium=gymnasium).start_search(move_list=move_list)
 
         for move in move_list:
             # 指し手のUSI表記に、独自形式を併記。
