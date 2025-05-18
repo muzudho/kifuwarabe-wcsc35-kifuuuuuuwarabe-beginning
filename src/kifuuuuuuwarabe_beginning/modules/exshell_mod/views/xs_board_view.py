@@ -156,11 +156,11 @@ class XsBoardView():
         self._render_color(ws, gymnasium)               # 手番の描画。
         self._render_repetition_label(ws)               # 局面反復回数ラベル。
         self._render_repetition_value(ws)               # 局面反復回数値。
-        self._render_title(ws)                          # タイトルを描画。
         self._render_mars_hands(ws, gymnasium)          # 一段目側の持ち駒の描画。
         self._render_earth_hands(ws, gymnasium)         # 九段目側の持ち駒の描画。
         self._render_board_background_except_squares(ws, gymnasium)    # 盤の背景を描画。マスを除く。
         self._render_board_each_square(ws, gymnasium)     # 盤の各マスを描画。
+        self._render_title(ws)                          # タイトルを描画。
 
         # ワークブック保存
         gymnasium.exshell.save_workbook(wb=wb)
@@ -179,7 +179,7 @@ class XsBoardView():
         """背景を描画。
         """
         start_row_th = 1
-        end_row_th = 27
+        end_row_th = 28
         for y_th in range(start_row_th, end_row_th + 1):
             for column_letter in xa.ColumnLetterRange(start='A', end='AK'):
                 row_th = y_th
@@ -250,75 +250,6 @@ class XsBoardView():
         cell.font = self._NEXT_VALUE_FONT
         cell.fill = self._header_1_fill
         cell.alignment = self._left_center_alignment
-
-
-    def _render_title(self, ws):
-        """タイトルを描画。
-        """
-        cell = ws['S2']
-        cell.value = 'B'
-        cell.font = self._TITLE_FONT
-
-        cell = ws['T2']
-        cell.value = 'i'
-        cell.font = self._TITLE_FONT
-
-        cell = ws['U2']
-        cell.value = 'g'
-        cell.font = self._TITLE_FONT
-
-        cell = ws['W2']
-        cell.value = 'd'
-        cell.font = self._TITLE_FONT
-
-        cell = ws['X2']
-        cell.value = 'o'
-        cell.font = self._TITLE_FONT
-
-        cell = ws['Y2']
-        cell.value = 'b'
-        cell.font = self._TITLE_FONT
-
-        cell = ws['Z2']
-        cell.value = 'u'
-        cell.font = self._TITLE_FONT
-
-        cell = ws['AA2']
-        cell.value = 't'
-        cell.font = self._TITLE_FONT
-
-        cell = ws['AB2']
-        cell.value = 's'
-        cell.font = self._TITLE_FONT
-
-        cell = ws['AC2']
-        cell.value = 'u'
-        cell.font = self._TITLE_FONT
-
-        cell = ws['AE2']
-        cell.value = 's'
-        cell.font = self._TITLE_FONT
-
-        cell = ws['AF2']
-        cell.value = 'h'
-        cell.font = self._TITLE_FONT
-
-        cell = ws['AG2']
-        cell.value = 'o'
-        cell.font = self._TITLE_FONT
-
-        cell = ws['AH2']
-        cell.value = 'g'
-        cell.font = self._TITLE_FONT
-
-        cell = ws['AI2']
-        cell.value = 'i'
-        cell.font = self._TITLE_FONT
-
-        cell = ws['S3']
-        cell.value = 'Original 3x4 board was invented by Madoka Kitao. The original pieces were designed by Maiko Fujita.'
-        cell.font = self._SMALL_TITLE_FONT
-        cell.alignment = self._left_top_alignment
 
 
     def _render_mars_hands(self, ws, gymnasium):
@@ -410,6 +341,8 @@ class XsBoardView():
             cell.font = self._MARS_HANDS_NUMBER_FONT
             cell.alignment = self._center_center_alignment
 
+        # 後手の持ち駒の数のリスト
+        w_hand = gymnasium.table.pieces_in_hand[1]
         #
         # NOTE 元の画像サイズで貼り付けられるわけではないの、何でだろう？ 60x60pixels の画像にしておくと、90x90pixels のセルに合う？
         #
@@ -417,34 +350,18 @@ class XsBoardView():
         # 難しい
         #
         input_data = [
-            ('C6', cshogi.WHITE, cshogi.PAWN),
-            ('C8', cshogi.WHITE, cshogi.LANCE),
-            ('C10', cshogi.WHITE, cshogi.KNIGHT),
-            ('C12', cshogi.WHITE, cshogi.SILVER),
-            ('C14', cshogi.WHITE, cshogi.GOLD),
-            ('C16', cshogi.WHITE, cshogi.BISHOP),
-            ('C18', cshogi.WHITE, cshogi.ROOK),
-            ('AE10', cshogi.BLACK, cshogi.PAWN),
-            ('AE12', cshogi.BLACK, cshogi.LANCE),
-            ('AE14', cshogi.BLACK, cshogi.KNIGHT),
-            ('AE16', cshogi.BLACK, cshogi.SILVER),
-            ('AE18', cshogi.BLACK, cshogi.GOLD),
-            ('AE20', cshogi.BLACK, cshogi.BISHOP),
-            ('AE22', cshogi.BLACK, cshogi.ROOK),
+            ('C6', cshogi.WHITE, cshogi.PAWN, 'E6', w_hand[6]),
+            ('C8', cshogi.WHITE, cshogi.LANCE, 'E8', w_hand[5]),
+            ('C10', cshogi.WHITE, cshogi.KNIGHT, 'E10', w_hand[4]),
+            ('C12', cshogi.WHITE, cshogi.SILVER, 'E12', w_hand[3]),
+            ('C14', cshogi.WHITE, cshogi.GOLD, 'E14', w_hand[2]),
+            ('C16', cshogi.WHITE, cshogi.BISHOP, 'E16', w_hand[1]),
+            ('C18', cshogi.WHITE, cshogi.ROOK, 'E18', w_hand[0]),
         ]
-        for (cell_number, color, pt) in input_data:
-            XsUtils.render_piece_1(ws=ws, cell_address=cell_number, color=color, pt=pt)
-
-        # 後手の持ち駒の数のリスト
-        w_hand = gymnasium.table.pieces_in_hand[1]
-        # 後手の持ち駒の数
-        ws['E6'].value      = w_hand[6]     # 歩
-        ws['E8'].value      = w_hand[5]     # 香
-        ws['E10'].value     = w_hand[4]     # 桂
-        ws['E12'].value     = w_hand[3]     # 銀
-        ws['E14'].value     = w_hand[2]     # 金
-        ws['E16'].value     = w_hand[1]     # 角
-        ws['E18'].value     = w_hand[0]     # 飛
+        for (cell_number, color, pt, value_cell_address, number_of_piece) in input_data:
+            if 0 < number_of_piece:
+                XsUtils.render_piece_1(ws=ws, cell_address=cell_number, color=color, pt=pt)
+                ws[value_cell_address].value = number_of_piece
 
 
     def _render_earth_hands(self, ws, gymnasium):
@@ -538,14 +455,25 @@ class XsBoardView():
 
         # 先手、後手の持ち駒の数のリスト
         b_hand = gymnasium.table.pieces_in_hand[0]
-        # 先手の持ち駒の数
-        ws['AG10'].value    = b_hand[6]     # 飛
-        ws['AG12'].value    = b_hand[5]     # 角
-        ws['AG14'].value    = b_hand[4]     # 金
-        ws['AG16'].value    = b_hand[3]     # 銀
-        ws['AG18'].value    = b_hand[2]     # 桂
-        ws['AG20'].value    = b_hand[1]     # 香
-        ws['AG22'].value    = b_hand[0]     # 歩
+        #
+        # NOTE 元の画像サイズで貼り付けられるわけではないの、何でだろう？ 60x60pixels の画像にしておくと、90x90pixels のセルに合う？
+        #
+        # TODO 📖 [PythonでExcelファイルに画像を挿入する/列の幅を調整する](https://qiita.com/kaba_san/items/b231a41891ebc240efc7)
+        # 難しい
+        #
+        input_data = [
+            ('AE10', cshogi.BLACK, cshogi.PAWN, 'AG10', b_hand[6]),
+            ('AE12', cshogi.BLACK, cshogi.LANCE, 'AG12', b_hand[5]),
+            ('AE14', cshogi.BLACK, cshogi.KNIGHT, 'AG14', b_hand[4]),
+            ('AE16', cshogi.BLACK, cshogi.SILVER, 'AG16', b_hand[3]),
+            ('AE18', cshogi.BLACK, cshogi.GOLD, 'AG18', b_hand[2]),
+            ('AE20', cshogi.BLACK, cshogi.BISHOP, 'AG20', b_hand[1]),
+            ('AE22', cshogi.BLACK, cshogi.ROOK, 'AG22', b_hand[0]),
+        ]
+        for (cell_number, color, pt, value_cell_address, number_of_piece) in input_data:
+            if 0 < number_of_piece:
+                XsUtils.render_piece_1(ws=ws, cell_address=cell_number, color=color, pt=pt)
+                ws[value_cell_address].value = number_of_piece
 
 
     def _render_board_background_except_squares(self, ws, gymnasium):
@@ -726,3 +654,44 @@ class XsBoardView():
             masu = next_suji * 10 + next_dan
             #print(f"{next_suji=} {next_dan=} {masu=}")
 
+
+    def _render_title(self, ws):
+        """タイトルを描画。
+        """
+
+        input_data = [
+            ('L27', 'B'),
+            ('M27', 'i'),
+            ('N27', 'g'),
+
+            ('P27', 'f'),
+            ('Q27', 'o'),
+            ('R27', 'r'),
+            ('S27', 'e'),
+            ('T27', 's'),
+            ('U27', 't'),
+
+            ('W27', 'd'),
+            ('X27', 'o'),
+            ('Y27', 'b'),
+            ('Z27', 'u'),
+            ('AA27', 't'),
+            ('AB27', 's'),
+            ('AC27', 'u'),
+
+            ('AE27', 's'),
+            ('AF27', 'h'),
+            ('AG27', 'o'),
+            ('AH27', 'g'),
+            ('AI27', 'i'),
+        ]
+
+        for (cell_address, char) in input_data:
+            cell = ws[cell_address]
+            cell.value = char
+            cell.font = self._TITLE_FONT
+
+        cell = ws['L28']
+        cell.value = 'Original 3x4 board was invented by Madoka Kitao. The original pieces were designed by Maiko Fujita.'
+        cell.font = self._SMALL_TITLE_FONT
+        cell.alignment = self._left_top_alignment
